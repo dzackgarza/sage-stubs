@@ -32,37 +32,35 @@ Work in three phases. Do not write any stub code until Phase 2 is complete.
 
 ## Type annotation quality contract (non-negotiable)
 
-### Banned unconditionally
+`Any` is banned. Not "banned unless justified." Banned.
 
-- **`Any` as a return type** — banned. No exceptions, no justifications.
-- **`Any` as a named parameter type** — banned. `*args: Any` and `**kwargs: Any` in variadic positions are the only permitted use.
-- **`object` as a return type** — banned, except `__new__`. Use a concrete Sage type.
-- **`builtins.object` as a return type** — banned for the same reason. Qualifying `object` via the `builtins` module does not change its meaning.
-- **`# type: ignore` comments** — banned in stub files. If a type error arises, fix the underlying stub, not the error.
-- **Deprecated `typing` forms** — banned. Use `X | Y` not `Union[X, Y]`, `X | None` not `Optional[X]`, `list[X]` not `List[X]`, import from `collections.abc` not `typing` for `Callable`/`Iterator`.
+If a type is complex, use `Union[A, B]`, `TypeVar`, `overload`, or `object`. There is always a more precise type than `Any`.
 
-### Required
+The only structural exception is `*args: Any` / `**kwargs: Any` in variadic signatures where the forwarded types are genuinely unspecified at the call site. This does not apply to named parameters.
 
-- **Named parameters must be resolved to domain types.** If you can name the type in words, write it as a type:
-  - `precision`, `prec`, `degree`, `n`, `p`, `k`, `m` — use `int` (or the specific Sage numeric type if the source confirms it)
-  - `ring`, `base_ring` — use `Ring`, `CommutativeRing`, `Field`, etc. (read the source to determine which)
-  - `other` in arithmetic methods — use `Self` or the concrete operand type
-  - `variable` — `int | Variable` if the source says so, not `Any`
-  - `names` for polynomial variables — `str | tuple[str, ...]`
-- **Return types must be resolved** from the source implementation:
-  - If the source returns `self`, use `Self`
-  - If the source returns `P.element_class(...)`, use the element class
-  - If the return type depends on the input, use `@overload`
+**Named parameters must be resolved to domain types:**
+- `precision` — is a number. Use `int` or the appropriate Sage numeric type.
+- `degree` — is an integer. Use `int`.
+- `prec` — is an integer. Use `int`.
+- `n`, `p`, `k`, `m` — are integers unless the source says otherwise. Use `int`.
+- `ring`, `base_ring` — use the actual base class (`Ring`, `CommutativeRing`, etc.).
+- `other` on arithmetic methods — use `Self` or the operand type, not `Any`.
+- `variable` — if the docstring says "a variable or integer", write `int | Variable`, not `Any`.
+- `names` — if used for polynomial variable names, write `str | tuple[str, ...]`, not `Any`.
 
-### Completing a task means fixing ALL violations
+**Return types must be resolved:**
+- If the source returns `P.element_class(P, ...)` where `P = self.parent()`, the return type is `Self` or the class itself.
+- If the source returns `self`, the return type is `Self`.
+- If the return type depends on the input type, use `@overload` to express the distinct signatures.
 
-If you are asked to fix violations in a file, you must fix every violation reported by `python3 scripts/check_stubs.py <file>`. Fixing unrelated files or making only cosmetic changes (removing quoted annotations, updating import style) while leaving the assigned violations in place is not task completion.
+**The following rationalizations are not acceptable and will be rejected:**
+- *"The library allows coercion from other types."* — Coercion is runtime behaviour. Annotate the intended type.
+- *"I don't have that type imported."* — Add the import or use a string forward reference. Missing imports are not a license for `Any`.
+- *"The parameter is polymorphic."* — If you can describe the types in words, write them as a `Union`. If you wrote a plain-English description and then typed `Any`, that is dishonesty, not uncertainty.
+- *"The return type depends on runtime input."* — Use `@overload`.
+- *"I described the type correctly but wrote `Any` anyway."* — Not acceptable under any circumstance.
 
-Run `python3 scripts/check_stubs.py <yourfile>` and verify it reports 0 violations before marking your task complete.
-
-### Direct methods only
-
-Only stub public methods defined directly on the class body. Nested helper functions (e.g. `def coefficient(n)` defined *inside* `__call__`) are not class methods. Check `cls.body` in the AST, not the full `ast.walk` output — `ast.walk` descends into nested function bodies and will produce false positives.
+**Only stub public methods defined directly on the class.** Nested helper functions (e.g. `def coefficient(n)` defined inside `__call__`) are not class methods. Inherited aliases are not direct definitions. Check `cls.body` in the AST, not the full `ast.walk` output.
 
 ## Class hierarchy
 
