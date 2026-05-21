@@ -1,0 +1,3 @@
+from .covariant_functorial_construction import RegressiveCovariantConstructionCategory
+
+class SubobjectsCategory(RegressiveCovariantConstructionCategory): ...

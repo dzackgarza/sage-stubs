@@ -1,8 +1,9 @@
 from sage.categories.category import Category
+from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 from sage.structure.element import Element
 from sage.structure.parent import Parent
 
-class Algebras:
+class Algebras(CategoryWithAxiom_over_base_ring):
     def __init__(self, base: Parent | Category, name: str | None = None) -> None: ...
     class SubcategoryMethods:
         def Semisimple(self) -> Category: ...

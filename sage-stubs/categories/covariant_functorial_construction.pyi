@@ -1,0 +1,6 @@
+from .category import Category
+
+class CovariantConstructionCategory(Category):
+    def base_category(self) -> Category: ...
+
+class RegressiveCovariantConstructionCategory(CovariantConstructionCategory): ...

@@ -1,8 +1,9 @@
 from sage.categories.category import Category
+from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 from sage.structure.element import Element
 from sage.structure.parent import Parent
 
-class AlgebrasWithBasis:
+class AlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
     def __init__(self, base: Parent | Category, name: str | None = None) -> None: ...
     class ParentMethods:
         def hochschild_complex(self, *args: object, **kwargs: object) -> Parent: ...

@@ -1,6 +1,9 @@
+from .covariant_functorial_construction import RegressiveCovariantConstructionCategory
 from .category_with_axiom import CategoryWithAxiom
 
-class TopologicalSpaces:
+class TopologicalSpacesCategory(RegressiveCovariantConstructionCategory): ...
+
+class TopologicalSpaces(TopologicalSpacesCategory):
     def Compact(self) -> CategoryWithAxiom: ...
     class SubcategoryMethods:
         def Compact(self) -> CategoryWithAxiom: ...

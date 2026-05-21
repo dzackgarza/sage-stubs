@@ -1,0 +1,3 @@
+from .category import Category
+
+class Category_singleton(Category): ...

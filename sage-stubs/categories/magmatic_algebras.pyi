@@ -1,8 +1,9 @@
 from sage.categories.category import Category
+from sage.categories.category_types import Category_over_base_ring
 from sage.structure.element import Element
 from sage.structure.parent import Parent
 
-class MagmaticAlgebras:
+class MagmaticAlgebras(Category_over_base_ring):
     def __init__(self, base: Parent | Category, name: str | None = None) -> None: ...
     class ParentMethods:
         def algebra_generators(self) -> tuple[Element, ...]: ...
