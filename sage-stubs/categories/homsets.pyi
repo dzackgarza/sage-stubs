@@ -1,4 +1,7 @@
+from collections.abc import Sequence
+
 class Homsets:
+    def super_categories(self) -> Sequence[object]: ...
     class ParentMethods:
         ...
     class SubcategoryMethods:
