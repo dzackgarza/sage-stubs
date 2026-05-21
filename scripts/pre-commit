@@ -1,0 +1,5 @@
+#!/usr/bin/env sh
+# Pre-commit hook: reject stub quality violations on staged .pyi files.
+# Install via: just install-hooks
+set -e
+just lint
