@@ -3,6 +3,7 @@ from sage.structure.element import Element
 from sage.structure.parent import Parent
 
 class AlgebrasWithBasis:
+    def __init__(self, base: Parent | Category, name: str | None = None) -> None: ...
     class ParentMethods:
         def hochschild_complex(self, *args: object, **kwargs: object) -> Parent: ...
     class ElementMethods:
