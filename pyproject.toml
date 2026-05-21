@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=80"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sage-stubs"
+version = "10.7.0"
+description = "PEP 561 stub-only package for Sage 10.7 category/structure interfaces"
+requires-python = ">=3.12"
+readme = "README.md"
+
+[tool.setuptools]
+packages = [
+    "sage-stubs",
+    "sage-stubs.categories",
+    "sage-stubs.structure",
+    "sage-stubs.misc",
+    "sage-stubs.sets",
+    "sage-stubs.matrix",
+    "sage-stubs.rings",
+    "sage-stubs.rings.polynomial",
+    "sage-stubs.combinat",
+    "sage-stubs.combinat.posets",
+]
+
+[tool.setuptools.package-data]
+"*" = ["*.pyi"]
