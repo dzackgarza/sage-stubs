@@ -1,0 +1,3 @@
+class DistributiveMagmasAndAdditiveMagmas:
+    class ParentMethods:
+        ...

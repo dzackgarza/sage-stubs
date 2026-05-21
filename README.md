@@ -37,6 +37,14 @@ Stubs cover the plugin-facing infrastructure surface:
 - `sage.categories.functor` — Functor
 - `sage.categories.homset` — Homset
 - `sage.categories.morphism` — Morphism
+- `sage.categories.additive_magmas` and related category provider modules —
+  provider container shells required by projected Sage category MROs
+- `sage.categories.additive_groups`,
+  `sage.categories.commutative_additive_groups`,
+  `sage.categories.commutative_additive_monoids`,
+  `sage.categories.commutative_additive_semigroups`,
+  `sage.categories.semirings`, and `sage.categories.sets_with_partial_maps` —
+  manifest-referenced category shells for real fixtures and `category_specs`
 - `sage.structure.category_object` — CategoryObject
 - `sage.structure.element` — Element
 - `sage.structure.parent` — Parent

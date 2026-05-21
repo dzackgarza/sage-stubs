@@ -1,0 +1,3 @@
+class AdditiveSemigroups:
+    class ParentMethods:
+        ...

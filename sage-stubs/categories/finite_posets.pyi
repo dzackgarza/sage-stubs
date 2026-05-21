@@ -1,0 +1,3 @@
+class FinitePosets:
+    class ParentMethods:
+        ...

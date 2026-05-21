@@ -1,0 +1,3 @@
+class InfiniteEnumeratedSets:
+    class ParentMethods:
+        ...

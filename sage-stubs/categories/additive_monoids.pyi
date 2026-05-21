@@ -1,0 +1,3 @@
+class AdditiveMonoids:
+    class ParentMethods:
+        ...

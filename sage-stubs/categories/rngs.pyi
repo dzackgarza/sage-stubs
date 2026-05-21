@@ -1,0 +1,3 @@
+class Rngs:
+    class ParentMethods:
+        ...

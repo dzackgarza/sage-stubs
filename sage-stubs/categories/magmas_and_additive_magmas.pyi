@@ -1,0 +1,3 @@
+class MagmasAndAdditiveMagmas:
+    class SubcategoryMethods:
+        ...

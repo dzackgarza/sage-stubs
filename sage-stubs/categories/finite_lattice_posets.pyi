@@ -1,0 +1,3 @@
+class FiniteLatticePosets:
+    class ParentMethods:
+        ...
