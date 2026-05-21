@@ -1,9 +1,6 @@
-from .covariant_functorial_construction import RegressiveCovariantConstructionCategory
 from .category_with_axiom import CategoryWithAxiom
 
-class MetricSpacesCategory(RegressiveCovariantConstructionCategory): ...
-
-class MetricSpaces(MetricSpacesCategory):
+class MetricSpaces:
     class ElementMethods:
         ...
     class ParentMethods:

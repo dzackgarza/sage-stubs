@@ -1,20 +1,17 @@
 from collections.abc import Sequence
 
 from .category_with_axiom import CategoryWithAxiom
-from .category_singleton import Category_singleton
 from .finite_sets import FiniteSets
 from .metric_spaces import MetricSpaces
 from .topological_spaces import TopologicalSpaces
 from .facade_sets import FacadeSets
 from .enumerated_sets import EnumeratedSets
-from .quotients import QuotientsCategory
-from .subobjects import SubobjectsCategory
 from sage.structure.element import Element
 
 
 class EmptySetError(ValueError): ...
 
-class Sets(Category_singleton):
+class Sets:
     class ElementMethods:
         ...
     class MorphismMethods:
@@ -32,8 +29,6 @@ class Sets(Category_singleton):
         def Infinite(self) -> CategoryWithAxiom: ...
         def Enumerated(self) -> EnumeratedSets: ...
         def Facade(self) -> FacadeSets: ...
-        def Quotients(self) -> CategoryWithAxiom: ...
-        def Subobjects(self) -> CategoryWithAxiom: ...
     class Finite(CategoryWithAxiom):
         ...
     class Topological(CategoryWithAxiom):
@@ -59,9 +54,6 @@ class Sets(Category_singleton):
             ...
         class ParentMethods:
             ...
-    class Quotients(QuotientsCategory):
-        class ParentMethods:
-            ...
-    class Subobjects(SubobjectsCategory):
+    class Subobjects:
         class ParentMethods:
             ...

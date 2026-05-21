@@ -1,10 +1,9 @@
 from sage.categories.category import Category
-from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 from sage.matrix.matrix2 import Matrix
 from sage.structure.element import Element
 from sage.structure.parent import Parent
 
-class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
+class FiniteDimensionalAlgebrasWithBasis:
     def __init__(self, base: Parent | Category, name: str | None = None) -> None: ...
     class ParentMethods:
         def radical_basis(self) -> tuple[Element, ...]: ...

@@ -1,12 +1,11 @@
 from collections.abc import Iterable
 
 from sage.categories.category import Category
-from sage.categories.category_types import Category_module
 from sage.categories.morphism import Morphism
 from sage.structure.element import Element
 from sage.structure.parent import Parent
 
-class Modules(Category_module):
+class Modules:
     def __init__(self, base_ring: Parent | Category, dispatch: bool = True) -> None: ...
     class SubcategoryMethods:
         def base_ring(self) -> Parent: ...

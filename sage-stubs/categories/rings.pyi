@@ -1,7 +1,7 @@
 from .category_with_axiom import CategoryWithAxiom
 from sage.structure.element import Element
 
-class Rings(CategoryWithAxiom):
+class Rings:
     class ElementMethods:
         ...
     class MorphismMethods:

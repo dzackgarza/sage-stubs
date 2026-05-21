@@ -1,7 +1,6 @@
 from collections.abc import Iterable
-from sage.categories.category import Category
 
-class Posets(Category):
+class Posets:
     class ElementMethods:
         ...
     class ParentMethods:
