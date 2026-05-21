@@ -1,0 +1,4 @@
+[submodule "sage-src"]
+	path = sage-src
+	url = https://github.com/sagemath/sage
+	shallow = true
