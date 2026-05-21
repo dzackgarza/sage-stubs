@@ -1,4 +1,8 @@
-from typing import Any
+from sage.structure.parent import Parent
 
 class OrePolynomialRing:
-    def completion(self, *args: Any, **kwargs: Any) -> Any: ...
+    def quotient_module(
+        self,
+        P: object,
+        names: str | tuple[str, ...] | list[str] | None = None,
+    ) -> Parent: ...
