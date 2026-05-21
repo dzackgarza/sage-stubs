@@ -1,3 +1,0 @@
-from sage.structure.parent import Parent
-
-class CommutativeRing(Parent): ...
