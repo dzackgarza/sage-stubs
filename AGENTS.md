@@ -146,6 +146,23 @@ still be resolved.
 - If the return type depends on the input type, use `@overload` to
   express the distinct signatures.
 
+**Type precision must move forward:**
+
+- Never weaken an existing or source-backed type to satisfy a local
+  checker error, lint warning, import problem, or cleanup goal. Fix the
+  missing sidecar, import path, package registration, or supporting stub
+  instead.
+- Never replace a precise base class or protocol with a broader one.
+  Changes such as `FieldElement -> Element`, `CommutativeRingElement ->
+  RingElement`, or `Parent -> object` are backwards progress unless
+  source review proves the original type was wrong.
+- Never flatten source-backed inheritance. Stub class bases carry API
+  information and must preserve the Sage hierarchy unless the direct
+  source body documents a different relationship.
+- If verification fails after adding a precise type, the failure is a
+  dependency-resolution problem to fix. It is not permission to degrade
+  the type surface.
+
 **The following rationalisations are not acceptable and will be
 rejected:**
 
@@ -200,6 +217,11 @@ runs automatically in the pre-commit hook.
   warns on top-level definitions removed vs `HEAD`; override with
   `--allow-narrow` only after explicit source citation in the commit
   message.
+- **No type weakening.** Do not make signatures, return types, class
+  bases, protocols, aliases, or imports less precise for local
+  convenience. If a precise type exposes a missing dependency or mypy
+  import failure, add the missing source-grounded sidecar instead of
+  broadening the type.
 - **No inherited-method inflation.** If a requested method is inherited
   rather than defined directly on the target class, report that fact.
   Do not add inherited methods as direct methods.
