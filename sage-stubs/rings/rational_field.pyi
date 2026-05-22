@@ -2,8 +2,9 @@ from collections.abc import Iterator
 
 from sage.rings.integer import Integer
 from sage.rings.rational import Rational
+from sage.rings.ring import Field
 
-class RationalField:
+class RationalField(Field):
     def __init__(self) -> None: ...
     def _repr_(self) -> str: ...
     def discriminant(self) -> Integer: ...
