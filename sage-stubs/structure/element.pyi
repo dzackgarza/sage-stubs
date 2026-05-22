@@ -23,6 +23,9 @@ class RingElement(ModuleElement, Protocol):
 class CommutativeRingElement(RingElement, Protocol):
     ...
 
+class Expression(CommutativeRingElement, Protocol):
+    ...
+
 class FieldElement(CommutativeRingElement, Protocol):
     ...
 
