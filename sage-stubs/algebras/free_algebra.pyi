@@ -1,8 +1,46 @@
+from typing import TypeAlias, overload
+
 from sage.structure.parent import Parent
 from sage.structure.element import Element
 from sage.structure.element import Element as Matrix
 from sage.structure.parent import Parent as Ring
 from sage.structure.parent import Parent as Family
+from sage.structure.factory import FactoryKeyPart, UniqueFactory
+
+FreeAlgebraKeyPart: TypeAlias = Ring | tuple[int, ...] | tuple[str, ...]
+
+class FreeAlgebraFactory(UniqueFactory):
+    @overload
+    def create_key(
+        self,
+        base_ring: Ring,
+        arg1: int | str | tuple[str, ...] | list[str] | None = ...,
+        arg2: int | str | tuple[str, ...] | list[str] | None = ...,
+        sparse: bool | None = ...,
+        order: str | None = ...,
+        names: str | tuple[str, ...] | list[str] | None = ...,
+        name: str | None = ...,
+        implementation: str | None = ...,
+        degrees: int | tuple[int, ...] | list[int] | None = ...,
+    ) -> tuple[FreeAlgebraKeyPart, ...]: ...
+    @overload
+    def create_key(self, *args: object, **kwds: object) -> tuple[FactoryKeyPart, ...]: ...
+    def create_object(self, version: object, key: tuple[FactoryKeyPart, ...], **extra_args: object) -> Parent: ...
+    @overload
+    def __call__(
+        self,
+        base_ring: Ring,
+        arg1: int | str | tuple[str, ...] | list[str] | None = ...,
+        arg2: int | str | tuple[str, ...] | list[str] | None = ...,
+        sparse: bool | None = ...,
+        order: str | None = ...,
+        names: str | tuple[str, ...] | list[str] | None = ...,
+        name: str | None = ...,
+        implementation: str | None = ...,
+        degrees: int | tuple[int, ...] | list[int] | None = ...,
+    ) -> Parent: ...
+    @overload
+    def __call__(self, *args: object, **kwds: object) -> Parent: ...
 
 class FreeAlgebra_generic(Parent):
     def __init__(self, R: Ring, n: int, names: str | tuple[str, ...], degrees: tuple[int, ...] | None = ...) -> None: ...
@@ -21,3 +59,5 @@ class FreeAlgebra_generic(Parent):
     def poincare_birkhoff_witt_basis(self) -> Parent: ...
     def pbw_element(self, elt: Element) -> Element: ...
     def lie_polynomial(self, w: object) -> Element: ...
+
+FreeAlgebra: FreeAlgebraFactory
