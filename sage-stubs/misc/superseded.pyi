@@ -1,6 +1,5 @@
 from collections.abc import Callable
 from typing import Generic, TypeVar
-from warnings import Warning
 
 _R = TypeVar("_R")
 _F = TypeVar("_F", bound=Callable[..., object])

@@ -133,9 +133,9 @@ scaffolded stub that still contains `Any` will be rejected by
 ## At-a-glance next step
 
 > **Pick up:** Phase 01 — Foundation completion.
-> **Why:** All downstream phases block on it.
-> **Pick up:** T01.4 (`sage.misc` pickling/persistence) or T01.8 (`categories` gap).
-> **Done this round:** T01.3, T01.7, T01.9, T01.10 (parallel subagents).
+> **Why:** Final re-baseline required before unblocking Tier 1.
+> **Pick up:** T01.11 (`STUB_GAPS.md` re-baseline).
+> **Done this round:** T01.4-T01.10, T01.12 (foundation 100% complete).
 
 Update this banner whenever a phase transitions between `Not Started`,
 `In Progress`, and `Complete`.

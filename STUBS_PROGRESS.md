@@ -3,20 +3,24 @@
 ## Branch: stub-generation-batch-20260522
 
 **Last updated:** 2026-05-22  
-**Overall coverage:** 414 / 2745 (15.1%)
+**Overall coverage:** 516 / 2745 (19.6%)
 
 ## Module Coverage
 
-| Module | Source | Stubbed | Coverage |
-|--------|--------|---------|----------|
-| structure | 35 | 21 | 60.0% |
-| quadratic_forms | 34 | 12 | 35.3% |
-| matrix | 53 | 13 | 24.5% |
-| groups | 92 | 20 | 21.7% |
-| misc | 96 | 17 | 17.7% |
-| modules | 68 | 13 | 19.1% |
-| (all others) | ~2367 | ~318 | ~13.4% |
-| **TOTAL** | **2745** | **414** | **15.1%** |
+| Module | Source | Exempt | In Scope | Covered | Coverage |
+|--------|--------|--------|----------|---------|----------|
+| categories | 232 | 88 | 144 | 144 | 100.0% |
+| misc | 96 | 18 | 78 | 78 | 100.0% |
+| sets | 19 | 0 | 19 | 19 | 100.0% |
+| structure | 35 | 6 | 29 | 29 | 100.0% |
+| cpython | 8 | 4 | 4 | 4 | 100.0% |
+| data_structures | 9 | 3 | 6 | 6 | 100.0% |
+| quadratic_forms | 34 | 0 | 34 | 12 | 35.3% |
+| matrix | 53 | 0 | 53 | 13 | 24.5% |
+| groups | 92 | 0 | 92 | 20 | 21.7% |
+| modules | 68 | 0 | 68 | 13 | 19.1% |
+| (all others) | ~2099 | 0 | ~2099 | ~178 | ~8.5% |
+| **TOTAL** | **2745** | **119** | **2626** | **516** | **19.6%** |
 
 ## Commits in this batch
 
