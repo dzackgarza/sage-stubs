@@ -8,13 +8,9 @@ from sage.rings.ring import Field, Ring
 from sage.structure.element import Element
 from sage.structure.parent import Parent
 
-class ModuleMorphism:
-    """Stub class for sage.modules.module_morphism.ModuleMorphism"""
-    ...
+class ModuleMorphism: ...
 
-class Family:
-    """Stub class for sage.categories.family.Family"""
-    ...
+class Family: ...
 
 class FreeModuleFactory:
     def create_key(
