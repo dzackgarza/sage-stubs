@@ -1,0 +1,6 @@
+from sage.matrix.matrix import Matrix_dense
+from sage.structure.parent import Parent
+
+class Matrix_generic_dense(Matrix_dense):
+    def __init__(self, parent: Parent, entries: list[object] | None = None, copy: bool | None = None, coerce: bool = True) -> None: ...
+    def __copy__(self) -> Matrix_generic_dense: ...

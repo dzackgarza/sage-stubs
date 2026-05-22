@@ -1,13 +1,15 @@
+from typing import TYPE_CHECKING
 from sage.categories.category import Category
 from sage.categories.category_singleton import Category_singleton
-from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet_forest
-from sage.combinat.core import Core
-from sage.combinat.partition import Partition
+
+if TYPE_CHECKING:
+    from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet_forest
+    from sage.combinat.core import Core
+    from sage.combinat.partition import Partition
 
 class AffineWeylGroups(Category_singleton):
     def super_categories(self) -> list[Category]: ...
     def additional_structure(self) -> None: ...
-    def _repr_object_names(self) -> str: ...
     class ParentMethods:
         def special_node(self) -> int: ...
         def affine_grassmannian_elements_of_given_length(self, k: int) -> RecursivelyEnumeratedSet_forest: ...
