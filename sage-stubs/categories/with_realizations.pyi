@@ -1,0 +1,6 @@
+from sage.categories.covariant_functorial_construction import RegressiveCovariantConstructionCategory
+
+class WithRealizationsCategory(RegressiveCovariantConstructionCategory):
+    def _repr_(self) -> str: ...
+
+def WithRealizations(self: object) -> WithRealizationsCategory: ...
