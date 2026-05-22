@@ -1,16 +1,13 @@
-from typing import TYPE_CHECKING
 from sage.categories.category import Category
 from sage.categories.super_modules import SuperModulesCategory
 from sage.categories.signed_tensor import SignedTensorProductsCategory
 
-if TYPE_CHECKING:
-    from sage.structure.parent import Parent
-
+from sage.structure.parent import Parent
 class SuperAlgebras(SuperModulesCategory):
     def extra_super_categories(self) -> list[Category]: ...
     class ParentMethods:
-        def graded_algebra(self) -> 'Parent': ...
-        def tensor(self, *parents: 'Parent', **kwargs: object) -> 'Parent': ...
+        def graded_algebra(self) -> Parent: ...
+        def tensor(self, *parents: Parent, **kwargs: object) -> Parent: ...
     class SubcategoryMethods:
         def Supercommutative(self) -> Category: ...
     class SignedTensorProducts(SignedTensorProductsCategory):

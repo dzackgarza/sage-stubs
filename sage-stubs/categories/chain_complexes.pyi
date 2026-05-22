@@ -1,11 +1,8 @@
-from typing import TYPE_CHECKING
 from sage.categories.category import Category
 from sage.categories.functor import Functor
 from sage.structure.element import Element
 
-if TYPE_CHECKING:
-    from sage.categories.morphism import Morphism
-
+from sage.categories.morphism import Morphism
 class ChainComplexes(Category):
     def super_categories(self) -> list[Category]: ...
     class ParentMethods:
@@ -17,4 +14,4 @@ class ChainComplexes(Category):
 class HomologyFunctor(Functor):
     def __init__(self, domain: Category, n: int | None = None) -> None: ...
     def _apply_functor(self, x: Element) -> Element: ...
-    def _apply_functor_to_morphism(self, f: Element) -> 'Morphism': ...
+    def _apply_functor_to_morphism(self, f: Element) -> Morphism: ...
