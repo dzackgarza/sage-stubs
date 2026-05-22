@@ -1,4 +1,4 @@
-from sage.structure.parent import Parent
+from ...structure.parent import Parent
 
 
 class SchemeHomset_points_projective_field(Parent): ...

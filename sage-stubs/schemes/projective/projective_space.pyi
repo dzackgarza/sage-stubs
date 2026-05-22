@@ -1,7 +1,8 @@
 from sage.rings.ring import CommutativeRing
 from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_base
-from sage.schemes.generic.scheme import Scheme
-from sage.schemes.generic.morphism import SchemeMorphism_point
+
+from ..generic.morphism import SchemeMorphism_point
+from ..generic.scheme import Scheme
 
 class ProjectiveSpace_abstract(Scheme):
     def dimension(self) -> int: ...

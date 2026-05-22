@@ -1,4 +1,4 @@
-from sage.structure.element import Element
+from ..structure.element import Element
 
 
 class Expression(Element): ...

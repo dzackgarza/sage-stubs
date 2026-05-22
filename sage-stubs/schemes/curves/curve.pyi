@@ -1,0 +1,3 @@
+from ..generic.algebraic_scheme import AlgebraicScheme_subscheme
+
+class Curve_generic(AlgebraicScheme_subscheme): ...

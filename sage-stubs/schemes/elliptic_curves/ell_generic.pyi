@@ -8,18 +8,20 @@ from sage.structure.element import RingElement
 from sage.categories.category import Category
 from sage.categories.map import Map
 from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.schemes.projective.projective_point import SchemeMorphism_point_projective_ring
-from sage.schemes.elliptic_curves.weierstrass_morphism import WeierstrassIsomorphism
-from sage.schemes.elliptic_curves.ell_point import EllipticCurvePoint_field
-from sage.schemes.projective.projective_morphism import SchemeMorphism_polynomial_projective_space
 from sage.symbolic.expression import Expression
-from sage.schemes.elliptic_curves.ell_curve_isogeny import EllipticCurveIsogeny
 from sage.plot.graphics import Graphics
-from sage.schemes.elliptic_curves.formal_group import EllipticCurveFormalGroup
 from sage.libs.pari.gen import gen as pari_gen
-from sage.schemes.projective.projective_homset import SchemeHomset_points_abelian_variety_field
 
-class EllipticCurve_generic:
+from ..curves.projective_curve import ProjectivePlaneCurve
+from ..projective.projective_homset import SchemeHomset_points_abelian_variety_field
+from ..projective.projective_morphism import SchemeMorphism_polynomial_projective_space
+from ..projective.projective_point import SchemeMorphism_point_projective_ring
+from .ell_curve_isogeny import EllipticCurveIsogeny
+from .ell_point import EllipticCurvePoint_field
+from .formal_group import EllipticCurveFormalGroup
+from .weierstrass_morphism import WeierstrassIsomorphism
+
+class EllipticCurve_generic(ProjectivePlaneCurve):
     def __init__(self, K: Ring, ainvs: tuple[object, ...], category: Category | None = ...) -> None: ...
     def assume_base_ring_is_field(self, flag: bool = ...) -> None: ...
     def _defining_params_(self) -> tuple[Ring, tuple[RingElement, RingElement, RingElement, RingElement, RingElement]]: ...
@@ -85,4 +87,4 @@ class EllipticCurve_generic:
     def hyperelliptic_polynomials(self) -> tuple[Polynomial, Polynomial]: ...
     def pari_curve(self) -> pari_gen: ...
     def __pari__(self) -> pari_gen: ...
-    def is_smooth(self) -> bool: ...
+    def is_smooth(self, point: RingElement | tuple[RingElement, ...] | None = None) -> bool: ...

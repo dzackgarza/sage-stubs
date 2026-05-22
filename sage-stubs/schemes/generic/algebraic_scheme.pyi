@@ -2,9 +2,10 @@ from collections.abc import Sequence
 
 from sage.rings.ideal import Ideal_generic
 from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.schemes.generic.scheme import Scheme
 from sage.rings.integer import Integer
 from sage.structure.element import RingElement
+
+from .scheme import Scheme
 
 
 class AlgebraicScheme(Scheme):

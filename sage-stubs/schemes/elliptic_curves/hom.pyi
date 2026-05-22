@@ -1,4 +1,4 @@
-from sage.categories.morphism import Morphism
+from ...categories.morphism import Morphism
 
 
 class EllipticCurveHom(Morphism): ...

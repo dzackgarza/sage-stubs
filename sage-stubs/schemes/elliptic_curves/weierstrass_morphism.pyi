@@ -1,4 +1,4 @@
-from sage.schemes.elliptic_curves.hom import EllipticCurveHom
+from .hom import EllipticCurveHom
 
 
 class WeierstrassIsomorphism(EllipticCurveHom): ...

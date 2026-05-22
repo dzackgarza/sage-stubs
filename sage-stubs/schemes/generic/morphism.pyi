@@ -1,8 +1,10 @@
 from sage.structure.element import Element
 
+from sage.categories.category import Category
 from .scheme import Scheme
 
 class SchemeMorphism(Element):
+    def category_for(self) -> Category: ...
     def domain(self) -> Scheme: ...
     def codomain(self) -> Scheme: ...
 
