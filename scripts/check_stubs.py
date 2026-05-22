@@ -10,8 +10,9 @@ ruff (ANN, UP, PYI) handles:
 
 This script adds:
   - Any as a return type (banned unconditionally)
-  - Any as a named parameter type (banned; *args/*kwargs excepted)
+  - Any as a parameter type (banned unconditionally)
   - object as a return type (banned except known protocol dunders)
+  - TYPE_CHECKING, local suppressions, cast, builtins aliases, and legacy typing aliases
 
 Exit 0 = clean. Exit 1 = violations.
 """
@@ -33,8 +34,8 @@ def is_object(node: ast.expr) -> bool:
 
 # Dunders whose return type is legitimately object or whose params accept object
 OBJECT_RETURN_OK = {"__new__"}
-ANY_PARAM_OK_DUNDERS = {"__eq__", "__ne__", "__hash__", "__contains__", "__lt__",
-                        "__le__", "__gt__", "__ge__"}
+LOCAL_SUPPRESSIONS = ("type: ignore", "noqa")
+LEGACY_TYPING_ALIASES = {"List", "Dict", "Tuple", "Set", "FrozenSet"}
 
 
 def check_function(fn: ast.FunctionDef | ast.AsyncFunctionDef, path: Path) -> list[str]:
@@ -64,12 +65,7 @@ def check_function(fn: ast.FunctionDef | ast.AsyncFunctionDef, path: Path) -> li
     for arg in all_args:
         if arg.arg in ("self", "cls") or arg.annotation is None:
             continue
-        is_variadic = arg is fn.args.vararg or arg is fn.args.kwarg
         if is_any(arg.annotation):
-            if is_variadic:
-                continue  # *args: Any, **kwargs: Any are structurally necessary
-            if fn.name in ANY_PARAM_OK_DUNDERS:
-                continue  # protocol dunders accept object/Any by contract
             errors.append(
                 f"{path}:{ln}: `{fn.name}` parameter `{arg.arg}` typed `Any` — banned. "
                 "Use a concrete type."
@@ -78,12 +74,89 @@ def check_function(fn: ast.FunctionDef | ast.AsyncFunctionDef, path: Path) -> li
     return errors
 
 
+def check_tree(tree: ast.Module, path: Path) -> list[str]:
+    errors = []
+    for node in ast.walk(tree):
+        if isinstance(node, ast.ImportFrom):
+            if node.module == "typing":
+                for alias in node.names:
+                    if alias.name == "TYPE_CHECKING":
+                        errors.append(
+                            f"{path}:{node.lineno}: TYPE_CHECKING import — banned. "
+                            "Import annotation types directly."
+                        )
+                    if alias.name == "Any":
+                        errors.append(
+                            f"{path}:{node.lineno}: Any import — banned. "
+                            "Use concrete types or object for honest opacity."
+                        )
+                    if alias.name == "cast":
+                        errors.append(
+                            f"{path}:{node.lineno}: cast import — banned in stubs. "
+                            "Fix the annotation instead."
+                        )
+                    if alias.name in LEGACY_TYPING_ALIASES:
+                        errors.append(
+                            f"{path}:{node.lineno}: typing.{alias.name} import — banned. "
+                            "Use built-in generics."
+                        )
+            if node.module == "builtins":
+                errors.append(
+                    f"{path}:{node.lineno}: builtins import — banned. "
+                    "Use normal built-in names."
+                )
+        elif isinstance(node, ast.If) and isinstance(node.test, ast.Name) and node.test.id == "TYPE_CHECKING":
+            errors.append(
+                f"{path}:{node.lineno}: TYPE_CHECKING block — banned. "
+                "Import annotation types directly."
+            )
+        elif isinstance(node, ast.Attribute):
+            if (
+                isinstance(node.value, ast.Name)
+                and node.value.id == "typing"
+                and node.attr in LEGACY_TYPING_ALIASES
+            ):
+                errors.append(
+                    f"{path}:{node.lineno}: typing.{node.attr} annotation — banned. "
+                    "Use built-in generics."
+                )
+            if isinstance(node.value, ast.Name) and node.value.id == "builtins":
+                errors.append(
+                    f"{path}:{node.lineno}: builtins.{node.attr} — banned. "
+                    "Use normal built-in names."
+                )
+            if isinstance(node.value, ast.Name) and node.value.id == "typing" and node.attr == "Any":
+                errors.append(
+                    f"{path}:{node.lineno}: typing.Any — banned. "
+                    "Use concrete types or object for honest opacity."
+                )
+        elif isinstance(node, ast.Name):
+            if node.id == "Any":
+                errors.append(
+                    f"{path}:{node.lineno}: Any — banned. "
+                    "Use concrete types or object for honest opacity."
+                )
+            if node.id == "cast":
+                errors.append(
+                    f"{path}:{node.lineno}: cast — banned in stubs. "
+                    "Fix the annotation instead."
+                )
+    return errors
+
+
 def check_file(path: Path) -> list[str]:
+    text = path.read_text(encoding="utf-8")
+    marker_errors = [
+        f"{path}:{lineno}: local suppression `{marker}` — banned."
+        for lineno, line in enumerate(text.splitlines(), start=1)
+        for marker in LOCAL_SUPPRESSIONS
+        if marker in line
+    ]
     try:
-        tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
+        tree = ast.parse(text, filename=str(path))
     except SyntaxError as e:
         return [f"{path}:{e.lineno}: SyntaxError: {e.msg}"]
-    errors = []
+    errors = marker_errors + check_tree(tree, path)
     for node in ast.walk(tree):
         if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
             errors.extend(check_function(node, path))

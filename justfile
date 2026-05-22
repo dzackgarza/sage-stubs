@@ -15,6 +15,14 @@ lint:
     ruff check sage-stubs/
     python3 scripts/check_stubs.py $(find sage-stubs -name "*.pyi")
 
+# Fast lint for staged stub files only, used by the pre-commit hook
+lint-staged:
+    @files="$(git diff --cached --name-only --diff-filter=ACM | grep -E '\\.pyi$' || true)"; \
+    if [ -n "$files" ]; then \
+        ruff check $files; \
+        python3 scripts/check_stubs.py $files; \
+    fi
+
 # Auto-fix what ruff can fix (deprecated patterns)
 fix:
     ruff check --fix sage-stubs/
