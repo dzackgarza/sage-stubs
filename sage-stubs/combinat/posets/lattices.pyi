@@ -1,12 +1,11 @@
 from collections.abc import Iterator
-from typing import TYPE_CHECKING
 
 from sage.combinat.posets.posets import FinitePoset
+from sage.matrix.matrix import Matrix
 from sage.structure.element import Element
+from sage.structure.parent import Parent
 
-if TYPE_CHECKING:
-    from sage.matrix.matrix import Matrix
-    from sage.structure.parent import Parent
+def MeetSemilattice(data: object | None = ..., *args: object, **options: object) -> FiniteMeetSemilattice: ...
 
 class FiniteMeetSemilattice(FinitePoset):
     def meet_matrix(self) -> Matrix: ...
@@ -84,4 +83,5 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
     def is_regular(self, certificate: bool = ...) -> bool | tuple[bool, Element]: ...
     def is_simple(self, certificate: bool = ...) -> bool | tuple[bool, Element]: ...
 
+def JoinSemilattice(data: object | None = ..., *args: object, **options: object) -> FiniteJoinSemilattice: ...
 def LatticePoset(data: object | None = ..., *args: object, **options: object) -> FiniteLatticePoset: ...
