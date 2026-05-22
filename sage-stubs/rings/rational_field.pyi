@@ -1,10 +1,5 @@
-from typing import TYPE_CHECKING
-if TYPE_CHECKING:
-    from sage.rings.integer import Integer
-    from sage.rings.rational import Rational
-
-# from sage.rings.integer import Integer
-# from sage.rings.rational import Rational
+from sage.rings.integer import Integer
+from sage.rings.rational import Rational
 from collections.abc import Iterator
 
 class RationalField:

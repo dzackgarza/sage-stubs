@@ -1,0 +1,3 @@
+from sage.rings.integer import Integer
+
+def factor_using_flint(n: Integer, bits: int = 0) -> list[tuple[Integer, int]]: ...

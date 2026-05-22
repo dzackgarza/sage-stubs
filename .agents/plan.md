@@ -134,8 +134,8 @@ scaffolded stub that still contains `Any` will be rejected by
 
 > **Pick up:** Tier 1 Phases: [Phase 02](phases/phase-02-core-rings.md), [Phase 03](phases/phase-03-polynomial-rings.md), [Phase 04](phases/phase-04-number-theory-rings.md), or [Phase 05](phases/phase-05-linear-algebra.md).
 > **Why:** Phase 01 (Foundation completion) is 100% complete, fully unblocking Tier 1.
-> **Pick up:** T02.3 / T03.1 / T04.1 / T05.1.
-> **Done this round:** T02.2 (real & complex floating point/interval stubs completed).
+> **Pick up:** T02.4 / T03.1 / T04.1 / T05.1.
+> **Done this round:** T02.3 (integer & rational base stubs completed).
 
 Update this banner whenever a phase transitions between `Not Started`,
 `In Progress`, and `Complete`.
