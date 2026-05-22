@@ -1,0 +1,76 @@
+#!/usr/bin/env bash
+# Tracked pre-commit hook for sage-stubs.
+# Activate once per clone with:   just setup
+# (equivalently: git config core.hooksPath .githooks)
+#
+# What this hook enforces, on STAGED FILES ONLY (the existing legacy backlog
+# is not blocking — agents only need to leave the files they touch clean):
+#   1. ruff lint                       on staged .pyi files
+#   2. scripts/check_stubs.py          on staged .pyi files
+#   3. scripts/check_guardrails.py     on the staged set
+#   4. mypy --strict                   on staged .pyi files (follow imports)
+#
+# Coverage is reported at the end as informational signal.
+
+set -uo pipefail
+cd "$(git rev-parse --show-toplevel)"
+
+bold() { printf '\n\033[1m%s\033[0m\n' "$*"; }
+red()  { printf '\033[31m%s\033[0m\n' "$*"; }
+grn()  { printf '\033[32m%s\033[0m\n' "$*"; }
+ylw()  { printf '\033[33m%s\033[0m\n' "$*"; }
+
+mapfile -t STAGED < <(git diff --cached --name-only --diff-filter=ACMR)
+STAGED_PYI=()
+for f in "${STAGED[@]:-}"; do
+    [[ "$f" == *.pyi ]] && STAGED_PYI+=("$f")
+done
+
+fail=0
+run() {
+    local label="$1"; shift
+    bold "[$label]"
+    if "$@"; then
+        grn "  ok"
+    else
+        red "  FAILED"
+        fail=1
+    fi
+}
+
+if [ ${#STAGED_PYI[@]} -gt 0 ]; then
+    run "ruff (staged .pyi)" ruff check "${STAGED_PYI[@]}"
+    run "check_stubs (Any / object ban)" python3 scripts/check_stubs.py "${STAGED_PYI[@]}"
+else
+    ylw "[ruff / check_stubs] no .pyi staged — skipped"
+fi
+
+run "guardrails (banned patterns + protected config)" python3 scripts/check_guardrails.py
+
+if [ ${#STAGED_PYI[@]} -gt 0 ]; then
+    run "mypy --strict (staged .pyi, follow-imports=silent)" \
+        python3 -m mypy --strict --follow-imports=silent "${STAGED_PYI[@]}"
+else
+    ylw "[mypy] no .pyi staged — skipped"
+fi
+
+if [ "$fail" -ne 0 ]; then
+    red "
+pre-commit: rejected. See messages above and AGENTS.md for the relevant
+section. To bypass for a verified emergency only, use --no-verify (do not
+make this a habit — agents should never do this without explicit human
+authorisation)."
+    exit 1
+fi
+
+if [ -d sage-src/src/sage ]; then
+    bold "[coverage]"
+    python3 scripts/stub_coverage.py 2>/dev/null \
+        | awk '/^__TOTAL__/ {printf "  overall: %s / %s (%s%%)\n", $5, $4, $7}' \
+        || true
+else
+    ylw "[coverage] sage-src submodule not initialised — run: just setup"
+fi
+
+grn "
+pre-commit: all checks passed."

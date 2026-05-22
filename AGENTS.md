@@ -2,45 +2,133 @@
 
 ## What this repo is
 
-PEP 561 stub-only package (`sage-stubs`) providing type stubs for the SageMath library.
-Stubs live under `sage-stubs/` and mirror the layout of the real `sage` package.
-Each `.pyi` file must be a valid mypy stub for the corresponding `sage/**/*.py` source file.
+PEP 561 stub-only package (`sage-stubs`) providing type stubs for the
+SageMath library (10.7). Stubs live under `sage-stubs/` and mirror the
+layout of the real `sage` package. Each `.pyi` file must be a valid mypy
+stub for the corresponding `sage/**/*.py` source file.
 
-## Sage source reference
+Work on this repo is **agent-led**. Quality is enforced by automated
+hooks rather than reviewer vigilance, so the rules below are not
+suggestions — every one of them is checked mechanically before a commit
+lands. Bypassing the hooks (`--no-verify`) is forbidden without explicit
+human authorisation.
 
-The actual SageMath source is available as a git submodule at `sage-src/`.
-
-**Before starting any stub work, initialize it:**
+## First-clone setup (run once)
 
 ```bash
+just setup
+```
+
+That command:
+
+1. Points git at the tracked hooks in `.githooks/`
+   (`git config core.hooksPath .githooks`).
+2. Initialises the `sage-src` submodule at the Sage 10.7 source tree.
+
+If `just` is unavailable, the equivalent shell is:
+
+```bash
+git config core.hooksPath .githooks
 git submodule update --init --depth 1
 ```
 
-The full source for any module you are stubbing is then readable at `sage-src/src/sage/<module>/<file>.py`.
+After this, every commit runs `ruff` + `scripts/check_stubs.py` +
+`scripts/check_guardrails.py` + `mypy --strict` on the staged `.pyi`
+files, and prints current coverage. **Do not skip this step.**
 
-**You must read the source before writing any stub.** Do not infer signatures from memory or guesswork.
+## How to work on the plan
+
+1. **Read `.agents/plan.md`.** It is the master tracking card and names
+   the next phase to pick up via its "At-a-glance next step" banner.
+2. **Open the relevant phase card** under `.agents/phases/`. Each card
+   has a task table with explicit `Depends` and `Status` columns. Pick
+   a task that is `⬜ Pending` and whose dependencies are satisfied.
+3. **Mark the task `🟡 In Progress`** in the phase card, and update the
+   phase status in `plan.md` if you are the first to start work in it.
+   The hooks accept these doc-only edits.
+4. **Follow the stub authoring procedure below** (Phases 1–3).
+5. **Commit.** Hooks enforce every rule in this document and coverage
+   is printed automatically. Mark the task `✅ Done` in the phase card
+   as part of the same commit.
+6. **Repeat.** Pick the next task. If no task remains in the current
+   phase, return to `.agents/plan.md` for the next phase. Within a
+   phase, tasks with `Depends: —` can run in parallel — claim by
+   setting an owner annotation in the task row.
+
+### Document index
+
+| Document | Purpose |
+|----------|---------|
+| `AGENTS.md` *(this file)* | Workflow, quality contract, banned patterns |
+| `.agents/feature.md` | Full-parity requirements, scope, tooling references |
+| `.agents/plan.md` | Master tracking card with the 18-phase dependency graph |
+| `.agents/phases/phase-NN-*.md` | One card per phase: tasks, dependencies, risks |
+| `.agents/phases/phase-01-exempt.md` | Produced by T01.1: modules excluded from parity denominator |
+| `STUB_GAPS.md` | Currently-blocked sidecar gaps with diagnostic evidence |
+| `README.md` | User-facing scope description (rewritten at end of Phase 18) |
+| `justfile` | Canonical task entrypoints (`just check`, `just coverage`, etc.) |
+| `scripts/stub_coverage.py` | Measures stub coverage vs `sage-src` |
+| `scripts/check_stubs.py` | AST-level `Any` / `object` ban enforcement |
+| `scripts/check_guardrails.py` | Banned patterns, scratch artefacts, protected config |
+| `.githooks/pre-commit` | Auto-enforces all of the above on staged files |
+| `.githooks/post-commit` | Reports coverage delta after each commit |
+
+## Sage source reference
+
+The actual SageMath source is at `sage-src/` (a git submodule,
+initialised by `just setup`). The full source for any module you are
+stubbing is at `sage-src/src/sage/<module>/<file>.py`.
+
+**You must read the source before writing any stub.** Do not infer
+signatures from memory or guesswork. `mypy.stubgen` may be used to
+*enumerate* the public surface — see `.agents/feature.md` for the
+workflow — but its output is never the final stub, because it emits
+`Any` and the hook will reject the commit.
 
 ## Stub authoring procedure
 
-Work in three phases. Do not write any stub code until Phase 2 is complete.
+Work in three phases. Do not write any stub code until Phase 2 is
+complete.
 
-**Phase 1 — Enumerate:** Read the source file. List every public method defined directly on the target class (not inherited), with its source line number. Output this list explicitly before proceeding.
+**Phase 1 — Enumerate.** Read the source file. List every public method
+defined directly on the target class (not inherited), with its source
+line number. Output this list explicitly before proceeding.
+`mypy.stubgen` may produce the initial list; verify against the source
+AST `cls.body` (not `ast.walk`) — stubgen does not distinguish direct
+from inherited methods for Cython classes.
 
-**Phase 2 — Resolve types:** For each method in your list, read the implementation and docstring. State the concrete return type and parameter types. Cite the source line that justifies each type decision.
+**Phase 2 — Resolve types.** For each method in your list, read the
+implementation and docstring. State the concrete return type and
+parameter types. Cite the source line that justifies each type decision.
 
-**Phase 3 — Write:** Every method from Phase 1 must appear. Every type must match Phase 2. Only then write the `.pyi` file.
+**Phase 3 — Write.** Every method from Phase 1 must appear. Every type
+must match Phase 2. Only then write the `.pyi` file.
 
 ## Type annotation quality contract (non-negotiable)
 
-`Any` is banned. Not "banned unless justified." Banned.
+`Any` is banned. Not "banned unless justified." Banned. The
+`scripts/check_stubs.py` AST checker rejects:
 
-If a type is complex, use `Union[A, B]`, `TypeVar`, `overload`, or `object`. There is always a more precise type than `Any`.
+- `Any` as a return type.
+- `Any` as a named parameter type (except in the listed protocol
+  dunders).
+- `object` as a return type (except `__new__`).
 
-Variadic signatures are not an exception. Use `*args: object` / `**kwargs: object` when the forwarded values are genuinely opaque at the call site.
+When a type is complex, use `Union[A, B]`, `TypeVar`, `@overload`, or
+`object`. There is always a more precise type than `Any`.
 
-`object` is honest opacity, not an escape hatch. It is acceptable only when the source accepts arbitrary Python objects, forwards genuinely opaque callback values, or exposes foreign runtime values whose type is not represented by existing Sage stubs. Named domain parameters must still be resolved.
+Variadic signatures are not an exception. Use `*args: object` /
+`**kwargs: object` when the forwarded values are genuinely opaque at
+the call site.
+
+`object` is honest opacity, not an escape hatch. It is acceptable only
+when the source accepts arbitrary Python objects, forwards genuinely
+opaque callback values, or exposes foreign runtime values whose type is
+not represented by existing Sage stubs. Named domain parameters must
+still be resolved.
 
 **Named parameters must be resolved to domain types:**
+
 - `precision` — is a number. Use `int` or the appropriate Sage numeric type.
 - `degree` — is an integer. Use `int`.
 - `prec` — is an integer. Use `int`.
@@ -51,63 +139,124 @@ Variadic signatures are not an exception. Use `*args: object` / `**kwargs: objec
 - `names` — if used for polynomial variable names, write `str | tuple[str, ...]`, not `Any`.
 
 **Return types must be resolved:**
-- If the source returns `P.element_class(P, ...)` where `P = self.parent()`, the return type is `Self` or the class itself.
+
+- If the source returns `P.element_class(P, ...)` where `P =
+  self.parent()`, the return type is `Self` or the class itself.
 - If the source returns `self`, the return type is `Self`.
-- If the return type depends on the input type, use `@overload` to express the distinct signatures.
+- If the return type depends on the input type, use `@overload` to
+  express the distinct signatures.
 
-**The following rationalizations are not acceptable and will be rejected:**
-- *"The library allows coercion from other types."* — Coercion is runtime behaviour. Annotate the intended type.
-- *"I don't have that type imported."* — Add the import or use a string forward reference. Missing imports are not a license for `Any`.
-- *"The parameter is polymorphic."* — If you can describe the types in words, write them as a `Union`. If you wrote a plain-English description and then typed `Any`, that is dishonesty, not uncertainty.
+**The following rationalisations are not acceptable and will be
+rejected:**
+
+- *"The library allows coercion from other types."* — Coercion is
+  runtime behaviour. Annotate the intended type.
+- *"I don't have that type imported."* — Add the import or use a
+  string forward reference. Missing imports are not a license for `Any`.
+- *"The parameter is polymorphic."* — If you can describe the types in
+  words, write them as a `Union`. If you wrote a plain-English
+  description and then typed `Any`, that is dishonesty, not uncertainty.
 - *"The return type depends on runtime input."* — Use `@overload`.
-- *"I described the type correctly but wrote `Any` anyway."* — Not acceptable under any circumstance.
+- *"I described the type correctly but wrote `Any` anyway."* — Not
+  acceptable under any circumstance.
 
-**Only stub public methods defined directly on the class.** Nested helper functions (e.g. `def coefficient(n)` defined inside `__call__`) are not class methods. Inherited aliases are not direct definitions. Check `cls.body` in the AST, not the full `ast.walk` output.
+**Only stub public methods defined directly on the class.** Nested
+helper functions (e.g. `def coefficient(n)` defined inside `__call__`)
+are not class methods. Inherited aliases are not direct definitions.
+Check `cls.body` in the AST, not the full `ast.walk` output.
 
 ## Banned output patterns
 
-These patterns were observed in failed agent sessions and must be rejected by review, hooks, or tests.
+These patterns are rejected by `scripts/check_guardrails.py`, which
+runs automatically in the pre-commit hook.
 
-**No `TYPE_CHECKING` blocks in stubs.** A `.pyi` file is already an annotation surface. Import annotation types directly at top level. If that import exposes a missing dependency, add the minimal source-grounded stub for the dependency or use a quoted forward reference only for genuinely recursive definitions.
-
-**No local suppressions.** `# type: ignore`, `# noqa`, `cast(...)`, and similar lint or type-checking suppressions are banned in stub files. Fix the signature, import, or supporting stub instead.
-
-**No lint or type-check relaxation.** Stub tasks must not edit `pyproject.toml` to weaken Ruff, mypy, hook, or validation settings. The only permitted `pyproject.toml` change for ordinary stub work is adding a real package path under `[tool.setuptools] packages`.
-
-**No scratch artifacts in the repo.** Do not commit helper scripts, extraction scripts, inventories, plans, temporary tests, or generated notes such as `plan.md`, `test_*.py`, `generate_*.py`, `fix_*.py`, or one-off method-list files. Put throwaway work in `/tmp`.
-
-**No nested `sage-stubs/sage/...` layout.** `sage-src/src/sage/structure/foo.py` maps to `sage-stubs/structure/foo.pyi`, not `sage-stubs/sage/structure/foo.pyi`.
-
-**No destructive narrowing.** Existing stubs are part of the sidecar surface. Do not replace an existing file with a smaller partial stub, delete existing public definitions, or narrow existing signatures unless source review proves the existing stub is wrong. Corrections must be minimal and source-cited.
-
-**No inherited-method inflation.** If a requested method is inherited rather than defined directly on the target class, report that fact. Do not add inherited methods as direct methods.
-
-**No prompt-driven invention.** A method name appearing in a prompt is not evidence that the method belongs in the stub. Every method and signature must be justified by the direct Sage source body or by a documented alias in the source.
-
-**No verbose builtins.** Use `object`, `type`, `list[T]`, and `dict[K, V]`, not `builtins.object`, `builtins.type`, `typing.List`, or `typing.Dict`.
+- **No `TYPE_CHECKING` blocks in stubs.** A `.pyi` file is already an
+  annotation surface. Import annotation types directly at top level. If
+  that import exposes a missing dependency, add the minimal
+  source-grounded stub for the dependency or use a quoted forward
+  reference only for genuinely recursive definitions.
+- **No local suppressions.** `# type: ignore`, `# noqa`, `cast(...)`,
+  and similar lint or type-checking suppressions are banned in stub
+  files. Fix the signature, import, or supporting stub instead.
+- **No lint or type-check relaxation.** Stub tasks must not edit
+  `pyproject.toml` to weaken Ruff, mypy, hook, or validation settings.
+  The only permitted `pyproject.toml` change for ordinary stub work is
+  adding a real package path under `[tool.setuptools] packages`. The
+  hook checks the protected sections (`[tool.ruff`, `[tool.mypy`,
+  `[build-system`) against `HEAD` and rejects any edit.
+- **No scratch artefacts in the repo.** Do not commit helper scripts,
+  extraction scripts, inventories, plans, temporary tests, or generated
+  notes such as `plan.md` (at repo root), `test_*.py`, `generate_*.py`,
+  `fix_*.py`, or one-off method-list files. Put throwaway work in
+  `/tmp`. The hook rejects these by filename pattern.
+- **No nested `sage-stubs/sage/...` layout.**
+  `sage-src/src/sage/structure/foo.py` maps to
+  `sage-stubs/structure/foo.pyi`, not
+  `sage-stubs/sage/structure/foo.pyi`.
+- **No destructive narrowing.** Existing stubs are part of the sidecar
+  surface. Do not replace an existing file with a smaller partial stub,
+  delete existing public definitions, or narrow existing signatures
+  unless source review proves the existing stub is wrong. The hook
+  warns on top-level definitions removed vs `HEAD`; override with
+  `--allow-narrow` only after explicit source citation in the commit
+  message.
+- **No inherited-method inflation.** If a requested method is inherited
+  rather than defined directly on the target class, report that fact.
+  Do not add inherited methods as direct methods.
+- **No prompt-driven invention.** A method name appearing in a prompt
+  is not evidence that the method belongs in the stub. Every method and
+  signature must be justified by the direct Sage source body or by a
+  documented alias in the source.
+- **No verbose builtins.** Use `object`, `type`, `list[T]`, and
+  `dict[K, V]`, not `builtins.object`, `builtins.type`, `typing.List`,
+  or `typing.Dict`.
 
 ## Class hierarchy
 
-Preserve the class hierarchy exactly as in the source. Do not flatten inheritance.
+Preserve the class hierarchy exactly as in the source. Do not flatten
+inheritance.
 
 ## Package registration
 
-When adding a stub for a new module path, add the corresponding package to `pyproject.toml` under `[tool.setuptools] packages` if not already present.
+When adding a stub for a new module path, add the corresponding package
+to `pyproject.toml` under `[tool.setuptools] packages` if not already
+present. This is the **only** permitted edit to `pyproject.toml` for
+stub tasks.
 
-Do not modify validation, lint, mypy, build, or hook configuration as part of a stub task. Such changes are process changes, not stub work.
+## Measuring progress
+
+Coverage is reported by `scripts/stub_coverage.py` and printed at the
+end of every successful pre-commit run. To query it yourself:
+
+```bash
+just coverage                                      # summary table
+just coverage -- --subpackage rings --missing      # list missing rings/ files
+just coverage -- --threshold 0.95                  # CI gate
+```
+
+Baseline at plan kickoff: ~12.7 % (349 / 2745 in-scope modules).
 
 ## Verification
 
-```bash
-python -m mypy --strict sage-stubs/
-```
-
-All stubs must pass `mypy --strict` with no errors before the PR is ready.
-
-Before completion, also run `git diff --check`. For changed `.pyi` files, run the repo's stub checker if available:
+The pre-commit hook runs all of the following on staged files. They can
+also be invoked manually:
 
 ```bash
-python3 scripts/check_stubs.py <changed .pyi files>
+just check       # ruff + check_stubs + check_guardrails + mypy --strict
+just lint        # ruff + check_stubs only (no mypy)
+just guardrails  # check_guardrails on staged set
+just coverage    # current parity report
 ```
 
-Reviewers and hooks should reject `TYPE_CHECKING`, `Any`, local suppressions, root scratch artifacts, nested `sage-stubs/sage/` paths, and non-package-registration edits to validation config.
+If you ever bypass the hook (`--no-verify`), the next contributor's
+hook will catch the violation on their next commit and your file will
+block their work. Don't.
+
+## Legacy backlog
+
+A subset of existing `.pyi` files in `sage-stubs/` predate this
+contract and contain `TYPE_CHECKING`, `# noqa`, or `Any` patterns. They
+were captured in the initial 402-stub baseline. `just check` will print
+these under the `check_guardrails --all` section but will not block.
+The hook only fails on *new or staged* violations, so the backlog is
+cleaned up progressively as agents touch each file.
