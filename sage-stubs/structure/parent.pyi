@@ -1,18 +1,17 @@
-from typing import TYPE_CHECKING
+from collections.abc import Sequence
 
-if TYPE_CHECKING:
-    from sage.categories.category import Category
-    from sage.categories.homset import Homset
-    from sage.categories.morphism import Morphism
-    from sage.structure.element import Element
-    from sage.rings.ring import Ring
+from sage.categories.category import Category
+from sage.categories.homset import Homset
+from sage.categories.morphism import Morphism
+from sage.rings.ring import Ring
+from sage.structure.element import Element
 
 from .category_object import CategoryObject
 
 class Parent(CategoryObject):
     def __init__(self, category: Category | None = ...) -> None: ...
-    def Hom(self, *args: object, **kwargs: object) -> Homset: ...
-    def _refine_category_(self, category: Category) -> None: ...
+    def Hom(self, *args: object, **kwargs: object) -> Homset[Parent, Parent]: ...
+    def _refine_category_(self, category: Category | Sequence[Category]) -> None: ...
     def _test_not_implemented_methods(self) -> None: ...
     def __call__(self, *args: object, **kwargs: object) -> Element: ...
     def structure_morphism(self) -> Morphism: ...
