@@ -1,0 +1,9 @@
+from sage.rings.integer import Integer
+from sage.rings.ring import Ring
+from sage.modular.dirichlet import DirichletCharacter
+from sage.rings.power_series_ring_element import PowerSeries
+from sage.lfunctions.pari import LFunction
+
+def eisenstein_series_qexp(k: Integer, prec: Integer = ..., K: Ring = ..., var: str = ..., normalization: str = ...) -> PowerSeries: ...
+def eisenstein_series_lseries(weight: Integer, prec: Integer = ..., max_imaginary_part: float = ...) -> LFunction: ...
+def compute_eisenstein_params(character: DirichletCharacter, k: Integer) -> list[tuple[DirichletCharacter, DirichletCharacter, Integer]]: ...
