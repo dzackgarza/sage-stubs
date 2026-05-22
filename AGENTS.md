@@ -230,6 +230,18 @@ parents such as `ZZ`: `ZZ` is not interchangeable with `int` or `Integer`.
 - Any weaker change blocks the commit. Fix the missing sidecar, import,
   hierarchy stub, package registration, or alias so the precise type survives.
   Do not trade semantic precision for a local green check.
+- Run `just type-surface-review` before staging any changed `.pyi` file and
+  after accepting any auto-fix, formatter, codemod, or subagent output. Treat
+  every reported annotation, base-class, type-alias, protocol, overload,
+  `TypeVar`, and annotation import change as a required review item. The
+  command is an inventory, not approval: each item still needs source-backed
+  classification as stricter, equivalent, or weaker.
+- Use the review inventory to force a second pass over the diff. For every
+  reported item, cite the Sage 10.7 source line that justifies the proposed
+  type. If there is no citation, the type is not ready to stage.
+- Do not stage a file while its review inventory contains a suspicious broader
+  type, a lost generic parameter, a deleted precise import, or a helper sidecar
+  introduced only to make a weakened annotation type-check.
 
 When a forced review is triggered, do not stage the file until the review
 result is known. Hook passage is not enough; the review must explicitly look

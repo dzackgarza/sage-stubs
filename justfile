@@ -6,6 +6,8 @@ check:
     ruff check sage-stubs/
     @echo "--- check_stubs: Any/object ban ---"
     python3 scripts/check_stubs.py $(find sage-stubs -name "*.pyi")
+    @echo "--- type_surface_review: changed type surfaces require review ---"
+    python3 scripts/type_surface_review.py
     @echo "--- check_guardrails: banned patterns + protected config (--all) ---"
     python3 scripts/check_guardrails.py --all || echo "(legacy backlog — see report above; new commits are still gated by the hook on staged files)"
     @echo "--- mypy: strict type checking ---"
@@ -23,6 +25,7 @@ lint-staged:
     if [ -n "$files" ]; then \
         ruff check $files; \
         python3 scripts/check_stubs.py $files; \
+        python3 scripts/type_surface_review.py --staged; \
     fi
 
 # Auto-fix what ruff can fix (deprecated patterns)
@@ -61,3 +64,7 @@ install-hooks:
 # Guardrails — banned patterns + scratch artefacts + narrowing detection.
 guardrails *args:
     python3 scripts/check_guardrails.py {{args}}
+
+# Inventory changed annotation surfaces for stricter/equivalent/weaker review.
+type-surface-review *args:
+    python3 scripts/type_surface_review.py {{args}}

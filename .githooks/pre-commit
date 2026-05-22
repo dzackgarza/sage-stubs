@@ -7,8 +7,9 @@
 # is not blocking — agents only need to leave the files they touch clean):
 #   1. ruff lint                       on staged .pyi files
 #   2. scripts/check_stubs.py          on staged .pyi files
-#   3. scripts/check_guardrails.py     on the staged set
-#   4. mypy --strict                   on staged .pyi files (follow imports)
+#   3. scripts/type_surface_review.py  on staged .pyi files
+#   4. scripts/check_guardrails.py     on the staged set
+#   5. mypy --strict                   on staged .pyi files (follow imports)
 #
 # Coverage is reported at the end as informational signal.
 
@@ -41,8 +42,9 @@ run() {
 if [ ${#STAGED_PYI[@]} -gt 0 ]; then
     run "ruff (staged .pyi)" ruff check "${STAGED_PYI[@]}"
     run "check_stubs (Any / object ban)" python3 scripts/check_stubs.py "${STAGED_PYI[@]}"
+    run "type_surface_review (staged .pyi)" python3 scripts/type_surface_review.py --staged
 else
-    ylw "[ruff / check_stubs] no .pyi staged — skipped"
+    ylw "[ruff / check_stubs / type_surface_review] no .pyi staged — skipped"
 fi
 
 run "guardrails (banned patterns + protected config)" python3 scripts/check_guardrails.py
