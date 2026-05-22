@@ -1,0 +1,3 @@
+from sage.categories.category import Category
+
+class Category_singleton(Category): ...
