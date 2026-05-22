@@ -3,7 +3,7 @@
 ## Branch: stub-generation-batch-20260522
 
 **Last updated:** 2026-05-23  
-**Overall coverage:** 522 / 2745 (19.9%)
+**Overall coverage:** 534 / 2626 (20.3%)
 
 ## Module Coverage
 
@@ -16,15 +16,18 @@
 | structure | 35 | 6 | 29 | 29 | 100.0% |
 | cpython | 8 | 4 | 4 | 4 | 100.0% |
 | data_structures | 9 | 3 | 6 | 6 | 100.0% |
+| rings | 337 | 0 | 337 | 68 | 20.2% |
 | quadratic_forms | 34 | 0 | 34 | 12 | 35.3% |
 | matrix | 53 | 0 | 53 | 13 | 24.5% |
 | groups | 92 | 0 | 92 | 20 | 21.7% |
 | modules | 68 | 0 | 68 | 13 | 19.1% |
-| (all others) | ~2099 | 0 | ~2099 | ~177 | ~8.4% |
-| **TOTAL** | **2745** | **119** | **2626** | **522** | **19.9%** |
+| plot | 48 | 0 | 48 | 1 | 2.1% |
+| (all others) | ~1750 | 0 | ~1750 | ~140 | ~8.0% |
+| **TOTAL** | **2745** | **119** | **2626** | **534** | **20.3%** |
 
 ## Commits in this batch
 
+- `13a33ad` feat: complete stubs for real_arb, real_double_element_gsl, complex_interval and add plot.plot (T02.2 Part 1)
 - `29755e8` fix: replace 87 object return types in quadratic_forms stubs
 - `73c57ac` fix: correct ClasscallMetaclass stub (inherit from type)
 - `59dfc33` fix: resolve mypy and stub validation violations in free_module.pyi
