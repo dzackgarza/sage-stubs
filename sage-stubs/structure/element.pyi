@@ -29,6 +29,9 @@ class AlgebraElement(RingElement, Protocol):
 class CommutativeRingElement(RingElement, Protocol):
     ...
 
+class CommutativeAlgebraElement(CommutativeRingElement, Protocol):
+    ...
+
 class Expression(CommutativeRingElement, Protocol):
     ...
 

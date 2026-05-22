@@ -7,6 +7,7 @@ from sage.manifolds.manifold import TopologicalManifold
 from sage.manifolds.subsets.pullback import ManifoldSubsetPullback
 from sage.sets.condition_set import ConditionSet
 from sage.structure.element import Element, Expression
+from sage.structure.sage_object import SageObject
 
 _Scalar: TypeAlias = Element | Expression | int | float | complex | str
 _Period: TypeAlias = Element | Expression | int | float | complex | tuple[_Scalar, _Scalar] | None
@@ -30,8 +31,9 @@ class _CoordinatePoint(Protocol):
 class _CoordinateSubset(Protocol):
     def __contains__(self, coordinate_vector: tuple[_Scalar, ...]) -> bool: ...
 
-class CoordChange:
+class CoordChange(SageObject):
     def __init__(self, chart1: Chart, chart2: Chart, *transformations: Expression) -> None: ...
+    def __call__(self, *coords: Expression | complex) -> tuple[Expression, ...]: ...
     def inverse(self) -> CoordChange: ...
     def display(self) -> str: ...
 
