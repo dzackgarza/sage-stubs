@@ -1,0 +1,13 @@
+from sage.categories.category import Category
+from sage.structure.parent import Parent
+from sage.structure.element import Element
+
+class FunctionFields(Category):
+    def super_categories(self) -> list[Category]: ...
+    def __call__(self, x: object) -> Parent: ...
+
+    class ParentMethods:
+        ...
+
+    class ElementMethods:
+        ...
