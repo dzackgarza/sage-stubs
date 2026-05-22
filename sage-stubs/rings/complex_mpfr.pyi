@@ -1,12 +1,14 @@
 from sage.plot.graphics import Graphics
 from sage.rings.integer import Integer
 from sage.rings.real_mpfr import RealField_class, RealNumber
-from .abc import ComplexField
+from .abc import ComplexField as ComplexField_abc
 from sage.structure.element import Element
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.qqbar import AlgebraicField
 
-class ComplexField_class(ComplexField):
+def ComplexField(prec: int = ..., names: str | None = ...) -> ComplexField_class: ...
+
+class ComplexField_class(ComplexField_abc):
     def __init__(self, prec: int = ...) -> None: ...
     def is_exact(self) -> bool: ...
     def prec(self) -> Integer: ...
