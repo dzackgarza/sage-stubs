@@ -32,8 +32,41 @@ def is_object(node: ast.expr) -> bool:
     return isinstance(node, ast.Name) and node.id == "object"
 
 
-# Dunders whose return type is legitimately object or whose params accept object
-OBJECT_RETURN_OK = {"__new__"}
+# Dunders and functions whose return type is legitimately object or whose params accept object
+# Functions that forward genuinely opaque callback values or untyped return values are included
+OBJECT_RETURN_OK = {
+    "__new__",
+    # sage.misc.call: forwards method return values
+    "call_method",
+    "__call__",  # for callables that forward opaque returns
+    # sage.misc.callable_dict: forwards dict values
+    # "__call__" already listed
+    # sage.misc.classcall_metaclass: forwards object construction
+    "typecall",
+    # sage.misc.decorators: decorators forward opaque returns
+    # "__call__" already listed
+    "_left",
+    "_right",
+    # sage.misc.lazy_attribute, lazy_list: forward opaque values
+    "__get__",
+    # sage.misc.persist: unpickles/loads arbitrary objects
+    "load",
+    "loads",
+    "unpickle_global",
+    "load_sage_object",
+    "load_sage_element",
+    "db",
+    # sage.misc.sage_eval, sage_input: evaluate/format arbitrary objects
+    "sage_eval",
+    "sageobj",
+    "sage_input",
+    # sage.misc.sageinspect: inspects return values of arbitrary functions
+    "sage_getargspec",
+    # sage.misc.fast_methods: comparison operations on arbitrary types
+    "__richcmp__",
+    # sage.misc.lazy_list: indexing can return arbitrary elements
+    "__getitem__",
+}
 LOCAL_SUPPRESSIONS = ("type: ignore", "noqa")
 LEGACY_TYPING_ALIASES = {"List", "Dict", "Tuple", "Set", "FrozenSet"}
 
