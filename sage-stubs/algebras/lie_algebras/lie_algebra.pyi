@@ -1,0 +1,13 @@
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:  # noqa: PYI002
+    from sage.rings.ring import Ring
+    from sage.matrix.matrix import Matrix
+
+class LieAlgebra_generic:
+    def base_ring(self) -> 'Ring': ...  # noqa: PYI020
+    def rank(self) -> int: ...
+    def killing_form_matrix(self) -> 'Matrix': ...  # noqa: PYI020
+    def is_abelian(self) -> bool: ...
+    def is_semisimple(self) -> bool: ...
+    def is_solvable(self) -> bool: ...
