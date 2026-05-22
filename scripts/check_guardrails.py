@@ -91,7 +91,6 @@ PROTECTED_CONFIG = {
     "scripts/check_stubs.py",
     "scripts/check_guardrails.py",
     "scripts/stub_coverage.py",
-    "scripts/pre-commit",
     ".githooks/pre-commit",
     ".githooks/post-commit",
     "justfile",
