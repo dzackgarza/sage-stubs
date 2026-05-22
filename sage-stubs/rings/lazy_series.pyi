@@ -1,4 +1,3 @@
-from typing import Any
 from sage.rings.polynomial.polynomial_element import Polynomial
 
 from sage.structure.element import Element
