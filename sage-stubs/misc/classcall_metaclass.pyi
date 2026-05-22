@@ -1,10 +1,8 @@
 from typing import TypeVar
 
-from sage.misc.nested_class import NestedClassMetaclass
-
 _T = TypeVar("_T", bound=type)
 
-class ClasscallMetaclass(NestedClassMetaclass):
+class ClasscallMetaclass(type):
     def __cinit__(self, *args: object, **opts: object) -> None: ...
     def _set_classcall(cls: type, function: object) -> None: ...
     def __call__(cls: _T, *args: object, **kwds: object) -> _T: ...
