@@ -1,7 +1,15 @@
+import sage.rings.abc
 from sage.rings.padics.padic_base_generic import pAdicBaseGeneric
-from sage.rings.padics.padic_generic import pAdicRingGeneric
+from sage.rings.padics.padic_generic import pAdicGeneric
 from sage.rings.padics.padic_generic_element import pAdicGenericElement
 from sage.rings.finite_rings.finite_field_base import FiniteField
+
+class pAdicRingGeneric(pAdicGeneric, sage.rings.abc.pAdicRing):
+    def is_field(self, proof: bool = True) -> bool: ...
+    def krull_dimension(self) -> int: ...
+
+class pAdicFieldGeneric(pAdicGeneric, sage.rings.abc.pAdicField):
+    def is_field(self, proof: bool = True) -> bool: ...
 
 class pAdicRingBaseGeneric(pAdicBaseGeneric, pAdicRingGeneric):
     def uniformizer(self) -> pAdicGenericElement: ...

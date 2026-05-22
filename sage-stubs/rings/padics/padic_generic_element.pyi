@@ -1,0 +1,3 @@
+from sage.rings.padics.local_generic_element import LocalGenericElement
+
+class pAdicGenericElement(LocalGenericElement): ...

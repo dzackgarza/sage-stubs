@@ -11,6 +11,9 @@ class MonoidElement(Element, Protocol):
 class RingElement(Element, Protocol):
     ...
 
+class CommutativeRingElement(RingElement, Protocol):
+    ...
+
 class InfinityElement(RingElement, Protocol):
     ...
 
