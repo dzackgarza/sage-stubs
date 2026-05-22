@@ -19,6 +19,20 @@ lint:
 fix:
     ruff check --fix sage-stubs/
 
+# Report stub-vs-source coverage. Pass extra flags like --missing / --orphan /
+# --subpackage X / --threshold 0.95 / --json.
+coverage *args:
+    python3 scripts/stub_coverage.py {{args}}
+
+# Scaffold a fresh stub for one Sage module using mypy stubgen.
+# Output lands under /tmp/stubgen/ so it can be hand-refined into sage-stubs/.
+# Example: just scaffold sage.rings.polynomial.polynomial_ring
+scaffold module:
+    @rm -rf /tmp/stubgen
+    python3 -m mypy.stubgen -m {{module}} --include-private --inspect-mode -o /tmp/stubgen || \
+      python3 -m mypy.stubgen -p {{module}} -o /tmp/stubgen
+    @echo "Scaffold written under /tmp/stubgen/. Refine (replace every Any!) and copy into sage-stubs/."
+
 # Install the pre-commit hook
 install-hooks:
     cp scripts/pre-commit .git/hooks/pre-commit

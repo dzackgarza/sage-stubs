@@ -95,6 +95,63 @@ The umbrella plan and current phase status live in
 under [`.agents/phases/`](phases/). Each phase card embeds its own
 parallelisable task list and explicit dependency notes.
 
+### Measuring progress
+
+`scripts/stub_coverage.py` walks both trees and prints per-subpackage
+counts (`source / exempt / in_scope / covered / missing / %`). Use it for
+phase-by-phase progress and for the global parity number.
+
+```bash
+just coverage                              # overall summary
+just coverage -- --subpackage rings --missing   # list missing rings/ files
+just coverage -- --json > /tmp/cov.json    # machine-readable
+just coverage -- --threshold 0.95          # CI gate
+```
+
+The script honours an exempt list at
+`.agents/phases/phase-01-exempt.md` (or any path passed via `--exempt`)
+so audited Exempt modules don't drag the denominator down.
+
+CI should fail when:
+- coverage drops on `main` (regression), and/or
+- coverage of a touched subpackage drops on a PR.
+
+### Tooling: auto-scaffolding from source
+
+`mypy.stubgen` (ships with `mypy`) generates a `.pyi` scaffold from a Python
+module. The scaffold gives us **method enumeration for free** — Phase 1 of
+the AGENTS.md three-phase procedure — but it produces stubs that are
+unusable as-is for this repo because every parameter and return type comes
+out as `Any`. **Stubgen output is a starting point, not a deliverable.**
+
+Workflow for any task that needs to bootstrap many files:
+
+```bash
+just scaffold sage.rings.polynomial.polynomial_ring   # → /tmp/stubgen/...
+# Or for a whole subpackage:
+python3 -m mypy.stubgen -p sage.combinat.crystals -o /tmp/stubgen
+```
+
+Then for each scaffolded file:
+
+1. Diff the scaffold's method list against the source's `cls.body` AST
+   (AGENTS.md anti-inflation rule — stubgen does NOT distinguish direct
+   from inherited methods for Cython classes).
+2. Read the source per AGENTS.md Phase 2 (Resolve types). Replace EVERY
+   `Any` with the resolved concrete type / `Self` / `Union` / `@overload` /
+   `object` (only at genuinely opaque boundaries).
+3. Drop the resulting `.pyi` into `sage-stubs/<path>/<file>.pyi`.
+4. Run `just check`.
+
+A scaffold that still contains `Any` will be rejected by
+`scripts/check_stubs.py`, so the bootstrap step cannot be skipped on the
+way to a commit. Stubgen's value is purely the enumeration — it shortens
+Phase 1 from ~minutes per file to seconds, leaving the same Phase 2 / 3
+work intact.
+
+When stubgen fails (Cython modules without `.py` shims, missing optional
+deps), fall back to reading the source directly per AGENTS.md.
+
 When picking up work: read `.agents/plan.md`, find the next phase with
 **Status: Ready** that has no unmet dependencies, open its phase card, pick
 a task marked `⬜ Pending` whose `Depends` column is satisfied, and update

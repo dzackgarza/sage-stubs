@@ -37,6 +37,15 @@ Phase-1 audit must cover them so this phase has a clean target list.
 | T18.15 | **Databases & features & ext & tests & cli** — `databases/` (15), `features/` (61), `ext/` (3), `tests/` (88, but most Exempt as test scaffolding), `cli/` (11). | ~30 in-scope after audit | T01.1 (audit) | ⬜ | Heaviest Exempt rate. Split into 2–3 commits. |
 | T18.16 | **Final pyproject & README sync** — register every newly-stubbed subpackage in `pyproject.toml`; rewrite `README.md` "Scope" to describe full parity. | ~2 file edits | T18.1–T18.15 | ⬜ | Last task in the entire feature. |
 
+## Bootstrap with stubgen
+
+This phase has the highest Exempt rate; stubgen scaffolding here is
+mostly useful as a *triage* tool — modules whose stubgen output is
+trivially empty (no public classes / functions) are strong Exempt
+candidates. Cross-check against the source before listing them in
+`.agents/phases/phase-01-exempt.md`. See
+[feature.md](../feature.md#tooling-auto-scaffolding-from-source).
+
 ## Parallelism
 
 - Every task in Phase 18 is independent of every other (with the

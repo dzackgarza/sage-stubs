@@ -36,7 +36,8 @@ exempt list appended to this card).
 
 | Task | Subtree / Scope | Files | Depends | Status | Notes |
 |------|-----------------|-------|---------|--------|-------|
-| T01.1 | **Audit** — full source inventory of the six subtrees; mark Cython internals, demos, and re-export shells as Exempt. Output: `.agents/phases/phase-01-exempt.md`. | 0 stubs (audit only) | — | ⬜ | Establishes per-task scope for T01.2–T01.10. |
+| T01.0 | **Tooling validation** — confirm `scripts/stub_coverage.py` runs cleanly, confirm `mypy.stubgen` is installed (`python3 -m mypy.stubgen --help`), confirm `just coverage` and `just scaffold sage.structure.element` both succeed. Record the baseline `just coverage --json` to `/tmp/baseline-cov.json` (not committed) for later regression checks. | 0 | — | ⬜ | Fast (~5 min). Unblocks every later task by guaranteeing the bootstrap pipeline works. |
+| T01.1 | **Audit** — full source inventory of the six subtrees; mark Cython internals, demos, and re-export shells as Exempt. Output: `.agents/phases/phase-01-exempt.md`. Use `scripts/stub_coverage.py --missing --subpackage <name>` to enumerate candidates. | 0 stubs (audit only) | T01.0 | ⬜ | Establishes per-task scope for T01.2–T01.10. |
 | T01.2 | `sage.structure` — gap fill: `coerce`, `coerce_actions`, `coerce_dict` already present; add `dynamic_class`, `formal_sum`, `factory`, `factorization_integer`, `gens_py`, `set_factories`, `support_view`, `nonexact`, `mutability`, `parent_base`, `parent_gens`, `element_wrapper`, `richcmp`, `coerce_exceptions`. | ~15 | T01.1 | ⬜ | Existing stubs in this subtree must not be narrowed. |
 | T01.3 | `sage.misc` — high-traffic utilities: `bindable_class`, `call`, `callable_dict`, `c3_controlled`, `classcall_metaclass`, `cython`, `decorators`, `fast_methods`, `function_mangling`, `lazy_attribute`, `lazy_list`, `lazy_string`, `lazy_format`, `nested_class`. | ~14 | T01.1 | ⬜ | `lazy_attribute` and `lazy_list` are referenced by category stubs already. |
 | T01.4 | `sage.misc` — pickling, persistence, randomness: `persist`, `fpickle`, `pickle_old`, `prandom`, `randstate`, `weak_dict`, `inherit_comparison`, `instancedoc`, `parser`, `search`, `superseded`, `unknown`, `verbose`. | ~13 | T01.1 | ⬜ | |
@@ -49,9 +50,18 @@ exempt list appended to this card).
 | T01.11 | `STUB_GAPS.md` re-baseline — re-run the real-consumer regression capture against the new foundation; refresh the three blocked entries (`Posets.ParentMethods`, `random_element`, `_make_named_class_key`) with current data. | 0 stubs | T01.2–T01.10 | ⬜ | If any blocker is now resolvable, file a follow-up task; if still blocked, leave a fresh annotation. |
 | T01.12 | `pyproject.toml` package registration — add `sage-stubs.cpython`, `sage-stubs.data_structures`, and any newly-introduced subdirs to `[tool.setuptools] packages`. | 1 (pyproject) | T01.2–T01.10 | ⬜ | This is the **only** permitted pyproject edit. |
 
+## Bootstrap with stubgen
+
+Tasks T01.2 – T01.10 should each begin with a stubgen scaffold of the
+target module(s) (see [feature.md tooling section](../feature.md#tooling-auto-scaffolding-from-source)).
+Stubgen's enumeration is the cheapest way to satisfy AGENTS.md Phase 1
+(list every public method) — but every `Any` in the scaffold must be
+resolved by hand before commit, and inherited methods stubgen emits must
+be filtered out by checking `cls.body` in the source AST.
+
 ## Parallel work guidance
 
-- T01.1 is a hard prerequisite — claim and finish it first.
+- T01.0 first, then T01.1 — both are hard prerequisites.
 - After T01.1, **T01.2, T01.3, T01.7, T01.9, T01.10** can run truly in
   parallel (different subtrees).
 - T01.3–T01.6 all touch `sage.misc/`; serialise these or split by clean

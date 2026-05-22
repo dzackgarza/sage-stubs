@@ -27,6 +27,14 @@ Existing stubs are thin (3+4+6+0 respectively).
 | T15.11 | **Graphs base & decompositions** — `base/` (10 files), `graph_decompositions/` (12 files). | ~22 | — | ⬜ | Split into two commits. |
 | T15.12 | **Graphs generators & misc** — `generators/` subpackage (14 files): `basic`, `chessboard`, `classical_geometries`, `degree_sequence`, `distance_regular`, `families`, `intersection`, `luw_graphs`, `platonic_solids`, `random`, `smallgraphs`, `trees`, `world_map`. Plus root `graph_database`, `cographs`. | ~16 | — | ⬜ | |
 
+## Bootstrap with stubgen
+
+Topology and manifolds are pure-Python and scaffold cleanly with
+`python3 -m mypy.stubgen -p sage.topology -o /tmp/stubgen` /
+`-p sage.manifolds`. Graphs Cython modules need `--inspect-mode` (or fall
+back to manual source-reading when stubgen errors). See
+[feature.md](../feature.md#tooling-auto-scaffolding-from-source).
+
 ## Parallelism
 
 - All four subtrees (topology, homology, manifolds, graphs) are mutually

@@ -31,6 +31,16 @@ stubs must be audited rather than rewritten.
 | T03.10 | **`padics/` polynomial subpackage** — `padics/factor_padic`, related helpers (full file list in Phase-1 exempt audit). | ~6 | T03.1 | ⬜ | Coordinate with Phase 04 (padics). |
 | T03.11 | **`weil/` polynomial subpackage** — Weil polynomial helpers. | ~4 | T03.1 | ⬜ | |
 
+## Bootstrap with stubgen
+
+Every task in this phase should start with
+`python3 -m mypy.stubgen -p sage.rings.polynomial.<module>` (or the
+`just scaffold <module>` shortcut). Cython `.pyx` modules often resolve
+via the compiled `.so`, so stubgen's `--inspect-mode` is required there.
+Treat the scaffold as a Phase-1 method enumeration only — every `Any` and
+every inherited method must be removed before commit (see
+[feature.md](../feature.md#tooling-auto-scaffolding-from-source)).
+
 ## Parallelism
 
 - T03.1 first (foundation). Then T03.2, T03.3, T03.4, T03.6, T03.7,

@@ -38,6 +38,17 @@ in T09.1.
 | T09.11 | **Combinat algebras** — `descent_algebra` (also see Phase 06), `diagram_algebras`, `free_dendriform_algebra`, `free_prelie_algebra`, `fqsym`, `grossman_larson_algebras`, `partition_algebra`, `blob_algebra`. | 8 | T09.1 | ⬜ | Cross-listed with Phase 06 — pick whichever phase lands first; remove from the other's task. |
 | T09.12 | **Combinat: chas, integer_lists, matrices, ncsym, species, designs** — leaf subpackages. | ~5+5+5+4+19+24=~62 | T09.1 | ⬜ | Split into 3–4 commits along subpackage boundaries: (a) chas+ncsym+integer_lists, (b) matrices+species, (c) designs (24 files — one commit on its own). |
 
+## Bootstrap with stubgen
+
+This phase is the highest-volume one for which scaffolding pays off most
+directly: many `combinat/` modules are pure-Python with regular method
+shapes, so
+`python3 -m mypy.stubgen -p sage.combinat -o /tmp/stubgen` produces a
+usable per-file scaffold in one shot. Refine each per
+[feature.md](../feature.md#tooling-auto-scaffolding-from-source) — every
+`Any` must be replaced before commit, and stubgen will emit some
+inherited methods that must be filtered out via the source AST.
+
 ## Parallelism
 
 - T09.1 first. T09.2–T09.12 mostly independent thereafter.

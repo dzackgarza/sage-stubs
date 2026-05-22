@@ -100,6 +100,36 @@ just check
 which runs `ruff`, `scripts/check_stubs.py`, and `mypy --strict`. A green
 result is the only acceptable signal of done.
 
+## Measuring progress
+
+```bash
+just coverage                                      # overall + per-subpackage
+just coverage -- --subpackage rings --missing      # missing files for a phase
+just coverage -- --threshold 0.95                  # CI gate
+```
+
+See [feature.md](feature.md#measuring-progress) for full options. As a
+baseline reference (run before Phase 01 starts), overall coverage sits
+near **12.7 %** (349 / 2745 in-scope modules), heavily concentrated in
+`categories/` (60 %), `lfunctions/` (60 %), `structure/` (31 %), and
+`modular/` (21 %).
+
+## Bootstrap workflow (stubgen)
+
+Each task with **more than ~10 net-new files** should start with a
+stubgen scaffold rather than writing every `.pyi` by hand:
+
+```bash
+just scaffold sage.<package>.<module>
+# Or for a whole subpackage:
+python3 -m mypy.stubgen -p sage.<package> -o /tmp/stubgen
+```
+
+Then refine every `Any` per AGENTS.md (see
+[feature.md](feature.md#tooling-auto-scaffolding-from-source)). A
+scaffolded stub that still contains `Any` will be rejected by
+`scripts/check_stubs.py`, so the manual cleanup step is enforced by CI.
+
 ## At-a-glance next step
 
 > **Pick up:** Phase 01 — Foundation completion.
