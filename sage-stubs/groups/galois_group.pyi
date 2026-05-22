@@ -1,11 +1,8 @@
-from sage.groups.abelian_gps.abelian_group import AbelianGroup_class
+from sage.groups.abelian_gps.abelian_group import AbelianGroup_class, AbelianGroup_subgroup
 from sage.rings.integer import Integer
 from sage.groups.perm_gps.permgroup import PermutationGroup_generic
 from sage.rings.morphism import RingHomomorphism
 from sage.rings.ring import Field
-
-AbelianGroup_subgroup = AbelianGroup_class
-
 
 class _GMixin:
     
