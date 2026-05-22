@@ -1,13 +1,9 @@
-from __future__ import annotations
-from typing import TYPE_CHECKING
 from collections.abc import Callable
 
-if TYPE_CHECKING:
-    from sage.combinat.partition import Partition
-    from sage.rings.ring import Ring
-    from sage.structure.parent import Parent
-    from sage.rings.commutative_ring_element import CommutativeRingElement
-
+from sage.combinat.partition import Partition
+from sage.rings.commutative_ring_element import CommutativeRingElement
+from sage.rings.ring import Ring
+from sage.structure.parent import Parent
 class Macdonald:
     q: CommutativeRingElement
     t: CommutativeRingElement
@@ -16,9 +12,8 @@ class Macdonald:
     _name_suffix: str
     _name: str
 
-    def __repr__(self) -> str: ...
     @staticmethod
-    def __classcall__(cls, Sym: object, q: str | CommutativeRingElement = 'q', t: str | CommutativeRingElement = 't') -> Macdonald: ...
+    def __classcall__(cls: type[Macdonald], Sym: object, q: str | CommutativeRingElement = 'q', t: str | CommutativeRingElement = 't') -> Macdonald: ...
     def __init__(self, Sym: object, q: CommutativeRingElement, t: CommutativeRingElement) -> None: ...
     def base_ring(self) -> Ring: ...
     def symmetric_function_ring(self) -> Parent: ...
@@ -60,7 +55,7 @@ class MacdonaldPolynomials_p(MacdonaldPolynomials_generic):
     def scalar_qt_basis(self, part1: Partition, part2: Partition | None = None) -> CommutativeRingElement: ...
 
     class Element(MacdonaldPolynomials_generic.Element):
-        pass
+        ...
 
 class MacdonaldPolynomials_q(MacdonaldPolynomials_generic):
     _J: MacdonaldPolynomials_j
@@ -69,7 +64,7 @@ class MacdonaldPolynomials_q(MacdonaldPolynomials_generic):
     def __init__(self, macdonald: Macdonald) -> None: ...
 
     class Element(MacdonaldPolynomials_generic.Element):
-        pass
+        ...
 
 class MacdonaldPolynomials_j(MacdonaldPolynomials_generic):
     _self_to_s_cache: dict[object, object]
@@ -80,7 +75,7 @@ class MacdonaldPolynomials_j(MacdonaldPolynomials_generic):
     def _to_s(self, part: Partition) -> Callable[[Partition], CommutativeRingElement]: ...
 
     class Element(MacdonaldPolynomials_generic.Element):
-        pass
+        ...
 
 class MacdonaldPolynomials_h(MacdonaldPolynomials_generic):
     _m: object
@@ -94,7 +89,7 @@ class MacdonaldPolynomials_h(MacdonaldPolynomials_generic):
     def _m_to_self(self, f: object) -> MacdonaldPolynomials_generic.Element: ...
 
     class Element(MacdonaldPolynomials_generic.Element):
-        pass
+        ...
 
 class MacdonaldPolynomials_ht(MacdonaldPolynomials_generic):
     _self_to_m_cache: dict[tuple[Partition, Partition], CommutativeRingElement]
@@ -108,8 +103,8 @@ class MacdonaldPolynomials_ht(MacdonaldPolynomials_generic):
     def _m_to_self(self, f: object) -> MacdonaldPolynomials_generic.Element: ...
 
     class Element(MacdonaldPolynomials_generic.Element):
-        pass
+        ...
 
 class MacdonaldPolynomials_s(MacdonaldPolynomials_generic):
     class Element(MacdonaldPolynomials_generic.Element):
-        pass
+        ...
