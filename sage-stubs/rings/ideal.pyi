@@ -1,0 +1,3 @@
+from sage.structure.element import MonoidElement
+
+class Ideal_generic(MonoidElement): ...

@@ -1,0 +1,3 @@
+from sage.rings.ring import Field
+
+class RealField(Field): ...

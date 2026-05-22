@@ -1,11 +1,7 @@
-from typing import TYPE_CHECKING
-if TYPE_CHECKING:
-    from sage.rings.integer import Integer
-    from sage.rings.rational import Rational
-
-# from sage.rings.integer import Integer
-# from sage.rings.rational import Rational
 from collections.abc import Iterator
+
+from sage.rings.integer import Integer
+from sage.rings.rational import Rational
 
 class RationalField:
     def __init__(self) -> None: ...
@@ -24,3 +20,6 @@ class RationalField:
     def random_element(self, num_bound: int | None = ..., den_bound: int | None = ..., *args: object, **kwds: object) -> Rational: ...
     def some_elements(self) -> Iterator[Rational]: ...
     def _an_element_(self) -> Rational: ...
+
+QQ: RationalField
+Q: RationalField

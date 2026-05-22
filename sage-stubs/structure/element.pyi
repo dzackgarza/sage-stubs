@@ -5,6 +5,9 @@ from sage.structure.parent import Parent
 class Element(Protocol):
     ...
 
+class MonoidElement(Element, Protocol):
+    ...
+
 class RingElement(Element, Protocol):
     ...
 
