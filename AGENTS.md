@@ -104,6 +104,15 @@ parameter types. Cite the source line that justifies each type decision.
 **Phase 3 — Write.** Every method from Phase 1 must appear. Every type
 must match Phase 2. Only then write the `.pyi` file.
 
+**Phase 4 — Type-surface review.** Before staging, committing, accepting
+subagent output, or accepting auto-fix output, inspect the diff for every
+changed annotation, alias, import used for annotations, class base, return
+type, parameter type, protocol, or generic argument. For each changed type
+surface, compare previous spelling, proposed spelling, and Sage 10.7 source
+evidence. Classify the change as stricter, equivalent, or weaker. Weaker
+changes are rejected unless the previous stub is source-proven wrong and the
+replacement is the most precise source-backed type available.
+
 ## Type annotation quality contract (non-negotiable)
 
 `Any` is banned. Not "banned unless justified." Banned. The
@@ -158,6 +167,12 @@ parents such as `ZZ`: `ZZ` is not interchangeable with `int` or `Integer`.
   checker error, lint warning, import problem, or cleanup goal. Fix the
   missing sidecar, import path, package registration, or supporting stub
   instead.
+- Never use a broader superclass, implementation base, or placeholder as a
+  local substitute for the semantic Sage type. Examples of rejected backward
+  moves include `FieldElement -> Element`, `VectorSpace ->
+  FreeModule_generic`, subclass -> superclass, parameterized container ->
+  unparameterized container, concrete class -> `Parent`, concrete class ->
+  `SageObject`, and any precise type -> `object`.
 - Coercion is not arbitrary opacity. If the source coerces an argument,
   write the intended domain type or a concrete union of observed
   accepted domains; do not write `object` merely because the runtime
@@ -172,6 +187,26 @@ parents such as `ZZ`: `ZZ` is not interchangeable with `int` or `Integer`.
 - If verification fails after adding a precise type, the failure is a
   dependency-resolution problem to fix. It is not permission to degrade
   the type surface.
+- Auto-fixes are forward progress until proven otherwise. Do not revert an
+  auto-fix merely because it exposes more required cleanup. Review the diff,
+  keep the corrected parts, and either fix the follow-on errors or checkpoint
+  the forward progress with the remaining blocker clearly identified.
+
+**Forced review triggers:**
+
+- Running or accepting output from an auto-fixer, formatter, codemod, or
+  subagent that touched `.pyi` files.
+- Editing imports whose only purpose is to make annotations available.
+- Replacing one Sage class, parent, element type, category, protocol, alias,
+  or container parameter with another.
+- Changing a return type, parameter type, class base, overload, `TypeVar`
+  bound, or type alias.
+- Resolving a checker failure by changing the annotation rather than adding a
+  missing source-backed sidecar.
+
+When a forced review is triggered, do not stage the file until the review
+result is known. Hook passage is not enough; the review must explicitly look
+for backwards movement in semantic type precision.
 
 **The following rationalisations are not acceptable and will be
 rejected:**
