@@ -1,0 +1,6 @@
+from sage.structure.element import Element
+from sage.groups.perm_gps.permgroup_element import PermutationGroupElement
+
+class AbelianGroupElement(Element):
+    def as_permutation(self) -> PermutationGroupElement: ...
+    def word_problem(self, words: object) -> list[object]: ...
