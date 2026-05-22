@@ -1,15 +1,13 @@
-from typing import TYPE_CHECKING, Callable, Tuple
+from collections.abc import Callable
 
 from sage.categories.map import Map
 from sage.categories.category import Category
 from sage.structure.element import Element
 from sage.structure.parent import Parent
 
-if TYPE_CHECKING:
-    from sage.categories.homset import Homset
-
+from sage.categories.homset import Homset
 class Morphism(Map):
-    """Base class for morphisms between objects of a given category."""
+    
 
     def __call__(self, *args: object, **kwargs: object) -> Element: ...
     def is_endomorphism(self) -> bool: ...
@@ -21,20 +19,20 @@ class Morphism(Map):
     def __hash__(self) -> int: ...
 
 class FormalCoercionMorphism(Morphism):
-    """A formal coercion morphism."""
+    
 
-    def __init__(self, parent: Homset) -> None: ...
+    def __init__(self, parent: Homset[Parent, Parent]) -> None: ...
     def _repr_type(self) -> str: ...
 
 class CallMorphism(Morphism):
-    """A morphism defined by calling the codomain on elements."""
+    
 
     def _repr_type(self) -> str: ...
 
 class IdentityMorphism(Morphism):
-    """The identity morphism from a parent to itself."""
+    
 
-    def __init__(self, parent: Homset | Parent) -> None: ...
+    def __init__(self, parent: Homset[Parent, Parent] | Parent) -> None: ...
     def _repr_type(self) -> str: ...
     def __mul__(left: IdentityMorphism, right: Map) -> Map: ...
     def __invert__(self) -> IdentityMorphism: ...
@@ -44,13 +42,13 @@ class IdentityMorphism(Morphism):
     def is_injective(self) -> bool: ...
 
 class SetMorphism(Morphism):
-    """A morphism of sets defined by a Python function."""
+    
 
-    def __init__(self, parent: Homset, function: Callable) -> None: ...
-    _function: Callable
+    def __init__(self, parent: Homset[Parent, Parent], function: Callable[..., Element]) -> None: ...
+    _function: Callable[..., Element]
 
 class SetIsomorphism(SetMorphism):
-    """An isomorphism of sets."""
+    
 
     def _set_inverse(self, inverse: SetIsomorphism) -> None: ...
     def __invert__(self) -> SetIsomorphism: ...
