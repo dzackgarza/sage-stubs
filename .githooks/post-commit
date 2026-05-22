@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+# Post-commit reporter: shows coverage delta versus the previous commit so
+# agents see the impact of the commit they just made.
+#
+# Activated by:  just setup   (sets core.hooksPath to .githooks)
+
+set -uo pipefail
+cd "$(git rev-parse --show-toplevel)"
+
+if [ ! -d sage-src/src/sage ]; then
+    exit 0
+fi
+
+prev=$(git rev-parse HEAD~1 2>/dev/null || true)
+if [ -z "$prev" ]; then
+    python3 scripts/stub_coverage.py 2>/dev/null \
+        | awk '/^__TOTAL__/ {printf "[coverage] initial: %s / %s (%s%%)\n", $5, $4, $7}'
+    exit 0
+fi
+
+now_line=$(python3 scripts/stub_coverage.py 2>/dev/null \
+    | awk '/^__TOTAL__/ {print $5" "$4" "$7}')
+prev_line=$(git stash create >/dev/null 2>&1; \
+    git show "$prev":scripts/stub_coverage.py >/tmp/__cov.py 2>/dev/null \
+        && python3 /tmp/__cov.py 2>/dev/null \
+        | awk '/^__TOTAL__/ {print $5" "$4" "$7}')
+
+if [ -z "$now_line" ]; then
+    exit 0
+fi
+
+if [ -n "${prev_line:-}" ]; then
+    read -r pc pn _ <<< "$prev_line"
+    read -r nc nn _ <<< "$now_line"
+    delta=$((nc - pc))
+    sign=""
+    [ "$delta" -gt 0 ] && sign="+"
+    printf "[coverage] %s / %s  (Δ %s%d from %s)\n" "$nc" "$nn" "$sign" "$delta" "${prev:0:7}"
+else
+    printf "[coverage] %s\n" "$now_line"
+fi

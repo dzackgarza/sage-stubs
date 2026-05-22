@@ -1,11 +1,13 @@
 # sage-stubs quality pipeline
 
-# Full quality check — run before every commit
+# Full quality check — run before every commit (also enforced by .githooks/pre-commit).
 check:
     @echo "--- ruff: deprecated patterns + missing annotations ---"
     ruff check sage-stubs/
-    @echo "--- custom: Any/object ban (what ruff can't enforce) ---"
+    @echo "--- check_stubs: Any/object ban ---"
     python3 scripts/check_stubs.py $(find sage-stubs -name "*.pyi")
+    @echo "--- check_guardrails: banned patterns + protected config (--all) ---"
+    python3 scripts/check_guardrails.py --all || echo "(legacy backlog — see report above; new commits are still gated by the hook on staged files)"
     @echo "--- mypy: strict type checking ---"
     python3 -m mypy --strict sage-stubs/
     @echo "All checks passed."
@@ -33,8 +35,21 @@ scaffold module:
       python3 -m mypy.stubgen -p {{module}} -o /tmp/stubgen
     @echo "Scaffold written under /tmp/stubgen/. Refine (replace every Any!) and copy into sage-stubs/."
 
-# Install the pre-commit hook
+# One-shot setup: point git at the tracked hooks under .githooks/.
+# Run this once per clone. Idempotent.
+setup:
+    git config core.hooksPath .githooks
+    @git submodule update --init --depth 1
+    @echo "sage-stubs ready: hooks active, sage-src initialised."
+    @echo "Next: read .agents/plan.md and claim a phase task."
+
+# Legacy single-file installer for clones that haven't migrated to core.hooksPath.
 install-hooks:
-    cp scripts/pre-commit .git/hooks/pre-commit
-    chmod +x .git/hooks/pre-commit
-    @echo "pre-commit hook installed."
+    cp .githooks/pre-commit .git/hooks/pre-commit
+    cp .githooks/post-commit .git/hooks/post-commit
+    chmod +x .git/hooks/pre-commit .git/hooks/post-commit
+    @echo "pre-commit + post-commit hooks installed locally."
+
+# Guardrails — banned patterns + scratch artefacts + narrowing detection.
+guardrails *args:
+    python3 scripts/check_guardrails.py {{args}}
