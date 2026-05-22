@@ -1,0 +1,3 @@
+from sage.structure.parent import Parent as _StructureParent
+
+class Parent(_StructureParent): ...

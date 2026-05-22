@@ -23,7 +23,7 @@ their tier-blocker dependency completes.
 
 | ID | Phase | Tier | Depends on | Source files | Status |
 |----|-------|------|------------|--------------|--------|
-| 01 | [Foundation completion](phases/phase-01-foundation.md) | 0 | — | ~145 | ⬜ Not Started |
+| 01 | [Foundation completion](phases/phase-01-foundation.md) | 0 | — | ~145 | 🟡 In Progress |
 | 02 | [Core rings & arithmetic](phases/phase-02-core-rings.md) | 1 | 01 | ~80 | ⬜ Not Started |
 | 03 | [Polynomial rings](phases/phase-03-polynomial-rings.md) | 1 | 01 | ~95 | ⬜ Not Started |
 | 04 | [Number-theoretic rings](phases/phase-04-number-theory-rings.md) | 1 | 01 | ~130 | ⬜ Not Started |
@@ -134,8 +134,8 @@ scaffolded stub that still contains `Any` will be rejected by
 
 > **Pick up:** Phase 01 — Foundation completion.
 > **Why:** All downstream phases block on it.
-> **First task to claim:** see [phase-01-foundation.md](phases/phase-01-foundation.md)
-> task table; tasks T01.1, T01.2 have no internal dependencies.
+> **First task to claim:** T01.3 (`sage.misc` high-traffic utilities) or parallel
+> T01.7 / T01.9 / T01.10; structure gap fill (T01.2) is done.
 
 Update this banner whenever a phase transitions between `Not Started`,
 `In Progress`, and `Complete`.
