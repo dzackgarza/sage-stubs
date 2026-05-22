@@ -135,6 +135,13 @@ sidecar before editing the stub.
 - `variable` — if the docstring says "a variable or integer", write `int | Variable`, not `Any`.
 - `names` — if used for polynomial variable names, write `str | tuple[str, ...]`, not `Any`.
 
+Do not churn equivalent Sage-normalized numeric annotations. If the source
+immediately normalizes an input through `Integer`, `ZZ`, or `int`, and the
+existing local contract already uses one of `int` or `Integer`, keep that
+choice consistently across the related stub surface. Do not spend review or
+implementation effort flipping `int` ↔ `Integer` merely because Sage accepts
+both at runtime; either is acceptable when the source normalizes the value.
+
 **Return types must be resolved:**
 
 - If the source returns `P.element_class(P, ...)` where `P =
