@@ -1,0 +1,3 @@
+from sage.structure.element import Element
+
+def berlekamp_massey(a: list[object] | tuple[object, ...]) -> Element: ...

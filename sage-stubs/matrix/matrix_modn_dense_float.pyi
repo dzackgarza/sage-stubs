@@ -1,0 +1,3 @@
+from sage.matrix.matrix import Matrix_dense
+
+class Matrix_modn_dense_float(Matrix_dense): ...
