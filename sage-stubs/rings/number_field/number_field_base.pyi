@@ -1,3 +1,3 @@
-from ..ring import Field
+from sage.rings.ring import Field
 
 class NumberField(Field): ...
