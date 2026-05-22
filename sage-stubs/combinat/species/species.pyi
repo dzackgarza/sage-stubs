@@ -10,6 +10,8 @@ if TYPE_CHECKING:
         CycleIndexSeries,
     )
     from sage.rings.ring import Ring
+    from sage.graphs.digraph import DiGraph
+    from sage.rings.polynomial.polynomial_element import Polynomial
 
 class GenericCombinatorialSpecies(SageObject):
     _weight: object
@@ -48,7 +50,3 @@ class GenericCombinatorialSpecies(SageObject):
     def digraph(self) -> DiGraph: ...
     def _add_to_digraph(self, d: DiGraph) -> None: ...
     def algebraic_equation_system(self) -> list[Polynomial]: ...
-
-if TYPE_CHECKING:
-    from sage.graphs.digraph import DiGraph
-    from sage.rings.polynomial.polynomial_element import Polynomial
