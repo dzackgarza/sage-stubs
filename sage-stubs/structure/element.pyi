@@ -8,6 +8,9 @@ class Element(Protocol):
 class ModuleElement(Element, Protocol):
     ...
 
+class ModuleElementWithMutability(ModuleElement, Protocol):
+    ...
+
 class MonoidElement(Element, Protocol):
     ...
 
@@ -18,6 +21,9 @@ class AdditiveGroupElement(ModuleElement, Protocol):
     ...
 
 class RingElement(ModuleElement, Protocol):
+    ...
+
+class AlgebraElement(RingElement, Protocol):
     ...
 
 class CommutativeRingElement(RingElement, Protocol):
