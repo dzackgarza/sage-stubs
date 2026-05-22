@@ -1,0 +1,3 @@
+import sys
+
+def flatten(in_list: object, ltypes: tuple[type, ...] = ..., max_level: int = ...) -> list[object]: ...

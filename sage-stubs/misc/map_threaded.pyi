@@ -1,0 +1,3 @@
+from collections.abc import Callable
+
+def map_threaded(function: Callable[[object], object], sequence: object) -> list[object] | object: ...

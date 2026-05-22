@@ -1,0 +1,3 @@
+from pathlib import Path
+
+def get_remote_file(filename: str, verbose: bool = ...) -> Path: ...
