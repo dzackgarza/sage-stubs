@@ -17,6 +17,17 @@ from sage.rings.number_field.order import Order
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.rational_field import RationalField
 
+def NumberFieldTower(
+    polynomials: list[Polynomial] | tuple[Polynomial, ...],
+    names: str | list[str] | tuple[str, ...],
+    check: bool = ...,
+    embeddings: list[object | None] | None = ...,
+    latex_names: str | list[str | None] | tuple[str | None, ...] | None = ...,
+    assume_disc_small: bool = ...,
+    maximize_at_primes: list[Integer | int] | None = ...,
+    structures: list[object | None] | None = ...,
+) -> NumberField_generic | RationalField: ...
+
 class NumberField_generic(NumberField):
     def construction(self) -> tuple[type, tuple[Polynomial]]: ...
     def structure(self) -> tuple[Polynomial, RingHomomorphism, RingHomomorphism]: ...
