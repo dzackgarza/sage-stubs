@@ -113,6 +113,15 @@ evidence. Classify the change as stricter, equivalent, or weaker. Weaker
 changes are rejected unless the previous stub is source-proven wrong and the
 replacement is the most precise source-backed type available.
 
+**Stop-the-line weakening review.** If a diff changes a precise Sage type to a
+broader type, do not continue implementation, staging, or commit preparation
+until the weakening has been removed or independently reviewed. This applies
+even when the broader type makes mypy, Ruff, imports, or local package
+registration easier. The required review must be performed by a separate
+subagent when one is available; otherwise perform a separate written audit pass
+that names each suspicious change and cites the Sage 10.7 source. Hook passage
+is not evidence that weakening is acceptable.
+
 ## Type annotation quality contract (non-negotiable)
 
 `Any` is banned. Not "banned unless justified." Banned. The
@@ -203,6 +212,24 @@ parents such as `ZZ`: `ZZ` is not interchangeable with `int` or `Integer`.
   bound, or type alias.
 - Resolving a checker failure by changing the annotation rather than adding a
   missing source-backed sidecar.
+- Seeing or proposing a broader annotation such as `FieldElement -> Element`,
+  `VectorSpace -> FreeModule_generic`, subclass -> superclass, semantic parent
+  -> implementation parent, parameterized container -> unparameterized
+  container, or precise type -> `object`.
+
+**Forced review procedure:**
+
+- If a spark subagent is available, delegate a bounded type-surface audit before
+  accepting the diff. The audit must classify changed annotations, bases,
+  aliases, and annotation imports as stricter, equivalent, or weaker against
+  Sage 10.7 source.
+- If no subagent can be started, do a separate self-audit pass after edits and
+  before staging. This pass must not be merged into ordinary lint or mypy
+  cleanup; it must explicitly search for broader types, lost generic
+  parameters, deleted precise imports, and support-stub shortcuts.
+- Any weaker change blocks the commit. Fix the missing sidecar, import,
+  hierarchy stub, package registration, or alias so the precise type survives.
+  Do not trade semantic precision for a local green check.
 
 When a forced review is triggered, do not stage the file until the review
 result is known. Hook passage is not enough; the review must explicitly look

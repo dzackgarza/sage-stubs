@@ -33,6 +33,10 @@ Verification:
   auto-fixers, classify every changed annotation/import/base/alias as stricter,
   equivalent, or weaker against Sage 10.7 source. Reject weaker changes before
   they reach commit.
+- If any changed type surface appears broader than the current stub or the
+  source-backed semantic type, stop implementation and force a separate review.
+  Use a spark subagent for that review when available; if none can be started,
+  perform a separate written audit pass before staging.
 - If any backwards movement is intentional, cite the exact source evidence and
   make it explicit in the commit message or status.
 
@@ -80,6 +84,12 @@ Verification:
   that loses domain specificity.
 - Apply the same forced review to subagent output and auto-fix output before
   accepting it.
+- Suspicious broadenings such as `FieldElement -> Element`, `VectorSpace ->
+  FreeModule_generic`, subclass -> superclass, semantic parent ->
+  implementation parent, parameterized container -> unparameterized container,
+  or precise type -> `object` require an independent review path before the
+  diff can be accepted. A local checker failure is not a reason to accept the
+  broader type.
 - The commit message must state that the forced type-surface review found no
   weakening, or cite source evidence for a source-proven correction to a more
   precise type.
