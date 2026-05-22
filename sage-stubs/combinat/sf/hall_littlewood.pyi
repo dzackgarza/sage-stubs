@@ -1,22 +1,17 @@
-from __future__ import annotations
-from typing import TYPE_CHECKING
 from collections.abc import Callable
 
-if TYPE_CHECKING:
-    from sage.combinat.partition import Partition
-    from sage.rings.ring import Ring
-    from sage.structure.parent import Parent
-    from sage.matrix.matrix import Matrix
-
+from sage.combinat.partition import Partition
+from sage.rings.ring import Ring
+from sage.structure.parent import Parent
+from sage.matrix.matrix import Matrix
 class HallLittlewood:
     t: object
     _sym: object
     _name_suffix: str
     _name: str
 
-    def __repr__(self) -> str: ...
     @staticmethod
-    def __classcall__(cls, Sym: object, t: str | object = ...) -> HallLittlewood: ...
+    def __classcall__(cls: type[HallLittlewood], Sym: object, t: str | object = ...) -> HallLittlewood: ...
     def __init__(self, Sym: object, t: object) -> None: ...
     def symmetric_function_ring(self) -> Parent: ...
     def base_ring(self) -> Ring: ...
@@ -56,7 +51,7 @@ class HallLittlewood_p(HallLittlewood_generic):
     def _s_cache(self, n: int) -> None: ...
 
     class Element(HallLittlewood_generic.Element):
-        pass
+        ...
 
 class HallLittlewood_q(HallLittlewood_generic):
     _P: HallLittlewood_p
@@ -65,7 +60,7 @@ class HallLittlewood_q(HallLittlewood_generic):
     def _p_to_q_normalization(self, m: Partition) -> Ring: ...
 
     class Element(HallLittlewood_generic.Element):
-        pass
+        ...
 
 class HallLittlewood_qp(HallLittlewood_generic):
     _self_to_s_cache: dict[object, object]
@@ -76,4 +71,4 @@ class HallLittlewood_qp(HallLittlewood_generic):
     def _s_cache(self, n: int) -> None: ...
 
     class Element(HallLittlewood_generic.Element):
-        pass
+        ...

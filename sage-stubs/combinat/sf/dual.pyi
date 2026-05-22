@@ -1,16 +1,12 @@
-from __future__ import annotations
-from typing import TYPE_CHECKING
 from collections.abc import Callable
 
-if TYPE_CHECKING:
-    from sage.combinat.partition import Partition
-    from sage.rings.ring import Ring
-    from sage.structure.parent import Parent
-    from sage.matrix.matrix import Matrix
-
+from sage.combinat.partition import Partition
+from sage.rings.ring import Ring
+from sage.structure.parent import Parent
+from sage.matrix.matrix import Matrix
 class SymmetricFunctionAlgebra_dual:
     @staticmethod
-    def __classcall__(cls, dual_basis: Parent, scalar: Callable[[Partition], object], scalar_name: str = ..., basis_name: str | None = None, prefix: str | None = None) -> SymmetricFunctionAlgebra_dual: ...
+    def __classcall__(cls: type[SymmetricFunctionAlgebra_dual], dual_basis: Parent, scalar: Callable[[Partition], object], scalar_name: str = ..., basis_name: str | None = None, prefix: str | None = None) -> SymmetricFunctionAlgebra_dual: ...
     def __init__(self, dual_basis: Parent, scalar: Callable[[Partition], object], scalar_name: str, basis_name: str | None, prefix: str) -> None: ...
     def construction(self) -> tuple[object, Ring]: ...
     def _dual_to_self(self, x: object) -> SymmetricFunctionAlgebra_dual.Element: ...
