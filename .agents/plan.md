@@ -134,8 +134,8 @@ scaffolded stub that still contains `Any` will be rejected by
 
 > **Pick up:** Phase 01 — Foundation completion.
 > **Why:** All downstream phases block on it.
-> **First task to claim:** T01.3 (`sage.misc` high-traffic utilities) or parallel
-> T01.7 / T01.9 / T01.10; structure gap fill (T01.2) is done.
+> **In flight:** T01.3, T01.7, T01.9, T01.10 (parallel subagents).
+> **Next to claim:** T01.4–T01.6 (`sage.misc` batches) or T01.8 (`categories` gap).
 
 Update this banner whenever a phase transitions between `Not Started`,
 `In Progress`, and `Complete`.
