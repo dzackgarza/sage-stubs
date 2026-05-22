@@ -1,0 +1,3 @@
+from sage.rings.complex_interval_field import ComplexIntervalField_class
+
+CIF: ComplexIntervalField_class
