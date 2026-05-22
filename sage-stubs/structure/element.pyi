@@ -8,10 +8,16 @@ class Element(Protocol):
 class MonoidElement(Element, Protocol):
     ...
 
+class MultiplicativeGroupElement(MonoidElement, Protocol):
+    ...
+
 class RingElement(Element, Protocol):
     ...
 
 class CommutativeRingElement(RingElement, Protocol):
+    ...
+
+class FieldElement(CommutativeRingElement, Protocol):
     ...
 
 class InfinityElement(RingElement, Protocol):

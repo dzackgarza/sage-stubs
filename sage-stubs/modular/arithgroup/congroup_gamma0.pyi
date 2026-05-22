@@ -1,6 +1,7 @@
-from typing import Iterator
+from collections.abc import Iterator
 from sage.modular.arithgroup.arithgroup_generic import ArithmeticSubgroup
 from sage.modular.arithgroup.arithgroup_element import ArithmeticSubgroupElement
+from sage.modular.arithgroup.congroup_gammaH import GammaH_class
 
 class Gamma0_class:
     def __init__(self, level: int) -> None: ...
