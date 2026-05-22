@@ -1,0 +1,13 @@
+from sage.structure.parent import Parent
+
+class RingExtension_generic(Parent):
+    ...
+
+class RingExtensionFractionField(RingExtension_generic):
+    ...
+
+class RingExtensionWithBasis(RingExtension_generic):
+    ...
+
+class RingExtensionWithGen(RingExtensionWithBasis):
+    ...
