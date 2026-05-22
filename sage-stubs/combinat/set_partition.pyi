@@ -4,6 +4,7 @@ from typing import Protocol
 from sage.combinat.partition import Partition
 from sage.combinat.permutation import Permutation
 from sage.plot.graphics import Graphics
+from sage.rings.integer import Integer
 from sage.structure.parent import Parent
 
 class AbstractSetPartition(Protocol):
@@ -70,33 +71,40 @@ class SetPartitions(Parent):
         s: Iterable[object] | int | None = ...,
         part: int | Iterable[int] | Partition | None = ...,
     ) -> SetPartitions: ...
+    def __init__(
+        self,
+        s: Iterable[object] | int | Integer | None = ...,
+        part: int | Integer | Iterable[int | Integer] | Partition | None = ...,
+    ) -> None: ...
     def __contains__(self, x: object) -> bool: ...
     def _element_constructor__(
         self, s: Iterable[Iterable[object]] | SetPartition, check: bool = ...
     ) -> SetPartition: ...
     def from_restricted_growth_word(
-        self, w: Sequence[int], bijection: str = ...
+        self, w: Sequence[int | Integer], bijection: str = ...
     ) -> SetPartition: ...
-    def from_restricted_growth_word_blocks(self, w: Sequence[int]) -> SetPartition: ...
+    def from_restricted_growth_word_blocks(
+        self, w: Sequence[int | Integer]
+    ) -> SetPartition: ...
     def from_restricted_growth_word_intertwining(
-        self, w: Sequence[int]
+        self, w: Sequence[int | Integer]
     ) -> SetPartition: ...
     def from_rook_placement(
         self,
-        rooks: Iterable[tuple[int, int]],
+        rooks: Iterable[tuple[int | Integer, int | Integer]],
         bijection: str = ...,
-        n: int | None = ...,
+        n: int | Integer | None = ...,
     ) -> SetPartition: ...
     def from_arcs(
-        self, arcs: Iterable[tuple[int, int]], n: int
+        self, arcs: Iterable[tuple[int | Integer, int | Integer]], n: int | Integer
     ) -> SetPartition: ...
     def from_rook_placement_gamma(
-        self, rooks: Iterable[tuple[int, int]], n: int
+        self, rooks: Iterable[tuple[int | Integer, int | Integer]], n: int | Integer
     ) -> SetPartition: ...
     def from_rook_placement_rho(
-        self, rooks: Iterable[tuple[int, int]], n: int
+        self, rooks: Iterable[tuple[int | Integer, int | Integer]], n: int | Integer
     ) -> SetPartition: ...
     def from_rook_placement_psi(
-        self, rooks: Iterable[tuple[int, int]], n: int
+        self, rooks: Iterable[tuple[int | Integer, int | Integer]], n: int | Integer
     ) -> SetPartition: ...
     def is_less_than(self, s: SetPartition, t: SetPartition) -> bool: ...
