@@ -1,14 +1,12 @@
-from typing import TYPE_CHECKING
 from sage.structure.richcmp import richcmp_method
 from sage.groups.group import Group
 from sage.rings.ring import Ring
 from sage.matrix.matrix import Matrix
 from sage.matrix.matrix_space import MatrixSpace
 from sage.rings.integer import Integer
-
-if TYPE_CHECKING:
-    from sage.modules.with_basis.representation import SignRepresentationMatrixGroup
-    from sage.modules.with_basis.representation import NaturalMatrixRepresentation
+from sage.modules.with_basis.representation import NaturalMatrixRepresentation
+from sage.modules.with_basis.representation import SignRepresentationMatrixGroup
+from sage.modules.with_basis.representation import TrivialRepresentation
 
 class MatrixGroup_base(Group):
     _ambient: object
@@ -19,7 +17,7 @@ class MatrixGroup_base(Group):
     def _repr_(self) -> str: ...
     def _repr_option(self, key: str) -> bool: ...
     def _latex_(self) -> str: ...
-    def sign_representation(self, base_ring: Ring | None = ...) -> SignRepresentationMatrixGroup | object: ...
+    def sign_representation(self, base_ring: Ring | None = ...) -> SignRepresentationMatrixGroup | TrivialRepresentation: ...
     def natural_representation(self, base_ring: Ring | None = ...) -> NaturalMatrixRepresentation: ...
 
 class MatrixGroup_generic(MatrixGroup_base):
