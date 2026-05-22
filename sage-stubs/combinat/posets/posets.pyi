@@ -1,39 +1,11 @@
-from typing import Literal, overload
-
-def Poset(
-    data: object | None = None,
-    element_labels: object | None = None,
-    cover_relations: bool = False,
-    linear_extension: bool = False,
-    category: object | None = None,
-    facade: bool | None = None,
-    key: object | None = None,
-) -> FinitePoset: ...
-
-class FinitePoset:
-    def height(self, certificate: bool = False) -> int | tuple[int, list[object]]: ...
-    def width(self, certificate: bool = False) -> int | tuple[int, list[object]]: ...
-    @overload
-    def is_meet_semilattice(self, certificate: Literal[False] = False) -> bool: ...
-    @overload
-    def is_meet_semilattice(
-        self,
-        certificate: Literal[True],
-    ) -> tuple[bool, tuple[object, object] | None]: ...
-    @overload
-    def is_meet_semilattice(
-        self,
-        certificate: bool,
-    ) -> bool | tuple[bool, tuple[object, object] | None]: ...
-    @overload
-    def is_join_semilattice(self, certificate: Literal[False] = False) -> bool: ...
-    @overload
-    def is_join_semilattice(
-        self,
-        certificate: Literal[True],
-    ) -> tuple[bool, tuple[object, object] | None]: ...
-    @overload
-    def is_join_semilattice(
-        self,
-        certificate: bool,
-    ) -> bool | tuple[bool, tuple[object, object] | None]: ...
+from sage.structure.unique_representation import UniqueRepresentation
+from sage.structure.parent import Parent
+from sage.rings.integer import Integer
+from sage.combinat.posets.linear_extensions import LinearExtensionsOfPoset
+class FinitePoset(UniqueRepresentation, Parent):
+    def cardinality(self) -> Integer: ...
+    def linear_extensions(self, facade: bool = ...) -> LinearExtensionsOfPoset: ...
+    def moebius_function(self, x: object, y: object) -> Integer: ...
+    def rank(self, element: object | None = ...) -> Integer | None: ...
+    def is_graded(self) -> bool: ...
+    def maximal_chains(self, partial: list[object] | None = ...) -> list[list[object]]: ...

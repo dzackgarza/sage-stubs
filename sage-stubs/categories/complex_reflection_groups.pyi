@@ -1,12 +1,16 @@
-import sage.categories.category as category
-from sage.categories.category_singleton import Category_singleton
+from typing import TYPE_CHECKING
+from sage.categories.category import Category
 
-from sage.combinat.colored_permutations import ColoredPermutations
+if TYPE_CHECKING:
+    from sage.combinat.colored_permutations import ColoredPermutations
 
-class ComplexReflectionGroups(Category_singleton):
-    def super_categories(self) -> list[category.Category]: ...
+class ComplexReflectionGroups:
+    def super_categories(self) -> list[Category]: ...
     def additional_structure(self) -> None: ...
     def example(self) -> ColoredPermutations: ...
 
     class ParentMethods:
         def rank(self) -> int: ...
+
+    class Finite(Category):
+        ...
