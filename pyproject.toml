@@ -18,6 +18,8 @@ packages = [
     "sage-stubs.sets",
     "sage-stubs.matrix",
     "sage-stubs.rings",
+    "sage-stubs.rings.number_field",
+    "sage-stubs.rings.padics",
     "sage-stubs.rings.polynomial",
     "sage-stubs.combinat",
     "sage-stubs.combinat.posets",
