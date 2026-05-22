@@ -23,7 +23,7 @@ their tier-blocker dependency completes.
 
 | ID | Phase | Tier | Depends on | Source files | Status |
 |----|-------|------|------------|--------------|--------|
-| 01 | [Foundation completion](phases/phase-01-foundation.md) | 0 | — | ~145 | 🟡 In Progress |
+| 01 | [Foundation completion](phases/phase-01-foundation.md) | 0 | — | ~145 | ✅ Complete |
 | 02 | [Core rings & arithmetic](phases/phase-02-core-rings.md) | 1 | 01 | ~80 | ⬜ Not Started |
 | 03 | [Polynomial rings](phases/phase-03-polynomial-rings.md) | 1 | 01 | ~95 | ⬜ Not Started |
 | 04 | [Number-theoretic rings](phases/phase-04-number-theory-rings.md) | 1 | 01 | ~130 | ⬜ Not Started |
@@ -132,10 +132,10 @@ scaffolded stub that still contains `Any` will be rejected by
 
 ## At-a-glance next step
 
-> **Pick up:** Phase 01 — Foundation completion.
-> **Why:** Final re-baseline required before unblocking Tier 1.
-> **Pick up:** T01.11 (`STUB_GAPS.md` re-baseline).
-> **Done this round:** T01.4-T01.10, T01.12 (foundation 100% complete).
+> **Pick up:** Tier 1 Phases: [Phase 02](phases/phase-02-core-rings.md), [Phase 03](phases/phase-03-polynomial-rings.md), [Phase 04](phases/phase-04-number-theory-rings.md), or [Phase 05](phases/phase-05-linear-algebra.md).
+> **Why:** Phase 01 (Foundation completion) is 100% complete, fully unblocking Tier 1.
+> **Pick up:** T02.1 / T03.1 / T04.1 / T05.1.
+> **Done this round:** T01.11 (`STUB_GAPS.md` re-baseline complete).
 
 Update this banner whenever a phase transitions between `Not Started`,
 `In Progress`, and `Complete`.

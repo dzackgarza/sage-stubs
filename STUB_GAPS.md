@@ -80,6 +80,10 @@ example `le(self, PosetElement, PosetElement)` overriding
 `sage-stubs/AGENTS.md` bans `Any` for named parameters. This needs a typed
 poset element/subset model before filling the provider methods.
 
+> [!NOTE]
+> **Re-baseline (Phase 01 Completion — May 2026):**
+> Confirmed still blocked. With the foundation stubs (Phase 01) now 100% complete, the local `sage-stubs/categories/posets.pyi` does not include these methods. Because the `Any` ban is strictly enforced, we cannot launder these as `Any` or `object` without triggering override-variance type failures in consumer tests. Adding these requires full-parity poset element type representation which is scheduled for Phase 11 (`phases/phase-11-combinat-crystals-posets.md`).
+
 ### `sage.categories.infinite_enumerated_sets.InfiniteEnumeratedSets.ParentMethods.random_element`
 
 Fresh baseline:
@@ -104,6 +108,10 @@ consumer capture:
 
 The missing-base diagnostic turned into self-type argument errors. This needs
 the enumerated-set provider self type aligned before adding the method.
+
+> [!NOTE]
+> **Re-baseline (Phase 01 Completion — May 2026):**
+> Confirmed still blocked. The local `sage-stubs/categories/infinite_enumerated_sets.pyi` remains clean of the `random_element` stub. Resolving this signature mismatch requires self-type/provider-type alignment for all enumerated set stubs, which is deferred to the Tier 3 domain rollout (Phase 11 Crystals and Posets or Phase 9 Combinatorics foundations).
 
 ### `sage.categories.category.CategoryWithParameters._make_named_class_key`
 
@@ -136,6 +144,10 @@ local-wrapper `Category` mismatches in the real consumer capture:
 
 This needs the `category_specs` local wrapper `CategoryWithParameters` relation
 fixed or projected before the sidecar method becomes a clean addition.
+
+> [!NOTE]
+> **Re-baseline (Phase 01 Completion — May 2026):**
+> Confirmed still blocked. While `sage-stubs/categories/category.pyi` declares `_make_named_class_key(self, name: str) -> Hashable: ...`, any further refinement of the return type is blocked by the external category-specs wrapper relationship. The existing stub remains minimal and stable.
 
 ## Search Notes
 

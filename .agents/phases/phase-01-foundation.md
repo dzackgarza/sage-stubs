@@ -1,7 +1,7 @@
 # Phase 01 — Foundation Completion
 
 **Tier:** 0 (must complete before anything else)
-**Status:** 🟡 In Progress
+**Status:** ✅ Complete
 **Depends on:** —
 **Unblocks:** all subsequent phases
 
@@ -47,7 +47,7 @@ exempt list appended to this card).
 | T01.8 | `sage.categories` gap fill — verify every Sage 10.7 category module that is missing from `sage-stubs/categories/`. Cross-reference against existing 144 stubs; complete the residue. | ~10–20 | T01.1 | ✅ Done | Categories 100% in-scope. |
 | T01.9 | `sage.cpython` — public surface: `getattr`, `string`, `type`, `debug`, `atexit`, `builtin_types`. | ~6 | T01.1 | ✅ Done | 3803048; 100% in-scope. |
 | T01.10 | `sage.data_structures` — `blas_dict`, `bounded_integer_sequences`, `mutable_poset`, `stream`, `binary_search`, `bitset`, `list_of_pairs`, `sparse_bitset` (Python-facing only). | ~8 | T01.1 | ✅ Done | 51252e9; `binary_search` is cdef-only (no stub). |
-| T01.11 | `STUB_GAPS.md` re-baseline — re-run the real-consumer regression capture against the new foundation; refresh the three blocked entries (`Posets.ParentMethods`, `random_element`, `_make_named_class_key`) with current data. | 0 stubs | T01.2–T01.10 | ⬜ | If any blocker is now resolvable, file a follow-up task; if still blocked, leave a fresh annotation. |
+| T01.11 | `STUB_GAPS.md` re-baseline — re-run the real-consumer regression capture against the new foundation; refresh the three blocked entries (`Posets.ParentMethods`, `random_element`, `_make_named_class_key`) with current data. | 0 stubs | T01.2–T01.10 | ✅ Done | If any blocker is now resolvable, file a follow-up task; if still blocked, leave a fresh annotation. |
 | T01.12 | `pyproject.toml` package registration — add `sage-stubs.cpython`, `sage-stubs.data_structures`, and any newly-introduced subdirs to `[tool.setuptools] packages`. | 1 (pyproject) | T01.2–T01.10 | ✅ Done | Obsolete; switched to auto-discovery in 254d4f7. |
 
 ## Bootstrap with stubgen
