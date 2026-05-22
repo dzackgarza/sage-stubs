@@ -1,6 +1,6 @@
 from typing import NoReturn as _NoReturn
 from sage.rings.ring import CommutativeRing
-from sage.structure.element import InfinityElement
+from sage.structure.element import InfinityElement as InfinityElement
 
 class InfinityRing_class(CommutativeRing):
     def __init__(self) -> None: ...
