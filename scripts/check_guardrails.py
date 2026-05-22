@@ -96,7 +96,7 @@ PROTECTED_CONFIG = {
     "justfile",
 }
 
-PYPROJECT_PROTECTED_KEYS = ("[tool.ruff", "[tool.mypy", "[build-system")
+PYPROJECT_PROTECTED_KEYS = ("[tool.ruff", "[tool.mypy", "[build-system", "[tool.setuptools")
 
 
 # --------------------------------------------------------------------------
