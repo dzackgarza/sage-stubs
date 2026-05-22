@@ -1,7 +1,7 @@
 # Phase 02 — Core Rings & Arithmetic
 
 **Tier:** 1
-**Status:** ⬜ Not Started
+**Status:** 🟡 In Progress
 **Depends on:** Phase 01
 **Unblocks:** Phase 03, 04, 06, 07, 08, 13, 14, 16, 17, 18
 
@@ -26,7 +26,7 @@ Cover the root of `sage.rings/` (everything *not* under
 
 | Task | Subtree / Group | Files | Depends | Status | Notes |
 |------|-----------------|-------|---------|--------|-------|
-| T02.1 | **`sage.arith`** — `misc`, `functions`, `multi_modular`, `numerical_approx`, `power`, `rational_reconstruction`, `srange`, `long`. | ~8 | — | ⬜ | `misc` already has a stub; complete the rest. |
+| T02.1 | **`sage.arith`** — `misc`, `functions`, `multi_modular`, `numerical_approx`, `power`, `rational_reconstruction`, `srange`, `long`. | ~8 | — | ✅ Done | `misc` already has a stub; complete the rest. |
 | T02.2 | **Real / complex floating point** — audit & complete `real_mpfr`, `real_double`, `real_double_element_gsl`, `real_arb`, `real_interval_absolute`, `real_lazy`, `real_mpfi`, `real_field`, `complex_double`, `complex_mpfr`, `complex_mpc`, `complex_arb`, `complex_interval`, `complex_interval_field`, `complex_conversion`, `cc.py`, `cif.py`. | ~17 | — | ⬜ | Several stubs already exist — extend, never narrow. |
 | T02.3 | **Integer / rational base** — audit & complete `integer`, `integer_ring`, `integer_fake`, `rational`, `rational_field`, `factorint`, `factorint_flint`, `factorint_pari`, `bernoulli_mod_p`, `bernmm` (root), `numbers_abc`, `fast_arith`. | ~12 | — | ⬜ | Most files have existing stubs; audit Phase-1 / Phase-2 of AGENTS.md. |
 | T02.4 | **Algebraic numbers & continued fractions** — `qqbar`, `qqbar_decorators`, `continued_fraction`, `continued_fraction_gosper`, `universal_cyclotomic_field`, `imaginary_unit`. | ~6 | — | ⬜ | |

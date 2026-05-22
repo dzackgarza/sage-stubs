@@ -2,14 +2,15 @@
 
 ## Branch: stub-generation-batch-20260522
 
-**Last updated:** 2026-05-22  
-**Overall coverage:** 516 / 2745 (19.6%)
+**Last updated:** 2026-05-23  
+**Overall coverage:** 522 / 2745 (19.9%)
 
 ## Module Coverage
 
 | Module | Source | Exempt | In Scope | Covered | Coverage |
 |--------|--------|--------|----------|---------|----------|
 | categories | 232 | 88 | 144 | 144 | 100.0% |
+| arith | 7 | 0 | 7 | 7 | 100.0% |
 | misc | 96 | 18 | 78 | 78 | 100.0% |
 | sets | 19 | 0 | 19 | 19 | 100.0% |
 | structure | 35 | 6 | 29 | 29 | 100.0% |
@@ -19,8 +20,8 @@
 | matrix | 53 | 0 | 53 | 13 | 24.5% |
 | groups | 92 | 0 | 92 | 20 | 21.7% |
 | modules | 68 | 0 | 68 | 13 | 19.1% |
-| (all others) | ~2099 | 0 | ~2099 | ~178 | ~8.5% |
-| **TOTAL** | **2745** | **119** | **2626** | **516** | **19.6%** |
+| (all others) | ~2099 | 0 | ~2099 | ~177 | ~8.4% |
+| **TOTAL** | **2745** | **119** | **2626** | **522** | **19.9%** |
 
 ## Commits in this batch
 

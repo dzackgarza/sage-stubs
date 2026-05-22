@@ -1,0 +1,3 @@
+from sage.structure.element import Element
+
+def numerical_approx_generic(x: object, prec: int) -> Element: ...
