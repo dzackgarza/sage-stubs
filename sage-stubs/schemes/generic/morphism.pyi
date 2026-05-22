@@ -5,3 +5,6 @@ class SchemeMorphism(Element):
 
 class SchemeMorphism_point(SchemeMorphism):
     ...
+
+class SchemeMorphism_polynomial(SchemeMorphism):
+    ...

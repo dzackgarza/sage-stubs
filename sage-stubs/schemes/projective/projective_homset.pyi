@@ -1,0 +1,6 @@
+from sage.structure.parent import Parent
+
+
+class SchemeHomset_points_projective_field(Parent): ...
+
+class SchemeHomset_points_abelian_variety_field(SchemeHomset_points_projective_field): ...
