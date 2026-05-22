@@ -1,0 +1,3 @@
+from sage.structure.sage_object import SageObject
+
+class gen(SageObject): ...
