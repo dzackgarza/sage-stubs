@@ -1,10 +1,14 @@
-from collections.abc import Iterable, Iterator
+from collections.abc import Iterable, Iterator, Sequence
+from typing import Protocol
 
 from sage.combinat.partition import Partition
 from sage.combinat.permutation import Permutation
 from sage.plot.graphics import Graphics
 from sage.structure.parent import Parent
-from sage.combinat.core import AbstractSetPartition
+
+class AbstractSetPartition(Protocol):
+    def __len__(self) -> int: ...
+    def base_set_cardinality(self) -> int: ...
 
 class SetPartition(AbstractSetPartition):
     @classmethod
@@ -57,3 +61,42 @@ class SetPartition(AbstractSetPartition):
     def blocks(self) -> list[frozenset[object]]: ...
     def coarsenings(self) -> list[SetPartition]: ...
 
+class SetPartitions(Parent):
+    Element: type[SetPartition]
+
+    @staticmethod
+    def __classcall_private__(
+        cls: type[SetPartitions],
+        s: Iterable[object] | int | None = ...,
+        part: int | Iterable[int] | Partition | None = ...,
+    ) -> SetPartitions: ...
+    def __contains__(self, x: object) -> bool: ...
+    def _element_constructor__(
+        self, s: Iterable[Iterable[object]] | SetPartition, check: bool = ...
+    ) -> SetPartition: ...
+    def from_restricted_growth_word(
+        self, w: Sequence[int], bijection: str = ...
+    ) -> SetPartition: ...
+    def from_restricted_growth_word_blocks(self, w: Sequence[int]) -> SetPartition: ...
+    def from_restricted_growth_word_intertwining(
+        self, w: Sequence[int]
+    ) -> SetPartition: ...
+    def from_rook_placement(
+        self,
+        rooks: Iterable[tuple[int, int]],
+        bijection: str = ...,
+        n: int | None = ...,
+    ) -> SetPartition: ...
+    def from_arcs(
+        self, arcs: Iterable[tuple[int, int]], n: int
+    ) -> SetPartition: ...
+    def from_rook_placement_gamma(
+        self, rooks: Iterable[tuple[int, int]], n: int
+    ) -> SetPartition: ...
+    def from_rook_placement_rho(
+        self, rooks: Iterable[tuple[int, int]], n: int
+    ) -> SetPartition: ...
+    def from_rook_placement_psi(
+        self, rooks: Iterable[tuple[int, int]], n: int
+    ) -> SetPartition: ...
+    def is_less_than(self, s: SetPartition, t: SetPartition) -> bool: ...
