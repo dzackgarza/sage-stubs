@@ -1,0 +1,3 @@
+from sage.libs.gap.element import ElementLibGAP
+
+class MatrixGroupElement_gap(ElementLibGAP): ...

@@ -1,0 +1,3 @@
+from sage.structure.parent import Parent
+
+class AbstractFamily(Parent): ...
