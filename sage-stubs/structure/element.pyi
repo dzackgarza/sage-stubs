@@ -5,13 +5,19 @@ from sage.structure.parent import Parent
 class Element(Protocol):
     ...
 
+class ModuleElement(Element, Protocol):
+    ...
+
 class MonoidElement(Element, Protocol):
     ...
 
 class MultiplicativeGroupElement(MonoidElement, Protocol):
     ...
 
-class RingElement(Element, Protocol):
+class AdditiveGroupElement(ModuleElement, Protocol):
+    ...
+
+class RingElement(ModuleElement, Protocol):
     ...
 
 class CommutativeRingElement(RingElement, Protocol):
