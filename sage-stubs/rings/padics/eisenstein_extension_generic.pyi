@@ -1,4 +1,7 @@
 
+from collections.abc import Sequence
+from typing import TypeAlias
+
 from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.infinity import PlusInfinity
 from sage.rings.padics.local_generic import LocalGeneric
@@ -7,13 +10,14 @@ from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.structure.element import Element
 from sage.structure.parent import Parent
 
+PrintModeValue: TypeAlias = str | bool | int | Sequence[str] | None
 
 class EisensteinExtensionGeneric(pAdicExtensionGeneric):
     def __init__(
         self,
         poly: Polynomial,
         prec: int,
-        print_mode: dict[str, object],
+        print_mode: dict[str, PrintModeValue],
         names: tuple[str, str, str, str],
         element_class: type[Element],
     ) -> None: ...

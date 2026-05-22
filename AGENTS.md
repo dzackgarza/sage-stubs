@@ -114,18 +114,15 @@ must match Phase 2. Only then write the `.pyi` file.
   dunders).
 - `object` as a return type (except `__new__`).
 
-When a type is complex, use `Union[A, B]`, `TypeVar`, `@overload`, or
-`object`. There is always a more precise type than `Any`.
+When a type is complex, use `Union[A, B]`, `TypeVar`, `Protocol`,
+`@overload`, or add the missing source-backed Sage stub. There is
+always a more precise type than `Any`.
 
-Variadic signatures are not an exception. Use `*args: object` /
-`**kwargs: object` when the forwarded values are genuinely opaque at
-the call site.
-
-`object` is honest opacity, not an escape hatch. It is acceptable only
-when the source accepts arbitrary Python objects, forwards genuinely
-opaque callback values, or exposes foreign runtime values whose type is
-not represented by existing Sage stubs. Named domain parameters must
-still be resolved.
+`object` is not an acceptable opacity marker for stub authoring in this
+repo. Do not add it to parameter, return, alias, or generic positions
+to get around the `Any` ban. If the concrete type is unknown, stop and
+resolve it from Sage source, runtime evidence, docs, or a supporting
+sidecar before editing the stub.
 
 **Named parameters must be resolved to domain types:**
 
@@ -152,6 +149,10 @@ still be resolved.
   checker error, lint warning, import problem, or cleanup goal. Fix the
   missing sidecar, import path, package registration, or supporting stub
   instead.
+- Coercion is not arbitrary opacity. If the source coerces an argument,
+  write the intended domain type or a concrete union of observed
+  accepted domains; do not write `object` merely because the runtime
+  may reject bad values later.
 - Never replace a precise base class or protocol with a broader one.
   Changes such as `FieldElement -> Element`, `CommutativeRingElement ->
   RingElement`, or `Parent -> object` are backwards progress unless
@@ -222,6 +223,11 @@ runs automatically in the pre-commit hook.
   convenience. If a precise type exposes a missing dependency or mypy
   import failure, add the missing source-grounded sidecar instead of
   broadening the type.
+- **No `object` escape hatch.** Do not replace `Any` or an unresolved
+  annotation with `object` to satisfy `check_stubs.py`. Resolve the
+  domain type, add the missing sidecar, or write a concrete union from
+  source evidence. If no source-backed type can be resolved, leave the
+  stub unchanged and report the blocked type evidence.
 - **No inherited-method inflation.** If a requested method is inherited
   rather than defined directly on the target class, report that fact.
   Do not add inherited methods as direct methods.
@@ -229,9 +235,8 @@ runs automatically in the pre-commit hook.
   is not evidence that the method belongs in the stub. Every method and
   signature must be justified by the direct Sage source body or by a
   documented alias in the source.
-- **No verbose builtins.** Use `object`, `type`, `list[T]`, and
-  `dict[K, V]`, not `builtins.object`, `builtins.type`, `typing.List`,
-  or `typing.Dict`.
+- **No verbose builtins.** Use `type`, `list[T]`, and `dict[K, V]`,
+  not `builtins.type`, `typing.List`, or `typing.Dict`.
 
 ## Class hierarchy
 

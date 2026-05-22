@@ -25,6 +25,6 @@ class LaurentPolynomial:
         
         ...
 
-    def gcd(self, other: object) -> LaurentPolynomial:
+    def gcd(self, other: LaurentPolynomial | int) -> LaurentPolynomial:
         
         ...
