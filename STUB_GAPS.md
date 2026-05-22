@@ -137,6 +137,27 @@ local-wrapper `Category` mismatches in the real consumer capture:
 This needs the `category_specs` local wrapper `CategoryWithParameters` relation
 fixed or projected before the sidecar method becomes a clean addition.
 
+### `sage.rings.infinity.oo`
+
+GitHub issue #4 listed `sage.rings.infinity.oo` as a possible alias/export to
+verify for `category_specs/rings/subcategories/polynomial_ring.py:83`.
+
+- Searched: GitHub issue #4 P2 request; Sage 10.7
+  `src/sage/rings/infinity.py` around the module-level infinity assignments;
+  `git -C sage-src grep -n "oo =\|infinity =" 10.7 --
+  src/sage/rings/infinity.py`.
+- Found: Sage 10.7 defines `infinity = InfinityRing.gen(0)`,
+  `Infinity = infinity`, and `minus_infinity = InfinityRing.gen(1)` in
+  `sage.rings.infinity`; I found no module-level `oo` assignment in that
+  source file.
+- Conclusion: inference — `sage.rings.infinity.oo` is not a source-backed
+  sidecar export for Sage 10.7, so adding it to `rings/infinity.pyi` would be
+  prompt-driven invention rather than stub data.
+- Confidence: High.
+- Gaps: This does not rule out `oo` being exported by another aggregation
+  module such as `sage.all`; it only blocks adding `oo` to
+  `sage.rings.infinity`.
+
 ## Search Notes
 
 The following were checked and should not be re-tried as direct sidecar method
