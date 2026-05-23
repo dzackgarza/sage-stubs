@@ -6,10 +6,11 @@
 # What this hook enforces, on STAGED FILES ONLY (the existing legacy backlog
 # is not blocking — agents only need to leave the files they touch clean):
 #   1. ruff lint                       on staged .pyi files
-#   2. scripts/check_stubs.py          on staged .pyi files
-#   3. scripts/type_surface_review.py  on staged .pyi files
-#   4. scripts/check_guardrails.py     on the staged set
-#   5. mypy --strict                   on staged .pyi files (follow imports)
+#   2. scripts/check_stubs.py self-test
+#   3. scripts/check_stubs.py          on staged .pyi files
+#   4. scripts/type_surface_review.py  on staged .pyi files
+#   5. scripts/check_guardrails.py     on the staged set
+#   6. mypy --strict                   on staged .pyi files (follow imports)
 #
 # Coverage is reported at the end as informational signal.
 
@@ -39,9 +40,11 @@ run() {
     fi
 }
 
+run "check_stubs self-test" python3 scripts/check_stubs.py --self-test
+
 if [ ${#STAGED_PYI[@]} -gt 0 ]; then
     run "ruff (staged .pyi)" ruff check "${STAGED_PYI[@]}"
-    run "check_stubs (Any / object ban)" python3 scripts/check_stubs.py "${STAGED_PYI[@]}"
+    run "check_stubs (annotation policy)" python3 scripts/check_stubs.py "${STAGED_PYI[@]}"
     run "type_surface_review (staged .pyi)" python3 scripts/type_surface_review.py --staged
 else
     ylw "[ruff / check_stubs / type_surface_review] no .pyi staged — skipped"

@@ -4,7 +4,9 @@
 check:
     @echo "--- ruff: deprecated patterns + missing annotations ---"
     ruff check sage-stubs/
-    @echo "--- check_stubs: Any/object ban ---"
+    @echo "--- check_stubs self-test ---"
+    python3 scripts/check_stubs.py --self-test
+    @echo "--- check_stubs: annotation policy ---"
     python3 scripts/check_stubs.py $(find sage-stubs -name "*.pyi")
     @echo "--- type_surface_review: changed type surfaces require review ---"
     python3 scripts/type_surface_review.py
@@ -17,7 +19,11 @@ check:
 # Fast lint only (no mypy)
 lint:
     ruff check sage-stubs/
+    python3 scripts/check_stubs.py --self-test
     python3 scripts/check_stubs.py $(find sage-stubs -name "*.pyi")
+
+check-stubs-self-test:
+    python3 scripts/check_stubs.py --self-test
 
 # Fast lint for staged stub files only, used by the pre-commit hook
 lint-staged:

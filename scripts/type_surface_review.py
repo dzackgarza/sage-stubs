@@ -89,13 +89,6 @@ ALLOWED_OBJECT_PARAMETER_SLOTS = {
     "__ne__.other",
 }
 
-IGNORED_PARAMETER_SLOTS = {
-    # Variadic annotations often have inheritance-compatibility constraints and
-    # are too noisy for this prototype gate.
-    ".*",
-    ".**",
-}
-
 
 @dataclass(frozen=True, order=True)
 class SurfaceItem:
@@ -270,8 +263,6 @@ def report_texts(path: Path, before_text: str, after_text: str) -> SurfaceReport
                     continue
                 if is_allowed_protocol_widening(proposed, previous.value):
                     continue
-                if is_ignored_parameter_slot(proposed):
-                    continue
                 reason = relaxation_reason(previous.value, proposed.value, proposed.kind)
                 if reason:
                     violations.append(
@@ -295,10 +286,6 @@ def is_allowed_protocol_widening(item: SurfaceItem, previous: str) -> bool:
     if not any(item.name.endswith(slot) for slot in ALLOWED_OBJECT_PARAMETER_SLOTS):
         return False
     return proposed_is_exact_object(item.value) and previous not in {"<missing>", "<none>"}
-
-
-def is_ignored_parameter_slot(item: SurfaceItem) -> bool:
-    return item.kind == "parameter" and any(marker in item.name for marker in IGNORED_PARAMETER_SLOTS)
 
 
 def proposed_is_exact_object(value: str) -> bool:
@@ -453,6 +440,7 @@ class Demo:
     def finite_field(self) -> FiniteField: ...
     def words(self) -> Sequence[Word_class]: ...
     def callback(self) -> Callable[[Integer], FiniteField]: ...
+    def variadic(self, *items: VectorSpace) -> None: ...
     def newly_typed(self): ...
     def __contains__(self, x: FiniteField) -> bool: ...
     def __eq__(self, other: Self) -> bool: ...
@@ -466,6 +454,7 @@ class Demo:
     def finite_field(self) -> Field: ...
     def words(self) -> Sequence: ...
     def callback(self) -> Callable: ...
+    def variadic(self, *items: FreeModule) -> None: ...
     def newly_typed(self) -> FiniteField: ...
     def __contains__(self, x: object) -> bool: ...
     def __eq__(self, other: object) -> bool: ...
@@ -477,6 +466,7 @@ class Demo:
         "FiniteField -> Field",
         "words",
         "callback",
+        "variadic.*items",
     }
     missing_fragments = {
         fragment

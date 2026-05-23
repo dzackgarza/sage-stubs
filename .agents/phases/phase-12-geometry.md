@@ -33,7 +33,8 @@ Cover `sage.geometry/`. Existing stubs are concentrated in
 ## Risks
 
 - Polyhedron backends import optional dependencies (`cdd`, `normaliz`,
-  `polymake`, `ppl`). Stubs must not import those — use string forward
-  references for the optional types.
+  `polymake`, `ppl`). Stubs must not import those runtime backends. Add
+  source-backed support stubs or explicit option/container types for the
+  visible Python surface; quoted/string type references are banned.
 - `integral_points.py` and `integral_points.pxi` interact; only the
   `.py` is in scope, but its signatures depend on Cython-only helpers.

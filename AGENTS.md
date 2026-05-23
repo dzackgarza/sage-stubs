@@ -266,8 +266,9 @@ rejected:**
 
 - *"The library allows coercion from other types."* — Coercion is
   runtime behaviour. Annotate the intended type.
-- *"I don't have that type imported."* — Add the import or use a
-  string forward reference. Missing imports are not a license for `Any`.
+- *"I don't have that type imported."* — Add the import or the minimal
+  source-backed support stub. Missing imports are not a license for `Any`,
+  `object`, or a quoted annotation.
 - *"The parameter is polymorphic."* — If you can describe the types in
   words, write them as a `Union`. If you wrote a plain-English
   description and then typed `Any`, that is dishonesty, not uncertainty.
@@ -282,14 +283,23 @@ Check `cls.body` in the AST, not the full `ast.walk` output.
 
 ## Banned output patterns
 
-These patterns are rejected by `scripts/check_guardrails.py`, which
-runs automatically in the pre-commit hook.
+These patterns are rejected by `scripts/check_guardrails.py` and
+`scripts/check_stubs.py`, both of which run automatically in the
+pre-commit hook.
 
-- **No `TYPE_CHECKING` blocks in stubs.** A `.pyi` file is already an
-  annotation surface. Import annotation types directly at top level. If
-  that import exposes a missing dependency, add the minimal
-  source-grounded stub for the dependency or use a quoted forward
-  reference only for genuinely recursive definitions.
+- **No `TYPE_CHECKING` blocks or quoted annotations in stubs.** A `.pyi`
+  file is already an annotation surface. Import annotation types directly
+  at top level. If that import exposes a missing dependency or cycle, add
+  the minimal source-grounded support stub or stop and report the blocked
+  evidence. Quoted/string type references are banned; they hide
+  type-surface changes from review. String values inside `Literal[...]`
+  remain allowed.
+- **No opaque variadics.** Do not write `*args` or `**kwds` into a stub
+  as an escape hatch. Analyze the source paths and express the accepted
+  call shapes with overloads, finite unions, or a source-audited argument
+  container type such as a `TypedDict` or protocol that enumerates the
+  possible keyword/argument variables. If the cases cannot be exhausted,
+  leave the stub unchanged and report the blocked evidence.
 - **No local suppressions.** `# type: ignore`, `# noqa`, `cast(...)`,
   and similar lint or type-checking suppressions are banned in stub
   files. Fix the signature, import, or supporting stub instead.

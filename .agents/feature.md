@@ -138,8 +138,9 @@ Then for each scaffolded file:
    (AGENTS.md anti-inflation rule — stubgen does NOT distinguish direct
    from inherited methods for Cython classes).
 2. Read the source per AGENTS.md Phase 2 (Resolve types). Replace EVERY
-   `Any` with the resolved concrete type / `Self` / `Union` / `@overload` /
-   `object` (only at genuinely opaque boundaries).
+   `Any` with the resolved concrete type, `Self`, a finite union,
+   `@overload`, or a source-audited argument/keyword container type that
+   enumerates the accepted cases.
 3. Drop the resulting `.pyi` into `sage-stubs/<path>/<file>.pyi`.
 4. Run `just check`.
 
@@ -167,12 +168,15 @@ starting. Mark `✅ Done` on the same line when the commit lands.
   side is fixed first.
 - **Cython forwarders.** Many `.pyx` modules export Python classes whose
   `__cinit__` and `__init__` signatures live in C-level docstrings. Where
-  the runtime accepts arbitrary Python coercion, the rule is **still no
-  `Any`** — use `object` for genuinely opaque incoming values, `Self` for
-  arithmetic forwards, and `Union` for documented coercion sets.
+  the runtime accepts several shapes, the rule is **still no `Any`**:
+  enumerate the shapes with overloads, finite unions, or a source-audited
+  container/option type. Reserve `object` for Python protocol slots already
+  allowed in AGENTS.md.
 - **Forward references and import cycles.** Sage's runtime relies heavily
-  on `LazyImport` to break import cycles. Stubs cannot use `LazyImport` and
-  must use string forward references for genuinely recursive types.
+  on `LazyImport` to break import cycles. Stubs cannot use `LazyImport`,
+  and quoted/string type references are banned. Add the direct import or
+  minimal source-backed support stub; if the cycle cannot be resolved that
+  way, leave the stub unchanged and report the blocked evidence.
 - **Surface drift.** Sage 10.7 is the pinned version; do not pull surface
   from `sage-src` until the submodule has been confirmed at the
   appropriate tag/commit.

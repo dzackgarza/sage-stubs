@@ -47,6 +47,7 @@ be audited and expanded, not rewritten.
 - p-adic stubs touch C-level flint pow computers; signature drift between
   template `.pxi` files is common. Stick to the public `.pyx` surface.
 - Number field stubs reference `sage.libs.pari` — those stubs come in
-  Phase 18. Use string forward references where needed.
+  Phase 18. Add direct imports only after the minimal source-backed support
+  stub exists; quoted/string type references are banned.
 - `STUB_GAPS.md` blockers concerning finite fields are partially resolved;
   re-check after T04.2 lands.

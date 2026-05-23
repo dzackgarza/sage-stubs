@@ -90,6 +90,7 @@ PROTECTED_CONFIG = {
     ".pre-commit-config.yaml",
     "scripts/check_stubs.py",
     "scripts/check_guardrails.py",
+    "scripts/type_surface_review.py",
     "scripts/stub_coverage.py",
     ".githooks/pre-commit",
     ".githooks/post-commit",
