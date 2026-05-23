@@ -122,6 +122,14 @@ subagent when one is available; otherwise perform a separate written audit pass
 that names each suspicious change and cites the Sage 10.7 source. Hook passage
 is not evidence that weakening is acceptable.
 
+The review is blocking, not advisory. `scripts/type_surface_review.py` rejects
+common high-risk widenings such as precise type -> `object`, precise Sage type
+-> `Element`/`Parent`/`SageObject`, `VectorSpace -> FreeModule_generic`, and
+parameterized container -> unparameterized container. Do not bypass this gate to
+finish a local stub task. If the previous type is source-proven wrong, replace
+it with the most precise source-backed type and document that proof; do not
+route through a broad placeholder first.
+
 ## Type annotation quality contract (non-negotiable)
 
 `Any` is banned. Not "banned unless justified." Banned. The
@@ -236,6 +244,10 @@ parents such as `ZZ`: `ZZ` is not interchangeable with `int` or `Integer`.
   `TypeVar`, and annotation import change as a required review item. The
   command is an inventory, not approval: each item still needs source-backed
   classification as stricter, equivalent, or weaker.
+- Treat a `type_surface_review` high-risk broadening failure as a blocked
+  commit until the broadening is removed. The `--allow-high-risk` flag is only
+  for local investigation after a written/source-cited review; it is not
+  permitted in hooks and is not permission to commit weaker stubs.
 - Use the review inventory to force a second pass over the diff. For every
   reported item, cite the Sage 10.7 source line that justifies the proposed
   type. If there is no citation, the type is not ready to stage.

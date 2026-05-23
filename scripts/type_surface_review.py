@@ -3,6 +3,8 @@
 
 This is a review inventory, not an approval tool. Every reported item still
 needs a source-backed stricter/equivalent/weaker classification.
+
+High-risk widenings fail by default so they cannot be accepted accidentally.
 """
 
 from __future__ import annotations
@@ -34,6 +36,17 @@ ANNOTATION_IMPORT_MODULES = {
     "sage.symbolic",
 }
 
+OPAQUE_TYPES = {"Any", "object"}
+BROAD_SAGE_TYPES = {
+    "Element",
+    "Parent",
+    "SageObject",
+    "FreeModule_generic",
+    "RingElement",
+    "CommutativeRingElement",
+}
+CONTAINER_TYPES = {"list", "dict", "tuple", "set", "frozenset"}
+
 
 @dataclass(frozen=True, order=True)
 class SurfaceItem:
@@ -44,6 +57,9 @@ class SurfaceItem:
 
     def format(self) -> str:
         return f"{self.path}: {self.kind} {self.name}: {self.value}"
+
+    def key(self) -> tuple[str, str, str]:
+        return (self.kind, self.path, self.name)
 
 
 def git_output(args: list[str]) -> str:
@@ -161,7 +177,13 @@ def _is_type_alias(node: ast.AST) -> bool:
     return False
 
 
-def report_file(path: Path, staged: bool) -> list[str]:
+@dataclass(frozen=True)
+class SurfaceReport:
+    lines: list[str]
+    high_risk: list[str]
+
+
+def report_file(path: Path, staged: bool) -> SurfaceReport:
     before = collect(head_text(path, staged), path)
     after = collect(current_text(path, staged), path)
     removed = sorted(before - after)
@@ -171,13 +193,63 @@ def report_file(path: Path, staged: bool) -> list[str]:
         lines.append(f"- {item.format()}")
     for item in added:
         lines.append(f"+ {item.format()}")
-    return lines
+
+    before_by_key = {item.key(): item for item in before}
+    after_by_key = {item.key(): item for item in after}
+    high_risk = []
+    for key in sorted(before_by_key.keys() & after_by_key.keys()):
+        previous = before_by_key[key]
+        proposed = after_by_key[key]
+        reason = high_risk_reason(previous.value, proposed.value)
+        if reason:
+            high_risk.append(
+                f"{proposed.path}: {proposed.kind} {proposed.name}: "
+                f"{previous.value} -> {proposed.value} ({reason})"
+            )
+    return SurfaceReport(lines, high_risk)
+
+
+def high_risk_reason(previous: str, proposed: str) -> str | None:
+    if previous == proposed:
+        return None
+    previous_names = names_in_type(previous)
+    proposed_names = names_in_type(proposed)
+    if proposed_names & OPAQUE_TYPES:
+        return "new opaque type"
+    broad_added = proposed_names & BROAD_SAGE_TYPES
+    if broad_added and not broad_added <= previous_names:
+        return "broader Sage base introduced"
+    previous_base = previous.split("[", 1)[0]
+    proposed_base = proposed.split("[", 1)[0]
+    if (
+        previous_base == proposed_base
+        and previous_base in CONTAINER_TYPES
+        and "[" in previous
+        and "[" not in proposed
+    ):
+        return "parameterized container became unparameterized"
+    if "|" in previous and proposed in OPAQUE_TYPES | BROAD_SAGE_TYPES:
+        return "precise union replaced by broad placeholder"
+    return None
+
+
+def names_in_type(value: str) -> set[str]:
+    try:
+        tree = ast.parse(value)
+    except SyntaxError:
+        return {value}
+    return {node.id for node in ast.walk(tree) if isinstance(node, ast.Name)}
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--staged", action="store_true", help="review staged diff")
     parser.add_argument("--files", nargs="*", help="explicit .pyi files")
+    parser.add_argument(
+        "--allow-high-risk",
+        action="store_true",
+        help="print high-risk widenings without failing",
+    )
     args = parser.parse_args()
 
     files = selected_files(args.staged, args.files)
@@ -186,14 +258,16 @@ def main() -> int:
         return 0
 
     had_items = False
+    high_risk: list[str] = []
     for path in files:
-        lines = report_file(path, args.staged)
-        if not lines:
+        report = report_file(path, args.staged)
+        if not report.lines:
             continue
         had_items = True
         print(f"\n# {path.relative_to(REPO_ROOT)}")
-        for line in lines:
+        for line in report.lines:
             print(line)
+        high_risk.extend(report.high_risk)
 
     if not had_items:
         print("type_surface_review: no type-surface changes found.")
@@ -202,6 +276,17 @@ def main() -> int:
             "\nReview required: classify every item as stricter, equivalent, "
             "or weaker against Sage 10.7 source before staging or committing."
         )
+    if high_risk:
+        print("\nHigh-risk broadening detected:")
+        for line in high_risk:
+            print(f"! {line}")
+        print(
+            "\nRejected: remove the broadening or cite source proof and rerun "
+            "with --allow-high-risk for a local audit only. Pre-commit must not "
+            "accept unresolved high-risk weakening."
+        )
+        if not args.allow_high_risk:
+            return 1
     return 0
 
 

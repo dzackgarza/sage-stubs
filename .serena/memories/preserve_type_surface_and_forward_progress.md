@@ -37,6 +37,9 @@ Verification:
   source-backed semantic type, stop implementation and force a separate review.
   Use a spark subagent for that review when available; if none can be started,
   perform a separate written audit pass before staging.
+- Treat `just type-surface-review` high-risk broadening failures as blocking
+  defects. Do not use `--allow-high-risk` except for local investigation after
+  a written/source-cited audit, and never use it to make a commit path pass.
 - If any backwards movement is intentional, cite the exact source evidence and
   make it explicit in the commit message or status.
 
@@ -71,6 +74,11 @@ FreeModule_generic`, concrete class -> `Parent`/`SageObject`/`object`, subclass
 union -> opaque placeholder is rejected unless it is replaced by a more precise
 source-backed annotation before commit.
 
+Mechanical gate: `scripts/type_surface_review.py` must fail unresolved
+high-risk broadening patterns. A failure means the diff is not ready; do not
+route around it by weakening support stubs, deleting imports, or accepting a
+broader placeholder.
+
 Forced review output: The review must name the changed type surfaces and mark
 each as stricter, equivalent, or weaker. "Mypy passes", "ruff passes", "cleaner
 import graph", "smaller sidecar", and "unblocks local goal" are not review
@@ -79,7 +87,7 @@ introduced it and repair the dependency, support stub, import, or alias instead
 of accepting the weaker type.
 
 Verification:
-- Before every commit touching stubs, inspect `git diff --cached` for any
+- Before every commit touching stubs, run `just type-surface-review --staged` and inspect `git diff --cached` for any
   annotation, import, alias, base class, return type, or parameter type change
   that loses domain specificity.
 - Apply the same forced review to subagent output and auto-fix output before
