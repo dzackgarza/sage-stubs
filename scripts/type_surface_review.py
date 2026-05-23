@@ -205,6 +205,8 @@ def report_file(path: Path, staged: bool) -> SurfaceReport:
             "__ne__.other",
         }:
             continue
+        if proposed.kind == "parameter" and (".*" in proposed.name or ".**" in proposed.name):
+            continue
         reason = high_risk_reason(previous.value, proposed.value)
         if reason:
             high_risk.append(
@@ -221,11 +223,28 @@ def high_risk_reason(previous: str, proposed: str) -> str | None:
     proposed_names = names_in_type(proposed)
     if proposed_names & OPAQUE_TYPES:
         return "new opaque type"
+    previous_base = bare_container_base(previous)
+    proposed_base = bare_container_base(proposed)
+    if previous in {"<missing>", "<none>"}:
+        return None
+    if previous_names & OPAQUE_TYPES and not proposed_names & OPAQUE_TYPES:
+        return None
+    if (
+        previous_base == proposed_base
+        and previous_base in CONTAINER_TYPES
+        and "[" not in previous
+        and "[" in proposed
+    ):
+        return None
+    if (
+        previous_base in CONTAINER_TYPES
+        and "[" not in previous
+        and proposed_names & CONTAINER_TYPES
+    ):
+        return None
     broad_added = proposed_names & BROAD_SAGE_TYPES
     if broad_added and not broad_added <= previous_names:
         return "broader Sage base introduced"
-    previous_base = previous.split("[", 1)[0]
-    proposed_base = proposed.split("[", 1)[0]
     if (
         previous_base == proposed_base
         and previous_base in CONTAINER_TYPES
@@ -236,6 +255,14 @@ def high_risk_reason(previous: str, proposed: str) -> str | None:
     if "|" in previous and proposed in OPAQUE_TYPES | BROAD_SAGE_TYPES:
         return "precise union replaced by broad placeholder"
     return None
+
+
+def bare_container_base(value: str) -> str:
+    for part in (part.strip() for part in value.split("|")):
+        base = part.split("[", 1)[0].strip()
+        if base in CONTAINER_TYPES:
+            return base
+    return value.split("[", 1)[0].strip()
 
 
 def names_in_type(value: str) -> set[str]:

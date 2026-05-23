@@ -36,6 +36,34 @@ def is_object(node: ast.expr) -> bool:
 OBJECT_RETURN_OK = {"__new__"}
 LOCAL_SUPPRESSIONS = ("type: ignore", "noqa")
 LEGACY_TYPING_ALIASES = {"List", "Dict", "Tuple", "Set", "FrozenSet"}
+BUILTIN_COLLISION_NAMES = {"list", "dict", "tuple", "set", "type", "object"}
+
+
+def annotate_parents(tree: ast.AST) -> None:
+    for parent in ast.walk(tree):
+        for child in ast.iter_child_nodes(parent):
+            setattr(child, "_stub_parent", parent)
+
+
+def enclosing_class(node: ast.AST) -> ast.ClassDef | None:
+    current = getattr(node, "_stub_parent", None)
+    while current is not None:
+        if isinstance(current, ast.ClassDef):
+            return current
+        current = getattr(current, "_stub_parent", None)
+    return None
+
+
+def is_allowed_builtin_collision(node: ast.Attribute) -> bool:
+    if node.attr not in BUILTIN_COLLISION_NAMES:
+        return False
+    cls = enclosing_class(node)
+    if cls is None:
+        return False
+    return any(
+        isinstance(item, (ast.FunctionDef, ast.AsyncFunctionDef)) and item.name == node.attr
+        for item in cls.body
+    )
 
 
 def check_function(fn: ast.FunctionDef | ast.AsyncFunctionDef, path: Path) -> list[str]:
@@ -76,6 +104,7 @@ def check_function(fn: ast.FunctionDef | ast.AsyncFunctionDef, path: Path) -> li
 
 def check_tree(tree: ast.Module, path: Path) -> list[str]:
     errors = []
+    annotate_parents(tree)
     for node in ast.walk(tree):
         if isinstance(node, ast.ImportFrom):
             if node.module == "typing":
@@ -88,7 +117,7 @@ def check_tree(tree: ast.Module, path: Path) -> list[str]:
                     if alias.name == "Any":
                         errors.append(
                             f"{path}:{node.lineno}: Any import — banned. "
-                            "Use concrete types or object for honest opacity."
+                            "Resolve the concrete type; do not substitute object."
                         )
                     if alias.name == "cast":
                         errors.append(
@@ -120,7 +149,11 @@ def check_tree(tree: ast.Module, path: Path) -> list[str]:
                     f"{path}:{node.lineno}: typing.{node.attr} annotation — banned. "
                     "Use built-in generics."
                 )
-            if isinstance(node.value, ast.Name) and node.value.id == "builtins":
+            if (
+                isinstance(node.value, ast.Name)
+                and node.value.id == "builtins"
+                and not is_allowed_builtin_collision(node)
+            ):
                 errors.append(
                     f"{path}:{node.lineno}: builtins.{node.attr} — banned. "
                     "Use normal built-in names."
@@ -128,13 +161,13 @@ def check_tree(tree: ast.Module, path: Path) -> list[str]:
             if isinstance(node.value, ast.Name) and node.value.id == "typing" and node.attr == "Any":
                 errors.append(
                     f"{path}:{node.lineno}: typing.Any — banned. "
-                    "Use concrete types or object for honest opacity."
+                    "Resolve the concrete type; do not substitute object."
                 )
         elif isinstance(node, ast.Name):
             if node.id == "Any":
                 errors.append(
                     f"{path}:{node.lineno}: Any — banned. "
-                    "Use concrete types or object for honest opacity."
+                    "Resolve the concrete type; do not substitute object."
                 )
             if node.id == "cast":
                 errors.append(

@@ -19,6 +19,10 @@ Rules:
   editing.
 - If source coerces an argument, annotate the intended domain type or concrete
   observed union instead of treating coercion as permission for `object`.
+- Do not hide basic builtin container types behind private aliases merely to
+  dodge class-body name collisions. If a class method such as `list` shadows
+  the builtin in annotations, qualify the builtin at the collision site
+  (`builtins.list[int]`) so the public stub still says the ordinary type.
 - Do not flatten or simplify source-backed inheritance if doing so loses API
   information.
 - Do not revert auto-fixes just because they expand the scope of cleanup. Treat

@@ -323,6 +323,12 @@ runs automatically in the pre-commit hook.
   domain type, add the missing sidecar, or write a concrete union from
   source evidence. If no source-backed type can be resolved, leave the
   stub unchanged and report the blocked type evidence.
+- **No private aliases for basic containers.** Do not hide ordinary
+  builtin container types behind aliases such as `_IntList` or
+  `_ElementList` merely to route around a local type-checker problem.
+  If a class method shadows a builtin name such as `list`, qualify the
+  builtin exactly at that collision site, e.g. `builtins.list[int]`, and
+  nowhere else.
 - **No inherited-method inflation.** If a requested method is inherited
   rather than defined directly on the target class, report that fact.
   Do not add inherited methods as direct methods.
@@ -331,7 +337,10 @@ runs automatically in the pre-commit hook.
   signature must be justified by the direct Sage source body or by a
   documented alias in the source.
 - **No verbose builtins.** Use `type`, `list[T]`, and `dict[K, V]`,
-  not `builtins.type`, `typing.List`, or `typing.Dict`.
+  not `builtins.type`, `typing.List`, or `typing.Dict`. The only
+  exception is a same-class name collision such as a `list` method,
+  where `builtins.list[T]` is permitted at the affected annotation
+  site to preserve the real type without aliasing.
 
 ## Class hierarchy
 

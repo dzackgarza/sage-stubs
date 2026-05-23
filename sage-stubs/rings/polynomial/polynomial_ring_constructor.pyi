@@ -1,7 +1,4 @@
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from sage.structure.parent import Parent
+from sage.structure.parent import Parent
 
 def PolynomialRing(
     base_ring: object,
