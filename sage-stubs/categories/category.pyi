@@ -1,8 +1,10 @@
 from collections.abc import Hashable, Iterable, Sequence
 from typing import TypeAlias, overload
 
-_CategoryArg: TypeAlias = Category | int | str | type | tuple[str, ...] | None
-_CategoryOption: TypeAlias = Category | bool | int | str | type | tuple[str, ...] | None
+from sage.rings.integer import Integer
+
+_CategoryArg: TypeAlias = Category | int | Integer | str | type | tuple[str, ...] | None
+_CategoryOption: TypeAlias = Category | bool | int | Integer | str | type | tuple[str, ...] | None
 
 class Category:
     parent_class: type
