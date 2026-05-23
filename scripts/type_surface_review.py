@@ -235,7 +235,7 @@ def report_file(path: Path, staged: bool) -> SurfaceReport:
 def report_texts(path: Path, before_text: str, after_text: str) -> SurfaceReport:
     before = collect(before_text, path)
     after = collect(after_text, path)
-    typevar_names = collect_typevar_names(after_text)
+    abstraction_names = collect_local_abstraction_names(after_text)
     removed = sorted(before - after)
     added = sorted(after - before)
     lines: list[str] = []
@@ -263,7 +263,7 @@ def report_texts(path: Path, before_text: str, after_text: str) -> SurfaceReport
                     previous.value,
                     proposed.value,
                     proposed.kind,
-                    typevar_names,
+                    abstraction_names,
                 )
                 if reason:
                     violations.append(
@@ -273,8 +273,8 @@ def report_texts(path: Path, before_text: str, after_text: str) -> SurfaceReport
     return SurfaceReport(lines, violations)
 
 
-def collect_typevar_names(text: str) -> set[str]:
-    """Return TypeVar symbols introduced by a stub file."""
+def collect_local_abstraction_names(text: str) -> set[str]:
+    """Return local TypeVar and Protocol symbols introduced by a stub file."""
     if not text.strip():
         return set()
     try:
@@ -298,6 +298,9 @@ def collect_typevar_names(text: str) -> set[str]:
         for target in targets:
             if isinstance(target, ast.Name):
                 names.add(target.id)
+    for node in ast.walk(tree):
+        if isinstance(node, ast.ClassDef) and class_extends_protocol(node):
+            names.add(node.name)
     return names
 
 
@@ -310,6 +313,10 @@ def is_typevar_call(node: ast.AST | None) -> bool:
     ) or (
         isinstance(func, ast.Attribute) and func.attr == "TypeVar"
     )
+
+
+def class_extends_protocol(node: ast.ClassDef) -> bool:
+    return any("Protocol" in names_in_node(base) for base in node.bases)
 
 
 def items_by_key(items: set[SurfaceItem]) -> dict[tuple[str, str, str], list[SurfaceItem]]:
@@ -336,24 +343,26 @@ def relaxation_reason(
     previous: str,
     proposed: str,
     kind: str,
-    typevar_names: set[str] | None = None,
+    abstraction_names: set[str] | None = None,
 ) -> str | None:
     if kind == "annotation-import":
         return None
     if previous == proposed:
         return None
-    typevar_names = typevar_names or set()
+    abstraction_names = abstraction_names or set()
     previous_names = names_in_type(previous)
     proposed_names = names_in_type(proposed)
     if previous in {"<missing>", "<none>"}:
         return None
-    if opaque_to_typevar_laundering(previous_names, proposed_names, typevar_names):
-        return "opaque type replaced by TypeVar-bearing generic without source proof"
+    if abstraction_laundering(previous_names, proposed_names, abstraction_names):
+        return "existing type surface replaced by local generic/protocol abstraction without source proof"
     if previous_names & OPAQUE_TYPES and not proposed_names & OPAQUE_TYPES:
         return None
 
     if proposed_names & OPAQUE_TYPES:
         return "existing typed surface relaxed to opaque type"
+    if callable_gained_ellipsis(previous, proposed):
+        return "precise callable signature replaced by Callable ellipsis"
     if type_gained_parameters(previous, proposed):
         return None
     if lost_generic_parameters(previous, proposed):
@@ -369,12 +378,21 @@ def relaxation_reason(
     return None
 
 
-def opaque_to_typevar_laundering(
+def abstraction_laundering(
     previous_names: set[str],
     proposed_names: set[str],
-    typevar_names: set[str],
+    abstraction_names: set[str],
 ) -> bool:
-    return bool(previous_names & OPAQUE_TYPES and proposed_names & typevar_names)
+    return bool(abstraction_names and proposed_names & abstraction_names and not previous_names & abstraction_names)
+
+
+def callable_gained_ellipsis(previous: str, proposed: str) -> bool:
+    return (
+        "Callable" in names_in_type(previous)
+        and "Callable" in names_in_type(proposed)
+        and "..." not in previous
+        and "..." in proposed
+    )
 
 
 def bare_container_base(value: str) -> str:
@@ -457,6 +475,12 @@ def names_in_type(value: str) -> set[str]:
     return {node.id for node in ast.walk(tree) if isinstance(node, ast.Name)}
 
 
+def names_in_node(node: ast.AST) -> set[str]:
+    names = {child.id for child in ast.walk(node) if isinstance(child, ast.Name)}
+    names.update(child.attr for child in ast.walk(node) if isinstance(child, ast.Attribute))
+    return names
+
+
 def demo_relaxation_cases() -> int:
     """Run one-off examples for the agent-hacking patterns this gate owns."""
     cases = [
@@ -469,12 +493,15 @@ def demo_relaxation_cases() -> int:
         ("return", "Any", "FiniteField", False),
         ("parameter", "FiniteField", "object", True),
         ("parameter", "object", "Iterable[_T]", True),
+        ("parameter", "Word_class", "_T", True),
+        ("parameter", "object", "_SupportsWord", True),
         ("return", "Any", "Sequence[_T]", True),
+        ("return", "Callable[[Integer], FiniteField]", "Callable[..., FiniteField]", True),
         ("parameter", "Word_class", "Word_class", False),
     ]
     failed = 0
     for kind, previous, proposed, should_flag in cases:
-        reason = relaxation_reason(previous, proposed, kind, {"_T"})
+        reason = relaxation_reason(previous, proposed, kind, {"_T", "_SupportsWord"})
         flagged = reason is not None
         status = "ok" if flagged == should_flag else "FAIL"
         print(f"{status}: {kind} {previous} -> {proposed}: {reason or 'allowed'}")
@@ -498,15 +525,19 @@ class Demo:
     def callback(self) -> Callable[[Integer], FiniteField]: ...
     def variadic(self, *items: VectorSpace) -> None: ...
     def erased(self, x: object) -> None: ...
+    def structural(self, x: Word_class) -> None: ...
     def newly_typed(self): ...
     def __contains__(self, x: FiniteField) -> bool: ...
     def __eq__(self, other: Self) -> bool: ...
 """
     after_text = """
 from collections.abc import Callable, Iterable, Sequence
-from typing import TypeVar
+from typing import Protocol, TypeVar
 
 _T = TypeVar("_T")
+
+class _SupportsWord(Protocol):
+    def string_rep(self) -> str: ...
 
 class Demo:
     def vector_space(self) -> FreeModule: ...
@@ -516,6 +547,7 @@ class Demo:
     def callback(self) -> Callable: ...
     def variadic(self, *items: FreeModule) -> None: ...
     def erased(self, x: Iterable[_T]) -> None: ...
+    def structural(self, x: _SupportsWord) -> None: ...
     def newly_typed(self) -> FiniteField: ...
     def __contains__(self, x: object) -> bool: ...
     def __eq__(self, other: object) -> bool: ...
@@ -529,6 +561,7 @@ class Demo:
         "callback",
         "variadic.*items",
         "erased.x",
+        "structural.x",
     }
     missing_fragments = {
         fragment
