@@ -9,8 +9,7 @@ class ConditionSet(Parent):
     def __init__(
         self,
         ambient: Parent,
-        predicate: Callable[[Element], bool] | Expression,
-        *,
+        *predicates: Callable[..., bool] | Expression,
         category: Category | None = ...,
         names: str | tuple[str, ...] | None = ...,
     ) -> None: ...
