@@ -169,6 +169,8 @@ related stub surface. Do not spend review or implementation effort flipping
 `int` ↔ `Integer` merely because Sage accepts both at runtime; either is
 acceptable when the source normalizes the value. This rule does not apply to
 parents such as `ZZ`: `ZZ` is not interchangeable with `int` or `Integer`.
+The type-surface review gate should not treat a bare `int`/`Integer` spelling
+swap as a weakening by itself; surrounding domain types still require review.
 
 **Return types must be resolved:**
 

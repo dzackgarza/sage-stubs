@@ -159,7 +159,7 @@ def arg_name(prefix: str, arg: ast.arg) -> str:
 
 
 def iter_args(fn: ast.FunctionDef | ast.AsyncFunctionDef) -> list[tuple[str, ast.arg]]:
-    args = []
+    args: list[tuple[str, ast.arg]] = []
     args.extend((arg_name(fn.name, a), a) for a in fn.args.posonlyargs)
     args.extend((arg_name(fn.name, a), a) for a in fn.args.args)
     if fn.args.vararg:
@@ -182,36 +182,44 @@ def collect(text: str, path: Path) -> set[SurfaceItem]:
     rel = str(path.relative_to(REPO_ROOT))
     items: set[SurfaceItem] = set()
 
-    for node in ast.walk(tree):
-        if isinstance(node, ast.ImportFrom) and node.module:
-            if node.module == "typing" or any(
-                node.module == mod or node.module.startswith(f"{mod}.")
-                for mod in ANNOTATION_IMPORT_MODULES
-            ):
-                names = ", ".join(alias.asname or alias.name for alias in node.names)
-                items.add(SurfaceItem("annotation-import", rel, node.module, names))
-        elif isinstance(node, ast.ClassDef):
-            bases = ", ".join(unparse(base) for base in node.bases) or "<none>"
-            items.add(SurfaceItem("class-bases", rel, node.name, bases))
-        elif isinstance(node, ast.AnnAssign):
-            items.add(
-                SurfaceItem(
-                    "variable-annotation",
-                    rel,
-                    unparse(node.target),
-                    unparse(node.annotation),
+    def visit_body(body: list[ast.stmt], scope: tuple[str, ...]) -> None:
+        for node in body:
+            if isinstance(node, ast.ImportFrom) and node.module:
+                if node.module == "typing" or any(
+                    node.module == mod or node.module.startswith(f"{mod}.")
+                    for mod in ANNOTATION_IMPORT_MODULES
+                ):
+                    names = ", ".join(alias.asname or alias.name for alias in node.names)
+                    items.add(SurfaceItem("annotation-import", rel, node.module, names))
+            elif isinstance(node, ast.ClassDef):
+                qualname = ".".join((*scope, node.name))
+                bases = ", ".join(unparse(base) for base in node.bases) or "<none>"
+                items.add(SurfaceItem("class-bases", rel, qualname, bases))
+                visit_body(node.body, (*scope, node.name))
+            elif isinstance(node, ast.AnnAssign):
+                target = ".".join((*scope, unparse(node.target)))
+                items.add(
+                    SurfaceItem(
+                        "variable-annotation",
+                        rel,
+                        target,
+                        unparse(node.annotation),
+                    )
                 )
-            )
-        elif isinstance(node, ast.Assign):
-            if _is_type_alias(node.value):
-                targets = ", ".join(unparse(target) for target in node.targets)
-                items.add(SurfaceItem("type-alias", rel, targets, unparse(node.value)))
-        elif isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
-            items.add(SurfaceItem("return", rel, node.name, unparse(node.returns)))
-            for name, arg in iter_args(node):
-                if arg.arg in {"self", "cls"} and arg.annotation is None:
-                    continue
-                items.add(SurfaceItem("parameter", rel, name, unparse(arg.annotation)))
+            elif isinstance(node, ast.Assign):
+                if _is_type_alias(node.value):
+                    targets = ", ".join(".".join((*scope, unparse(target))) for target in node.targets)
+                    items.add(SurfaceItem("type-alias", rel, targets, unparse(node.value)))
+            elif isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                qualname = ".".join((*scope, node.name))
+                items.add(SurfaceItem("return", rel, qualname, unparse(node.returns)))
+                for name, arg in iter_args(node):
+                    if arg.arg in {"self", "cls"} and arg.annotation is None:
+                        continue
+                    suffix = name.removeprefix(f"{node.name}.")
+                    items.add(SurfaceItem("parameter", rel, f"{qualname}.{suffix}", unparse(arg.annotation)))
+
+    visit_body(tree.body, ())
 
     return items
 
@@ -233,8 +241,12 @@ class SurfaceReport:
 
 
 def report_file(path: Path, staged: bool) -> SurfaceReport:
-    before = collect(head_text(path, staged), path)
-    after = collect(current_text(path, staged), path)
+    return report_texts(path, head_text(path, staged), current_text(path, staged))
+
+
+def report_texts(path: Path, before_text: str, after_text: str) -> SurfaceReport:
+    before = collect(before_text, path)
+    after = collect(after_text, path)
     removed = sorted(before - after)
     added = sorted(after - before)
     lines: list[str] = []
@@ -243,30 +255,44 @@ def report_file(path: Path, staged: bool) -> SurfaceReport:
     for item in added:
         lines.append(f"+ {item.format()}")
 
-    before_by_key = {item.key(): item for item in before}
-    after_by_key = {item.key(): item for item in after}
+    before_by_key = items_by_key(before)
+    after_by_key = items_by_key(after)
     violations = []
     for key in sorted(before_by_key.keys() & after_by_key.keys()):
-        previous = before_by_key[key]
-        proposed = after_by_key[key]
-        if is_allowed_protocol_widening(proposed, previous.value):
-            continue
-        if is_ignored_parameter_slot(proposed):
-            continue
-        reason = relaxation_reason(previous.value, proposed.value, proposed.kind)
-        if reason:
-            violations.append(
-                f"{proposed.path}: {proposed.kind} {proposed.name}: "
-                f"{previous.value} -> {proposed.value} ({reason})"
-            )
+        previous_items = before_by_key[key]
+        proposed_items = after_by_key[key]
+        previous_values = {item.value for item in previous_items}
+        for previous in previous_items:
+            if previous.value in {item.value for item in proposed_items}:
+                continue
+            for proposed in proposed_items:
+                if proposed.value in previous_values:
+                    continue
+                if is_allowed_protocol_widening(proposed, previous.value):
+                    continue
+                if is_ignored_parameter_slot(proposed):
+                    continue
+                reason = relaxation_reason(previous.value, proposed.value, proposed.kind)
+                if reason:
+                    violations.append(
+                        f"{proposed.path}: {proposed.kind} {proposed.name}: "
+                        f"{previous.value} -> {proposed.value} ({reason})"
+                    )
     return SurfaceReport(lines, violations)
+
+
+def items_by_key(items: set[SurfaceItem]) -> dict[tuple[str, str, str], list[SurfaceItem]]:
+    grouped: dict[tuple[str, str, str], list[SurfaceItem]] = {}
+    for item in items:
+        grouped.setdefault(item.key(), []).append(item)
+    return grouped
 
 
 def is_allowed_protocol_widening(item: SurfaceItem, previous: str) -> bool:
     """Permit Python-forced object parameters in named protocol slots only."""
     if item.kind != "parameter":
         return False
-    if item.name not in ALLOWED_OBJECT_PARAMETER_SLOTS:
+    if not any(item.name.endswith(slot) for slot in ALLOWED_OBJECT_PARAMETER_SLOTS):
         return False
     return proposed_is_exact_object(item.value) and previous not in {"<missing>", "<none>"}
 
@@ -280,12 +306,12 @@ def proposed_is_exact_object(value: str) -> bool:
 
 
 def relaxation_reason(previous: str, proposed: str, kind: str) -> str | None:
+    if kind == "annotation-import":
+        return None
     if previous == proposed:
         return None
     previous_names = names_in_type(previous)
     proposed_names = names_in_type(proposed)
-    previous_base = bare_container_base(previous)
-    proposed_base = bare_container_base(proposed)
     if previous in {"<missing>", "<none>"}:
         return None
     if previous_names & OPAQUE_TYPES and not proposed_names & OPAQUE_TYPES:
@@ -303,6 +329,8 @@ def relaxation_reason(previous: str, proposed: str, kind: str) -> str | None:
         return "mathematical type relaxed to broader Sage/domain base"
     if class_base_relaxed(previous, proposed, kind):
         return "class base replaced with broader Sage/domain base"
+    if sage_normalized_integer_spelling(previous_names, proposed_names):
+        return None
     if changed_between_sage_types(previous_names, proposed_names):
         return "changed Sage/domain type names require relaxation review"
     return None
@@ -314,6 +342,16 @@ def bare_container_base(value: str) -> str:
         if base in GENERIC_TYPES:
             return base
     return value.split("[", 1)[0].strip()
+
+
+def sage_normalized_integer_spelling(previous_names: set[str], proposed_names: set[str]) -> bool:
+    normalized_previous = (previous_names - {"int", "Integer"}) | (
+        {"Integer"} if previous_names & {"int", "Integer"} else set()
+    )
+    normalized_proposed = (proposed_names - {"int", "Integer"}) | (
+        {"Integer"} if proposed_names & {"int", "Integer"} else set()
+    )
+    return normalized_previous == normalized_proposed
 
 
 def type_gained_parameters(previous: str, proposed: str) -> bool:
@@ -405,6 +443,60 @@ def demo_relaxation_cases() -> int:
     else:
         print("FAIL: parameter Self -> object should be allowed for __eq__.other")
         failed += 1
+
+    before_text = """
+from collections.abc import Callable, Sequence
+
+class Demo:
+    def vector_space(self) -> VectorSpace: ...
+    def matrix(self) -> Matrix_integer_dense: ...
+    def finite_field(self) -> FiniteField: ...
+    def words(self) -> Sequence[Word_class]: ...
+    def callback(self) -> Callable[[Integer], FiniteField]: ...
+    def newly_typed(self): ...
+    def __contains__(self, x: FiniteField) -> bool: ...
+    def __eq__(self, other: Self) -> bool: ...
+"""
+    after_text = """
+from collections.abc import Callable, Sequence
+
+class Demo:
+    def vector_space(self) -> FreeModule: ...
+    def matrix(self) -> Matrix: ...
+    def finite_field(self) -> Field: ...
+    def words(self) -> Sequence: ...
+    def callback(self) -> Callable: ...
+    def newly_typed(self) -> FiniteField: ...
+    def __contains__(self, x: object) -> bool: ...
+    def __eq__(self, other: object) -> bool: ...
+"""
+    report = report_texts(REPO_ROOT / "sage-stubs/demo_relaxation.pyi", before_text, after_text)
+    expected_fragments = {
+        "vector_space",
+        "Matrix_integer_dense -> Matrix",
+        "FiniteField -> Field",
+        "words",
+        "callback",
+    }
+    missing_fragments = {
+        fragment
+        for fragment in expected_fragments
+        if not any(fragment in violation for violation in report.violations)
+    }
+    unexpected_fragments = {
+        fragment
+        for fragment in {"newly_typed", "__contains__.x", "__eq__.other"}
+        if any(fragment in violation for violation in report.violations)
+    }
+    if missing_fragments or unexpected_fragments:
+        print("FAIL: parsed diff demo did not match expected relaxation candidates")
+        if missing_fragments:
+            print(f"missing: {sorted(missing_fragments)}")
+        if unexpected_fragments:
+            print(f"unexpected: {sorted(unexpected_fragments)}")
+        failed += 1
+    else:
+        print("ok: parsed diff demo flags relaxations and ignores new typing/protocol widening")
     return 1 if failed else 0
 
 
