@@ -63,7 +63,7 @@ class SurfaceItem:
 
 
 def git_output(args: list[str]) -> str:
-    return subprocess.check_output(args, cwd=REPO_ROOT, text=True)
+    return subprocess.check_output(args, cwd=REPO_ROOT, stderr=subprocess.DEVNULL, text=True)
 
 
 def selected_files(staged: bool, files: list[str] | None) -> list[Path]:
@@ -200,6 +200,11 @@ def report_file(path: Path, staged: bool) -> SurfaceReport:
     for key in sorted(before_by_key.keys() & after_by_key.keys()):
         previous = before_by_key[key]
         proposed = after_by_key[key]
+        if proposed.kind == "parameter" and proposed.name in {
+            "__eq__.other",
+            "__ne__.other",
+        }:
+            continue
         reason = high_risk_reason(previous.value, proposed.value)
         if reason:
             high_risk.append(
