@@ -4,7 +4,8 @@
 This is a review inventory, not an approval tool. Every reported item still
 needs a source-backed stricter/equivalent/weaker classification.
 
-High-risk widenings fail by default so they cannot be accepted accidentally.
+Known type-relaxation patterns fail by default so agents cannot silently trade
+mathematical precision for local checker convenience.
 """
 
 from __future__ import annotations
@@ -37,15 +38,63 @@ ANNOTATION_IMPORT_MODULES = {
 }
 
 OPAQUE_TYPES = {"Any", "object"}
-BROAD_SAGE_TYPES = {
+BROAD_MATHEMATICAL_TYPES = {
+    "Algebra",
+    "CommutativeAlgebra",
+    "CommutativeRing",
+    "CommutativeRingElement",
     "Element",
+    "Field",
+    "FieldElement",
+    "FreeModule",
     "Parent",
+    "Matrix",
+    "Module",
+    "ModuleElement",
+    "Ring",
+    "RingElement",
     "SageObject",
     "FreeModule_generic",
-    "RingElement",
-    "CommutativeRingElement",
 }
-CONTAINER_TYPES = {"list", "dict", "tuple", "set", "frozenset"}
+GENERIC_TYPES = {
+    "Callable",
+    "ChainMap",
+    "Collection",
+    "Container",
+    "Counter",
+    "DefaultDict",
+    "Deque",
+    "FrozenSet",
+    "Iterable",
+    "Iterator",
+    "Mapping",
+    "MutableMapping",
+    "MutableSequence",
+    "MutableSet",
+    "Sequence",
+    "Set",
+    "Type",
+    "defaultdict",
+    "dict",
+    "frozenset",
+    "list",
+    "set",
+    "tuple",
+    "type",
+}
+
+ALLOWED_OBJECT_PARAMETER_SLOTS = {
+    "__contains__.x",
+    "__eq__.other",
+    "__ne__.other",
+}
+
+IGNORED_PARAMETER_SLOTS = {
+    # Variadic annotations often have inheritance-compatibility constraints and
+    # are too noisy for this prototype gate.
+    ".*",
+    ".**",
+}
 
 
 @dataclass(frozen=True, order=True)
@@ -180,7 +229,7 @@ def _is_type_alias(node: ast.AST) -> bool:
 @dataclass(frozen=True)
 class SurfaceReport:
     lines: list[str]
-    high_risk: list[str]
+    violations: list[str]
 
 
 def report_file(path: Path, staged: bool) -> SurfaceReport:
@@ -196,73 +245,129 @@ def report_file(path: Path, staged: bool) -> SurfaceReport:
 
     before_by_key = {item.key(): item for item in before}
     after_by_key = {item.key(): item for item in after}
-    high_risk = []
+    violations = []
     for key in sorted(before_by_key.keys() & after_by_key.keys()):
         previous = before_by_key[key]
         proposed = after_by_key[key]
-        if proposed.kind == "parameter" and proposed.name in {
-            "__eq__.other",
-            "__ne__.other",
-        }:
+        if is_allowed_protocol_widening(proposed, previous.value):
             continue
-        if proposed.kind == "parameter" and (".*" in proposed.name or ".**" in proposed.name):
+        if is_ignored_parameter_slot(proposed):
             continue
-        reason = high_risk_reason(previous.value, proposed.value)
+        reason = relaxation_reason(previous.value, proposed.value, proposed.kind)
         if reason:
-            high_risk.append(
+            violations.append(
                 f"{proposed.path}: {proposed.kind} {proposed.name}: "
                 f"{previous.value} -> {proposed.value} ({reason})"
             )
-    return SurfaceReport(lines, high_risk)
+    return SurfaceReport(lines, violations)
 
 
-def high_risk_reason(previous: str, proposed: str) -> str | None:
+def is_allowed_protocol_widening(item: SurfaceItem, previous: str) -> bool:
+    """Permit Python-forced object parameters in named protocol slots only."""
+    if item.kind != "parameter":
+        return False
+    if item.name not in ALLOWED_OBJECT_PARAMETER_SLOTS:
+        return False
+    return proposed_is_exact_object(item.value) and previous not in {"<missing>", "<none>"}
+
+
+def is_ignored_parameter_slot(item: SurfaceItem) -> bool:
+    return item.kind == "parameter" and any(marker in item.name for marker in IGNORED_PARAMETER_SLOTS)
+
+
+def proposed_is_exact_object(value: str) -> bool:
+    return value == "object"
+
+
+def relaxation_reason(previous: str, proposed: str, kind: str) -> str | None:
     if previous == proposed:
         return None
     previous_names = names_in_type(previous)
     proposed_names = names_in_type(proposed)
-    if proposed_names & OPAQUE_TYPES:
-        return "new opaque type"
     previous_base = bare_container_base(previous)
     proposed_base = bare_container_base(proposed)
     if previous in {"<missing>", "<none>"}:
         return None
     if previous_names & OPAQUE_TYPES and not proposed_names & OPAQUE_TYPES:
         return None
-    if (
-        previous_base == proposed_base
-        and previous_base in CONTAINER_TYPES
-        and "[" not in previous
-        and "[" in proposed
-    ):
+
+    if proposed_names & OPAQUE_TYPES:
+        return "existing typed surface relaxed to opaque type"
+    if type_gained_parameters(previous, proposed):
         return None
-    if (
-        previous_base in CONTAINER_TYPES
-        and "[" not in previous
-        and proposed_names & CONTAINER_TYPES
-    ):
-        return None
-    broad_added = proposed_names & BROAD_SAGE_TYPES
-    if broad_added and not broad_added <= previous_names:
-        return "broader Sage base introduced"
-    if (
-        previous_base == proposed_base
-        and previous_base in CONTAINER_TYPES
-        and "[" in previous
-        and "[" not in proposed
-    ):
-        return "parameterized container became unparameterized"
-    if "|" in previous and proposed in OPAQUE_TYPES | BROAD_SAGE_TYPES:
+    if lost_generic_parameters(previous, proposed):
+        return "generic parameters removed from existing type surface"
+    if union_collapsed_to_broad_type(previous, proposed):
         return "precise union replaced by broad placeholder"
+    if relaxed_to_known_broad_math_type(previous_names, proposed_names):
+        return "mathematical type relaxed to broader Sage/domain base"
+    if class_base_relaxed(previous, proposed, kind):
+        return "class base replaced with broader Sage/domain base"
+    if changed_between_sage_types(previous_names, proposed_names):
+        return "changed Sage/domain type names require relaxation review"
     return None
 
 
 def bare_container_base(value: str) -> str:
     for part in (part.strip() for part in value.split("|")):
         base = part.split("[", 1)[0].strip()
-        if base in CONTAINER_TYPES:
+        if base in GENERIC_TYPES:
             return base
     return value.split("[", 1)[0].strip()
+
+
+def type_gained_parameters(previous: str, proposed: str) -> bool:
+    return (
+        bare_container_base(previous) == bare_container_base(proposed)
+        and bare_container_base(previous) in GENERIC_TYPES
+        and "[" not in previous
+        and "[" in proposed
+    )
+
+
+def lost_generic_parameters(previous: str, proposed: str) -> bool:
+    return (
+        bare_container_base(previous) == bare_container_base(proposed)
+        and bare_container_base(previous) in GENERIC_TYPES
+        and "[" in previous
+        and "[" not in proposed
+    )
+
+
+def union_collapsed_to_broad_type(previous: str, proposed: str) -> bool:
+    if "|" not in previous:
+        return False
+    proposed_names = names_in_type(proposed)
+    broad_names = OPAQUE_TYPES | BROAD_MATHEMATICAL_TYPES
+    return bool(proposed_names & broad_names)
+
+
+def relaxed_to_known_broad_math_type(previous_names: set[str], proposed_names: set[str]) -> bool:
+    broad_added = proposed_names & BROAD_MATHEMATICAL_TYPES
+    if not broad_added or broad_added <= previous_names:
+        return False
+    precise_removed = previous_names - proposed_names
+    return bool(precise_removed)
+
+
+def class_base_relaxed(previous: str, proposed: str, kind: str) -> bool:
+    if kind != "class-bases":
+        return False
+    return relaxed_to_known_broad_math_type(names_in_type(previous), names_in_type(proposed))
+
+
+def changed_between_sage_types(previous_names: set[str], proposed_names: set[str]) -> bool:
+    removed = previous_names - proposed_names
+    added = proposed_names - previous_names
+    if not removed or not added:
+        return False
+    return any(looks_like_domain_type(name) for name in removed | added)
+
+
+def looks_like_domain_type(name: str) -> bool:
+    if name in {"None", "Literal", "Self", "TypeVar", "Protocol"}:
+        return False
+    return "_" in name or name[:1].isupper()
 
 
 def names_in_type(value: str) -> set[str]:
@@ -271,6 +376,36 @@ def names_in_type(value: str) -> set[str]:
     except SyntaxError:
         return {value}
     return {node.id for node in ast.walk(tree) if isinstance(node, ast.Name)}
+
+
+def demo_relaxation_cases() -> int:
+    """Run one-off examples for the agent-hacking patterns this gate owns."""
+    cases = [
+        ("return", "VectorSpace", "FreeModule", True),
+        ("return", "Matrix_integer_dense", "Matrix", True),
+        ("return", "FiniteField", "Field", True),
+        ("return", "Sequence[int]", "Sequence", True),
+        ("return", "Callable[[int], str]", "Callable", True),
+        ("return", "<missing>", "FiniteField", False),
+        ("return", "Any", "FiniteField", False),
+        ("parameter", "FiniteField", "object", True),
+        ("parameter", "Word_class", "Word_class", False),
+    ]
+    failed = 0
+    for kind, previous, proposed, should_flag in cases:
+        reason = relaxation_reason(previous, proposed, kind)
+        flagged = reason is not None
+        status = "ok" if flagged == should_flag else "FAIL"
+        print(f"{status}: {kind} {previous} -> {proposed}: {reason or 'allowed'}")
+        failed += int(flagged != should_flag)
+
+    allowed_eq = SurfaceItem("parameter", "demo.pyi", "__eq__.other", "object")
+    if is_allowed_protocol_widening(allowed_eq, "Self"):
+        print("ok: parameter Self -> object allowed for __eq__.other")
+    else:
+        print("FAIL: parameter Self -> object should be allowed for __eq__.other")
+        failed += 1
+    return 1 if failed else 0
 
 
 def main() -> int:
@@ -282,7 +417,15 @@ def main() -> int:
         action="store_true",
         help="print high-risk widenings without failing",
     )
+    parser.add_argument(
+        "--demo-relaxation-cases",
+        action="store_true",
+        help="run contrived relaxation examples and exit",
+    )
     args = parser.parse_args()
+
+    if args.demo_relaxation_cases:
+        return demo_relaxation_cases()
 
     files = selected_files(args.staged, args.files)
     if not files:
@@ -290,7 +433,7 @@ def main() -> int:
         return 0
 
     had_items = False
-    high_risk: list[str] = []
+    violations: list[str] = []
     for path in files:
         report = report_file(path, args.staged)
         if not report.lines:
@@ -299,7 +442,7 @@ def main() -> int:
         print(f"\n# {path.relative_to(REPO_ROOT)}")
         for line in report.lines:
             print(line)
-        high_risk.extend(report.high_risk)
+        violations.extend(report.violations)
 
     if not had_items:
         print("type_surface_review: no type-surface changes found.")
@@ -308,14 +451,22 @@ def main() -> int:
             "\nReview required: classify every item as stricter, equivalent, "
             "or weaker against Sage 10.7 source before staging or committing."
         )
-    if high_risk:
-        print("\nHigh-risk broadening detected:")
-        for line in high_risk:
+    if violations:
+        print("\nType-relaxation violation candidates detected:")
+        for line in violations:
             print(f"! {line}")
         print(
-            "\nRejected: remove the broadening or cite source proof and rerun "
-            "with --allow-high-risk for a local audit only. Pre-commit must not "
-            "accept unresolved high-risk weakening."
+            "\nRejected for agent review: this repo requires the most mathematically "
+            "precise, tight type that remains correct, coherent, and consistent with "
+            "the surrounding Sage stubs. Do not relax a type merely to pass tests, "
+            "lint, mypy, imports, package registration, or another local checker.\n\n"
+            "Stop and re-evaluate whether repo rules permit every listed relaxation. "
+            "Do NOT modify this script to permit fewer violations; changes to this "
+            "guardrail may only flag or detect more possible relaxations. If a "
+            "widening is truly forced by Sage source, isolate that widening in a "
+            "single commit with a detailed source-backed audit trail explaining why "
+            "the previous type was wrong and why the replacement is the tightest "
+            "coherent type available."
         )
         if not args.allow_high_risk:
             return 1
