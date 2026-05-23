@@ -119,16 +119,20 @@ not define `extension`.
 
 For `category_specs/rings/subcategories/polynomial_ring.py`, Sage 10.7 defines
 `PolynomialRing_generic.completion` at
-`sage-src/src/sage/rings/polynomial/polynomial_ring.py:620`, but the current
-`sage-stubs/rings/polynomial/polynomial_ring.pyi` is a legacy file with
-guardrail-blocking `object` annotations. The same source file does not define a
-direct `extension` method on `PolynomialRing_generic`.
+`sage-src/src/sage/rings/polynomial/polynomial_ring.py:620`. The
+source-backed sidecar now declares `completion` and replaces the legacy
+`object` parameters on `random_element`, `quotient`, and `change_ring`.
+Downstream still reports the `@override` row for
+`category_specs/rings/subcategories/polynomial_ring.py:82`, which points to the
+local provider base rather than the ordinary `PolynomialRing_generic` sidecar.
+The same source file does not define a direct `extension` method on
+`PolynomialRing_generic`.
 
-- Searched: current `category_specs` ledger; Sage 10.7 `sage-src/src/sage/rings/polynomial/polynomial_ring.py`; `sage-stubs/rings/polynomial/polynomial_ring.pyi`; `scripts/check_stubs.py`.
-- Found: `completion` is a true missing sidecar candidate, while `extension` is not source-backed on `PolynomialRing_generic`; touching the stub requires first resolving existing banned `object` annotations in `random_element`, `quotient`, and `change_ring`.
-- Conclusion: inference — `completion` is blocked by legacy stub cleanup, and `extension` should not be added to `PolynomialRing_generic` without a different source owner.
+- Searched: current `category_specs` ledger after reinstalling the staged sidecar; Sage 10.7 `sage-src/src/sage/rings/polynomial/polynomial_ring.py`; Sage 10.7 `sage-src/src/sage/rings/lazy_series_ring.py`; `sage-stubs/rings/polynomial/polynomial_ring.pyi`; `sage-stubs/rings/lazy_series_ring.pyi`; `just check`; `/home/dzack/research` `just category-specs-mypy-structural-report-full` and `just category-specs-mypy-ledger`.
+- Found: `completion` is present in the ordinary sidecar and validates locally, but the downstream ordinary error count remains `1815` with `99` missing-sidecar rows; `polynomial_ring.py:82` still reports an override-base failure. `extension` remains unsupported by direct Sage source evidence.
+- Conclusion: inference — the remaining `completion` row is a local category-provider inheritance/design row, not a missing ordinary `PolynomialRing_generic.completion` sidecar row. `extension` should not be added to `PolynomialRing_generic` without a different source owner.
 - Confidence: High for `completion`; Medium for `extension`.
-- Gaps: A future polynomial-ring batch should source-audit `quotient`, `change_ring`, `random_element`, and `completion` together.
+- Gaps: This does not classify whether the downstream local provider should inherit from a generated category provider, a protocol, or a different local base.
 
 ### `sage.categories.posets.Posets.ParentMethods`
 
