@@ -303,6 +303,11 @@ pre-commit hook.
   argument container type such as a `TypedDict` or protocol that
   enumerates the possible keyword/argument variables. If the cases cannot
   be exhausted, leave the stub unchanged and report the blocked evidence.
+- **No `object` outside known forced slots.** `object` is banned in
+  annotations except for the finite Python-forced slots centralized in
+  `scripts/stub_annotation_policy.py`: currently `__new__` returns and
+  the `__contains__.x`, `__eq__.other`, and `__ne__.other` parameters.
+  Add to that list only with source-backed justification.
 - **No local suppressions.** `# type: ignore`, `# noqa`, `cast(...)`,
   and similar lint or type-checking suppressions are banned in stub
   files. Fix the signature, import, or supporting stub instead.

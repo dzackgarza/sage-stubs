@@ -173,7 +173,7 @@ starting. Mark `✅ Done` on the same line when the commit lands.
   container/option type when that is tighter than the variadic source
   spelling. If a variadic signature remains, its annotation is still part
   of the type surface and must not be broadened. Reserve `object` for
-  Python protocol slots already allowed in AGENTS.md.
+  the Python-forced slots centralized in `scripts/stub_annotation_policy.py`.
 - **Forward references and import cycles.** Sage's runtime relies heavily
   on `LazyImport` to break import cycles. Stubs cannot use `LazyImport`,
   and quoted/string type references are banned. Add the direct import or

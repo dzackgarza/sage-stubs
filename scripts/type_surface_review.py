@@ -17,6 +17,8 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path
 
+from stub_annotation_policy import is_allowed_object_parameter_surface
+
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
 ANNOTATION_IMPORT_MODULES = {
@@ -82,13 +84,6 @@ GENERIC_TYPES = {
     "tuple",
     "type",
 }
-
-ALLOWED_OBJECT_PARAMETER_SLOTS = {
-    "__contains__.x",
-    "__eq__.other",
-    "__ne__.other",
-}
-
 
 @dataclass(frozen=True, order=True)
 class SurfaceItem:
@@ -283,7 +278,7 @@ def is_allowed_protocol_widening(item: SurfaceItem, previous: str) -> bool:
     """Permit Python-forced object parameters in named protocol slots only."""
     if item.kind != "parameter":
         return False
-    if not any(item.name.endswith(slot) for slot in ALLOWED_OBJECT_PARAMETER_SLOTS):
+    if not is_allowed_object_parameter_surface(item.name):
         return False
     return proposed_is_exact_object(item.value) and previous not in {"<missing>", "<none>"}
 

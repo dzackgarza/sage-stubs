@@ -24,6 +24,8 @@ import ast
 import sys
 from pathlib import Path
 
+from stub_annotation_policy import OBJECT_RETURN_OK, is_allowed_object_parameter
+
 
 def is_any(node: ast.expr) -> bool:
     return (isinstance(node, ast.Name) and node.id == "Any") or (
@@ -33,6 +35,12 @@ def is_any(node: ast.expr) -> bool:
 
 def is_object(node: ast.expr) -> bool:
     return isinstance(node, ast.Name) and node.id == "object"
+
+
+def contains_object_annotation(node: ast.AST | None) -> bool:
+    if node is None:
+        return False
+    return any(isinstance(child, ast.Name) and child.id == "object" for child in ast.walk(node))
 
 
 def is_opaque_variadic_annotation(node: ast.AST | None) -> bool:
@@ -83,18 +91,27 @@ def check_annotation_expr(
     path: Path,
     lineno: int,
     label: str,
+    *,
+    allow_exact_object: bool = False,
+    check_object: bool = True,
 ) -> list[str]:
-    if not contains_quoted_annotation(annotation):
-        return []
-    return [
-        f"{path}:{lineno}: {label} contains quoted type annotation — banned. "
-        "Import the annotation type directly or add the source-backed support stub; "
-        "string forward references hide type-surface changes."
-    ]
+    errors: list[str] = []
+    if contains_quoted_annotation(annotation):
+        errors.append(
+            f"{path}:{lineno}: {label} contains quoted type annotation — banned. "
+            "Import the annotation type directly or add the source-backed support stub; "
+            "string forward references hide type-surface changes."
+        )
+    object_allowed = allow_exact_object and isinstance(annotation, ast.expr) and is_object(annotation)
+    if check_object and contains_object_annotation(annotation) and not object_allowed:
+        errors.append(
+            f"{path}:{lineno}: {label} uses `object` outside the finite Python-forced "
+            "exception list — banned. Use the tight source-backed type, overloads, "
+            "a finite union, or a source-audited container type."
+        )
+    return errors
 
 
-# Dunders whose return type is legitimately object or whose params accept object
-OBJECT_RETURN_OK = {"__new__"}
 LOCAL_SUPPRESSIONS = ("type: ignore", "noqa")
 LEGACY_TYPING_ALIASES = {"List", "Dict", "Tuple", "Set", "FrozenSet"}
 BUILTIN_COLLISION_NAMES = {"list", "dict", "tuple", "set", "type", "object"}
@@ -133,17 +150,20 @@ def check_function(fn: ast.FunctionDef | ast.AsyncFunctionDef, path: Path) -> li
 
     # Return type
     ret = fn.returns
-    errors.extend(check_annotation_expr(ret, path, ln, f"`{fn.name}` return annotation"))
+    errors.extend(
+        check_annotation_expr(
+            ret,
+            path,
+            ln,
+            f"`{fn.name}` return annotation",
+            allow_exact_object=fn.name in OBJECT_RETURN_OK,
+        )
+    )
     if ret is not None:
         if is_any(ret):
             errors.append(
                 f"{path}:{ln}: `{fn.name}` return type `Any` — banned. "
                 "Use a concrete type, Self, Union, or overload."
-            )
-        if is_object(ret) and fn.name not in OBJECT_RETURN_OK:
-            errors.append(
-                f"{path}:{ln}: `{fn.name}` return type `object` — almost never correct. "
-                "Use a concrete type."
             )
 
     for prefix, arg, container_kind in (
@@ -175,12 +195,18 @@ def check_function(fn: ast.FunctionDef | ast.AsyncFunctionDef, path: Path) -> li
     for arg in all_args:
         if arg.arg in ("self", "cls") or arg.annotation is None:
             continue
+        opaque_variadic = (
+            (arg is fn.args.vararg or arg is fn.args.kwarg)
+            and is_opaque_variadic_annotation(arg.annotation)
+        )
         errors.extend(
             check_annotation_expr(
                 arg.annotation,
                 path,
                 ln,
                 f"`{fn.name}` parameter `{arg.arg}` annotation",
+                allow_exact_object=is_allowed_object_parameter(fn.name, arg.arg),
+                check_object=not opaque_variadic,
             )
         )
         if is_any(arg.annotation):
@@ -358,6 +384,46 @@ def run_self_test() -> int:
             "opaque kwargs variadic",
             "def f(**kwds: object) -> None: ...\n",
             ["variadic `**kwds` uses opaque annotation"],
+        ),
+        (
+            "plain object parameter",
+            "def f(x: object) -> None: ...\n",
+            ["parameter `x` annotation uses `object` outside"],
+        ),
+        (
+            "nested object parameter",
+            "def f(x: list[object]) -> None: ...\n",
+            ["parameter `x` annotation uses `object` outside"],
+        ),
+        (
+            "protocol object parameter",
+            "class C:\n    def __eq__(self, other: object) -> bool: ...\n",
+            [],
+        ),
+        (
+            "contains object parameter",
+            "class C:\n    def __contains__(self, x: object) -> bool: ...\n",
+            [],
+        ),
+        (
+            "object return union",
+            "def f() -> object | None: ...\n",
+            ["return annotation uses `object` outside"],
+        ),
+        (
+            "object variable annotation",
+            "value: object\n",
+            ["variable annotation uses `object` outside"],
+        ),
+        (
+            "object type alias",
+            "from typing import TypeAlias\nAlias: TypeAlias = object\n",
+            ["type alias uses `object` outside"],
+        ),
+        (
+            "object class base",
+            "class C(object): ...\n",
+            ["class base uses `object` outside"],
         ),
     ]
     failed = 0
