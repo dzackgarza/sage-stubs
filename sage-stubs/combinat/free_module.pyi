@@ -19,7 +19,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators[Ab
         self,
         R: CommutativeRing,
         basis_keys: Iterable[Hashable] | AbstractFamily | None = None,
-        element_class: type[Element] | None = None,
+        element_class: type[SageElement] | None = None,
         category: Category | tuple[Category, ...] | None = None,
         prefix: str | None = None,
         names: str | tuple[str, ...] | None = None,
