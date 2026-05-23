@@ -38,6 +38,58 @@ lines 47 and 54 were unchanged.
 
 ## Blocked Candidates
 
+### `category_specs` local override bases, not missing Sage sidecars
+
+Fresh ledger:
+`reports/workstreams/category-specs-mypy-ledger/latest.json` reports
+`override` diagnostics under the `missing sidecar ordinary signature` owner
+for several project-local `ParentMethods` classes. These rows look like
+missing Sage methods, but the affected override base is the local
+`category_specs` provider class, not the concrete Sage class that owns the
+method.
+
+For `category_specs/rings/subcategories/rational_field.py`, the current
+`sage-stubs/rings/rational_field.pyi` already declares the source-backed
+surface for `RationalField`, including `algebraic_closure`, `degree`,
+`absolute_degree`, `signature`, `discriminant`, `absolute_discriminant`,
+`automorphisms`, `class_number`, `power_basis`, `places`, and
+`maximal_order`. Sage 10.7 defines these directly at
+`sage-src/src/sage/rings/rational_field.py:541`, `:552`, `:574`, `:585`,
+`:623`, `:638`, `:939`, `:950`, `:1007`, `:1034`, and `:1073`.
+
+- Searched: current `category_specs` ledger; `/home/dzack/research/category_specs/rings/subcategories/rational_field.py`; `sage-stubs/rings/rational_field.pyi`; Sage 10.7 `sage-src/src/sage/rings/rational_field.py`.
+- Found: the Sage source and stub contain the key `RationalField` methods, while the downstream diagnostics are `@override` failures on a local nested `ParentMethods` class.
+- Conclusion: inference — the remaining `rational_field.py` rows are local category-provider inheritance/design rows, not missing ordinary `RationalField` sidecar methods.
+- Confidence: High.
+- Gaps: Some number-field-style methods in that file may still need separate source review, especially rows delegated through `as_number_field()`.
+
+For `category_specs/sets/subcategories/image.py:116` and
+`category_specs/sets/subcategories/real_set.py:205`, the ordinary Sage
+sidecars already expose `_an_element_`:
+`sage-stubs/sets/image_set.pyi:36` and `sage-stubs/sets/real_set.pyi:109`.
+Sage 10.7 defines the corresponding methods at
+`sage-src/src/sage/sets/image_set.py:401` and
+`sage-src/src/sage/sets/real_set.py:2348`.
+
+- Searched: current `category_specs` ledger; `sage-stubs/sets/image_set.pyi`; `sage-stubs/sets/real_set.pyi`; Sage 10.7 `sage-src/src/sage/sets/image_set.py` and `sage-src/src/sage/sets/real_set.py`.
+- Found: both ordinary sidecars and both Sage source files already define `_an_element_`.
+- Conclusion: inference — these two rows are local wrapper/provider inheritance rows, not missing ordinary `image_set` or `real_set` sidecar methods.
+- Confidence: High.
+- Gaps: This does not classify other `ImageSubobject` or `RealSet` argument/return variance diagnostics.
+
+For `category_specs/modules/subcategories/free.py`, Sage 10.7 defines the
+finite-rank free-module methods directly on
+`sage.tensor.modules.finite_rank_free_module.FiniteRankFreeModule_abstract`:
+`exterior_power` at `:1618`, `alternating_form` at `:2369`,
+`default_basis` at `:2759`, `set_default_basis` at `:2797`, and `bases` at
+`:2873`.
+
+- Searched: current `category_specs` ledger; Sage 10.7 `sage-src/src/sage/tensor/modules/finite_rank_free_module.py`; an isolated local sidecar experiment for `sage-stubs/tensor/modules/finite_rank_free_module.pyi`.
+- Found: Sage defines the requested methods, but the isolated sidecar experiment changed the downstream ordinary error count from `1816` to `1824` and did not clear the targeted local override rows.
+- Conclusion: inference — the current `free.py` override rows depend on local wrapper/provider inheritance and constructor modeling, not just the absence of an importable finite-rank module sidecar.
+- Confidence: Medium.
+- Gaps: A full finite-rank module sidecar may still be needed later, but it must model constructors and category provider bases before it can be a clean issue #5 fix.
+
 ### `sage.categories.posets.Posets.ParentMethods`
 
 Fresh baseline:
