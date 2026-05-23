@@ -13,7 +13,7 @@ This script adds:
   - Any as a parameter type (banned unconditionally)
   - object as a return type (banned except known protocol dunders)
   - quoted/string annotations (banned except string values inside Literal)
-  - variadic *args / **kwds signatures (banned; model the finite surface)
+  - missing or opaque variadic *args / **kwds annotations
   - TYPE_CHECKING, local suppressions, cast, builtins aliases, and legacy typing aliases
 
 Exit 0 = clean. Exit 1 = violations.
@@ -33,6 +33,10 @@ def is_any(node: ast.expr) -> bool:
 
 def is_object(node: ast.expr) -> bool:
     return isinstance(node, ast.Name) and node.id == "object"
+
+
+def is_opaque_variadic_annotation(node: ast.AST | None) -> bool:
+    return isinstance(node, ast.expr) and (is_any(node) or is_object(node))
 
 
 def is_literal_subscript(node: ast.AST) -> bool:
@@ -142,18 +146,25 @@ def check_function(fn: ast.FunctionDef | ast.AsyncFunctionDef, path: Path) -> li
                 "Use a concrete type."
             )
 
-    if fn.args.vararg:
-        errors.append(
-            f"{path}:{ln}: `{fn.name}` variadic `*{fn.args.vararg.arg}` — banned in stubs. "
-            "Exhaust the source code paths into overloads, finite unions, or a "
-            "source-audited argument container type that enumerates every accepted variable."
-        )
-    if fn.args.kwarg:
-        errors.append(
-            f"{path}:{ln}: `{fn.name}` variadic `**{fn.args.kwarg.arg}` — banned in stubs. "
-            "Exhaust the source code paths into overloads, finite unions, or a "
-            "source-audited keyword container type that enumerates every accepted variable."
-        )
+    for prefix, arg, container_kind in (
+        ("*", fn.args.vararg, "argument"),
+        ("**", fn.args.kwarg, "keyword"),
+    ):
+        if arg is None:
+            continue
+        variadic = f"{prefix}{arg.arg}"
+        if arg.annotation is None:
+            errors.append(
+                f"{path}:{ln}: `{fn.name}` variadic `{variadic}` has no annotation — banned. "
+                "Variadic slots are type-surface positions; use overloads, finite unions, "
+                f"or a source-audited {container_kind} container type that enumerates the accepted cases."
+            )
+        elif is_opaque_variadic_annotation(arg.annotation):
+            errors.append(
+                f"{path}:{ln}: `{fn.name}` variadic `{variadic}` uses opaque annotation "
+                f"`{ast.unparse(arg.annotation)}` — banned. Variadic slots are type-surface "
+                "positions; do not relax them to Any or object."
+            )
 
     # Parameters
     all_args = (
@@ -329,14 +340,24 @@ def run_self_test() -> int:
             ["type alias contains quoted type annotation"],
         ),
         (
-            "args variadic",
+            "typed args variadic",
             "def f(*args: int) -> None: ...\n",
-            ["variadic `*args`"],
+            [],
         ),
         (
-            "kwargs variadic",
+            "typed kwargs variadic",
             "def f(**kwds: int) -> None: ...\n",
-            ["variadic `**kwds`"],
+            [],
+        ),
+        (
+            "missing variadic annotation",
+            "def f(*args) -> None: ...\n",
+            ["variadic `*args` has no annotation"],
+        ),
+        (
+            "opaque kwargs variadic",
+            "def f(**kwds: object) -> None: ...\n",
+            ["variadic `**kwds` uses opaque annotation"],
         ),
     ]
     failed = 0

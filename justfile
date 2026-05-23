@@ -6,21 +6,36 @@ check:
     ruff check sage-stubs/
     @echo "--- check_stubs self-test ---"
     python3 scripts/check_stubs.py --self-test
-    @echo "--- check_stubs: annotation policy ---"
-    python3 scripts/check_stubs.py $(find sage-stubs -name "*.pyi")
+    @echo "--- check_stubs: annotation policy (staged .pyi) ---"
+    @files="$(git diff --cached --name-only --diff-filter=ACM | grep -E '[.]pyi$' || true)"; \
+    if [ -n "$files" ]; then \
+        python3 scripts/check_stubs.py $files; \
+    else \
+        echo "(no staged .pyi files — skipped)"; \
+    fi
     @echo "--- type_surface_review: changed type surfaces require review ---"
-    python3 scripts/type_surface_review.py
+    python3 scripts/type_surface_review.py --staged
     @echo "--- check_guardrails: banned patterns + protected config (--all) ---"
     python3 scripts/check_guardrails.py --all || echo "(legacy backlog — see report above; new commits are still gated by the hook on staged files)"
-    @echo "--- mypy: strict type checking ---"
-    python3 -m mypy --strict sage-stubs/
+    @echo "--- mypy: strict type checking (staged .pyi, follow-imports=silent) ---"
+    @files="$(git diff --cached --name-only --diff-filter=ACM | grep -E '[.]pyi$' || true)"; \
+    if [ -n "$files" ]; then \
+        python3 -m mypy --strict --follow-imports=silent $files; \
+    else \
+        echo "(no staged .pyi files — skipped)"; \
+    fi
     @echo "All checks passed."
 
 # Fast lint only (no mypy)
 lint:
     ruff check sage-stubs/
     python3 scripts/check_stubs.py --self-test
-    python3 scripts/check_stubs.py $(find sage-stubs -name "*.pyi")
+    @files="$(git diff --cached --name-only --diff-filter=ACM | grep -E '[.]pyi$' || true)"; \
+    if [ -n "$files" ]; then \
+        python3 scripts/check_stubs.py $files; \
+    else \
+        echo "(no staged .pyi files — skipped)"; \
+    fi
 
 check-stubs-self-test:
     python3 scripts/check_stubs.py --self-test

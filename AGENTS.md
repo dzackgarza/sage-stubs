@@ -294,12 +294,15 @@ pre-commit hook.
   evidence. Quoted/string type references are banned; they hide
   type-surface changes from review. String values inside `Literal[...]`
   remain allowed.
-- **No opaque variadics.** Do not write `*args` or `**kwds` into a stub
-  as an escape hatch. Analyze the source paths and express the accepted
-  call shapes with overloads, finite unions, or a source-audited argument
-  container type such as a `TypedDict` or protocol that enumerates the
-  possible keyword/argument variables. If the cases cannot be exhausted,
-  leave the stub unchanged and report the blocked evidence.
+- **No relaxed or opaque variadics.** Variadic parameters are
+  type-surface positions. If `*args` or `**kwds` is the precise
+  source-backed surface, keep it annotated with the tightest known type;
+  do not relax that annotation to `Any`, `object`, or a broader domain
+  type. If the source paths can be exhausted more explicitly, replace
+  the variadic spelling with overloads, finite unions, or a source-audited
+  argument container type such as a `TypedDict` or protocol that
+  enumerates the possible keyword/argument variables. If the cases cannot
+  be exhausted, leave the stub unchanged and report the blocked evidence.
 - **No local suppressions.** `# type: ignore`, `# noqa`, `cast(...)`,
   and similar lint or type-checking suppressions are banned in stub
   files. Fix the signature, import, or supporting stub instead.

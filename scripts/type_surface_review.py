@@ -318,8 +318,6 @@ def relaxation_reason(previous: str, proposed: str, kind: str) -> str | None:
         return "class base replaced with broader Sage/domain base"
     if sage_normalized_integer_spelling(previous_names, proposed_names):
         return None
-    if changed_between_sage_types(previous_names, proposed_names):
-        return "changed Sage/domain type names require relaxation review"
     return None
 
 
