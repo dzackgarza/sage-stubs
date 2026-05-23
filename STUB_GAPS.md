@@ -90,6 +90,46 @@ finite-rank free-module methods directly on
 - Confidence: Medium.
 - Gaps: A full finite-rank module sidecar may still be needed later, but it must model constructors and category provider bases before it can be a clean issue #5 fix.
 
+For `category_specs/forms/subcategories/*.py` and the predicate-only module
+subcategories, the live rows name project taxonomy predicates such as
+`has_form`, `is_quadratic`, `is_bilinear`, `is_nondegenerate`, `is_free`,
+`is_indefinite`, `is_positive_definite`, `is_lattice`, `is_ore_module`, and
+`is_representation_module`. Broad source search finds these names on concrete
+mathematical objects such as matrices, quadratic forms, quaternion algebras, or
+number fields, not on a Sage category provider class matching the
+`category_specs` local `ParentMethods` bases.
+
+- Searched: current `category_specs` ledger; `sage-src/src/sage` for the predicate names; relevant `category_specs/forms/subcategories/*.py` and `category_specs/modules/subcategories/*.py` rows.
+- Found: concrete Sage object methods for several names, but no source-backed Sage category provider surface that matches the local `category_specs` predicate-only `ParentMethods` overrides.
+- Conclusion: inference — these predicate rows are local taxonomy/interface rows, not ordinary Sage sidecar omissions.
+- Confidence: Medium.
+- Gaps: Each predicate can still be re-opened if a specific Sage category provider class is identified, not merely a same-named method on an unrelated concrete object.
+
+For `category_specs/rings/subcategories/puiseux_series_ring.py:55`, the live
+row expects an `extension` method, but Sage 10.7
+`sage-src/src/sage/rings/puiseux_series_ring.py` defines `base_extend`,
+`change_ring`, `fraction_field`, `residue_field`, and `uniformizer`; it does
+not define `extension`.
+
+- Searched: current `category_specs` ledger; Sage 10.7 `sage-src/src/sage/rings/puiseux_series_ring.py`; `rg -n "def extension\b" sage-src/src/sage/rings/puiseux_series_ring.py`.
+- Found: no `extension` definition in the Puiseux series ring source.
+- Conclusion: inference — adding `PuiseuxSeriesRing.extension` to the sidecar would be an invented API for Sage 10.7.
+- Confidence: High.
+- Gaps: This only covers `PuiseuxSeriesRing.extension`; it does not classify other Puiseux series methods or methods on related Laurent/power series rings.
+
+For `category_specs/rings/subcategories/polynomial_ring.py`, Sage 10.7 defines
+`PolynomialRing_generic.completion` at
+`sage-src/src/sage/rings/polynomial/polynomial_ring.py:620`, but the current
+`sage-stubs/rings/polynomial/polynomial_ring.pyi` is a legacy file with
+guardrail-blocking `object` annotations. The same source file does not define a
+direct `extension` method on `PolynomialRing_generic`.
+
+- Searched: current `category_specs` ledger; Sage 10.7 `sage-src/src/sage/rings/polynomial/polynomial_ring.py`; `sage-stubs/rings/polynomial/polynomial_ring.pyi`; `scripts/check_stubs.py`.
+- Found: `completion` is a true missing sidecar candidate, while `extension` is not source-backed on `PolynomialRing_generic`; touching the stub requires first resolving existing banned `object` annotations in `random_element`, `quotient`, and `change_ring`.
+- Conclusion: inference — `completion` is blocked by legacy stub cleanup, and `extension` should not be added to `PolynomialRing_generic` without a different source owner.
+- Confidence: High for `completion`; Medium for `extension`.
+- Gaps: A future polynomial-ring batch should source-audit `quotient`, `change_ring`, `random_element`, and `completion` together.
+
 ### `sage.categories.posets.Posets.ParentMethods`
 
 Fresh baseline:
