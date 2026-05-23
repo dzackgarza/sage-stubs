@@ -142,6 +142,16 @@ finish a local stub task. If the previous type is source-proven wrong, replace
 it with the most precise source-backed type and document that proof; do not
 route through a broad placeholder first.
 
+Class-base changes between Sage/domain types are high-risk by default. The
+failure mode is local-minimum reward hacking: making one file pass mypy or an
+import check by replacing a precise source hierarchy with a broader nearby base,
+thereby degrading downstream mathematical meaning. If such a weakening is truly
+forced, set a one-time `SAGE_STUBS_TYPE_SURFACE_REVIEW_OTP` value for the commit
+attempt and include the same token in the commit message. The commit message
+must contain `Type-surface relaxation review:`, `Source evidence:`, `Why
+forced:`, `Global regression risk:`, and `Reward-hacking/local-minimum check:`.
+The `commit-msg` hook rejects the commit unless that audit trail is present.
+
 ## Type annotation quality contract (non-negotiable)
 
 `Any` is banned. Not "banned unless justified." Banned. The

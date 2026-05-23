@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import argparse
 import ast
+import os
 import subprocess
 import sys
 from dataclasses import dataclass
@@ -20,6 +21,8 @@ from pathlib import Path
 from stub_annotation_policy import is_allowed_object_parameter_surface
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
+OTP_ENV_VAR = "SAGE_STUBS_TYPE_SURFACE_REVIEW_OTP"
+OTP_MARKER = REPO_ROOT / ".git" / "sage-stubs-type-surface-review-otp"
 
 ANNOTATION_IMPORT_MODULES = {
     "typing",
@@ -373,6 +376,11 @@ def relaxation_reason(
         return "mathematical type relaxed to broader Sage/domain base"
     if class_base_relaxed(previous, proposed, kind):
         return "class base replaced with broader Sage/domain base"
+    if class_base_changed_between_domain_types(previous, proposed, kind):
+        return (
+            "class base changed between Sage/domain types; review for "
+            "local-checker reward-hacking and global hierarchy regression"
+        )
     if sage_normalized_integer_spelling(previous_names, proposed_names):
         return None
     return None
@@ -453,6 +461,12 @@ def class_base_relaxed(previous: str, proposed: str, kind: str) -> bool:
     return relaxed_to_known_broad_math_type(names_in_type(previous), names_in_type(proposed))
 
 
+def class_base_changed_between_domain_types(previous: str, proposed: str, kind: str) -> bool:
+    if kind != "class-bases":
+        return False
+    return changed_between_sage_types(names_in_type(previous), names_in_type(proposed))
+
+
 def changed_between_sage_types(previous_names: set[str], proposed_names: set[str]) -> bool:
     removed = previous_names - proposed_names
     added = proposed_names - previous_names
@@ -497,6 +511,12 @@ def demo_relaxation_cases() -> int:
         ("parameter", "object", "_SupportsWord", True),
         ("return", "Any", "Sequence[_T]", True),
         ("return", "Callable[[Integer], FiniteField]", "Callable[..., FiniteField]", True),
+        (
+            "class-bases",
+            "ExactSubcategorySurface, SourceBackedSpecializedBase",
+            "ExactSubcategorySurface, BroaderNearbyBase",
+            True,
+        ),
         ("parameter", "Word_class", "Word_class", False),
     ]
     failed = 0
@@ -585,6 +605,32 @@ class Demo:
     return 1 if failed else 0
 
 
+def use_otp_bypass(violations: list[str]) -> bool:
+    token = os.environ.get(OTP_ENV_VAR, "").strip()
+    if not token:
+        return False
+    if len(token) < 16 or any(ch.isspace() for ch in token):
+        print(
+            f"\n{OTP_ENV_VAR} is present but invalid. Use a one-time token with "
+            "at least 16 non-whitespace characters.",
+            file=sys.stderr,
+        )
+        return False
+    OTP_MARKER.write_text(
+        "\n".join([token, *violations, ""]),
+        encoding="utf-8",
+    )
+    print(
+        f"\nOTP bypass recorded for this commit attempt. The commit message must "
+        f"include {OTP_ENV_VAR}={token} and a source-backed audit with these "
+        "headings: Type-surface relaxation review, Source evidence, Why forced, "
+        "Global regression risk, Reward-hacking/local-minimum check.\n"
+        "The commit-msg hook will reject the commit if the token or audit headings "
+        "are missing."
+    )
+    return True
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--staged", action="store_true", help="review staged diff")
@@ -646,7 +692,16 @@ def main() -> int:
             "coherent type available."
         )
         if not args.allow_high_risk:
+            if use_otp_bypass(violations):
+                return 0
+            print(
+                f"\nEmergency bypass: set a one-time {OTP_ENV_VAR} value and commit "
+                "with the same token plus a source-backed review in the commit "
+                "message. This is for forced widenings only, not checker convenience."
+            )
             return 1
+    elif OTP_MARKER.exists():
+        OTP_MARKER.unlink()
     return 0
 
 

@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+# Enforce the audit trail for one-time type-surface relaxation bypasses.
+
+set -uo pipefail
+cd "$(git rev-parse --show-toplevel)"
+
+marker=".git/sage-stubs-type-surface-review-otp"
+env_name="SAGE_STUBS_TYPE_SURFACE_REVIEW_OTP"
+msg_file="$1"
+
+if [ ! -s "$marker" ]; then
+    exit 0
+fi
+
+token="$(head -n 1 "$marker")"
+missing=0
+
+need() {
+    local pattern="$1"
+    local label="$2"
+    if ! grep -Fqi "$pattern" "$msg_file"; then
+        printf 'commit-msg: missing required type-surface audit field: %s\n' "$label" >&2
+        missing=1
+    fi
+}
+
+if ! grep -Fq "${env_name}=${token}" "$msg_file"; then
+    printf 'commit-msg: missing one-time type-surface bypass token: %s=%s\n' "$env_name" "$token" >&2
+    missing=1
+fi
+
+need "Type-surface relaxation review:" "Type-surface relaxation review"
+need "Source evidence:" "Source evidence"
+need "Why forced:" "Why forced"
+need "Global regression risk:" "Global regression risk"
+need "Reward-hacking/local-minimum check:" "Reward-hacking/local-minimum check"
+
+if [ "$missing" -ne 0 ]; then
+    cat >&2 <<EOF
+
+Type-surface relaxation bypass was requested. The commit message must record
+the exact source-backed review, including the local-minimum reward-hacking risk
+and global regression risk. The one-time token remains pending for retry.
+EOF
+    exit 1
+fi
+
+rm -f "$marker"
