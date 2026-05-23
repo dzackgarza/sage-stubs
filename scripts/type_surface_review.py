@@ -235,6 +235,7 @@ def report_file(path: Path, staged: bool) -> SurfaceReport:
 def report_texts(path: Path, before_text: str, after_text: str) -> SurfaceReport:
     before = collect(before_text, path)
     after = collect(after_text, path)
+    typevar_names = collect_typevar_names(after_text)
     removed = sorted(before - after)
     added = sorted(after - before)
     lines: list[str] = []
@@ -258,13 +259,57 @@ def report_texts(path: Path, before_text: str, after_text: str) -> SurfaceReport
                     continue
                 if is_allowed_protocol_widening(proposed, previous.value):
                     continue
-                reason = relaxation_reason(previous.value, proposed.value, proposed.kind)
+                reason = relaxation_reason(
+                    previous.value,
+                    proposed.value,
+                    proposed.kind,
+                    typevar_names,
+                )
                 if reason:
                     violations.append(
                         f"{proposed.path}: {proposed.kind} {proposed.name}: "
                         f"{previous.value} -> {proposed.value} ({reason})"
                     )
     return SurfaceReport(lines, violations)
+
+
+def collect_typevar_names(text: str) -> set[str]:
+    """Return TypeVar symbols introduced by a stub file."""
+    if not text.strip():
+        return set()
+    try:
+        tree = ast.parse(text)
+    except SyntaxError:
+        return set()
+    names: set[str] = set()
+    for node in ast.walk(tree):
+        targets: list[ast.expr]
+        value: ast.AST | None
+        if isinstance(node, ast.Assign):
+            targets = list(node.targets)
+            value = node.value
+        elif isinstance(node, ast.AnnAssign):
+            targets = [node.target]
+            value = node.value
+        else:
+            continue
+        if not is_typevar_call(value):
+            continue
+        for target in targets:
+            if isinstance(target, ast.Name):
+                names.add(target.id)
+    return names
+
+
+def is_typevar_call(node: ast.AST | None) -> bool:
+    if not isinstance(node, ast.Call):
+        return False
+    func = node.func
+    return (
+        isinstance(func, ast.Name) and func.id == "TypeVar"
+    ) or (
+        isinstance(func, ast.Attribute) and func.attr == "TypeVar"
+    )
 
 
 def items_by_key(items: set[SurfaceItem]) -> dict[tuple[str, str, str], list[SurfaceItem]]:
@@ -287,15 +332,23 @@ def proposed_is_exact_object(value: str) -> bool:
     return value == "object"
 
 
-def relaxation_reason(previous: str, proposed: str, kind: str) -> str | None:
+def relaxation_reason(
+    previous: str,
+    proposed: str,
+    kind: str,
+    typevar_names: set[str] | None = None,
+) -> str | None:
     if kind == "annotation-import":
         return None
     if previous == proposed:
         return None
+    typevar_names = typevar_names or set()
     previous_names = names_in_type(previous)
     proposed_names = names_in_type(proposed)
     if previous in {"<missing>", "<none>"}:
         return None
+    if opaque_to_typevar_laundering(previous_names, proposed_names, typevar_names):
+        return "opaque type replaced by TypeVar-bearing generic without source proof"
     if previous_names & OPAQUE_TYPES and not proposed_names & OPAQUE_TYPES:
         return None
 
@@ -314,6 +367,14 @@ def relaxation_reason(previous: str, proposed: str, kind: str) -> str | None:
     if sage_normalized_integer_spelling(previous_names, proposed_names):
         return None
     return None
+
+
+def opaque_to_typevar_laundering(
+    previous_names: set[str],
+    proposed_names: set[str],
+    typevar_names: set[str],
+) -> bool:
+    return bool(previous_names & OPAQUE_TYPES and proposed_names & typevar_names)
 
 
 def bare_container_base(value: str) -> str:
@@ -407,11 +468,13 @@ def demo_relaxation_cases() -> int:
         ("return", "<missing>", "FiniteField", False),
         ("return", "Any", "FiniteField", False),
         ("parameter", "FiniteField", "object", True),
+        ("parameter", "object", "Iterable[_T]", True),
+        ("return", "Any", "Sequence[_T]", True),
         ("parameter", "Word_class", "Word_class", False),
     ]
     failed = 0
     for kind, previous, proposed, should_flag in cases:
-        reason = relaxation_reason(previous, proposed, kind)
+        reason = relaxation_reason(previous, proposed, kind, {"_T"})
         flagged = reason is not None
         status = "ok" if flagged == should_flag else "FAIL"
         print(f"{status}: {kind} {previous} -> {proposed}: {reason or 'allowed'}")
@@ -425,7 +488,7 @@ def demo_relaxation_cases() -> int:
         failed += 1
 
     before_text = """
-from collections.abc import Callable, Sequence
+from collections.abc import Callable, Iterable, Sequence
 
 class Demo:
     def vector_space(self) -> VectorSpace: ...
@@ -434,12 +497,16 @@ class Demo:
     def words(self) -> Sequence[Word_class]: ...
     def callback(self) -> Callable[[Integer], FiniteField]: ...
     def variadic(self, *items: VectorSpace) -> None: ...
+    def erased(self, x: object) -> None: ...
     def newly_typed(self): ...
     def __contains__(self, x: FiniteField) -> bool: ...
     def __eq__(self, other: Self) -> bool: ...
 """
     after_text = """
-from collections.abc import Callable, Sequence
+from collections.abc import Callable, Iterable, Sequence
+from typing import TypeVar
+
+_T = TypeVar("_T")
 
 class Demo:
     def vector_space(self) -> FreeModule: ...
@@ -448,6 +515,7 @@ class Demo:
     def words(self) -> Sequence: ...
     def callback(self) -> Callable: ...
     def variadic(self, *items: FreeModule) -> None: ...
+    def erased(self, x: Iterable[_T]) -> None: ...
     def newly_typed(self) -> FiniteField: ...
     def __contains__(self, x: object) -> bool: ...
     def __eq__(self, other: object) -> bool: ...
@@ -460,6 +528,7 @@ class Demo:
         "words",
         "callback",
         "variadic.*items",
+        "erased.x",
     }
     missing_fragments = {
         fragment

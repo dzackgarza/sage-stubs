@@ -113,6 +113,17 @@ evidence. Classify the change as stricter, equivalent, or weaker. Weaker
 changes are rejected unless the previous stub is source-proven wrong and the
 replacement is the most precise source-backed type available.
 
+Generic annotations require the same source proof as concrete annotations.
+Introducing `TypeVar`, `Protocol`, or a generic container is not a way to erase
+unknown domains. Before adding a type variable, identify the invariant it
+expresses: which input, stored element, receiver, and return positions share the
+same type, and where Sage preserves that identity instead of coercing it. If
+Sage coerces, normalizes, wraps, or stores a different element type, use the
+accepted input domain and the resulting output/storage type explicitly. Do not
+replace `object`, `Any`, or an unresolved parameter with `_T`, `Iterable[_T]`,
+`Sequence[_T]`, `Callable[..., _T]`, or a local protocol unless the source proves
+the type relation.
+
 **Stop-the-line weakening review.** If a diff changes a precise Sage type to a
 broader type, do not continue implementation, staging, or commit preparation
 until the weakening has been removed or independently reviewed. This applies
@@ -149,6 +160,14 @@ repo. Do not add it to parameter, return, alias, or generic positions
 to get around the `Any` ban. If the concrete type is unknown, stop and
 resolve it from Sage source, runtime evidence, docs, or a supporting
 sidecar before editing the stub.
+
+`TypeVar` is not an acceptable replacement opacity marker. A type variable is
+valid only when it states a real relationship between type positions. It is
+invalid when it merely says "some type" for a constructor input, mutation input,
+variadic argument, callback, or container whose contents Sage coerces or
+normalizes. Opaque-to-generic changes are review failures by default; isolate
+the change and cite the exact Sage source if the generic relation is truly
+forced.
 
 **Named parameters must be resolved to domain types:**
 
