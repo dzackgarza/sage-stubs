@@ -2,11 +2,14 @@ from collections.abc import Callable, Hashable, Iterable, Iterator
 from typing import TypeAlias
 
 from sage.categories.category import Category
+from sage.rings.integer import Integer
 from sage.structure.element import Element
 from sage.structure.element import InfinityElement
 from sage.structure.parent import Parent
 
 _RecursiveElement: TypeAlias = Element | Hashable
+_MaxDepth: TypeAlias = int | Integer | float | InfinityElement
+_Facade: TypeAlias = bool | Parent | None
 _SearchAlgorithm: TypeAlias = str
 _Structure: TypeAlias = str
 
@@ -15,9 +18,9 @@ def RecursivelyEnumeratedSet(
     successors: Callable[[_RecursiveElement], Iterable[_RecursiveElement]],
     structure: _Structure | None = None,
     enumeration: _SearchAlgorithm | None = None,
-    max_depth: float | InfinityElement = ...,
+    max_depth: _MaxDepth = ...,
     post_process: Callable[[_RecursiveElement], _RecursiveElement | None] | None = None,
-    facade: Parent | None = None,
+    facade: _Facade = None,
     category: Category | None = None,
 ) -> RecursivelyEnumeratedSet_generic | RecursivelyEnumeratedSet_forest: ...
 
@@ -27,9 +30,9 @@ class RecursivelyEnumeratedSet_generic(Parent):
         seeds: Iterable[_RecursiveElement],
         successors: Callable[[_RecursiveElement], Iterable[_RecursiveElement]],
         enumeration: _SearchAlgorithm = "depth",
-        max_depth: float | InfinityElement = ...,
+        max_depth: _MaxDepth = ...,
         post_process: Callable[[_RecursiveElement], _RecursiveElement | None] | None = None,
-        facade: Parent | None = None,
+        facade: _Facade = None,
         category: Category | None = None,
     ) -> None: ...
     def seeds(self) -> Iterable[_RecursiveElement]: ...
