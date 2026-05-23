@@ -1,19 +1,20 @@
 from collections.abc import Iterable, Sequence
 from typing import TypeAlias
 
-from sage.dynamics.arithmetic_dynamics.projective_ds import DynamicalSystem_projective
-from sage.rings.integer import Integer
-from sage.rings.ideal import Ideal_generic
-from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.rings.polynomial.multi_polynomial_ideal import MPolynomialIdeal
-from sage.rings.ring import Ring
+from ...categories.homset import Homset
+from ...dynamics.arithmetic_dynamics.projective_ds import DynamicalSystem_projective
+from ...rings.integer import Integer
+from ...rings.ideal import Ideal_generic
+from ...rings.polynomial.polynomial_element import Polynomial
+from ...rings.polynomial.multi_polynomial_ideal import MPolynomialIdeal
+from ...rings.ring import Ring
 from ..affine.affine_space import AffineSpace_generic
 from ..affine.affine_subscheme import AlgebraicScheme_subscheme_affine
 from ..generic.algebraic_scheme import AlgebraicScheme_subscheme
 from .projective_morphism import SchemeMorphism_polynomial_projective_subscheme_field
 from .projective_point import SchemeMorphism_point_projective_ring
 from .projective_space import ProjectiveSpace_field
-from sage.structure.element import RingElement
+from ...structure.element import RingElement
 
 _PointLike: TypeAlias = SchemeMorphism_point_projective_ring | Sequence[RingElement]
 _PolynomialInput: TypeAlias = Polynomial | Ideal_generic | Iterable[Polynomial]
@@ -23,7 +24,12 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         self, A: ProjectiveSpace_field, polynomials: _PolynomialInput
     ) -> None: ...
     def point(self, v: _PointLike, check: bool = True) -> SchemeMorphism_point_projective_ring: ...
-    def _morphism(self, *args: object, **kwds: object) -> SchemeMorphism_polynomial_projective_subscheme_field: ...
+    def _morphism(
+        self,
+        parent: Homset[AlgebraicScheme_subscheme_projective, AlgebraicScheme_subscheme_projective],
+        polys: Sequence[Polynomial],
+        check: bool = True,
+    ) -> SchemeMorphism_polynomial_projective_subscheme_field: ...
     def dimension(self) -> Integer: ...
     def affine_patch(self, i: Integer, AA: AffineSpace_generic | None = None) -> AlgebraicScheme_subscheme_affine: ...
     def _best_affine_patch(self, point: _PointLike) -> Integer: ...
