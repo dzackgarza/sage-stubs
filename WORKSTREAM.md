@@ -8,16 +8,18 @@ stub surfaces, or by rejecting a listed surface with source/runtime evidence.
 Current baseline:
 
 - Issue scope: 370 stubs-owned `category_specs` rows.
-- Validated committed progress: 41 ordinary rows removed from the refreshed
+- Validated committed progress: 53 ordinary rows removed from the refreshed
   downstream ledger after the accepted category, integer, combinatorial free
-  module, finite-poset, matrix/module, and real-field stub batches.
+  module, finite-poset, matrix/module, real-field, and CategoryWithAxiom stub
+  batches.
 - Current downstream ledger after reinstalling committed stubs:
-  `ordinary_error_count = 1759`, with owner counts:
-  `mathematical/category-interface question = 389`,
+  `ordinary_error_count = 1747`, with owner counts:
+  `mathematical/category-interface question = 382`,
   `missing sidecar ordinary signature = 99`,
-  `research typing/design = 1271`.
-- Current local state after the latest accepted commits: no tracked file diff;
-  untracked `.serena/` metadata may exist and must not be committed.
+  `research typing/design = 1266`.
+- Current local state after the latest accepted commits: `WORKSTREAM.md` is the
+  orchestration registry being updated; untracked `.serena/` metadata may exist
+  and must not be committed.
 
 The main throughput problem is serial row-picking. Use this plan to split the
 remaining work by stub ownership, run agents in parallel in isolated worktrees
@@ -32,11 +34,21 @@ context, and clearly within an unclaimed lane. The default coordinator action is
 to turn a row family into a bounded subagent prompt, not to start implementing
 the row family directly.
 
+Coordinator token discipline is part of the plan. The main thread should spend
+tokens on orchestration: forming lanes, writing precise prompts, monitoring
+transcripts, comparing diffs with Sage source, validating downstream ledger
+deltas, posting issue comments, and keeping this registry current. It should not
+spend substantial tokens doing source enumeration, type-resolution, or broad
+stub implementation itself. When a task looks like real implementation rather
+than trivial polishing or already-contextual correction, delegate it.
+
 Subagent preference order:
 
 - Use Spark subagents first while suitable Spark capacity remains.
 - After Spark capacity is exhausted, use GPT-5.5 subagents with low
   reasoning/effort when the runtime offers that model and setting.
+- Record when Spark capacity is unavailable or exhausted, and make the GPT-5.5
+  low-reasoning/low-effort fallback explicit in the registry row.
 - Escalate model strength or reasoning effort only when transcript evidence
   shows the worker is stalling, drifting, or making source/type-surface mistakes.
 - Keep small, already-contextual edits in the coordinator thread when subagent
@@ -162,8 +174,9 @@ Owned files:
 
 Immediate action:
 
-- Commit the validated `Category.__classcall__` `Integer` domain edit if it
-  still passes hooks and downstream validation.
+- Keep the registry, issue comments, worker assignments, and downstream ledger
+  reconciliation current while pushing substantive implementation into bounded
+  subagent lanes.
 
 Responsibilities:
 
@@ -243,9 +256,10 @@ Current active registry:
 | CategoryWithAxiom blocker implementation | Linnaeus / GPT-5.5 low | agent fork workspace | `019e57d6-b73b-7e90-9691-592d1f6d51c7` | `categories/category_with_axiom.pyi` | `CategoryWithAxiom(base_category)` row at `category_specs/cat/base_category_types.py:801` | `ordinary_error_count=1759` | merged in `31fd0b3`; overload patch reduced downstream to `ordinary_error_count=1747` and removed target rows 648, 686, 718, 801, plus temporary row 802 | cleaned by agent close and issue evidence comment |
 | Combinatorics constructor cleanup implementation | Faraday / GPT-5.5 low | agent fork workspace | `019e57d7-006c-7b73-9a1a-e6c832853868` | `combinat/subset.pyi`, `combinat/set_partition.pyi` | `Subsets(..., Integer(k))` and `SetPartition(blocks, check=...)` constructor rows | `ordinary_error_count=1759` | closed: no merge; attempted bounded cleanup backed out because type-surface review rejected local generic abstraction and strict mypy still rejected existing `Subsets_s.__call__` override | cleaned by agent close and issue evidence comment |
 | Finite-rank tensor source-complete implementation | Erdos / GPT-5.5 low | agent fork workspace | `019e57d7-4c33-7500-a333-575d045723b3` | `tensor/modules/*.pyi` sidecars needed for finite-rank methods only | finite-rank `bases`, `default_basis`, `set_default_basis`, `exterior_power`, `alternating_form`; `dimension` excluded | `ordinary_error_count=1759` | closed: no merge; no bounded source-complete patch feasible without a larger tensor-module sidecar project, and no tensor files were edited | cleaned by agent close and issue evidence comment |
-| Subsets constructor cleanup | Nietzsche / GPT-5.5 low | agent fork workspace | `019e57eb-10c7-7673-9a41-4eed8c0e6de7` | `combinat/subset.pyi` | `Subsets(..., Integer(k))` row at `category_specs/sets/__init__.py:304` | `ordinary_error_count=1747` | active implementation/evidence lane | close after merge/rejection and registry update |
-| SetPartition constructor cleanup | Pauli / GPT-5.5 low | agent fork workspace | `019e57eb-5633-7581-98d0-88a7d67949c4` | `combinat/set_partition.pyi` | `SetPartition(blocks, check=...)` rows at `category_specs/sets/__init__.py:1225` | `ordinary_error_count=1747` | active implementation/evidence lane | close after merge/rejection and registry update |
-| Finite-rank tensor project decomposition | Curie / GPT-5.5 low | agent fork workspace | `019e57eb-8fec-7611-82c1-0125dc8ad0a4` | no edits | finite-rank tensor source-complete sidecar commit sequence and first implementable lane | `ordinary_error_count=1747` | active no-edit decomposition lane | close after next implementation lane is registered |
+| Subsets constructor cleanup | Nietzsche / GPT-5.5 low | agent fork workspace | `019e57eb-10c7-7673-9a41-4eed8c0e6de7` | `combinat/subset.pyi` | `Subsets(..., Integer(k))` row at `category_specs/sets/__init__.py:304` | `ordinary_error_count=1747` | closed: no merge; subset-only patch backed out because mypy-clean fix required local generic return-surface relaxation rejected by type-surface review | cleaned by agent close and issue evidence comment |
+| SetPartition constructor cleanup | Pauli / GPT-5.5 low | agent fork workspace | `019e57eb-5633-7581-98d0-88a7d67949c4` | `combinat/set_partition.pyi` | `SetPartition(blocks, check=...)` rows at `category_specs/sets/__init__.py:1225` | `ordinary_error_count=1747` | closed: no merge; set-partition-only patch passed local gates but regressed downstream to `ordinary_error_count=1749`, leaving the target row and exposing `_SetElementMethods` versus `Hashable` contract mismatch | cleaned by agent close and registry update |
+| Finite-rank tensor project decomposition | Curie / GPT-5.5 low | agent fork workspace | `019e57eb-8fec-7611-82c1-0125dc8ad0a4` | no edits | finite-rank tensor source-complete sidecar commit sequence and first implementable lane | `ordinary_error_count=1747` | closed: no edits; produced seven-lane tensor sidecar sequence and identified `reflexive_module.pyi` as the first prerequisite implementation slice | cleaned by agent close and follow-on lane registration |
+| Reflexive module prerequisite sidecar | Ramanujan / GPT-5.5 low | agent fork workspace | `019e57ef-76c9-7122-aff2-d1d68ddbf391` | `tensor/modules/reflexive_module.pyi` | prerequisite sidecar for finite-rank tensor hierarchy; no immediate target-row removal expected | `ordinary_error_count=1747` | merged in `24521e9`; local gates and full downstream ledger passed with `ordinary_error_count=1747`, as expected for a prerequisite sidecar | cleaned by agent close and registry update |
 
 ## Lazy callable stream
 
