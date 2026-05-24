@@ -8,13 +8,16 @@ stub surfaces, or by rejecting a listed surface with source/runtime evidence.
 Current baseline:
 
 - Issue scope: 370 stubs-owned `category_specs` rows.
-- Validated committed progress: 10 rows removed.
-- Current validated but uncommitted progress: `sage-stubs/categories/category.pyi`
-  accepts `Integer` in the existing `Category.__classcall__` argument domain,
-  lowering the latest downstream ledger to 1800 ordinary errors.
-- Effective progress after committing that edit: 13 / 370 rows, about 3.5%.
-- Open local state at plan creation: modified `sage-stubs/categories/category.pyi`
-  and untracked `.serena/` metadata. Do not commit `.serena/`.
+- Validated committed progress: 41 ordinary rows removed from the refreshed
+  downstream ledger after the accepted category, integer, combinatorial free
+  module, finite-poset, matrix/module, and real-field stub batches.
+- Current downstream ledger after reinstalling committed stubs:
+  `ordinary_error_count = 1759`, with owner counts:
+  `mathematical/category-interface question = 389`,
+  `missing sidecar ordinary signature = 99`,
+  `research typing/design = 1271`.
+- Current local state after the latest accepted commits: no tracked file diff;
+  untracked `.serena/` metadata may exist and must not be committed.
 
 The main throughput problem is serial row-picking. Use this plan to split the
 remaining work by stub ownership, run agents in parallel in isolated worktrees
@@ -201,6 +204,14 @@ Active workstream registry template:
 | Stream | Worker | Branch/worktree | Task id | Owned files | Target rows | Baseline | Status | Cleanup |
 |--------|--------|-----------------|---------|-------------|-------------|----------|--------|---------|
 | _example_ | _Spark/GPT worker_ | `.worktrees/<name>` | `<id>` | `<paths>` | `<regex>` | `<count>` | active/review/merged | remove after merge |
+
+Current active registry:
+
+| Stream | Worker | Branch/worktree | Task id | Owned files | Target rows | Baseline | Status | Cleanup |
+|--------|--------|-----------------|---------|-------------|-------------|----------|--------|---------|
+| Sets leaf surfaces | Hegel / GPT-5.5 low | agent fork workspace | `019e575d-ff11-7551-ad27-ba2dbf822f34` | `sets/recursively_enumerated_set.pyi`, `sets/family.pyi`, `sets/condition_set.pyi` | recursively enumerated exports, `AbstractFamily.keys`, `ConditionSet` constructor | `ordinary_error_count=1759` | active | close after accepted patch or rejection evidence |
+| Finite-rank free module surfaces | Averroes / GPT-5.5 low | agent fork workspace | `019e575e-479d-76a3-9365-105ad3bb329e` | `tensor/modules/finite_rank_free_module.pyi`, optional `modules/free_module.pyi` only if source forces it | `bases`, `default_basis`, `set_default_basis`, `dimension`, `exterior_power`, `alternating_form` override rows | `ordinary_error_count=1759` | active | close after accepted patch or rejection evidence |
+| Commutative ring polynomial leaf | Goodall / GPT-5.5 low | agent fork workspace | `019e575e-84fb-7411-94e6-5eeb26f66a7d` | `rings/ring.pyi`, `rings/polynomial/polynomial_ring.pyi` | `CommutativeRing.extension`, `PolynomialRing_generic.completion`; excluding `sage.rings.infinity.oo` | `ordinary_error_count=1759` | active | close after accepted patch or rejection evidence |
 
 ## Lazy callable stream
 
