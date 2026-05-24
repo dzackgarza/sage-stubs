@@ -1,12 +1,12 @@
 from collections.abc import Sequence
 
 from sage.rings.integer import Integer
-from sage.structure.element import Element
+from sage.structure.element import Element, Matrix as MatrixElement
 from sage.structure.parent import Parent
 
 type MatrixIndex = int | Integer | slice | tuple[int | Integer | slice, int | Integer | slice]
 
-class Matrix:
+class Matrix(MatrixElement):
     def __getitem__(self, key: MatrixIndex) -> Element: ...
     def base_ring(self) -> Parent: ...
     def determinant(self, algorithm: str | None = None) -> Element: ...
