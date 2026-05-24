@@ -75,6 +75,7 @@ class SageObject:
     def _regina_init_(self) -> str: ...
 
 
+type SageCoercionAtom = SageObject | int | float | complex | str | bool
 _Persistable: TypeAlias = SageObject | Hashable | Iterable[Hashable]
 
 def loads(s: bytes, compress: bool = True, **kwargs: _PersistKwarg) -> SageObject: ...

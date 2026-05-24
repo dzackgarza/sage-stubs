@@ -1,11 +1,11 @@
 from collections.abc import Iterable
 from typing import SupportsIndex, TypeAlias, overload
 
-from sage.structure.sage_object import SageObject
+from sage.structure.sage_object import SageCoercionAtom, SageObject
 from sage.structure.parent import Parent
 from sage.categories.category import Category
 
-_SequenceElement: TypeAlias = SageObject | int | float | complex | str | bool
+_SequenceElement: TypeAlias = SageCoercionAtom
 
 def Sequence(
     x: Iterable[_SequenceElement],

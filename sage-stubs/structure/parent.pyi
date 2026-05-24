@@ -5,11 +5,11 @@ from sage.categories.homset import Homset
 from sage.categories.morphism import Morphism
 from sage.rings.ring import Ring
 from sage.structure.element import Element
-from sage.structure.sage_object import SageObject
+from sage.structure.sage_object import SageCoercionAtom
 
 from .category_object import CategoryObject
 
-type ParentCallAtom = Element | SageObject | int | float | complex | str | bool
+type ParentCallAtom = Element | SageCoercionAtom
 type ParentCallInput = ParentCallAtom | Sequence[ParentCallAtom]
 
 class Parent(CategoryObject):
