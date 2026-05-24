@@ -1,4 +1,4 @@
-from collections.abc import Sequence
+from collections.abc import Callable, Hashable, Sequence
 
 from sage.categories.category import Category
 from sage.categories.homset import Homset
@@ -11,6 +11,16 @@ from .category_object import CategoryObject
 
 type ParentCallAtom = Element | SageCoercionAtom
 type ParentCallInput = ParentCallAtom | Sequence[ParentCallAtom]
+type AlgebraPrintOption = (
+    str
+    | bool
+    | tuple[str, str]
+    | list[str]
+    | dict[Hashable, str]
+    | Sequence[str]
+    | Callable[[Element], Hashable]
+    | None
+)
 
 class Parent(CategoryObject):
     def __init__(self, category: Category | None = ...) -> None: ...
@@ -22,4 +32,9 @@ class Parent(CategoryObject):
     def zero(self) -> Element: ...
     def base_ring(self) -> Ring: ...
     def quotient_module(self, sub: Parent, **kwargs: bool | int | str) -> Parent: ...
-    def algebra(self, base_ring: Ring | None = ...) -> Parent: ...
+    def algebra(
+        self,
+        base_ring: Ring | None = ...,
+        category: Category | None = ...,
+        **kwds: AlgebraPrintOption,
+    ) -> Parent: ...
