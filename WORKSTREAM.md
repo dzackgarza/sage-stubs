@@ -25,6 +25,56 @@ The main throughput problem is serial row-picking. Use this plan to split the
 remaining work by stub ownership, run agents in parallel in isolated worktrees
 or branches, and merge only source-cited, downstream-validated deltas.
 
+## Non-relaxable PR completion contract
+
+PR #6 is the completion vehicle for issue #5. It must not merge as partial
+evidence, a closeability proof, a reclassification record, or an honest account
+of incomplete work. Merge means the issue #5 Sage stub surfaces are actually
+complete on this branch.
+
+The current hard blockers are implementation work, not documentation work:
+
+- `sage.combinat.subset.Subsets` must accept Sage `Integer` in the `k`
+  argument where Sage source coerces through `Integer(k)`.
+- `sage.combinat.set_partition.SetPartition` must expose direct public
+  `SetPartition(blocks, check=...)` construction.
+- finite-rank free-module stubs must expose `bases`, `default_basis`,
+  `set_default_basis`, `exterior_power`, and `alternating_form`.
+- the tensor-module sidecar hierarchy required for those finite-rank methods
+  must be implemented with source-backed types rather than broad placeholders.
+- the current `99` missing-sidecar ordinary-signature rows must be resolved by
+  implementation where they correspond to real Sage APIs.
+
+Guardrail conflicts are not completion arguments. If a direct patch fails
+because it would require `Any`, `object`, a fake Sage surface, a broad
+superclass placeholder, a generic opacity marker, inherited-method inflation,
+or type-surface weakening, that failure means the worker must implement the
+harder source-backed type model. It does not permit deferral, tarpit closure,
+future-project language, or reclassification-only completion.
+
+A row or surface can leave this PR's completion scope only if source/runtime
+evidence proves that it is not a Sage stub surface requested by issue #5. The
+proof must name the searched source/runtime evidence and the owning follow-up
+work. Difficulty, downstream regression from an attempted patch, touched-file
+policy debt, or an expanded prerequisite hierarchy is not such proof.
+
+Before merge, the final branch must show:
+
+- `just check` passes;
+- downstream `category_specs` structural report and mypy ledger were rerun
+  after reinstalling this branch;
+- targeted downstream filters prove the `Subsets(Integer)`, direct
+  `SetPartition`, finite-rank free-module, `Parent.__call__`,
+  `MatrixSpace.zero`, and `Word_class.parent` defects are gone because the
+  stubs are correct;
+- type-surface review shows no hidden weakening of annotations, bases, aliases,
+  overloads, protocols, `TypeVar`s, or annotation imports.
+
+Do not count comments, PR body updates, issue comments, workstream status
+changes, rejected subagent attempts, or row-bucket summaries as progress against
+this contract unless they accompany source-backed code changes and downstream
+row movement.
+
 ## Orchestrator operating model
 
 The active coordinator is the orchestrator for issue #5. The orchestrator should
