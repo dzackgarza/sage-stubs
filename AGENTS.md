@@ -154,6 +154,8 @@ The `commit-msg` hook rejects the commit unless that audit trail is present.
 If a later `type_surface_review` run finds no staged `.pyi` files, it clears any
 stale pending OTP marker before returning so unrelated non-stub commits are not
 forced to carry an old type-surface bypass audit.
+The marker path is resolved through Git, not by assuming `.git` is a directory,
+so the bypass audit flow also works inside linked worktrees.
 
 ## Type annotation quality contract (non-negotiable)
 
@@ -338,10 +340,12 @@ pre-commit hook.
   enumerates the possible keyword/argument variables. If the cases cannot
   be exhausted, leave the stub unchanged and report the blocked evidence.
 - **No `object` outside known forced slots.** `object` is banned in
-  annotations except for the finite Python-forced slots centralized in
-  `scripts/stub_annotation_policy.py`: currently `__new__` returns and
-  the `__contains__.x`, `__eq__.other`, and `__ne__.other` parameters.
-  Add to that list only with source-backed justification.
+  annotations except for the finite source-forced slots centralized in
+  `scripts/stub_annotation_policy.py`: currently `__new__` returns,
+  `__contains__.x`, `__eq__.other`, `__ne__.other`, and the module-level
+  Sage persistence helpers `dumps.obj` / `save.obj`, which mirror
+  `sage.misc.persist` accepting arbitrary pickleable payloads. Add to that
+  list only with source-backed justification.
 - **No local suppressions.** `# type: ignore`, `# noqa`, `cast(...)`,
   and similar lint or type-checking suppressions are banned in stub
   files. Fix the signature, import, or supporting stub instead.

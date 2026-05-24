@@ -6,6 +6,8 @@ ALLOWED_OBJECT_PARAMETER_SLOTS = {
     ("__contains__", "x"),
     ("__eq__", "other"),
     ("__ne__", "other"),
+    ("dumps", "obj"),
+    ("save", "obj"),
 }
 
 

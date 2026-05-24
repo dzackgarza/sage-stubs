@@ -22,7 +22,13 @@ from stub_annotation_policy import is_allowed_object_parameter_surface
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 OTP_ENV_VAR = "SAGE_STUBS_TYPE_SURFACE_REVIEW_OTP"
-OTP_MARKER = REPO_ROOT / ".git" / "sage-stubs-type-surface-review-otp"
+OTP_MARKER = Path(
+    subprocess.check_output(
+        ["git", "rev-parse", "--git-path", "sage-stubs-type-surface-review-otp"],
+        cwd=REPO_ROOT,
+        text=True,
+    ).strip()
+)
 
 ANNOTATION_IMPORT_MODULES = {
     "typing",
