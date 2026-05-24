@@ -51,7 +51,7 @@ class FiniteRankFreeModule_abstract(UniqueRepresentation, ReflexiveModule_abstra
     def __init__(
         self,
         ring: CommutativeRing,
-        rank: int,
+        rank: int | Integer,
         name: _Name = ...,
         latex_name: _Name = ...,
         category: CategoryObject | None = ...,
@@ -74,10 +74,10 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
     def __classcall_private__(
         cls: type[FiniteRankFreeModule],
         ring: CommutativeRing,
-        rank: int,
+        rank: int | Integer,
         name: _Name = ...,
         latex_name: _Name = ...,
-        start_index: int = ...,
+        start_index: int | Integer = ...,
         output_formatter: _OutputFormatter | None = ...,
         category: CategoryObject | None = ...,
         ambient: ReflexiveModule_abstract | None = ...,
@@ -85,10 +85,10 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
     def __init__(
         self,
         ring: CommutativeRing,
-        rank: int,
+        rank: int | Integer,
         name: _Name = ...,
         latex_name: _Name = ...,
-        start_index: int = ...,
+        start_index: int | Integer = ...,
         output_formatter: _OutputFormatter | None = ...,
         category: CategoryObject | None = ...,
         ambient: ReflexiveModule_abstract | None = ...,
@@ -96,16 +96,16 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
     def construction(self) -> tuple[VectorFunctor, CommutativeRing] | None: ...
     def tensor_module(
         self,
-        k: int,
-        l: int,
+        k: int | Integer,
+        l: int | Integer,
         *,
         sym: _Symmetry = ...,
         antisym: _Symmetry = ...,
     ) -> FiniteRankFreeModule | ReflexiveModule_dual | TensorFreeModule | TensorFreeSubmodule_sym: ...
-    def symmetric_power(self, p: int) -> ReflexiveModule_abstract: ...
-    def dual_symmetric_power(self, p: int) -> ReflexiveModule_abstract: ...
-    def exterior_power(self, p: int) -> CommutativeRing | FiniteRankFreeModule | ExtPowerFreeModule: ...
-    def dual_exterior_power(self, p: int) -> CommutativeRing | FiniteRankDualFreeModule | ExtPowerDualFreeModule: ...
+    def symmetric_power(self, p: int | Integer) -> ReflexiveModule_abstract: ...
+    def dual_symmetric_power(self, p: int | Integer) -> ReflexiveModule_abstract: ...
+    def exterior_power(self, p: int | Integer) -> CommutativeRing | FiniteRankFreeModule | ExtPowerFreeModule: ...
+    def dual_exterior_power(self, p: int | Integer) -> CommutativeRing | FiniteRankDualFreeModule | ExtPowerDualFreeModule: ...
     def general_linear_group(self) -> FreeModuleLinearGroup: ...
     def basis(
         self,
@@ -132,13 +132,13 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
     ) -> FreeModuleTensor | FreeModuleAltForm | FiniteRankFreeModuleElement: ...
     def alternating_contravariant_tensor(
         self,
-        degree: int,
+        degree: int | Integer,
         name: _Name = ...,
         latex_name: _Name = ...,
     ) -> FreeModuleTensor | FiniteRankFreeModuleElement: ...
     def alternating_form(
         self,
-        degree: int,
+        degree: int | Integer,
         name: _Name = ...,
         latex_name: _Name = ...,
     ) -> SageElement | FreeModuleAltForm: ...
@@ -152,7 +152,7 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
     ) -> FreeModuleAutomorphism: ...
     def sym_bilinear_form(self, name: _Name = ..., latex_name: _Name = ...) -> FreeModuleTensor: ...
     def dual(self) -> FiniteRankDualFreeModule: ...
-    def irange(self, start: int | None = ...) -> Iterator[int]: ...
+    def irange(self, start: int | Integer | None = ...) -> Iterator[int]: ...
     def default_basis(self) -> FreeModuleBasis | None: ...
     def set_default_basis(self, basis: FreeModuleBasis) -> None: ...
     def print_bases(self) -> None: ...
