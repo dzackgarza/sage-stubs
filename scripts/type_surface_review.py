@@ -652,6 +652,8 @@ def main() -> int:
 
     files = selected_files(args.staged, args.files)
     if not files:
+        if OTP_MARKER.exists():
+            OTP_MARKER.unlink()
         print("type_surface_review: no changed .pyi files.")
         return 0
 

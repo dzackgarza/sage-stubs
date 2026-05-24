@@ -151,6 +151,9 @@ attempt and include the same token in the commit message. The commit message
 must contain `Type-surface relaxation review:`, `Source evidence:`, `Why
 forced:`, `Global regression risk:`, and `Reward-hacking/local-minimum check:`.
 The `commit-msg` hook rejects the commit unless that audit trail is present.
+If a later `type_surface_review` run finds no staged `.pyi` files, it clears any
+stale pending OTP marker before returning so unrelated non-stub commits are not
+forced to carry an old type-surface bypass audit.
 
 ## Type annotation quality contract (non-negotiable)
 
