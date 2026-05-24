@@ -205,7 +205,7 @@ def check_function(fn: ast.FunctionDef | ast.AsyncFunctionDef, path: Path) -> li
                 path,
                 ln,
                 f"`{fn.name}` parameter `{arg.arg}` annotation",
-                allow_exact_object=is_allowed_object_parameter(fn.name, arg.arg),
+                allow_exact_object=is_allowed_object_parameter(fn.name, arg.arg, str(path)),
                 check_object=not opaque_variadic,
             )
         )

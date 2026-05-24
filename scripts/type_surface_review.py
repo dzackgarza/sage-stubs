@@ -339,7 +339,7 @@ def is_allowed_protocol_widening(item: SurfaceItem, previous: str) -> bool:
     """Permit Python-forced object parameters in named protocol slots only."""
     if item.kind != "parameter":
         return False
-    if not is_allowed_object_parameter_surface(item.name):
+    if not is_allowed_object_parameter_surface(item.path, item.name):
         return False
     return proposed_is_exact_object(item.value) and previous not in {"<missing>", "<none>"}
 

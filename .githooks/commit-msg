@@ -12,6 +12,11 @@ if [ ! -s "$marker" ]; then
     exit 0
 fi
 
+if ! git diff --cached --name-only --diff-filter=ACMR | grep -q '\.pyi$'; then
+    rm -f "$marker"
+    exit 0
+fi
+
 token="$(head -n 1 "$marker")"
 missing=0
 

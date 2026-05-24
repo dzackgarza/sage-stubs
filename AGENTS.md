@@ -156,6 +156,8 @@ stale pending OTP marker before returning so unrelated non-stub commits are not
 forced to carry an old type-surface bypass audit.
 The marker path is resolved through Git, not by assuming `.git` is a directory,
 so the bypass audit flow also works inside linked worktrees.
+The `commit-msg` hook clears stale pending markers and skips OTP enforcement
+when the current staged set has no `.pyi` files.
 
 ## Type annotation quality contract (non-negotiable)
 
@@ -344,8 +346,10 @@ pre-commit hook.
   `scripts/stub_annotation_policy.py`: currently `__new__` returns,
   `__contains__.x`, `__eq__.other`, `__ne__.other`, and the module-level
   Sage persistence helpers `dumps.obj` / `save.obj`, which mirror
-  `sage.misc.persist` accepting arbitrary pickleable payloads. Add to that
-  list only with source-backed justification.
+  `sage.misc.persist` accepting arbitrary pickleable payloads. Path-specific
+  exceptions must stay path-specific in `scripts/stub_annotation_policy.py`; do
+  not allow every function with the same name. Add to that list only with
+  source-backed justification.
 - **No local suppressions.** `# type: ignore`, `# noqa`, `cast(...)`,
   and similar lint or type-checking suppressions are banned in stub
   files. Fix the signature, import, or supporting stub instead.
