@@ -1,9 +1,12 @@
-from collections.abc import Iterable
+from collections.abc import Callable, Iterable
 
 from sage.categories.category import Category
-from sage.categories.morphism import Morphism
+from sage.categories.morphism import Morphism, SetMorphism
+from sage.categories.tensor import TensorProductFunctor
+from sage.matrix.matrix2 import Matrix
 from sage.structure.element import Element
 from sage.structure.parent import Parent
+from sage.structure.sage_object import SageCoercionAtom
 
 class Modules:
     def __init__(self, base_ring: Parent | Category, dispatch: bool = True) -> None: ...
@@ -26,19 +29,24 @@ class Modules:
     class ParentMethods:
         def linear_combination(
             self,
-            iter_of_elements_coeff: Iterable[tuple[object, object]],
+            iter_of_elements_coeff: Iterable[tuple[Element, Element | SageCoercionAtom]],
             factor_on_left: bool = True,
         ) -> Element: ...
         def tensor_square(self) -> Parent: ...
         def module_morphism(
             self,
             *,
-            function: object,
-            category: object | None = None,
-            codomain: object,
-            **keywords: object,
-        ) -> Morphism: ...
-        def quotient(self, submodule: object, check: bool = True, **kwds: object) -> Parent: ...
+            function: Callable[..., Element],
+            category: Category | None = None,
+            codomain: Parent,
+            **keywords: bool | int | str | Matrix | Callable[..., Element] | Element | Category | Parent,
+        ) -> SetMorphism: ...
+        def quotient(
+            self,
+            submodule: Parent | Iterable[Element],
+            check: bool = True,
+            **kwds: bool | int | str | Parent | Element,
+        ) -> Parent: ...
     class ElementMethods:
         ...
     class Homsets:
@@ -54,9 +62,9 @@ class Modules:
         class ParentMethods:
             def __init_extra__(self) -> None: ...
         class ElementMethods:
-            def _lmul_(self, x: object) -> Element: ...
+            def _lmul_(self, x: Element | SageCoercionAtom) -> Element: ...
     class TensorProducts:
         def extra_super_categories(self) -> list[Category]: ...
         class ParentMethods:
-            def construction(self) -> tuple[object, tuple[Parent, ...]]: ...
+            def construction(self) -> tuple[TensorProductFunctor, tuple[Parent, ...]]: ...
             def tensor_factors(self) -> tuple[Parent, ...]: ...
