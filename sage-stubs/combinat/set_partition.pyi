@@ -21,11 +21,11 @@ class SetPartition(AbstractSetPartition):
     @staticmethod
     def __classcall_private__(
         cls: type[SetPartition],
-        blocks: Iterable[Iterable[_SetPartitionElementInput]],
+        parts: Iterable[Iterable[_SetPartitionElementInput]],
         check: bool = ...,
     ) -> SetPartition: ...
     @overload
-    def __init__(self, blocks: Iterable[Iterable[_SetPartitionElementInput]], check: bool = ...) -> None: ...
+    def __init__(self, parts: Iterable[Iterable[_SetPartitionElementInput]], check: bool = ...) -> None: ...
     @overload
     def __init__(
         self, parent: Parent, s: Iterable[Iterable[_SetPartitionElementInput]], check: bool = ...
