@@ -6,16 +6,18 @@ from sage.combinat.permutation import Permutation
 from sage.plot.graphics import Graphics
 from sage.rings.integer import Integer
 from sage.sets.set import Set_object
+from sage.structure.list_clone import ClonableArray
 from sage.structure.parent import Parent
-
-class AbstractSetPartition(Protocol):
-    def __len__(self) -> int: ...
-    def base_set_cardinality(self) -> int: ...
+from sage.structure.unique_representation import UniqueRepresentation
 
 class _SetPartitionElement(Protocol):
     def __eq__(self, other: object) -> bool: ...
 
 _SetPartitionElementInput: TypeAlias = Hashable | _SetPartitionElement
+
+class AbstractSetPartition(ClonableArray[frozenset[_SetPartitionElementInput]]):
+    def __len__(self) -> int: ...
+    def base_set_cardinality(self) -> int: ...
 
 class SetPartition(AbstractSetPartition):
     @staticmethod
@@ -89,7 +91,7 @@ class SetPartition(AbstractSetPartition):
     def blocks(self) -> list[frozenset[_SetPartitionElementInput]]: ...
     def coarsenings(self) -> list[SetPartition]: ...
 
-class SetPartitions(Parent):
+class SetPartitions(UniqueRepresentation, Parent):
     Element: type[SetPartition]
 
     @staticmethod
