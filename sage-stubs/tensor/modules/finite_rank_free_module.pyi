@@ -5,6 +5,7 @@ from sage.categories.morphism import SetIsomorphism
 from sage.categories.pushout import VectorFunctor
 from sage.matrix.matrix2 import Matrix
 from sage.rings.commutative_ring import CommutativeRing
+from sage.rings.commutative_ring_element import CommutativeRingElement
 from sage.rings.integer import Integer
 from sage.structure.category_object import CategoryObject
 from sage.structure.element import Element as SageElement
@@ -141,7 +142,7 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
         degree: int | Integer,
         name: _Name = ...,
         latex_name: _Name = ...,
-    ) -> SageElement | FreeModuleAltForm: ...
+    ) -> CommutativeRingElement | FreeModuleAltForm: ...
     def linear_form(self, name: _Name = ..., latex_name: _Name = ...) -> FreeModuleAltForm: ...
     def automorphism(
         self,
