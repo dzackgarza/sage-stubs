@@ -1,9 +1,16 @@
 # Workstream Plan for issue #5
 
 This document turns `dzackgarza/sage-stubs#5` into parallel, source-backed
-workstreams. The goal is not to classify the research ledger. The goal is to
-remove the stubs-owned `category_specs` failures by implementing real Sage 10.7
-stub surfaces, or by rejecting a listed surface with source/runtime evidence.
+workstreams. Issue #5 is a consumer-driven slice of the larger repository goal:
+complete, correct, and usable Sage stubs. The `category_specs` ledger is a
+high-value diagnostic for that goal, not the goal itself. The coordinator and
+workers must improve the Sage stub surface; they must not optimize for making a
+single consumer's type checker quiet.
+
+Within this issue slice, the goal is not to classify the research ledger. The
+goal is to implement real Sage 10.7 stub surfaces for the stubs-owned
+`category_specs` failures, or to reject a listed surface only with source/runtime
+evidence that it is not a Sage stub surface.
 
 Current baseline:
 
@@ -51,6 +58,72 @@ superclass placeholder, a generic opacity marker, inherited-method inflation,
 or type-surface weakening, that failure means the worker must implement the
 harder source-backed type model. It does not permit deferral, tarpit closure,
 future-project language, or reclassification-only completion.
+
+The failure mode this plan must prevent is not one specific bypass; it is
+hard-work avoidance. When a worker cannot land the source-backed stub, the next
+valid move is to split the stub implementation, add the prerequisite sidecar,
+escalate the exact source/type-model blocker, or keep the lane incomplete. The
+invalid move is to reduce the apparent issue by changing the consumer, metric,
+classification, narrative, or surrounding tooling that exposed the problem.
+
+Difficulty must be earmarked, not laundered. When a lane hits a real obstacle,
+record the obstacle as unresolved required implementation work with the original
+surface still attached. The lane remains open until a deeper source-backed
+attempt lands, is split into a smaller real implementation lane, or is escalated
+to the user as required work that cannot currently be completed. Do not close a
+lane merely because a one-shot patch failed, a local gate exposed more sidecar
+debt, or a downstream run regressed.
+
+Escalation requires recursive decomposition. A worker must enumerate the
+difficulties, revise the implementation plan, and split the hard task into
+smaller source/type questions until the smallest atomic obstacle is isolated.
+Atomic means no smaller unresolved question remains about Sage source ownership,
+directness, runtime behavior, constructor/coercion domain, missing sidecar,
+import cycle, generic invariant, override relation, policy conflict, or checker
+limitation.
+
+A user escalation is allowed only after the atomic obstacle has been persisted on
+through several distinct approaches: direct source-backed implementation,
+prerequisite sidecar or hierarchy implementation, and alternative precise
+type-model or runtime-evidence validation. The escalation must say why the
+blocker is atomic, what was tried, why it failed, and what compromise might be
+needed. Agents may present compromise options, but must not choose one or treat
+the issue as complete without the user's decision.
+
+Sideways work is forbidden as a response to difficulty. Do not answer a hard
+stub failure by adding PR comments, closeability proofs, issue summaries,
+registry entries, downstream casts, downstream type widenings, report refreshes,
+row-classifier changes, integer-wrapper churn, override deletion, or future-work
+language. Those actions may document a decision after the implementation path is
+exhausted, but they are not the next move when the product still needs code.
+
+Artifact drift does not trigger more artifact work. If the lane is already
+artifact-heavy, stop producing artifacts. Do not make an audit note, status
+update, cleaner registry, or explanatory PR comment the next product. The next
+action must be a source-backed `.pyi` edit, a smaller implementation assignment,
+or a user-facing escalation that says the required work remains blocked.
+
+Realignment must lower the amount of active artifact work. Cancel closeability
+proof lanes, report-refresh lanes, registry-only lanes, and no-edit audit lanes
+that are not directly feeding a concrete implementation patch. The coordinator
+may mark such lanes frozen or rejected, but must not replace them with new
+tracking lanes. Resume with fewer live non-code obligations and a named `.pyi`
+implementation target.
+
+The required reflection for a stuck lane is a synthesis, not a checklist:
+"The hard product problem is ___; the last real attempt failed because ___; the
+next deeper source-backed attempt is ___." The coordinator must reject worker
+reports that cannot fill this with concrete Sage source, changed `.pyi` files,
+and validation evidence.
+
+Validation targets are sensors, not repair targets. For this PR, downstream
+`category_specs` code, reports, and validation machinery are read-only except
+for local reruns that reinstall this branch and observe the result. Do not edit
+or commit downstream consumer code, report snapshots, ledger generators, smoke
+tests, plugin behavior, prompts, or issue text to make rows disappear. If a row
+can only be removed by changing a consumer, harness, or plugin instead of the
+stub surface, stop the stub lane and report the ownership break explicitly.
+That row movement is not PR #6 implementation evidence.
 
 A row or surface can leave this PR's completion scope only if source/runtime
 evidence proves that it is not a Sage stub surface requested by issue #5. The
@@ -119,11 +192,125 @@ The orchestrator owns process integrity:
 - split a workstream into substreams when it runs beyond the user-set 2-3 hour
   monitoring trigger or when transcript evidence shows multiple independent row
   families inside one stream.
+- keep hard problems attached to implementation lanes instead of letting them
+  become closeability, reclassification, or future-project artifacts.
 
 Use git worktrees only when the coordinator can keep them organized. Every
 worktree must have a named stream owner, branch, base commit, assigned files,
 task id, status, and cleanup condition. Clean stale worktrees immediately after
 merge, rejection, or abandonment.
+
+## Periodic adversarial audit lane
+
+Owner role: coordinator as adversarial auditor. This is not a documentation lane
+and not a progress-summary lane. Its purpose is to catch the exact drift where
+stub implementation becomes consumer cleanup, metric optimization,
+classification churn, or closeability paperwork.
+
+Audit triggers:
+
+- after compaction, interruption, or session resume;
+- before any status report, issue comment, PR comment, or completion claim;
+- after accepting or rejecting a subagent result;
+- after any downstream `category_specs` validation run;
+- after two consecutive non-implementation work products, including comments,
+  reports, registry updates, row reconciliations, planning edits, or rejected
+  attempts.
+- whenever the recent artifact-to-product ratio is suspicious: multiple
+  comments, reports, registry edits, planning edits, or consumer/report commits
+  with little or no merged source-backed `.pyi` improvement.
+
+Audit evidence:
+
+- tail the current Codex transcript through the transcript parser, starting near
+  the last user correction or audit trigger;
+- inspect actual diffs and logs in `sage-stubs`;
+- inspect downstream repo diffs/logs only to determine whether the validation
+  sensor or consumer was changed;
+- read the current local guidelines for both repos involved before judging a
+  cross-repo edit; for `research`, include its local agent guidance, README, and
+  justfile equivalents before deciding the edit was aligned;
+- ignore worker summaries unless their claims are verified against diffs,
+  source citations, and validation commands.
+
+Audit questions:
+
+- What source-backed Sage stub surface was the lane supposed to improve?
+- What files actually changed, in which repo?
+- Did the change make Sage stubs more complete, precise, and usable, or did it
+  make a consumer/checker/report/classifier quieter?
+- Did any downstream row movement depend on consumer, plugin, report,
+  validation, prompt, issue-scope, or classifier edits?
+- If the lane failed, is the remaining state honestly incomplete, or did the
+  plan convert failure into reclassification, closeability, future-work, or
+  tarpit language?
+- Is artifact production exceeding real product output, and if so, what hard
+  implementation problem is being avoided?
+
+Audit output:
+
+Start with a causal verdict: `aligned`, `contaminated`, `misaligned`, or
+`unclear`. Then state what the lane optimized in practice. If the practical
+optimization target was row disappearance, consumer quieting, status
+cleanliness, issue/PR closeability, or subagent activity rather than better
+Sage stubs, the audit must say so directly and stop the lane. Do not submit an
+audit that merely fills the questions above; the output must synthesize a
+causal account from transcript, diffs, and source evidence.
+
+Before abstract explanation, state the plain diff facts: which files changed,
+which annotations/bases/overrides/casts/wrappers changed, which repo changed,
+and which `.pyi` surfaces became more correct. If the answer is mostly comments,
+reports, registry entries, downstream casts, consumer type changes, integer
+wrappers, deleted overrides, or broader annotations, the output must say that
+directly.
+
+The audit must also state the realignment action. Valid realignment actions are:
+resume the original implementation with a deeper source-backed attempt, split
+the hard surface into smaller implementation lanes, reject/quarantine poisoned
+work, or escalate the unresolved required work to the user. A new comment,
+status artifact, or registry-only update is not realignment.
+
+The audit result should normally live only in the next action. If the next action
+is implementation, the code diff and commit carry it. If the next action is
+escalation, one short user-facing blocker message carries it. Do not create a
+separate audit artifact to prove that the audit happened.
+
+If realignment freezes or rejects work, the visible effect must be less artifact
+load than before: fewer live paperwork lanes, fewer report/comment loops, and no
+new closeability or reconciliation stream. A cleanup that creates a new standing
+artifact obligation is not realignment.
+
+Audit disposition:
+
+- `continue`: source-backed stub implementation improved and validation evidence
+  is uncontaminated.
+- `split`: the hard problem is real but needs a smaller source-backed lane.
+- `escalate`: the lane needs stronger source/type-model review before more
+  worker time is spent.
+- `contaminated`: metric movement or claimed progress depends on a changed
+  consumer, plugin, harness, classifier, report, prompt, or completion scope.
+- `misaligned`: recent work optimized activity, paperwork, or downstream quieting
+  instead of Sage stub quality.
+
+Only `continue`, `split`, or `escalate` may lead to more work on PR #6. A
+`contaminated` or `misaligned` audit stops the affected lane until the original
+stub problem is restored and reassigned.
+
+Misalignment response:
+
+- freeze the affected lane and any lane depending on its metric movement;
+- count recent artifacts versus real product commits since the last accepted
+  source-backed `.pyi` improvement, and treat artifact-heavy output as drift
+  unless the changed `.pyi` surfaces are clearly named;
+- reduce active artifact load by freezing or rejecting artifact-only lanes rather
+  than creating replacement reporting lanes;
+- identify the exact commits/diffs that changed consumers, reports, classifiers,
+  prompts, issue scope, or type surfaces outside the owned stub lane;
+- reject or quarantine those results before using their row counts;
+- assign an independent subagent to review the coordinator transcript and the
+  suspect diffs for causal alignment;
+- resume only after the original Sage stub problem is restored as the target and
+  the next deeper implementation attempt is named.
 
 ## Non-negotiable constraints
 
@@ -188,6 +375,18 @@ just category-specs-mypy-structural-report-full
 just category-specs-mypy-ledger
 jq '{ordinary_error_count, counts_by_owner}' reports/workstreams/category-specs-mypy-ledger/latest.json
 ```
+
+This gate is observation only. Do not stage or commit files under
+`/home/dzack/research` as part of issue #5 work. If running the gate modifies
+tracked report files, leave them uncommitted or discard them by a non-destructive
+checkpoint/reverse-diff process after confirming no user work is mixed in.
+If a worker proposes a downstream edit to improve the metric, reject the lane
+for PR #6 and reopen it only as a separately owned research/plugin task.
+
+Treat downstream improvement as invalid evidence whenever the worker changed the
+consumer, plugin, validation command, report generator, issue scope, prompt, or
+classifier in the same lane. The coordinator must preserve the original target
+row and ask what Sage stub source model is still missing.
 
 For targeted row proof, filter the ledger by the surface being changed:
 

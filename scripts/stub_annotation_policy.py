@@ -9,6 +9,8 @@ ALLOWED_OBJECT_PARAMETER_SLOTS = {
 }
 
 ALLOWED_OBJECT_PARAMETER_SURFACES = {
+    ("sage-stubs/rings/ring.pyi", "__xor__", "n"),
+    ("sage-stubs/rings/ring.pyi", "_is_Field", "x"),
     ("sage-stubs/structure/sage_object.pyi", "dumps", "obj"),
     ("sage-stubs/structure/sage_object.pyi", "save", "obj"),
 }
