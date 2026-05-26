@@ -1,15 +1,17 @@
 from collections.abc import Callable, Iterable
 
 from sage.categories.category import Category
+from sage.categories.category_types import Category_module
 from sage.categories.morphism import Morphism, SetMorphism
 from sage.categories.tensor import TensorProductFunctor
 from sage.matrix.matrix2 import Matrix
+from sage.structure.category_object import CategoryObject
 from sage.structure.element import Element
 from sage.structure.parent import Parent
 from sage.structure.sage_object import SageCoercionAtom
 
-class Modules:
-    def __init__(self, base_ring: Parent | Category, dispatch: bool = True) -> None: ...
+class Modules(Category_module):
+    def __init__(self, base_ring: Category | CategoryObject, dispatch: bool = True) -> None: ...
     class SubcategoryMethods:
         def base_ring(self) -> Parent: ...
         def TensorProducts(self) -> Category: ...
