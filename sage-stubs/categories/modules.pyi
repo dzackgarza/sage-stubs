@@ -49,6 +49,12 @@ class Modules(Category_module):
             check: bool = True,
             **kwds: bool | int | str | Parent | Element,
         ) -> Parent: ...
+        def quotient_module(
+            self,
+            submodule: Parent | Iterable[Element],
+            check: bool = True,
+            **kwds: bool | int | str | Parent | Element,
+        ) -> Parent: ...
     class ElementMethods:
         ...
     class Homsets:
