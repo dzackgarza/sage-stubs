@@ -4,6 +4,7 @@ from typing import Protocol, TypeAlias
 from sage.categories.category import Category
 from sage.categories.map import Map
 from sage.rings.integer import Integer
+from sage.sets.set import Set_add_sub_operators, Set_base, Set_boolean_operators
 from sage.structure.element import Element
 from sage.structure.parent import Parent
 
@@ -36,4 +37,4 @@ class ImageSubobject(Parent):
     def _an_element_(self) -> _ImageElement: ...
     def _sympy_(self) -> SympySet: ...
 
-class ImageSet(ImageSubobject): ...
+class ImageSet(ImageSubobject, Set_base, Set_add_sub_operators, Set_boolean_operators): ...
