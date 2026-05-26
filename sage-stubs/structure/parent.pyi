@@ -1,4 +1,4 @@
-from collections.abc import Callable, Hashable, Sequence
+from collections.abc import Callable, Hashable, Iterable, Sequence
 
 from sage.categories.category import Category
 from sage.categories.homset import Homset
@@ -11,6 +11,7 @@ from .category_object import CategoryObject
 
 type ParentCallAtom = Element | SageCoercionAtom
 type ParentCallInput = ParentCallAtom | Sequence[ParentCallAtom]
+type SetObjectInput = CategoryObject | Iterable[Element | Hashable | list[Hashable]] | None
 type AlgebraPrintOption = (
     str
     | bool
@@ -37,3 +38,7 @@ class Parent(CategoryObject):
         category: Category | None = ...,
         **kwds: AlgebraPrintOption,
     ) -> Parent: ...
+
+class Set_generic(Parent):
+    def object(self) -> Set_generic | SetObjectInput: ...
+    def __bool__(self) -> bool: ...

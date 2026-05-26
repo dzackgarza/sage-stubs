@@ -5,7 +5,7 @@ from sage.categories.category import Category
 from sage.rings.integer import Integer
 from sage.structure.category_object import CategoryObject
 from sage.structure.element import Element
-from sage.structure.parent import Parent
+from sage.structure.parent import Parent, Set_generic
 
 _SetElement: TypeAlias = Element | Hashable | list[Hashable]
 _SetInput: TypeAlias = CategoryObject | Iterable[_SetElement] | None
@@ -28,10 +28,6 @@ class Set_boolean_operators:
 class Set_add_sub_operators:
     def __add__(self, X: _SetOperand) -> Set_object: ...
     def __sub__(self, X: _SetOperand) -> Set_object: ...
-
-class Set_generic(Parent):
-    def object(self) -> Set_generic | _SetInput: ...
-    def __bool__(self) -> bool: ...
 
 class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_operators):
     def __init__(self, X: _SetInput, category: Category | None = None) -> None: ...
