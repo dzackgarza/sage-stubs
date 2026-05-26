@@ -12,6 +12,7 @@ from sage.rings.ideal import Ideal_generic
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import IntegerRing_class
 from sage.rings.number_field.number_field import NumberField_generic
+from sage.rings.number_field.number_field_base import NumberField
 from sage.rings.number_field.number_field_element import NumberFieldElement
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.qqbar import AlgebraicField
@@ -23,7 +24,7 @@ from sage.structure.parent import Parent
 from sage.structure.sequence import Sequence_generic
 
 
-class RationalField(Field):
+class RationalField(NumberField):
     def __new__(cls) -> Self: ...
     def __init__(self) -> None: ...
     def __reduce__(self) -> tuple[type[RationalField], tuple[()]]: ...
