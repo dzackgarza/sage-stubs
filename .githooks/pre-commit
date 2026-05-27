@@ -12,6 +12,10 @@
 #   5. scripts/check_guardrails.py     on the staged set
 #   6. mypy --strict                   on staged .pyi files (follow imports)
 #
+# Type-surface relaxation failures may only be bypassed with a one-time
+# SAGE_STUBS_TYPE_SURFACE_REVIEW_OTP value. The commit-msg hook then requires
+# the same token and a source-backed audit in the commit message.
+#
 # Coverage is reported at the end as informational signal.
 
 set -uo pipefail

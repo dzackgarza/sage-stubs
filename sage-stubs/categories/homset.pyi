@@ -1,11 +1,16 @@
-from typing import Generic, TypeVar
+from collections.abc import Callable
+from typing import Generic, Literal, TypeVar, overload
 
+from sage.matrix.matrix2 import Matrix
 from sage.categories.morphism import Morphism
 from sage.categories.category import Category
-from sage.structure.parent import Parent
+from sage.rings.ring import Ring
+from sage.structure.element import Element
+from sage.structure.parent import Parent, ParentCallInput
 
 _DomainElementT = TypeVar("_DomainElementT", bound=Parent)
 _CodomainElementT = TypeVar("_CodomainElementT", bound=Parent)
+type HomsetCallInput = Morphism | Callable[..., Element] | ParentCallInput
 
 def Hom(
     X: _DomainElementT,
@@ -14,11 +19,11 @@ def Hom(
     check: bool = True,
 ) -> Homset[_DomainElementT, _CodomainElementT]: ...
 
-def hom(X: object, Y: object, f: object) -> Morphism: ...
+def hom(X: Parent, Y: Parent, f: HomsetCallInput) -> Morphism: ...
 
 def End(X: Parent, category: Category | None = None) -> Homset[Parent, Parent]: ...
 
-def end(X: object, f: object) -> Morphism: ...
+def end(X: Parent, f: HomsetCallInput) -> Morphism: ...
 
 class Homset(Generic[_DomainElementT, _CodomainElementT]):
     def __init__(
@@ -26,10 +31,54 @@ class Homset(Generic[_DomainElementT, _CodomainElementT]):
         X: _DomainElementT,
         Y: _CodomainElementT,
         category: Category | None = None,
-        base: object = None,
+        base: Ring | None = None,
         check: bool = True,
     ) -> None: ...
-    def __call__(self, *args: object, **kwargs: object) -> Morphism: ...
+    @overload
+    def __call__(self, x: HomsetCallInput = ..., check: bool | None = None) -> Morphism: ...
+    @overload
+    def __call__(
+        self,
+        *,
+        on_basis: Callable[..., Element],
+        codomain: Parent | None = None,
+        category: Category | None = None,
+        zero: Element | None = None,
+        position: int = 0,
+        triangular: Literal["upper", "lower"] | None = None,
+        unitriangular: bool = False,
+        base_map: Morphism | None = None,
+    ) -> Morphism: ...
+    @overload
+    def __call__(
+        self,
+        *,
+        function: Callable[..., Element],
+        codomain: Parent | None = None,
+        category: Category | None = None,
+        triangular: Literal["upper", "lower"] | None = None,
+        unitriangular: bool = False,
+        base_map: Morphism | None = None,
+    ) -> Morphism: ...
+    @overload
+    def __call__(
+        self,
+        *,
+        diagonal: Callable[..., Element],
+        codomain: Parent | None = None,
+        category: Category | None = None,
+        base_map: Morphism | None = None,
+    ) -> Morphism: ...
+    @overload
+    def __call__(
+        self,
+        *,
+        matrix: Matrix,
+        codomain: Parent | None = None,
+        category: Category | None = None,
+        side: Literal["left", "right"] = "left",
+        base_map: Morphism | None = None,
+    ) -> Morphism: ...
     def _repr_(self) -> str: ...
     def __hash__(self) -> int: ...
     def __bool__(self) -> bool: ...

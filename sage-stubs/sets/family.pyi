@@ -1,4 +1,4 @@
-from collections.abc import Callable, Iterable, Mapping
+from collections.abc import Callable, Hashable, Iterable, Mapping
 from typing import TypeVar
 
 from sage.structure.parent import Parent
@@ -6,7 +6,9 @@ from sage.structure.parent import Parent
 _K = TypeVar("_K")
 _V = TypeVar("_V")
 
-class AbstractFamily(Parent): ...
+class AbstractFamily(Parent):
+    def hidden_keys(self) -> list[Hashable]: ...
+    def keys(self) -> Iterable[Hashable]: ...
 
 class FiniteFamily(AbstractFamily): ...
 

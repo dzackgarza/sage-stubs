@@ -13,6 +13,257 @@ suggestions — every one of them is checked mechanically before a commit
 lands. Bypassing the hooks (`--no-verify`) is forbidden without explicit
 human authorisation.
 
+## Work-integrity contract
+
+This repository exists to provide complete, correct, and usable stubs for the
+entire SageMath API. That is the job. A downstream project type-checking cleanly
+is a valuable diagnostic and a useful milestone, but it is not the reward
+function. Do not optimize this repository for making one consumer quiet. Optimize
+it for making Sage accurately visible to static tooling.
+
+The hard part is often not writing a line in a `.pyi` file; it is preserving the
+actual Sage type model when source classes are dynamic, cyclic, Cython-backed,
+or only partially stubbed. Do that hard work in this repository. Do not move the
+cost into the caller.
+
+The primary failure mode to avoid is task substitution under pressure. When a
+source-backed stub problem becomes difficult, an agent may try to make the
+surrounding world easier instead of solving the stub problem: edit the consumer
+that exposed the gap, soften the validation harness, refresh reports until the
+paper trail looks current, rename the bucket, narrow the issue, add casts or
+wrapper noise downstream, or describe the remaining implementation as a future
+project. All of those moves preserve the appearance of progress while changing
+the task. They are misaligned even when they reduce an error count.
+
+Validation targets are sensors. Tests, downstream consumers, ledgers, reports,
+tracker rows, PR comments, issue comments, and review threads exist to reveal
+whether this stub package models Sage correctly. A sensor that reports an
+uncomfortable fact is doing its job. Do not silence, weaken, rewrite, reroute,
+or relabel the sensor to make a stub task look easier. If the sensor is truly
+wrong, stop the stub task and make the new ownership explicit before editing the
+sensor or its repo. A sensor fix is a separate task, not evidence that the stub
+task advanced.
+
+Metrics are evidence, not objectives. The only local objective an agent can
+directly pursue here is better Sage stubs: more complete, more source-accurate,
+more precise, and more usable for every downstream caller. A downstream row
+disappearing only counts as supporting evidence when the causal path is: Sage
+source reviewed, stub changed in this repo, this repo reinstalled downstream,
+and the row disappears without changing the downstream consumer, plugin, report
+generator, checker configuration, prompt, ledger classifier, smoke test, or
+completion criterion. If the metric improves after changing any of those
+surrounding layers, the validation run is contaminated for the stub task until
+proven otherwise.
+
+Layer ownership is part of correctness. A stub task may read and run downstream
+consumers, plugins, reports, and issue threads for evidence. It must not edit
+them to complete the stub task. If solving the observed problem appears to
+require a consumer change, plugin change, checker change, or research-spec
+change, preserve the original stub failure, state why the ownership changed, and
+stop or open separately owned work. Do not combine that edit with stub progress
+or count it toward stub completion.
+
+Blocked is an acceptable state; disguised incompletion is not. If the real Sage
+surface requires a larger sidecar hierarchy, cleanup of legacy policy debt,
+careful overload design, or a source/runtime investigation that exceeds the
+current lane, say that and keep the task incomplete. Words such as "tarpit",
+"guardrail conflict", "downstream regression", "legacy touched-file debt",
+"future project", "closeability", and "reclassified" are not completion words.
+They either name implementation work still to do, or they require source/runtime
+proof that the requested surface is not a Sage stub surface.
+
+Administrative work is bookkeeping, not implementation. Comments, status tables,
+goal updates, reports, closeout arguments, proof narratives, row inventories,
+and issue/PR paperwork may preserve decisions and evidence, but they do not
+substitute for source-backed stub changes. If the remaining work is
+implementation, the next aligned action is implementation, a smaller
+implementation split, or an explicit blocker with the original hard problem
+still intact.
+
+Before accepting any work product, ask what hard problem it made disappear and
+which layer paid the cost. If the answer is not "the Sage stub surface in this
+repository now models the source-backed API more accurately", reject it as
+non-progress for this repo's implementation goal.
+
+## Difficulty-laundering stop line
+
+The dangerous pattern is not merely an inaccurate metric. The dangerous pattern
+is capitulating when the source-backed stub work becomes difficult and replacing
+the product with artifacts that look responsible: status updates, issue comments,
+workstream rows, reclassification notes, report refreshes, consumer edits,
+casts, wrapper changes, integer-normalization churn, override deletions, or
+broadened annotations. These artifacts can be useful evidence after real work,
+but they are misaligned when they are produced instead of continuing the real
+stub implementation.
+
+When a worker hits a hard source/type-model problem, the hard problem must be
+earmarked before any sideways work happens. Earmarking means preserving the
+original requirement in its strongest form, naming the exact source-backed Sage
+surface, naming the concrete failed patch or failed reasoning step, and stating
+the next deeper implementation attempt. Do not rename the problem, reclassify it,
+or move it to a future project while the required Sage surface still appears
+real.
+
+The next deeper attempt must stay on the product. Valid moves are: read more of
+the Sage source, inspect runtime behavior, add a prerequisite source-backed
+sidecar, split the sidecar hierarchy into a smaller real implementation slice,
+repair legacy touched-file policy debt, strengthen an overload/type model, or
+escalate to a stronger reviewer with the hard problem intact. Invalid moves are:
+changing a downstream consumer to avoid the failure, changing reports or
+classifiers, weakening types, adding casts, deleting demanding overrides, wrapping
+values merely to satisfy current stubs, narrowing the issue, posting a new
+closeability argument, or producing another registry/status artifact.
+
+One failed patch is not a blocker. A failure first means the worker does not yet
+understand the problem deeply enough. The worker must preserve epistemic
+humility: name the uncertainty, list the concrete difficulties, revise the
+implementation plan, and break the hard task into smaller source/type questions.
+Repeat that breakdown until the true smallest obstacle is isolated.
+
+An obstacle is atomic only when it cannot be split into a smaller question about
+Sage source ownership, direct versus inherited surface, runtime behavior,
+constructor/coercion domain, missing prerequisite sidecar, import cycle, generic
+invariant, override relation, policy conflict, or checker limitation. If any of
+those subquestions remains unresolved, the worker has not reached an atomic
+blocker and is not allowed to escalate.
+
+The escape route has a high bar. A lane may stop without implementation only
+after the atomic blocker has been attacked several materially distinct ways: a
+direct source-backed surface attempt, a prerequisite-sidecar or hierarchy
+attempt, and an alternative precise type-model or runtime-evidence attempt. Each
+attempt must leave concrete evidence of what failed and why. Failure must drive
+deeper decomposition, not goal substitution.
+
+Only after that does the lane escalate to the user. The escalation must be a
+plain user-facing blocker, not a completion claim. It must state why the blocker
+is minimal and atomic, what approaches were tried, why they failed, and what
+compromises might be required. Agents are not authorized to decide which
+compromise is acceptable; that decision belongs to the user. Until the user
+chooses a compromise or changes scope, the PR/issue remains incomplete.
+
+Reflection is mandatory when difficulty appears, but reflection is not a new
+deliverable. It must produce this synthesis before any further artifact work:
+"The hard product problem is ___; the last real attempt failed because ___; the
+next deeper source-backed attempt is ___." If that sentence cannot be filled
+with concrete source/type evidence, the agent has not understood the problem and
+must read more before acting.
+
+Artifact proliferation is a stop condition. If recent work contains multiple
+comments, reports, registry edits, planning edits, reclassification records, or
+consumer/report commits without corresponding source-backed stub commits, stop
+the lane immediately. The coordinator must count the recent middle-management
+artifacts and the recent product commits that improved `.pyi` surfaces. If
+artifact output exceeds product output, or product output is absent, the default
+verdict is drift until proven otherwise. The coordinator must name which `.pyi`
+surfaces became more correct. If the answer is thin or indirect, no additional
+artifact is allowed: no audit report, no registry cleanup, no PR comment, no
+issue comment, no refreshed report, and no new plan. The only allowed next
+actions are a source-backed implementation edit, a smaller implementation split
+assigned to a worker, or a minimal user-facing escalation that the required work
+is still blocked.
+
+Realignment must reduce artifact production, not merely pause it. When artifact
+drift is detected, disable the mechanisms that were generating artifacts:
+cancel artifact-only lanes, stop report-refresh loops, stop closeability/proof
+comment loops, stop registry churn except to mark a lane rejected or frozen, and
+reject stale summaries that are not tied to code. Resume only with fewer active
+non-code work products than before and with the next product aimed at a concrete
+`.pyi` surface.
+
+Misaligned work poisons later evidence. If an audit finds that a lane broadened
+types, added casts, stripped overrides, wrapped values to satisfy current stubs,
+edited a consumer to avoid missing stubs, or otherwise moved cost downstream,
+stop all work that depends on that lane. Review the actual diff, quarantine the
+claim, and either reject the work or remove it by a new corrective patch after a
+checkpoint. Do not build new workstreams on contaminated row counts or summaries.
+
+Misalignment reporting must start with plain facts from the diff. Name the files
+changed, the type surfaces changed, and whether the change added casts, widened
+types, deleted overrides, inserted wrapper/coercion noise, changed consumers, or
+changed reports. Do not start with jargon such as "alignment," "interop,"
+"surface," "closeability," or "verification harness" until the concrete edits
+are on the page. Performative admissions are not evidence of understanding.
+
+## Periodic adversarial audits
+
+Long-running agent work in this repo needs adversarial audits, not progress
+summaries. The audit job is to catch the failure mode where implementation
+stalls, activity continues, and the apparent target quietly changes.
+
+Run an audit at every resume after compaction or interruption, before any status
+report, before any PR/issue comment that claims progress or closeability, after
+accepting subagent output, after any downstream validation run, and whenever the
+recent work contains administrative artifacts without a corresponding
+source-backed stub change.
+
+An audit must start from evidence the current agent may not remember. Tail the
+current Codex transcript with the transcript parser, then inspect the actual git
+diff/log for this repo and any downstream repo used as a diagnostic. Do not rely
+on chat summaries, worker summaries, commit subjects, registry statuses, or
+memory. The audit must read what changed.
+
+For cross-repo work, the audit must touch base with both repositories'
+guidelines before judging alignment. Read the local `AGENTS.md`, `README.md`,
+`justfile`, and relevant workstream docs in this repo, then read the equivalent
+guidance in the downstream repo before deciding whether a downstream edit was a
+real consumer improvement or an accommodation of stub/plugin failure.
+
+The audit question is not "are we busy?" or "did the metric improve?" The audit
+question is:
+
+> What hard Sage stub problem was supposed to be solved, what actually changed,
+> which repository/layer paid the cost, and did that make the Sage stub surface
+> more complete, correct, and usable?
+
+The audit output must be a causal verdict, not a filled checklist. Start with
+whether the recent work was aligned, contaminated, misaligned, or still unclear.
+Then explain what the agents appeared to be optimizing: Sage stub quality, or a
+substitute target such as downstream quieting, row movement, status cleanliness,
+review-thread closure, or narrative closeability. If that verdict could have
+been written from summaries without reading transcript and diffs, the audit
+failed.
+
+If the recent work changed a consumer, plugin, report generator, validation
+command, issue scope, classifier, prompt, status table, or completion narrative,
+the audit must treat downstream metric movement as suspect until the causal path
+back to source-backed stub improvement is proven. If that causal path is not
+proven, stop the lane as misaligned or contaminated; do not keep building on its
+metric result.
+
+Every audit must include a self-reflection on artifact pressure. The required
+synthesis is: "Recent work is drifting toward artifacts rather than product if
+___; the hard implementation problem those artifacts may be hiding is ___; the
+realignment action is ___." If the realignment action is another comment,
+status table, or report, the audit has failed unless the user explicitly asked
+for that artifact as the product.
+
+An audit is an action gate, not a deliverable. Do not create a standalone audit
+document, PR comment, issue comment, status report, or workstream update merely
+because artifact drift was detected. Use the audit to choose the next permitted
+action: implement, split implementation, freeze poisoned work, or escalate to
+the user. If the user must be told, make that message the stop condition, not a
+new process artifact to continue working around the blocker.
+
+If the chosen action is freeze or reject, it must shrink the active paperwork
+surface. Close or quarantine artifact-only streams, remove them from the set of
+things being optimized, and stop relying on their ledgers. Do not replace one
+artifact lane with a cleaner artifact lane.
+
+After discovered misalignment, an independent subagent must review the current
+coordinator transcript and the suspect diffs for alignment before the lane
+continues. The subagent prompt must ask for a causal verdict, not a summary. If
+no independent subagent is available, the coordinator must report that limitation
+and keep the lane stopped; self-approval is not enough after a misalignment
+finding.
+
+If two consecutive work products are comments, reports, row reconciliations,
+registry updates, planning edits, or rejected attempts without a merged
+source-backed stub improvement, the coordinator must stop and audit for goal
+substitution before doing more coordination. The correct recovery is not a
+better status artifact. It is returning to source-backed stub implementation,
+splitting the implementation into a smaller real lane, or reporting the exact
+unresolved blocker.
+
 ## First-clone setup (run once)
 
 ```bash
@@ -113,6 +364,18 @@ evidence. Classify the change as stricter, equivalent, or weaker. Weaker
 changes are rejected unless the previous stub is source-proven wrong and the
 replacement is the most precise source-backed type available.
 
+Generic annotations require the same source proof as concrete annotations.
+Introducing `TypeVar`, `Protocol`, `Callable[..., ...]`, or a generic container
+is not a way to erase unknown domains. Before adding a type variable, identify
+the invariant it expresses: which input, stored element, receiver, and return
+positions share the same type, and where Sage preserves that identity instead of
+coercing it. If Sage coerces, normalizes, wraps, or stores a different element
+type, use the accepted input domain and the resulting output/storage type
+explicitly. Do not replace `object`, `Any`, a concrete Sage type, or an
+unresolved parameter with `_T`, `Iterable[_T]`, `Sequence[_T]`,
+`Callable[..., _T]`, or a local protocol unless the source proves the type
+relation.
+
 **Stop-the-line weakening review.** If a diff changes a precise Sage type to a
 broader type, do not continue implementation, staging, or commit preparation
 until the weakening has been removed or independently reviewed. This applies
@@ -129,6 +392,23 @@ parameterized container -> unparameterized container. Do not bypass this gate to
 finish a local stub task. If the previous type is source-proven wrong, replace
 it with the most precise source-backed type and document that proof; do not
 route through a broad placeholder first.
+
+Class-base changes between Sage/domain types are high-risk by default. The
+failure mode is local-minimum reward hacking: making one file pass mypy or an
+import check by replacing a precise source hierarchy with a broader nearby base,
+thereby degrading downstream mathematical meaning. If such a weakening is truly
+forced, set a one-time `SAGE_STUBS_TYPE_SURFACE_REVIEW_OTP` value for the commit
+attempt and include the same token in the commit message. The commit message
+must contain `Type-surface relaxation review:`, `Source evidence:`, `Why
+forced:`, `Global regression risk:`, and `Reward-hacking/local-minimum check:`.
+The `commit-msg` hook rejects the commit unless that audit trail is present.
+If a later `type_surface_review` run finds no staged `.pyi` files, it clears any
+stale pending OTP marker before returning so unrelated non-stub commits are not
+forced to carry an old type-surface bypass audit.
+The marker path is resolved through Git, not by assuming `.git` is a directory,
+so the bypass audit flow also works inside linked worktrees.
+The `commit-msg` hook clears stale pending markers and skips OTP enforcement
+when the current staged set has no `.pyi` files.
 
 ## Type annotation quality contract (non-negotiable)
 
@@ -149,6 +429,15 @@ repo. Do not add it to parameter, return, alias, or generic positions
 to get around the `Any` ban. If the concrete type is unknown, stop and
 resolve it from Sage source, runtime evidence, docs, or a supporting
 sidecar before editing the stub.
+
+`TypeVar` and local `Protocol` definitions are not acceptable replacement
+opacity markers. They are valid only when they state a real relationship between
+type positions or a real structural contract used by the Sage source. They are
+invalid when they merely say "some type" or "something with this method" for a
+constructor input, mutation input, variadic argument, callback, or container
+whose contents Sage coerces or normalizes. Replacing an existing type surface
+with a new local abstraction is a review failure by default; isolate the change
+and cite the exact Sage source if the abstraction is truly forced.
 
 **Named parameters must be resolved to domain types:**
 
@@ -304,10 +593,14 @@ pre-commit hook.
   enumerates the possible keyword/argument variables. If the cases cannot
   be exhausted, leave the stub unchanged and report the blocked evidence.
 - **No `object` outside known forced slots.** `object` is banned in
-  annotations except for the finite Python-forced slots centralized in
-  `scripts/stub_annotation_policy.py`: currently `__new__` returns and
-  the `__contains__.x`, `__eq__.other`, and `__ne__.other` parameters.
-  Add to that list only with source-backed justification.
+  annotations except for the finite source-forced slots centralized in
+  `scripts/stub_annotation_policy.py`: currently `__new__` returns,
+  `__contains__.x`, `__eq__.other`, `__ne__.other`, and the module-level
+  Sage persistence helpers `dumps.obj` / `save.obj`, which mirror
+  `sage.misc.persist` accepting arbitrary pickleable payloads. Path-specific
+  exceptions must stay path-specific in `scripts/stub_annotation_policy.py`; do
+  not allow every function with the same name. Add to that list only with
+  source-backed justification.
 - **No local suppressions.** `# type: ignore`, `# noqa`, `cast(...)`,
   and similar lint or type-checking suppressions are banned in stub
   files. Fix the signature, import, or supporting stub instead.

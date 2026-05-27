@@ -1,0 +1,83 @@
+from typing import TypeAlias, overload
+
+from sage.manifolds.chart import Chart
+from sage.manifolds.differentiable.diff_form import DiffForm
+from sage.manifolds.differentiable.diff_map import DiffMap
+from sage.manifolds.differentiable.levi_civita_connection import LeviCivitaConnection
+from sage.manifolds.differentiable.manifold import DifferentiableManifold
+from sage.manifolds.differentiable.scalarfield import DiffScalarField
+from sage.manifolds.differentiable.tensorfield import TensorField
+from sage.manifolds.differentiable.tensorfield_paral import TensorFieldParal
+from sage.manifolds.differentiable.vectorfield_module import VectorFieldModule
+from sage.rings.integer import Integer
+from sage.structure.element import Element, Expression
+from sage.tensor.modules.comp import CompWithSym
+from sage.tensor.modules.format_utilities import FormattedExpansion
+from sage.tensor.modules.free_module_basis import FreeModuleBasis
+
+_Signature: TypeAlias = int | Integer
+_FrameOrChart: TypeAlias = FreeModuleBasis | Chart | None
+_Component: TypeAlias = Element | Expression | Integer | int
+
+class PseudoRiemannianMetric(TensorField):
+    def __init__(
+        self,
+        vector_field_module: VectorFieldModule,
+        name: str,
+        signature: _Signature | None = None,
+        latex_name: str | None = None,
+    ) -> None: ...
+    def signature(self) -> _Signature: ...
+    def restrict(self, subdomain: DifferentiableManifold, dest_map: DiffMap | None = None) -> PseudoRiemannianMetric: ...
+    def set(self, symbiform: TensorField) -> None: ...
+    def inverse(self, expansion_symbol: Expression | None = None, order: int = 1) -> TensorField: ...
+    def connection(
+        self,
+        name: str | None = None,
+        latex_name: str | None = None,
+        init_coef: bool = True,
+    ) -> LeviCivitaConnection: ...
+    def christoffel_symbols(self, chart: Chart | None = None) -> CompWithSym[_Component, _Component, int | Integer]: ...
+    def christoffel_symbols_display(
+        self,
+        chart: Chart | None = None,
+        symbol: str | None = None,
+        latex_symbol: str | None = None,
+        index_labels: list[str] | None = None,
+        index_latex_labels: list[str] | None = None,
+        coordinate_labels: bool = True,
+        only_nonzero: bool = True,
+        only_nonredundant: bool = True,
+    ) -> FormattedExpansion: ...
+    def riemann(self, name: str | None = None, latex_name: str | None = None) -> TensorField: ...
+    def ricci(self, name: str | None = None, latex_name: str | None = None) -> TensorField: ...
+    def ricci_scalar(self, name: str | None = None, latex_name: str | None = None) -> DiffScalarField: ...
+    def weyl(self, name: str | None = None, latex_name: str | None = None) -> TensorField: ...
+    def schouten(self, name: str | None = None, latex_name: str | None = None) -> TensorField: ...
+    def cotton(self, name: str | None = None, latex_name: str | None = None) -> TensorField: ...
+    def cotton_york(self, name: str | None = None, latex_name: str | None = None) -> TensorField: ...
+    def determinant(self, frame: _FrameOrChart = None) -> DiffScalarField: ...
+    det = determinant
+    def sqrt_abs_det(self, frame: _FrameOrChart = None) -> DiffScalarField: ...
+    @overload
+    def volume_form(self) -> DiffForm: ...
+    @overload
+    def volume_form(self, contra: int) -> TensorField: ...
+    def hodge_star(self, pform: DiffForm) -> DiffForm: ...
+
+class PseudoRiemannianMetricParal(PseudoRiemannianMetric, TensorFieldParal):
+    def __init__(
+        self,
+        vector_field_module: VectorFieldModule,
+        name: str,
+        signature: _Signature | None = None,
+        latex_name: str | None = None,
+    ) -> None: ...
+    def restrict(
+        self,
+        subdomain: DifferentiableManifold,
+        dest_map: DiffMap | None = None,
+    ) -> PseudoRiemannianMetricParal: ...
+    def set(self, symbiform: TensorField) -> None: ...
+    def inverse(self, expansion_symbol: Expression | None = None, order: int = 1) -> TensorFieldParal: ...
+    def ricci_scalar(self, name: str | None = None, latex_name: str | None = None) -> DiffScalarField: ...

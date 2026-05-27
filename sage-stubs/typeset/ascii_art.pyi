@@ -1,0 +1,3 @@
+from sage.typeset.character_art import CharacterArt
+
+class AsciiArt(CharacterArt): ...

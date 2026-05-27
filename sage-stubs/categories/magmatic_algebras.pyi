@@ -1,15 +1,16 @@
-from sage.categories.category import Category
+from collections.abc import Hashable
+
+from sage.categories.category_types import Category_over_base_ring
 from sage.structure.element import Element
 from sage.structure.parent import Parent
 
-class MagmaticAlgebras:
-    def __init__(self, base: Parent | Category, name: str | None = None) -> None: ...
+class MagmaticAlgebras(Category_over_base_ring):
     class ParentMethods:
         def algebra_generators(self) -> tuple[Element, ...]: ...
     class WithBasis:
         class ParentMethods:
             def algebra_generators(self) -> tuple[Element, ...]: ...
-            def product_on_basis(self, left: object, right: object) -> Element: ...
+            def product_on_basis(self, left: Hashable, right: Hashable) -> Element: ...
             def product(self, left: Element, right: Element) -> Element: ...
         class FiniteDimensional:
             class ParentMethods:

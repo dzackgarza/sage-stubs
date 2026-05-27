@@ -38,6 +38,102 @@ lines 47 and 54 were unchanged.
 
 ## Blocked Candidates
 
+### `category_specs` local override bases, not missing Sage sidecars
+
+Fresh ledger:
+`reports/workstreams/category-specs-mypy-ledger/latest.json` reports
+`override` diagnostics under the `missing sidecar ordinary signature` owner
+for several project-local `ParentMethods` classes. These rows look like
+missing Sage methods, but the affected override base is the local
+`category_specs` provider class, not the concrete Sage class that owns the
+method.
+
+For `category_specs/rings/subcategories/rational_field.py`, the current
+`sage-stubs/rings/rational_field.pyi` already declares the source-backed
+surface for `RationalField`, including `algebraic_closure`, `degree`,
+`absolute_degree`, `signature`, `discriminant`, `absolute_discriminant`,
+`automorphisms`, `class_number`, `power_basis`, `places`, and
+`maximal_order`. Sage 10.7 defines these directly at
+`sage-src/src/sage/rings/rational_field.py:541`, `:552`, `:574`, `:585`,
+`:623`, `:638`, `:939`, `:950`, `:1007`, `:1034`, and `:1073`.
+
+- Searched: current `category_specs` ledger; `/home/dzack/research/category_specs/rings/subcategories/rational_field.py`; `sage-stubs/rings/rational_field.pyi`; Sage 10.7 `sage-src/src/sage/rings/rational_field.py`.
+- Found: the Sage source and stub contain the key `RationalField` methods, while the downstream diagnostics are `@override` failures on a local nested `ParentMethods` class.
+- Conclusion: inference — the remaining `rational_field.py` rows are local category-provider inheritance/design rows, not missing ordinary `RationalField` sidecar methods.
+- Confidence: High.
+- Gaps: Some number-field-style methods in that file may still need separate source review, especially rows delegated through `as_number_field()`.
+
+For `category_specs/sets/subcategories/image.py:116` and
+`category_specs/sets/subcategories/real_set.py:205`, the ordinary Sage
+sidecars already expose `_an_element_`:
+`sage-stubs/sets/image_set.pyi:36` and `sage-stubs/sets/real_set.pyi:109`.
+Sage 10.7 defines the corresponding methods at
+`sage-src/src/sage/sets/image_set.py:401` and
+`sage-src/src/sage/sets/real_set.py:2348`.
+
+- Searched: current `category_specs` ledger; `sage-stubs/sets/image_set.pyi`; `sage-stubs/sets/real_set.pyi`; Sage 10.7 `sage-src/src/sage/sets/image_set.py` and `sage-src/src/sage/sets/real_set.py`.
+- Found: both ordinary sidecars and both Sage source files already define `_an_element_`.
+- Conclusion: inference — these two rows are local wrapper/provider inheritance rows, not missing ordinary `image_set` or `real_set` sidecar methods.
+- Confidence: High.
+- Gaps: This does not classify other `ImageSubobject` or `RealSet` argument/return variance diagnostics.
+
+For `category_specs/modules/subcategories/free.py`, Sage 10.7 defines the
+finite-rank free-module methods directly on
+`sage.tensor.modules.finite_rank_free_module.FiniteRankFreeModule_abstract`:
+`exterior_power` at `:1618`, `alternating_form` at `:2369`,
+`default_basis` at `:2759`, `set_default_basis` at `:2797`, and `bases` at
+`:2873`.
+
+- Searched: current `category_specs` ledger; Sage 10.7 `sage-src/src/sage/tensor/modules/finite_rank_free_module.py`; an isolated local sidecar experiment for `sage-stubs/tensor/modules/finite_rank_free_module.pyi`.
+- Found: Sage defines the requested methods, but the isolated sidecar experiment changed the downstream ordinary error count from `1816` to `1824` and did not clear the targeted local override rows.
+- Conclusion: inference — the current `free.py` override rows depend on local wrapper/provider inheritance and constructor modeling, not just the absence of an importable finite-rank module sidecar.
+- Confidence: Medium.
+- Gaps: A full finite-rank module sidecar may still be needed later, but it must model constructors and category provider bases before it can be a clean issue #5 fix.
+
+For `category_specs/forms/subcategories/*.py` and the predicate-only module
+subcategories, the live rows name project taxonomy predicates such as
+`has_form`, `is_quadratic`, `is_bilinear`, `is_nondegenerate`, `is_free`,
+`is_indefinite`, `is_positive_definite`, `is_lattice`, `is_ore_module`, and
+`is_representation_module`. Broad source search finds these names on concrete
+mathematical objects such as matrices, quadratic forms, quaternion algebras, or
+number fields, not on a Sage category provider class matching the
+`category_specs` local `ParentMethods` bases.
+
+- Searched: current `category_specs` ledger; `sage-src/src/sage` for the predicate names; relevant `category_specs/forms/subcategories/*.py` and `category_specs/modules/subcategories/*.py` rows.
+- Found: concrete Sage object methods for several names, but no source-backed Sage category provider surface that matches the local `category_specs` predicate-only `ParentMethods` overrides.
+- Conclusion: inference — these predicate rows are local taxonomy/interface rows, not ordinary Sage sidecar omissions.
+- Confidence: Medium.
+- Gaps: Each predicate can still be re-opened if a specific Sage category provider class is identified, not merely a same-named method on an unrelated concrete object.
+
+For `category_specs/rings/subcategories/puiseux_series_ring.py:55`, the live
+row expects an `extension` method, but Sage 10.7
+`sage-src/src/sage/rings/puiseux_series_ring.py` defines `base_extend`,
+`change_ring`, `fraction_field`, `residue_field`, and `uniformizer`; it does
+not define `extension`.
+
+- Searched: current `category_specs` ledger; Sage 10.7 `sage-src/src/sage/rings/puiseux_series_ring.py`; `rg -n "def extension\b" sage-src/src/sage/rings/puiseux_series_ring.py`.
+- Found: no `extension` definition in the Puiseux series ring source.
+- Conclusion: inference — adding `PuiseuxSeriesRing.extension` to the sidecar would be an invented API for Sage 10.7.
+- Confidence: High.
+- Gaps: This only covers `PuiseuxSeriesRing.extension`; it does not classify other Puiseux series methods or methods on related Laurent/power series rings.
+
+For `category_specs/rings/subcategories/polynomial_ring.py`, Sage 10.7 defines
+`PolynomialRing_generic.completion` at
+`sage-src/src/sage/rings/polynomial/polynomial_ring.py:620`. The
+source-backed sidecar now declares `completion` and replaces the legacy
+`object` parameters on `random_element`, `quotient`, and `change_ring`.
+Downstream still reports the `@override` row for
+`category_specs/rings/subcategories/polynomial_ring.py:82`, which points to the
+local provider base rather than the ordinary `PolynomialRing_generic` sidecar.
+The same source file does not define a direct `extension` method on
+`PolynomialRing_generic`.
+
+- Searched: current `category_specs` ledger after reinstalling the staged sidecar; Sage 10.7 `sage-src/src/sage/rings/polynomial/polynomial_ring.py`; Sage 10.7 `sage-src/src/sage/rings/lazy_series_ring.py`; `sage-stubs/rings/polynomial/polynomial_ring.pyi`; `sage-stubs/rings/lazy_series_ring.pyi`; `just check`; `/home/dzack/research` `just category-specs-mypy-structural-report-full` and `just category-specs-mypy-ledger`.
+- Found: `completion` is present in the ordinary sidecar and validates locally, but the downstream ordinary error count remains `1815` with `99` missing-sidecar rows; `polynomial_ring.py:82` still reports an override-base failure. `extension` remains unsupported by direct Sage source evidence.
+- Conclusion: inference — the remaining `completion` row is a local category-provider inheritance/design row, not a missing ordinary `PolynomialRing_generic.completion` sidecar row. `extension` should not be added to `PolynomialRing_generic` without a different source owner.
+- Confidence: High for `completion`; Medium for `extension`.
+- Gaps: This does not classify whether the downstream local provider should inherit from a generated category provider, a protocol, or a different local base.
+
 ### `sage.categories.posets.Posets.ParentMethods`
 
 Fresh baseline:
