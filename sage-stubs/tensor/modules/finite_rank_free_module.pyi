@@ -1,5 +1,5 @@
 from collections.abc import Iterable, Iterator, Sequence
-from typing import Protocol, TypeAlias, overload
+from typing import Literal, Protocol, TypeAlias, overload
 
 from sage.categories.morphism import SetIsomorphism
 from sage.categories.pushout import VectorFunctor
@@ -95,6 +95,25 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
         ambient: ReflexiveModule_abstract | None = ...,
     ) -> None: ...
     def construction(self) -> tuple[VectorFunctor, CommutativeRing] | None: ...
+    @overload
+    def tensor_module(
+        self,
+        k: Literal[1],
+        l: Literal[0],
+        *,
+        sym: _Symmetry = ...,
+        antisym: _Symmetry = ...,
+    ) -> FiniteRankFreeModule: ...
+    @overload
+    def tensor_module(
+        self,
+        k: Literal[0],
+        l: Literal[1],
+        *,
+        sym: _Symmetry = ...,
+        antisym: _Symmetry = ...,
+    ) -> FiniteRankDualFreeModule: ...
+    @overload
     def tensor_module(
         self,
         k: int | Integer,
@@ -105,7 +124,17 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
     ) -> FiniteRankFreeModule | ReflexiveModule_dual | TensorFreeModule | TensorFreeSubmodule_sym: ...
     def symmetric_power(self, p: int | Integer) -> ReflexiveModule_abstract: ...
     def dual_symmetric_power(self, p: int | Integer) -> ReflexiveModule_abstract: ...
+    @overload
+    def exterior_power(self, p: Literal[0]) -> CommutativeRing: ...
+    @overload
+    def exterior_power(self, p: Literal[1]) -> FiniteRankFreeModule: ...
+    @overload
     def exterior_power(self, p: int | Integer) -> CommutativeRing | FiniteRankFreeModule | ExtPowerFreeModule: ...
+    @overload
+    def dual_exterior_power(self, p: Literal[0]) -> CommutativeRing: ...
+    @overload
+    def dual_exterior_power(self, p: Literal[1]) -> FiniteRankDualFreeModule: ...
+    @overload
     def dual_exterior_power(self, p: int | Integer) -> CommutativeRing | FiniteRankDualFreeModule | ExtPowerDualFreeModule: ...
     def general_linear_group(self) -> FreeModuleLinearGroup: ...
     def basis(
@@ -131,12 +160,28 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
         name: _Name = ...,
         latex_name: _Name = ...,
     ) -> FreeModuleTensor | FreeModuleAltForm | FiniteRankFreeModuleElement: ...
+    @overload
+    def alternating_contravariant_tensor(
+        self,
+        degree: Literal[1],
+        name: _Name = ...,
+        latex_name: _Name = ...,
+    ) -> FiniteRankFreeModuleElement: ...
+    @overload
     def alternating_contravariant_tensor(
         self,
         degree: int | Integer,
         name: _Name = ...,
         latex_name: _Name = ...,
     ) -> FreeModuleTensor | FiniteRankFreeModuleElement: ...
+    @overload
+    def alternating_form(
+        self,
+        degree: Literal[0],
+        name: _Name = ...,
+        latex_name: _Name = ...,
+    ) -> CommutativeRingElement: ...
+    @overload
     def alternating_form(
         self,
         degree: int | Integer,
