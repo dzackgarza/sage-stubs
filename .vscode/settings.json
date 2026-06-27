@@ -1,0 +1,17 @@
+{
+    "python-envs.pythonProjects": [
+        {
+            "path": "/home/dzack/gitclones/sage",
+            "venvPath": "/home/dzack/gitclones/sage/.venv"
+        },
+        {
+            "path": "/home/dzack/gitclones/integral_lattice",
+            "venvPath": "/home/dzack/gitclones/sage/.venv"
+        },
+        {
+            "path": "",
+            "envManager": "ms-python.python:venv",
+            "packageManager": "ms-python.python:pip"
+        }
+    ]
+}

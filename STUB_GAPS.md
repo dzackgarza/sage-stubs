@@ -7,7 +7,53 @@ interface surface.
 
 ## Ready Candidates
 
-None currently passed the real-consumer regression gate.
+### P0 — `sage.categories.category_types` Category_module and Category_over_base
+
+Fresh baseline:
+`.mypy_cache/category-specs-error-classification/raw_errors_sets_enum_batch2_fresh.txt`
+reports missing-base errors at:
+
+- `category_specs/cat/base_category_types.py:35` — `Category_module`
+- `category_specs/cat/base_category_types.py:36` — `Category_over_base`
+
+Sage 10.7 source defines these classes directly at:
+
+- `sage-src/src/sage/categories/category_types.py:147` — `Category_over_base`
+- `sage-src/src/sage/categories/category_types.py:575` — `Category_module`
+
+### P0 — `sage.rings.abc` Approximate field ABCs
+
+Fresh baseline:
+`.mypy_cache/category-specs-error-classification/raw_errors_sets_enum_batch2_fresh.txt`
+reports missing-base errors at:
+
+- `category_specs/rings/subcategories/approximate.py:8-15` — `ComplexBallField`, `ComplexDoubleField`, `ComplexField`, `ComplexIntervalField`, `RealBallField`, `RealDoubleField`, `RealIntervalField`
+
+Sage 10.7 source defines these ABCs directly at:
+
+- `sage-src/src/sage/rings/abc.pyx:194` — `RealBallField`
+- `sage-src/src/sage/rings/abc.pyx:219` — `RealIntervalField`
+- `sage-src/src/sage/rings/abc.pyx:244` — `RealDoubleField`
+- `sage-src/src/sage/rings/abc.pyx:269` — `ComplexField`
+- `sage-src/src/sage/rings/abc.pyx:294` — `ComplexBallField`
+- `sage-src/src/sage/rings/abc.pyx:319` — `ComplexIntervalField`
+- `sage-src/src/sage/rings/abc.pyx:344` — `ComplexDoubleField`
+
+### P0 — `sage.rings.padics.generic_nodes` p-adic generic classes
+
+Fresh baseline:
+`.mypy_cache/category-specs-error-classification/raw_errors_sets_enum_batch2_fresh.txt`
+reports missing-base errors at:
+
+- `category_specs/rings/subcategories/approximate.py:16` — `pAdicFieldGeneric`, `pAdicRingGeneric`
+- `category_specs/rings/subcategories/p_adic_field.py:45` — `pAdicFieldGeneric`
+- `category_specs/rings/subcategories/p_adic_ring.py:50` — `pAdicFieldGeneric`, `pAdicRingGeneric`
+- `category_specs/rings/subcategories/p_adic_integer_ring.py:42` — `pAdicRingGeneric`
+
+Sage 10.7 source defines these classes directly at:
+
+- `sage-src/src/sage/rings/padics/generic_nodes.py:1181` — `pAdicRingGeneric`
+- `sage-src/src/sage/rings/padics/generic_nodes.py:1305` — `pAdicFieldGeneric`
 
 ## Resolved Candidates
 

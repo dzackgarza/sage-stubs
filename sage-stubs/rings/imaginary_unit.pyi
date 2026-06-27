@@ -1,0 +1,3 @@
+from sage.rings.number_field.number_field_element_quadratic import NumberFieldElement_quadratic
+
+I: NumberFieldElement_quadratic
