@@ -136,7 +136,6 @@
       1 sage-stubs/rings/padics/padic_base_generic.pyi
       1 sage-stubs/rings/padics/local_generic.pyi
       1 sage-stubs/rings/padics/eisenstein_extension_generic.pyi
-      1 sage-stubs/rings/number_field/number_field_rel.pyi
       1 sage-stubs/rings/morphism.pyi
       1 sage-stubs/rings/integer_ring.pyi
       1 sage-stubs/rings/infinity.pyi
