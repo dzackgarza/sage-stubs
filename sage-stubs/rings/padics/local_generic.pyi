@@ -7,7 +7,7 @@ from sage.structure.parent import Parent
 from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.integer_ring import IntegerRing_class
 from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
 from sage.rings.ring import Ring
 from sage.structure.element import Element
 class LocalGeneric(Parent):

@@ -1,13 +1,12 @@
+from typing import overload
+
+from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
+from sage.rings.ring import Ring
+from sage.structure.element import Element
 from sage.structure.parent import Parent
 
-def PolynomialRing(
-    base_ring: object,
-    *args: object,
-    **kwds: object,
-) -> Parent: ...
+def PolynomialRing(base_ring: Ring, *args: object, **kwds: object) -> PolynomialRing_generic: ...
 
-def BooleanPolynomialRing_constructor(
-    n: int | None = None,
-    names: str | list[str] | tuple[str, ...] | None = None,
-    order: str = "lex",
-) -> Parent: ...
+def unpickle_PolynomialRing(base_ring: Ring, arg1: object = None, arg2: object = None, sparse: bool = False) -> PolynomialRing_generic: ...
+def polynomial_default_category(base_ring_category: object, n_variables: int) -> object: ...
+def BooleanPolynomialRing_constructor(n: int | None = None, names: object = None, order: str = "lex") -> Parent: ...

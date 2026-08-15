@@ -1,7 +1,7 @@
 # Phase 03 — Polynomial Rings
 
 **Tier:** 1
-**Status:** ⬜ Not Started
+**Status:** 🟡 In Progress
 **Depends on:** Phase 01
 **Unblocks:** Phase 04 (parts), Phase 06, 07, 09, 10, 11, 13, 14
 
@@ -19,7 +19,7 @@ stubs must be audited rather than rewritten.
 
 | Task | Subtree / Group | Files | Depends | Status | Notes |
 |------|-----------------|-------|---------|--------|-------|
-| T03.1 | **Univariate core** — audit & complete `polynomial_element`, `polynomial_element_generic`, `polynomial_ring`, `polynomial_ring_constructor`, `polynomial_ring_homomorphism`, `polynomial_compiled`, `polynomial_singular_interface`, `commutative_polynomial`. | ~8 | — | ⬜ | Existing stubs in this group. |
+| T03.1 | **Univariate core** — audit & complete `polynomial_element`, `polynomial_element_generic`, `polynomial_ring`, `polynomial_ring_constructor`, `polynomial_ring_homomorphism`, `polynomial_compiled`, `polynomial_singular_interface`, `commutative_polynomial`. | ~8 | — | ✅ Done | polynomial_element: 115-method Polynomial + dense/inexact + 2 map classes; element_generic: 18 classes; ring: 19 classes + polygen/polygens; constructor: 4 functions. PolynomialRing_general renamed -> PolynomialRing_generic (source name). |
 | T03.2 | **Univariate specialised dense** — `polynomial_integer_dense_flint`, `polynomial_integer_dense_ntl`, `polynomial_rational_flint`, `polynomial_real_mpfr_dense`, `polynomial_real_arb`, `polynomial_complex_arb`, `polynomial_number_field`. | 7 | T03.1 | ⬜ | All `.pyx`; many Sage-specific overloads. |
 | T03.3 | **Univariate finite-field & GF(2)** — `polynomial_gf2x`, `polynomial_modn_dense_ntl`, `polynomial_zmod_flint`, `polynomial_zz_pex`, `evaluation_flint`, `evaluation_ntl`. | 6 | T03.1 | ⬜ | Depends on `finite_rings` only via signatures — forward-ref OK. |
 | T03.4 | **Multivariate core** — audit & complete `multi_polynomial`, `multi_polynomial_element`, `multi_polynomial_ring`, `multi_polynomial_ring_base`, `multi_polynomial_ideal`, `multi_polynomial_ideal_libsingular`, `multi_polynomial_libsingular`, `multi_polynomial_sequence`, `polydict`, `plural`, `hilbert`. | ~11 | T03.1 | ⬜ | Heavy `libsingular` coupling — keep `object` only where Sage source forwards arbitrary Python objects. |
