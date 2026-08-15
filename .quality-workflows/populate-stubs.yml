@@ -1,0 +1,265 @@
+name: Populate full Sage 10.7 stub surface
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - scripts/*.py
+      - "sage-stubs/**/*.pyi"
+      - .semgrep/**
+      - pyproject.toml
+      - pyrightconfig.json
+      - .github/workflows/populate-stubs.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: populate-sage-stubs-main
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  PIP_DISABLE_PIP_VERSION_CHECK: "1"
+  PYTHONUTF8: "1"
+
+jobs:
+  populate:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - name: Check out repository and pinned Sage source
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Install validation tools
+        run: |
+          python -m pip install --upgrade pip mypy basedpyright ruff semgrep
+          ruff --version
+          python -m mypy --version
+          basedpyright --version
+          semgrep --version
+          mkdir -p reports
+
+      - name: Populate every missing source module
+        run: python scripts/populate_all_stubs.py
+
+      - name: Normalize generated stubs
+        run: |
+          set -euo pipefail
+          sort -u /tmp/sage-stubs-generated-files.txt > /tmp/changed-stubs.txt
+          if [[ -s /tmp/changed-stubs.txt ]]; then
+            xargs -r ruff check --fix --exit-zero -- < /tmp/changed-stubs.txt
+          fi
+
+      - name: Ruff complete stub surface
+        id: ruff
+        continue-on-error: true
+        run: ruff check --output-format=github sage-stubs/
+
+      - name: Ruff formatting, complete stub surface
+        id: ruff_format
+        continue-on-error: true
+        run: ruff format --check sage-stubs/
+
+      - name: AST stub contract, complete tree
+        id: check_stubs
+        continue-on-error: true
+        run: |
+          set +e
+          python scripts/check_stubs.py > reports/check-stubs.txt 2>&1
+          status=$?
+          set -e
+          sed -n '1,200p' reports/check-stubs.txt
+          exit "$status"
+
+      - name: Repository guardrails, complete tree
+        id: guardrails
+        continue-on-error: true
+        run: |
+          set +e
+          python scripts/check_guardrails.py --all > reports/guardrails.txt 2>&1
+          status=$?
+          set -e
+          sed -n '1,200p' reports/guardrails.txt
+          exit "$status"
+
+      - name: Verify full-tree quality gates remain enabled
+        id: quality_config
+        continue-on-error: true
+        run: python scripts/check_quality_config.py
+
+      - name: Semantic type-erasure audit
+        id: audit
+        continue-on-error: true
+        run: |
+          python scripts/audit_stub_quality.py \
+            --root sage-stubs \
+            --json reports/stub-quality.json \
+            --sarif reports/stub-quality.sarif \
+            --fail-on warning \
+            --max-console 200
+
+      - name: Mypy strict, complete tree
+        id: mypy
+        continue-on-error: true
+        run: |
+          set +e
+          python -m mypy \
+            --strict \
+            --no-incremental \
+            --follow-imports=normal \
+            --show-error-codes \
+            --show-column-numbers \
+            --no-pretty \
+            sage-stubs/ > reports/mypy.txt 2>&1
+          status=$?
+          set -e
+          sed -n '1,200p' reports/mypy.txt
+          exit "$status"
+
+      - name: Basedpyright strict, complete tree
+        id: basedpyright
+        continue-on-error: true
+        run: |
+          set +e
+          basedpyright --project pyrightconfig.json --outputjson \
+            > reports/basedpyright.json
+          status=$?
+          set -e
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          report = json.loads(Path("reports/basedpyright.json").read_text())
+          summary = report.get("summary", {})
+          print(
+              "basedpyright: "
+              f"{summary.get('errorCount', 0)} error(s), "
+              f"{summary.get('warningCount', 0)} warning(s)"
+          )
+          PY
+          exit "$status"
+
+      - name: Validate Semgrep rule configuration
+        id: semgrep_validate
+        continue-on-error: true
+        run: semgrep --validate --config .semgrep/stub-quality.yml
+
+      - name: Semgrep generated and erased-type audit
+        id: semgrep
+        continue-on-error: true
+        run: |
+          set +e
+          semgrep scan \
+            --metrics=off \
+            --error \
+            --config .semgrep/stub-quality.yml \
+            --exclude sage-src \
+            --json \
+            --output reports/semgrep.json \
+            .
+          status=$?
+          set -e
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          report = json.loads(Path("reports/semgrep.json").read_text())
+          print(
+              f"semgrep: {len(report.get('results', []))} finding(s), "
+              f"{len(report.get('errors', []))} engine error(s)"
+          )
+          PY
+          exit "$status"
+
+      - name: Source coverage
+        id: coverage
+        continue-on-error: true
+        run: |
+          python scripts/stub_coverage.py --json --threshold 1.0 \
+            > reports/coverage.json
+
+      - name: Reject orphan stubs
+        id: orphan
+        continue-on-error: true
+        run: |
+          python scripts/stub_coverage.py --orphan > reports/orphans.txt
+          test ! -s reports/orphans.txt
+
+      - name: Check resulting diff
+        id: diff
+        continue-on-error: true
+        run: git diff --check
+
+      - name: Upload validation reports
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: population-validation-reports
+          path: reports/
+          if-no-files-found: error
+
+      - name: Require every validator
+        if: always()
+        env:
+          RUFF: ${{ steps.ruff.outcome }}
+          RUFF_FORMAT: ${{ steps.ruff_format.outcome }}
+          CHECK_STUBS: ${{ steps.check_stubs.outcome }}
+          GUARDRAILS: ${{ steps.guardrails.outcome }}
+          QUALITY_CONFIG: ${{ steps.quality_config.outcome }}
+          AUDIT: ${{ steps.audit.outcome }}
+          MYPY: ${{ steps.mypy.outcome }}
+          BASEDPYRIGHT: ${{ steps.basedpyright.outcome }}
+          SEMGREP_VALIDATE: ${{ steps.semgrep_validate.outcome }}
+          SEMGREP: ${{ steps.semgrep.outcome }}
+          COVERAGE: ${{ steps.coverage.outcome }}
+          ORPHAN: ${{ steps.orphan.outcome }}
+          DIFF: ${{ steps.diff.outcome }}
+        run: |
+          printf '%s\n' \
+            "ruff=$RUFF" \
+            "ruff_format=$RUFF_FORMAT" \
+            "check_stubs=$CHECK_STUBS" \
+            "guardrails=$GUARDRAILS" \
+            "quality_config=$QUALITY_CONFIG" \
+            "audit=$AUDIT" \
+            "mypy=$MYPY" \
+            "basedpyright=$BASEDPYRIGHT" \
+            "semgrep_validate=$SEMGREP_VALIDATE" \
+            "semgrep=$SEMGREP" \
+            "coverage=$COVERAGE" \
+            "orphan=$ORPHAN" \
+            "diff=$DIFF"
+          for outcome in \
+            "$RUFF" "$RUFF_FORMAT" "$CHECK_STUBS" "$GUARDRAILS" "$QUALITY_CONFIG" "$AUDIT" "$MYPY" \
+            "$BASEDPYRIGHT" "$SEMGREP_VALIDATE" "$SEMGREP" "$COVERAGE" \
+            "$ORPHAN" "$DIFF"
+          do
+            test "$outcome" = success
+          done
+
+      - name: Commit generated stubs directly to main
+        run: |
+          set -euo pipefail
+          git add sage-stubs
+          if git diff --cached --quiet --exit-code; then
+            echo 'No changes to commit.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'feat: populate all remaining Sage 10.7 stubs'
+          git push origin HEAD:main

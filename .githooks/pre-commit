@@ -3,13 +3,14 @@
 # Activate once per clone with:   just setup
 # (equivalently: git config core.hooksPath .githooks)
 #
-# What this hook enforces, on STAGED FILES ONLY (the existing legacy backlog
-# is not blocking — agents only need to leave the files they touch clean):
+# What this hook enforces:
 #   1. ruff lint                       on staged .pyi files
 #   2. scripts/check_stubs.py          on staged .pyi files
 #   3. scripts/check_guardrails.py     on the staged set
-#   4. mypy --strict                   on staged .pyi files (follow imports)
+#   4. scripts/check_quality_config.py prevents weakening full-tree CI
+#   5. mypy --strict                   on staged .pyi files (follow imports)
 #
+# Full-tree mypy, basedpyright, Semgrep, and semantic-debt checks run in CI.
 # Coverage is reported at the end as informational signal.
 
 set -uo pipefail
@@ -46,6 +47,7 @@ else
 fi
 
 run "guardrails (banned patterns + protected config)" python3 scripts/check_guardrails.py
+run "quality config (full-tree gates remain enabled)" python3 scripts/check_quality_config.py
 
 if [ ${#STAGED_PYI[@]} -gt 0 ]; then
     run "mypy --strict (staged .pyi, follow-imports=silent)" \

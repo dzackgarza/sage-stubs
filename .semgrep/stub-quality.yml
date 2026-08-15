@@ -1,0 +1,238 @@
+rules:
+  - id: sage-stubs.generated-scaffold
+    languages: [generic]
+    message: >-
+      This file is still an automatically generated scaffold. Replace it with
+      a source-grounded stub preserving real Sage types and inheritance.
+    severity: WARNING
+    paths:
+      include:
+        - sage-stubs/*.pyi
+        - sage-stubs/**/*.pyi
+    pattern-regex: '^# Generated from the pinned Sage 10\.7 source tree\.$'
+    metadata:
+      category: correctness
+      confidence: HIGH
+
+  - id: sage-stubs.fabricated-sage-object
+    languages: [generic]
+    message: >-
+      _SageObject is a fabricated local placeholder, not a Sage Parent,
+      Element, morphism, ring, module, or other real API type.
+    severity: ERROR
+    paths:
+      include:
+        - sage-stubs/*.pyi
+        - sage-stubs/**/*.pyi
+    pattern-regex: '\b_SageObject\b'
+    metadata:
+      category: correctness
+      confidence: HIGH
+
+  - id: sage-stubs.explicit-any
+    languages: [generic]
+    message: >-
+      Any disables useful checking and propagates through consumers. Resolve
+      the concrete type, union, overload, protocol, or type variable.
+    severity: ERROR
+    paths:
+      include:
+        - sage-stubs/*.pyi
+        - sage-stubs/**/*.pyi
+    pattern-regex: '\b(?:typing\.)?Any\b'
+    metadata:
+      category: correctness
+      confidence: HIGH
+
+  - id: sage-stubs.builtins-object-erasure
+    languages: [generic]
+    message: >-
+      builtins.object erases the domain type and also violates the repository's
+      normal-builtins style contract.
+    severity: ERROR
+    paths:
+      include:
+        - sage-stubs/*.pyi
+        - sage-stubs/**/*.pyi
+    pattern-regex: '\bbuiltins\.object\b'
+    metadata:
+      category: correctness
+      confidence: HIGH
+
+  - id: sage-stubs.opaque-object-signature
+    languages: [generic]
+    message: >-
+      A public signature is erased behind object. Confirm that the source
+      genuinely accepts an arbitrary Python object; otherwise use its Sage
+      domain type.
+    severity: WARNING
+    paths:
+      include:
+        - sage-stubs/*.pyi
+        - sage-stubs/**/*.pyi
+    pattern-regex: '(?s)(?:^|\n)[ \t]*(?:async[ \t]+)?def[ \t]+[A-Za-z_][A-Za-z0-9_]*[ \t]*\([^)]*(?::[ \t]*(?:builtins\.)?object\b)[^)]*\)'
+    metadata:
+      category: correctness
+      confidence: MEDIUM
+
+  - id: sage-stubs.object-return-type
+    languages: [generic]
+    message: >-
+      Public return type object hides the actual result type. Use the concrete
+      Sage class, Self, a union, an overload, or a protocol.
+    severity: ERROR
+    paths:
+      include:
+        - sage-stubs/*.pyi
+        - sage-stubs/**/*.pyi
+    pattern-regex: '(?s)(?:^|\n)[ \t]*(?:async[ \t]+)?def[ \t]+[A-Za-z_][A-Za-z0-9_]*[ \t]*\([^)]*\)[ \t]*->[ \t]*(?:builtins\.)?object\b'
+    metadata:
+      category: correctness
+      confidence: HIGH
+
+  - id: sage-stubs.erased-generic-argument
+    languages: [generic]
+    message: >-
+      A container or iterator is parameterized by object/_SageObject/Any,
+      discarding the element type required by consumers.
+    severity: ERROR
+    paths:
+      include:
+        - sage-stubs/*.pyi
+        - sage-stubs/**/*.pyi
+    pattern-regex: '\b(?:list|tuple|dict|set|frozenset|Iterator|Iterable|AsyncIterator|Sequence|Mapping)[ \t]*\[[^\]\n]*(?:\bAny\b|\bobject\b|\b_SageObject\b)'
+    metadata:
+      category: correctness
+      confidence: HIGH
+
+  - id: sage-stubs.verbose-builtins-annotation
+    languages: [generic]
+    message: >-
+      Generated builtins.* annotation spelling is forbidden; use normal builtin
+      names and replace guessed annotations with source-grounded types.
+    severity: WARNING
+    paths:
+      include:
+        - sage-stubs/*.pyi
+        - sage-stubs/**/*.pyi
+    pattern-regex: '\bbuiltins\.(?:bool|int|float|complex|str|bytes|bytearray|memoryview|slice|range|type|object|list|tuple|dict|set|frozenset)\b'
+    metadata:
+      category: maintainability
+      confidence: HIGH
+
+  - id: sage-stubs.domain-parameter-as-scalar
+    languages: [generic]
+    message: >-
+      A domain-like parameter (R/K/F/ring/field/parent/category/domain) was
+      guessed as a scalar. Use the actual Sage domain type.
+    severity: ERROR
+    paths:
+      include:
+        - sage-stubs/*.pyi
+        - sage-stubs/**/*.pyi
+    pattern-regex: '\b(?:R|S|K|F|ring|base_ring|field|base_field|parent|category|domain|codomain)[ \t]*:[ \t]*(?:builtins\.)?(?:int|bool|str|float|complex)\b'
+    metadata:
+      category: correctness
+      confidence: HIGH
+
+  - id: sage-stubs.generated-class-without-bases
+    languages: [generic]
+    message: >-
+      Class declaration has no bases. For generated stubs this commonly means
+      the Sage inheritance graph was discarded; verify it against source.
+    severity: WARNING
+    paths:
+      include:
+        - sage-stubs/*.pyi
+        - sage-stubs/**/*.pyi
+    pattern-regex: '(?m)^[ \t]*class[ \t]+(?!_SageObject\b)[A-Za-z_][A-Za-z0-9_]*[ \t]*:[ \t]*(?:\.\.\.)?[ \t]*$'
+    metadata:
+      category: correctness
+      confidence: MEDIUM
+
+  - id: sage-stubs.blanket-arithmetic-self
+    languages: [generic]
+    message: >-
+      Arithmetic return type Self may be a generator guess. Sage arithmetic
+      often changes parent/result type and may require overloads.
+    severity: WARNING
+    paths:
+      include:
+        - sage-stubs/*.pyi
+        - sage-stubs/**/*.pyi
+    pattern-regex: '(?s)(?:^|\n)[ \t]*def[ \t]+__(?:add|radd|sub|rsub|mul|rmul|matmul|rmatmul|truediv|rtruediv|floordiv|rfloordiv|mod|rmod|pow|rpow|and|rand|or|ror|xor|rxor|lshift|rlshift|rshift|rrshift)__[ \t]*\([^)]*\)[ \t]*->[ \t]*Self\b'
+    metadata:
+      category: correctness
+      confidence: MEDIUM
+
+  - id: sage-stubs.local-diagnostic-suppression
+    languages: [generic]
+    message: >-
+      Local suppression hides a lint or type error. Correct the signature,
+      import, or supporting stub instead.
+    severity: ERROR
+    paths:
+      include:
+        - sage-stubs/*.pyi
+        - sage-stubs/**/*.pyi
+    pattern-regex: '#[ \t]*(?:type:[ \t]*ignore|pyright:[ \t]*ignore|noqa|mypy:)'
+    metadata:
+      category: maintainability
+      confidence: HIGH
+
+  - id: sage-stubs.cast-in-stub
+    languages: [generic]
+    message: >-
+      cast(...) in a stub conceals an unresolved annotation rather than
+      describing the public API.
+    severity: ERROR
+    paths:
+      include:
+        - sage-stubs/*.pyi
+        - sage-stubs/**/*.pyi
+    pattern-regex: '\bcast[ \t]*\('
+    metadata:
+      category: correctness
+      confidence: HIGH
+
+  - id: sage-stubs.generator-object-fallback
+    languages: [generic]
+    message: >-
+      Stub generator falls back to builtins.object. This mechanically creates
+      type-erased public parameters.
+    severity: ERROR
+    paths:
+      include:
+        - scripts/stubgen_*.py
+    pattern-regex: '(?:return|=)[ \t]*["'']builtins\.object["'']'
+    metadata:
+      category: correctness
+      confidence: HIGH
+
+  - id: sage-stubs.generator-placeholder-fallback
+    languages: [generic]
+    message: >-
+      Stub generator falls back to _SageObject. This creates a fabricated
+      nominal type unrelated to Sage's actual hierarchy.
+    severity: ERROR
+    paths:
+      include:
+        - scripts/stubgen_*.py
+    pattern-regex: '(?:return|=)[ \t]*["'']_SageObject["'']'
+    metadata:
+      category: correctness
+      confidence: HIGH
+
+  - id: sage-stubs.generator-name-based-integer-guess
+    languages: [generic]
+    message: >-
+      Integer inference from short parameter names is not source-grounded and
+      misclassifies domain parameters such as R.
+    severity: ERROR
+    paths:
+      include:
+        - scripts/stubgen_*.py
+    pattern-regex: '(?s)INT_NAMES[ \t]*=[ \t]*\{[^}]*["'']r["''][^}]*\}'
+    metadata:
+      category: correctness
+      confidence: HIGH

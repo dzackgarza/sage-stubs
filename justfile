@@ -1,23 +1,50 @@
 # sage-stubs quality pipeline
 
-# Full quality check — run before every commit (also enforced by .githooks/pre-commit).
+# Full repository quality check. This is intentionally a full-tree gate: the
+# generated backlog remains red until its placeholder types are replaced.
 check:
-    @echo "--- ruff: deprecated patterns + missing annotations ---"
+    @echo "--- ruff: syntax, imports, annotations, and stub rules ---"
     ruff check sage-stubs/
-    @echo "--- check_stubs: Any/object ban ---"
-    python3 scripts/check_stubs.py $(find sage-stubs -name "*.pyi")
-    @echo "--- check_guardrails: banned patterns + protected config (--all) ---"
-    python3 scripts/check_guardrails.py --all || echo "(legacy backlog — see report above; new commits are still gated by the hook on staged files)"
-    @echo "--- mypy: strict type checking ---"
-    python3 -m mypy --strict sage-stubs/
+    ruff format --check sage-stubs/
+    @echo "--- check_stubs: Any/object and suppression bans ---"
+    python3 scripts/check_stubs.py
+    @echo "--- check_guardrails: repository-wide banned patterns ---"
+    python3 scripts/check_guardrails.py --all
+    @echo "--- quality configuration cannot be weakened ---"
+    python3 scripts/check_quality_config.py
+    @echo "--- semantic quality debt audit ---"
+    python3 scripts/audit_stub_quality.py --root sage-stubs --fail-on warning
+    @echo "--- mypy: strict full-tree type checking ---"
+    python3 -m mypy --strict --no-incremental --follow-imports=normal sage-stubs/
+    @echo "--- basedpyright: strict full-tree type checking ---"
+    basedpyright --project pyrightconfig.json
+    @echo "--- semgrep: generated/erased-type rules ---"
+    semgrep --validate --config .semgrep/stub-quality.yml
+    semgrep scan --metrics=off --error --config .semgrep/stub-quality.yml --exclude sage-src .
     @echo "All checks passed."
 
-# Fast lint only (no mypy)
+# Fast lint only (no type checkers or Semgrep).
 lint:
     ruff check sage-stubs/
-    python3 scripts/check_stubs.py $(find sage-stubs -name "*.pyi")
+    ruff format --check sage-stubs/
+    python3 scripts/check_stubs.py
+    python3 scripts/check_guardrails.py --all
 
-# Fast lint for staged stub files only, used by the pre-commit hook
+# High-signal AST audit of placeholder and type-erasure debt.
+audit *args:
+    python3 scripts/audit_stub_quality.py --root sage-stubs {{args}}
+
+# Both independent full-tree type checkers.
+typecheck:
+    python3 -m mypy --strict --no-incremental --follow-imports=normal sage-stubs/
+    basedpyright --project pyrightconfig.json
+
+# Repository-local Semgrep rules.
+semgrep:
+    semgrep --validate --config .semgrep/stub-quality.yml
+    semgrep scan --metrics=off --error --config .semgrep/stub-quality.yml --exclude sage-src .
+
+# Fast lint for staged stub files only, used by the pre-commit hook.
 lint-staged:
     @files="$(git diff --cached --name-only --diff-filter=ACM | grep -E '\\.pyi$' || true)"; \
     if [ -n "$files" ]; then \
@@ -25,7 +52,7 @@ lint-staged:
         python3 scripts/check_stubs.py $files; \
     fi
 
-# Auto-fix what ruff can fix (deprecated patterns)
+# Auto-fix what ruff can fix.
 fix:
     ruff check --fix sage-stubs/
 
@@ -55,7 +82,7 @@ setup:
 install-hooks:
     cp .githooks/pre-commit .git/hooks/pre-commit
     cp .githooks/post-commit .git/hooks/post-commit
-    chmod +x .git/hooks/pre-commit .git/hooks/post-commit
+    chmod +x .githooks/pre-commit .githooks/post-commit
     @echo "pre-commit + post-commit hooks installed locally."
 
 # Guardrails — banned patterns + scratch artefacts + narrowing detection.

@@ -1,0 +1,40 @@
+{
+  "$schema": "https://raw.githubusercontent.com/DetachHead/basedpyright/main/packages/vscode-pyright/schemas/pyrightconfig.schema.json",
+  "include": [
+    "sage-stubs"
+  ],
+  "exclude": [
+    "sage-src",
+    "**/__pycache__",
+    ".git"
+  ],
+  "stubPath": "sage-stubs",
+  "pythonVersion": "3.12",
+  "pythonPlatform": "Linux",
+  "typeCheckingMode": "strict",
+  "useLibraryCodeForTypes": false,
+  "enableTypeIgnoreComments": false,
+  "deprecateTypingAliases": true,
+  "strictGenericNarrowing": true,
+  "reportAny": "error",
+  "reportExplicitAny": "error",
+  "reportIgnoreCommentWithoutRule": "error",
+  "reportMissingImports": "error",
+  "reportMissingModuleSource": "none",
+  "reportMissingTypeStubs": "none",
+  "reportUnknownParameterType": "error",
+  "reportUnknownArgumentType": "error",
+  "reportUnknownLambdaType": "error",
+  "reportUnknownVariableType": "error",
+  "reportUnknownMemberType": "error",
+  "reportMissingParameterType": "error",
+  "reportMissingTypeArgument": "error",
+  "reportUntypedBaseClass": "error",
+  "reportUnannotatedClassAttribute": "error",
+  "reportUnusedImport": "error",
+  "reportDuplicateImport": "error",
+  "reportUnusedVariable": "error",
+  "reportUnnecessaryTypeIgnoreComment": "error",
+  "reportInvalidCast": "error",
+  "reportPrivateUsage": "none"
+}
