@@ -34,8 +34,11 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Install normalization tool
-        run: python -m pip install --upgrade ruff
+      - name: Install validation tools
+        run: |
+          python -m pip install --upgrade mypy ruff
+          ruff --version
+          mypy --version
 
       - name: Populate every missing source module
         run: python scripts/populate_all_stubs.py
@@ -49,11 +52,24 @@ jobs:
             xargs -r ruff check --fix --exit-zero -- < /tmp/changed-stubs.txt
           fi
 
-      - name: Commit generated stubs directly to main
+      - name: Validate complete stub surface
         shell: bash
         run: |
           set -euo pipefail
+          ruff check --output-format=github sage-stubs/
+          find sage-stubs -name '*.pyi' -print0 | xargs -0 python scripts/check_stubs.py
+          python scripts/stub_coverage.py --threshold 1.0
+          if [[ -s /tmp/changed-stubs.txt ]]; then
+            xargs -r -n 100 python -m mypy --strict --follow-imports=silent -- < /tmp/changed-stubs.txt
+          fi
           git add sage-stubs
+          python scripts/check_guardrails.py
+          git diff --cached --check
+
+      - name: Commit directly to main
+        shell: bash
+        run: |
+          set -euo pipefail
           if git diff --cached --quiet --exit-code; then
             echo 'No changes to commit.'
             exit 0
