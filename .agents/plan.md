@@ -132,9 +132,9 @@ scaffolded stub that still contains `Any` will be rejected by
 
 ## At-a-glance next step
 
-> **NEXT PHASE:** Phase 03 🟡 In Progress (T03.1 ✅, T03.2 ✅). Tier 1 phases 04 (number-theoretic rings) and 05 (linear algebra) are still unblocked and untouched.
-> **Pick up:** T03.3 (univariate finite-field & GF(2)), T03.4 (multivariate core), or T03.6/T03.7/T03.8 in parallel; or start phase 04/05.
-> **Status:** Phase 02 Complete; Phase 03 In Progress; Phases 04-05 ⬜ Not Started.
+> **NEXT PHASE:** Phase 03 🟡 In Progress (T03.1–T03.4, T03.6–T03.8 ✅). Tier 1 phases 04 (number-theoretic rings) and 05 (linear algebra) are still unblocked and untouched.
+> **Pick up:** T03.5 (ideals, term order, fans — now unblocked by T03.4), T03.9 (pbori), T03.10 (padics), T03.11 (weil); or start phase 04/05.
+> **Status:** Phase 02 Complete; Phase 03 In Progress (T03.5, T03.9-T03.11 pending); Phases 04-05 ⬜ Not Started.
 
 Update this banner whenever a phase transitions between `Not Started`,
 `In Progress`, and `Complete`.
