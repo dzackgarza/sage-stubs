@@ -1,7 +1,7 @@
 # Phase 03 — Polynomial Rings
 
 **Tier:** 1
-**Status:** 🟡 In Progress
+**Status:** ✅ Complete
 **Depends on:** Phase 01
 **Unblocks:** Phase 04 (parts), Phase 06, 07, 09, 10, 11, 13, 14
 
@@ -28,8 +28,8 @@ stubs must be audited rather than rewritten.
 | T03.7 | **Ore / skew polynomials** — `ore_polynomial_element`, `ore_polynomial_ring`, `ore_function_element`, `ore_function_field`, `skew_polynomial_element`, `skew_polynomial_ring`, `skew_polynomial_finite_field`, `skew_polynomial_finite_order`. | 8 | T03.1 | ✅ Done | ore_polynomial_element: OrePolynomial + generic_dense (58+33 methods, left/right gcd-lcm-xgcd families); ore_polynomial_ring rewritten from 8-line legacy (UniqueRepresentation base, twisting_morphism/derivation, fraction_field); ore_function pair incl. center injection sections; skew element/ring incl. power_mod, minimal_vanishing/lagrange; finite_order (reduced trace/norm/charpoly, bound); finite_field (irreducible divisors, factor, factorizations). |
 | T03.8 | **Infinite polynomial rings & misc** — `infinite_polynomial_element`, `infinite_polynomial_ring`, `cyclotomic`, `complex_roots`, `convolution`, `polynomial_fateman`, `q_integer_valued_polynomials`, `integer_valued_polynomials`, `msolve`, `real_roots`, `refine_root`, `binary_form_reduce`. | ~12 | T03.1 | ✅ Done | infinite element: InfinitePolynomial base (36) + sparse/dense (12 each); ring: factory + 2 dict helpers + sparse/dense rings + InfinitePolynomialGen; cyclotomic_coeffs/value/bateman_bound; complex_roots; convolution FFT family; fateman; q/integer valued rings; msolve (groebner_basis_degrevlex, variety); real_roots (interval_bernstein hierarchy, ocean/island, real_roots, to_bernstein, ~40 helpers); refine_root; binary_form_reduce. |
 | T03.9 | **Polyboris (`pbori`) subpackage** — `pbori/pbori.pyx` + sibling helper modules. | ~20 | T03.4 | ✅ Done | pbori.pyi: BooleanPolynomialRing/MonomialMonoid/Monomial/Polynomial/Ideal/BooleSet/Vector/Strategies/factories (~24 classes, ~190 methods) + 28 module helpers; PyPolyBoRi, blocks (10 classes), cnf, easy_polynomials, fglm, frontend, gbcore, gbrefs, heuristics, interpolate, interred, ll, nf, parallel, randompoly, rank, specialsets, statistics. No brial.py in sage-src (external brial package) — nothing to stub there. |
-| T03.10 | **`padics/` polynomial subpackage** — `padics/factor_padic`, related helpers (full file list in Phase-1 exempt audit). | ~6 | T03.1 | ⬜ | Coordinate with Phase 04 (padics). |
-| T03.11 | **`weil/` polynomial subpackage** — Weil polynomial helpers. | ~4 | T03.1 | ⬜ | |
+| T03.10 | **`padics/` polynomial subpackage** — `padics/factor_padic`, related helpers (full file list in Phase-1 exempt audit). | ~6 | T03.1 | ✅ Done | polynomial_padic (content, factor, root_field, pari conversion), polynomial_padic_capped_relative_dense (43 methods: prec machinery, quo_rem, newton_polygon, is_eisenstein), polynomial_padic_flat, make_padic_poly. |
+| T03.11 | **`weil/` polynomial subpackage** — Weil polynomial helpers. | ~4 | T03.1 | ✅ Done | weil_polynomials: dfs_manager, WeilPolynomials_iter, WeilPolynomials (d/q/sign/lead enumeration interface). |
 
 ## Bootstrap with stubgen
 
