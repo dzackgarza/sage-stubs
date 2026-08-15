@@ -38,9 +38,9 @@ Cover the root of `sage.rings/` (everything *not* under
 | T02.7 | **Fractions, localisations, quotients** — `fraction_field`, `fraction_field_element`, `fraction_field_FpT`, `localization`, `quotient_ring`, `quotient_ring_element`, `monomials`. | ~7 | T02.5 | ✅ Done | New: localization, quotient_ring_element, monomials. Completed: fraction_field (+3 classes), fraction_field_element, quotient_ring (+2 classes), fraction_field_FpT LSP fixes. |
 | T02.8 | **Lazy series & lazy species** — `lazy_series`, `lazy_series_ring`, `lazy_species`. | 3 | T02.5 | ✅ Done | lazy_series: 9 classes complete (incl. all 23 transcendental functions); lazy_series_ring: 7 classes; lazy_species: 17 classes. |
 | T02.9 | **Ring extensions & Tate algebra** — `ring_extension`, `ring_extension_conversion`, `ring_extension_element`, `ring_extension_homset`, `ring_extension_morphism`, `tate_algebra`, `tate_algebra_element`, `tate_algebra_ideal`. | 8 | T02.5 | ✅ Done | All 8 stubbed; ring_extension 5 classes + 5 cpdefs, morphisms 5 classes, Tate algebra 3+3+1 classes. + minimal sage.monoids.monoid dep. |
-| T02.10 | **C-finite, Pari, Bernmm, sum_of_squares, species, tests** — `cfinite_sequence`, `pari_ring`, `bernmm` package surface, `sum_of_squares`, `species`, `infinity`. | ~6 | — | ⬜ | `infinity` has an existing stub. |
-| T02.11 | **Convert** — `sage.rings.convert/` (typically `mpfi`, `to_real_ramp` style helpers). | ~3 | — | ⬜ | Some files may be Exempt — list explicitly. |
-| T02.12 | **Invariants** — `sage.rings.invariants/` (binary form invariants). | ~3 | T02.6 | ⬜ | |
+| T02.10 | **C-finite, Pari, Bernmm, sum_of_squares, species, tests** — `cfinite_sequence`, `pari_ring`, `bernmm` package surface, `sum_of_squares`, `species`, `infinity`. | ~6 | — | ✅ Done | cfinite_sequence (2 classes + factory), pari_ring (2), sum_of_squares (4 cpdefs), species (6 classes), infinity completed (10 classes), bernmm verified complete. + monoids/indexed_free_monoid dep. |
+| T02.11 | **Convert** — `sage.rings.convert/` (typically `mpfi`, `to_real_ramp` style helpers). | ~3 | — | ✅ Done | convert/mpfi.pyx is cdef-only (no public surface); convert/all.pyi lazy re-export; + misc/lazy_import.pyi lazy_import function. |
+| T02.12 | **Invariants** — `sage.rings.invariants/` (binary form invariants). | ~3 | T02.6 | ✅ Done | invariant_theory (13 classes + factory + transvectant), reconstruction (3 functions), all.pyi lazy re-export. |
 
 ## Parallelism
 
