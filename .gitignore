@@ -1,18 +1,48 @@
 ```
-# Dependencies
-sage-src/
+# Compiled Python files
+*.pyc
+__pycache__/
 
-# Logs and temp files
+# Build and distribution directories
+build/
+dist/
+sage-build/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Sage-specific
+sage-src/
+sage-stubs/
+
+# Logs
 *.log
+
+# Temporary files
 *.tmp
 *.swp
+
+# Environment files
+.env
+.env.local
+*.env.*
 
 # Editors
 .vscode/
 .idea/
 
-# Environment
-.env
-.env.local
-*.env.*
+# Coverage reports
+.coverage
+coverage/
+htmlcov/
+
+# Python cache
+.mypy_cache/
+.pytest_cache/
+
+# OS specific
+.DS_Store
+Thumbs.db
 ```
