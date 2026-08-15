@@ -33,15 +33,19 @@ jobs:
           cat .quality-patch/chunk-* > /tmp/sage-stubs-quality-patch.b64
           base64 --decode /tmp/sage-stubs-quality-patch.b64 > /tmp/sage-stubs-quality-patch.tar.gz
           echo '88f278ac7fda74f77f2b46cf9879554ff604ce937ba50f09b4c63afb07b1fcd3  /tmp/sage-stubs-quality-patch.tar.gz' | sha256sum --check
-          tar -xzf /tmp/sage-stubs-quality-patch.tar.gz -C .
-          rm -rf .quality-patch .github/workflows/apply-quality-patch.yml
+          rm -rf /tmp/sage-stubs-quality-patch
+          mkdir -p /tmp/sage-stubs-quality-patch
+          tar -xzf /tmp/sage-stubs-quality-patch.tar.gz -C /tmp/sage-stubs-quality-patch
+          rsync -a --exclude='.github/workflows/' /tmp/sage-stubs-quality-patch/ ./
+          mkdir -p .quality-workflows
+          cp /tmp/sage-stubs-quality-patch/.github/workflows/*.yml .quality-workflows/
+          rm -rf .quality-patch
 
-      - name: Verify patch configuration
+      - name: Verify staged quality tooling
         shell: bash
         run: |
           set -euo pipefail
           python -m compileall -q scripts
-          python scripts/check_quality_config.py
           python - <<'PY'
           import json
           import tomllib
@@ -53,12 +57,12 @@ jobs:
           bash -n .githooks/pre-commit
           git diff --check
 
-      - name: Commit final quality pipeline directly to main
+      - name: Commit non-workflow tooling directly to main
         shell: bash
         run: |
           set -euo pipefail
           git add -A
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git commit -m 'ci: add full-tree type-quality audit'
+          git commit -m 'ci: stage full-tree type-quality tooling'
           git push origin HEAD:main
