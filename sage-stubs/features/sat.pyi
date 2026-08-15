@@ -1,0 +1,20 @@
+# Generated from the pinned Sage 10.7 source tree.
+import builtins
+from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
+from typing import Self
+
+class _SageObject: ...
+
+class Glucose:
+    def __init__(self, executable: builtins.str = ...) -> None: ...
+
+class Kissat:
+    def __init__(self) -> None: ...
+
+class Pycosat:
+    def __init__(self) -> None: ...
+
+class Pycryptosat:
+    def __init__(self) -> None: ...
+
+def all_features() -> _SageObject: ...

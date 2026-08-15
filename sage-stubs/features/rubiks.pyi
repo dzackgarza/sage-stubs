@@ -1,0 +1,29 @@
+# Generated from the pinned Sage 10.7 source tree.
+import builtins
+from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
+from typing import Self
+
+class _SageObject: ...
+
+class cu2:
+    def __init__(self) -> None: ...
+
+class size222:
+    def __init__(self) -> None: ...
+
+class optimal:
+    def __init__(self) -> None: ...
+
+class mcube:
+    def __init__(self) -> None: ...
+
+class dikcube:
+    def __init__(self) -> None: ...
+
+class cubex:
+    def __init__(self) -> None: ...
+
+class Rubiks:
+    def __init__(self) -> None: ...
+
+def all_features() -> _SageObject: ...

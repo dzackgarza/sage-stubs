@@ -1,0 +1,16 @@
+# Generated from the pinned Sage 10.7 source tree.
+import builtins
+from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
+from typing import Self
+
+class _SageObject: ...
+
+class SteenrodModuleMixin:
+    def profile(self) -> _SageObject: ...
+    def export_module_definition(self, powers_of_two_only: builtins.bool = ...) -> _SageObject: ...
+
+class SteenrodFPModule:
+    def resolution(self, k: builtins.int, top_dim: builtins.object = ..., verbose: builtins.bool = ...) -> _SageObject: ...
+
+class SteenrodFreeModule:
+    ...

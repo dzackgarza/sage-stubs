@@ -1,0 +1,13 @@
+# Generated from the pinned Sage 10.7 source tree.
+import builtins
+from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
+from typing import Self
+
+class _SageObject: ...
+
+class TachyonRT:
+    def __call__(self, model: builtins.object, outfile: builtins.str = ..., verbose: builtins.int = ..., extra_opts: builtins.str = ...) -> _SageObject: ...
+    def usage(self, use_pager: builtins.bool = ...) -> _SageObject: ...
+    def version(self) -> _SageObject: ...
+
+tachyon_rt: _SageObject

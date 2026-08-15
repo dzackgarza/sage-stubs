@@ -1,0 +1,13 @@
+# Generated from the pinned Sage 10.7 source tree.
+import builtins
+from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
+from typing import Self
+
+class _SageObject: ...
+
+class SagePrettyPrinter:
+    DEBUG: _SageObject
+    pretty_repr: _SageObject
+    def toplevel(self) -> _SageObject: ...
+    def __init__(self, output: builtins.object, max_width: builtins.object, newline: builtins.object, max_seq_length: builtins.object = ...) -> None: ...
+    def pretty(self, obj: builtins.object) -> _SageObject: ...

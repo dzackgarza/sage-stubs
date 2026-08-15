@@ -1,0 +1,13 @@
+# Generated from the pinned Sage 10.7 source tree.
+import builtins
+from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
+from typing import Self
+
+class _SageObject: ...
+
+x: _SageObject
+def matching_polynomial(G: builtins.object, complement: builtins.object = ..., name: builtins.object = ...) -> _SageObject: ...
+
+def complete_poly(n: builtins.object) -> _SageObject: ...
+
+def delete_and_add(edges: builtins.object, nverts: builtins.object, nedges: builtins.object, totverts: builtins.object, depth: builtins.object, pol: builtins.object) -> _SageObject: ...

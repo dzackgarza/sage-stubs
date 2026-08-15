@@ -1,0 +1,13 @@
+# Generated from the pinned Sage 10.7 source tree.
+import builtins
+from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
+from typing import Self
+
+class _SageObject: ...
+
+numpy: _SageObject
+scipy: _SageObject
+class Matrix_real_double_dense:
+    def __cinit__(self) -> _SageObject: ...
+    def set_unsafe_double(self, i: builtins.object, j: builtins.object, value: builtins.object) -> _SageObject: ...
+    def get_unsafe_double(self, i: builtins.object, j: builtins.object) -> _SageObject: ...

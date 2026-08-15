@@ -1,0 +1,16 @@
+# Generated from the pinned Sage 10.7 source tree.
+import builtins
+from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
+from typing import Self
+
+class _SageObject: ...
+
+class AutomorphismFieldGroup:
+    Element: _SageObject
+    def __init__(self, vector_field_module: builtins.object) -> None: ...
+    def one(self) -> _SageObject: ...
+    def base_module(self) -> _SageObject: ...
+
+class AutomorphismFieldParalGroup:
+    Element: _SageObject
+    def __init__(self, vector_field_module: builtins.object) -> None: ...

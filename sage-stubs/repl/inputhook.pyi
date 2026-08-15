@@ -1,0 +1,13 @@
+# Generated from the pinned Sage 10.7 source tree.
+import builtins
+from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
+from typing import Self
+
+class _SageObject: ...
+
+TIMEOUT: _SageObject
+def sage_inputhook(context: builtins.object) -> _SageObject: ...
+
+def install() -> _SageObject: ...
+
+def uninstall() -> _SageObject: ...

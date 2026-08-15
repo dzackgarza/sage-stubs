@@ -1,0 +1,16 @@
+# Generated from the pinned Sage 10.7 source tree.
+import builtins
+from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
+from typing import Self
+
+class _SageObject: ...
+
+class SchemeHomset_points_spec:
+    ...
+
+class SchemeHomset_polynomial_affine_space:
+    def identity(self) -> _SageObject: ...
+
+class SchemeHomset_points_affine:
+    def points(self, **kwds: builtins.object) -> _SageObject: ...
+    def numerical_points(self, F: builtins.object = ..., **kwds: builtins.object) -> _SageObject: ...

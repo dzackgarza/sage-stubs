@@ -1,0 +1,23 @@
+# Generated from the pinned Sage 10.7 source tree.
+import builtins
+from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
+from typing import Self
+
+class _SageObject: ...
+
+class MIPBackend:
+    ...
+
+class CPLEX:
+    def __init__(self) -> None: ...
+
+class Gurobi:
+    def __init__(self) -> None: ...
+
+class COIN:
+    def __init__(self) -> None: ...
+
+class CVXOPT:
+    def __init__(self) -> None: ...
+
+def all_features() -> _SageObject: ...

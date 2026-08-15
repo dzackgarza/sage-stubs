@@ -1,0 +1,19 @@
+# Generated from the pinned Sage 10.7 source tree.
+import builtins
+from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
+from typing import Self
+
+class _SageObject: ...
+
+def HighestWeightCrystal(dominant_weight: builtins.object, model: builtins.object = ...) -> _SageObject: ...
+
+class FiniteDimensionalHighestWeightCrystal_TypeE:
+    def __init__(self, dominant_weight: builtins.object) -> None: ...
+    Element: _SageObject
+    def module_generator(self) -> _SageObject: ...
+
+class FiniteDimensionalHighestWeightCrystal_TypeE6:
+    def __init__(self, dominant_weight: builtins.object) -> None: ...
+
+class FiniteDimensionalHighestWeightCrystal_TypeE7:
+    def __init__(self, dominant_weight: builtins.object) -> None: ...

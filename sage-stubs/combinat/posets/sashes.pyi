@@ -1,0 +1,19 @@
+# Generated from the pinned Sage 10.7 source tree.
+import builtins
+from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
+from typing import Self
+
+class _SageObject: ...
+
+B: _SageObject
+N: _SageObject
+BB: _SageObject
+def sashes(n: builtins.int) -> _SageObject: ...
+
+def cover_relations(s: builtins.object) -> _SageObject: ...
+
+def lattice_of_sashes(n: builtins.int) -> _SageObject: ...
+
+def pellytope_fan(n: builtins.int) -> _SageObject: ...
+
+def pellytope(n: builtins.int) -> _SageObject: ...

@@ -1,0 +1,13 @@
+# Generated from the pinned Sage 10.7 source tree.
+import builtins
+from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
+from typing import Self
+
+class _SageObject: ...
+
+class BialgebrasWithBasis:
+    class ParentMethods:
+        def convolution_product(self, *maps: builtins.object) -> _SageObject: ...
+    class ElementMethods:
+        def convolution_power_of_id(self, n: builtins.int) -> _SageObject: ...
+        def convolution_product(self, *maps: builtins.object) -> _SageObject: ...

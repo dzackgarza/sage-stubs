@@ -1,0 +1,13 @@
+# Generated from the pinned Sage 10.7 source tree.
+import builtins
+from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
+from typing import Self
+
+class _SageObject: ...
+
+class HyperbolicPolygon:
+    def __init__(self, pts: builtins.object, model: builtins.object, options: builtins.object) -> None: ...
+
+def hyperbolic_polygon(pts: builtins.object, model: builtins.str = ..., resolution: builtins.int = ..., **options: builtins.object) -> _SageObject: ...
+
+def hyperbolic_triangle(a: builtins.object, b: builtins.object, c: builtins.object, model: builtins.str = ..., **options: builtins.object) -> _SageObject: ...

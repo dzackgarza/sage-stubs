@@ -1,0 +1,16 @@
+# Generated from the pinned Sage 10.7 source tree.
+import builtins
+from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
+from typing import Self
+
+class _SageObject: ...
+
+class PrimePi:
+    def __init__(self) -> None: ...
+    def __call__(self, *args: builtins.object, coerce: builtins.object = ..., hold: builtins.object = ...) -> _SageObject: ...
+    def plot(self, xmin: builtins.object = ..., xmax: builtins.object = ..., vertical_lines: builtins.object = ..., **kwds: builtins.object) -> _SageObject: ...
+
+prime_pi: _SageObject
+def legendre_phi(x: builtins.object, a: builtins.object) -> _SageObject: ...
+
+partial_sieve_function: _SageObject

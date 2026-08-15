@@ -1,0 +1,16 @@
+# Generated from the pinned Sage 10.7 source tree.
+import builtins
+from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
+from typing import Self
+
+class _SageObject: ...
+
+class FiniteFieldVectorSpaceIsomorphism:
+    def is_injective(self) -> builtins.bool: ...
+    def is_surjective(self) -> builtins.bool: ...
+
+class MorphismVectorSpaceToFiniteField:
+    def __init__(self, V: builtins.object, K: builtins.int, C: builtins.object) -> None: ...
+
+class MorphismFiniteFieldToVectorSpace:
+    def __init__(self, K: builtins.int, V: builtins.object, C: builtins.object) -> None: ...
