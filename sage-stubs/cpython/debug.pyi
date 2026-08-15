@@ -10,7 +10,7 @@ from typing import TypeAlias, TypeVar, overload
 
 from sage.structure.sage_object import SageObject
 
-AttributeValue: TypeAlias = (
+type AttributeValue = (
     property
     | Callable[..., object]
     | FunctionType

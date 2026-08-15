@@ -4,9 +4,8 @@ from sage.categories.morphism import Morphism
 from sage.categories.category import Category
 from sage.structure.parent import Parent
 
-pass
-_ = TypeVarDomainElementT
-_ = TypeVarCodomainElementT
+DomainElementT = TypeVar("DomainElementT")
+CodomainElementT = TypeVar("CodomainElementT")
 
 def Hom(
     X: DomainElementT,

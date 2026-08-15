@@ -1,7 +1,7 @@
 from collections.abc import Callable
 from typing import Self, TypeAlias
 
-ExitHandler: TypeAlias = tuple[Callable[..., object], tuple[object, ...], dict[str, object]]
+type ExitHandler = tuple[Callable[..., object], tuple[object, ...], dict[str, object]]
 
 class restore_atexit:
     def __init__(self, *, run: bool = False, clear: bool | None = None) -> None: ...

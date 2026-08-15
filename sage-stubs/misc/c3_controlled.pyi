@@ -23,7 +23,7 @@ def C3_sorted_merge(
     key: Callable[[object], object] = ...,
 ) -> tuple[list[object], list[object]]: ...
 
-class HierarchyElement(object, metaclass=ClasscallMetaclass):
+class HierarchyElement(metaclass=ClasscallMetaclass):
     value: object
     _bases: list[HierarchyElement]
     _key: Callable[[object], object]

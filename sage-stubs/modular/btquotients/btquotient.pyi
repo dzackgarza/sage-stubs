@@ -24,7 +24,7 @@ class DoubleCosetReduction:
         
         ...
 
-    def t(self, prec: Optional[int] = None) -> Matrix:
+    def t(self, prec: int | None = None) -> Matrix:
         
         ...
 
@@ -51,9 +51,9 @@ class BruhatTitsQuotient:
         p,
         Nminus,
         Nplus: int = 1,
-        character: Optional[DirichletCharacter] = None,
+        character: DirichletCharacter | None = None,
         use_magma: bool = False,
-        seed: Optional[int] = None,
+        seed: int | None = None,
         magma_session = None,
     ) -> None: ...
 

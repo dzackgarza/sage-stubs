@@ -1,12 +1,17 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 from sage.categories.morphism import Morphism
 
 from sage.rings.ring import Ring
 from sage.rings.ideal import Ideal
 from sage.structure.richcmp import ComparisonOperator
+
+if TYPE_CHECKING:
+    from sage.rings.polynomial.polynomial_ring import PolynomialRing
+    from sage.rings.valuation.gauss_valuation import GaussValuation
+
 class DiscretePseudoValuation(Morphism):
     def __init__(self, parent: Morphism) -> None: ...
-    def is_equivalent(self, f, g) -> bool: ...
+    def is_equivalent(self, f: Any, g: Any) -> bool: ...
     def __hash__(self) -> int: ...
     def _hash_(self) -> int: ...
     def _richcmp_(self, other: DiscretePseudoValuation, op: ComparisonOperator) -> bool: ...
@@ -22,19 +27,36 @@ class NegativeInfiniteDiscretePseudoValuation(InfiniteDiscretePseudoValuation):
 
 class DiscreteValuation(DiscretePseudoValuation):
     def is_discrete_valuation(self) -> bool: ...
-    def mac_lane_approximants(self, G, assume_squarefree: bool = ..., require_final_EF: bool = ..., required_precision: int = ..., require_incomparability: bool = ..., require_maximal_degree: bool = ..., algorithm: str = ...) -> list: ...
-    def mac_lane_approximant(self, G, valuation, approximants=None): ...
-    def montes_factorization(self, G, assume_squarefree: bool = ..., required_precision=None): ...
+    def mac_lane_approximants(
+        self,
+        G: Any,
+        assume_squarefree: bool = ...,
+        require_final_EF: bool = ...,
+        required_precision: int = ...,
+        require_incomparability: bool = ...,
+        require_maximal_degree: bool = ...,
+        algorithm: str = ...
+    ) -> list[Any]: ...
+    def mac_lane_approximant(self, G: Any, valuation: Any, approximants: list[Any] | None = ...) -> Any: ...
+    def montes_factorization(self, G: Any, assume_squarefree: bool = ..., required_precision: int | None = ...) -> Any: ...
     def _ge_(self, other: DiscretePseudoValuation) -> bool: ...
 
 class MacLaneApproximantNode:
-    valuation: DiscreteValuation
+    valuation: Any
     parent: MacLaneApproximantNode | None
     ef: bool
     principal_part_bound: int | None
-    coefficients: dict | None
-    valuations: dict | None
+    coefficients: dict[str, Any] | None
+    valuations: dict[str, Any] | None
     forced_leaf: bool
-    def __init__(self, valuation: DiscreteValuation, parent: MacLaneApproximantNode | None, ef: bool, principal_part_bound: int | None, coefficients: dict | None, valuations: dict | None) -> None: ...
+    def __init__(
+        self,
+        valuation: Any,
+        parent: MacLaneApproximantNode | None,
+        ef: bool,
+        principal_part_bound: int | None,
+        coefficients: dict[str, Any] | None,
+        valuations: dict[str, Any] | None
+    ) -> None: ...
     def __eq__(self, other: MacLaneApproximantNode) -> bool: ...
     def __ne__(self, other: MacLaneApproximantNode) -> bool: ...

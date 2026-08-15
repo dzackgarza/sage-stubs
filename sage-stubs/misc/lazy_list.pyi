@@ -3,7 +3,7 @@ from typing import TypeAlias
 
 from sage.structure.sage_object import SageObject
 
-_LazyListMaterialized: TypeAlias = list[object]
+type _LazyListMaterialized = list[object]
 
 class lazy_list_generic:
     cache: _LazyListMaterialized

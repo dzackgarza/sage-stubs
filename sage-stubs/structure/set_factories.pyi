@@ -7,8 +7,8 @@ from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import UniqueRepresentation
 from typing import TypeAlias
 
-SetFactoryConstraints: TypeAlias = tuple[int | None, ...]
-ElementConstructorAttributes: TypeAlias = dict[str, Parent | str | type[Element]]
+type SetFactoryConstraints = tuple[int | None, ...]
+type ElementConstructorAttributes = dict[str, Parent | str | type[Element]]
 
 class SetFactory(UniqueRepresentation, SageObject):
     def __call__(self, *constraints: int | None, **consdict: int | None) -> Parent: ...

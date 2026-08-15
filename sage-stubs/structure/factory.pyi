@@ -7,13 +7,13 @@ from sage.rings.ring import Ring
 from sage.structure.parent import Parent
 from sage.structure.sage_object import SageObject
 
-FactoryVersion: TypeAlias = tuple[int, ...]
-FactoryCacheKeyComponent: TypeAlias = (
+type FactoryVersion = tuple[int, ...]
+type FactoryCacheKeyComponent = (
     Integer | int | str | bool | None | tuple[str, ...] | Polynomial | Ring
 )
-FactoryCacheKey: TypeAlias = tuple[FactoryCacheKeyComponent, ...]
-FactoryExtraArgs: TypeAlias = dict[str, bool]
-FactoryPickleState: TypeAlias = dict[str, Callable[..., SageObject]]
+type FactoryCacheKey = tuple[FactoryCacheKeyComponent, ...]
+type FactoryExtraArgs = dict[str, bool]
+type FactoryPickleState = dict[str, Callable[..., SageObject]]
 
 class UniqueFactory(SageObject):
     def __init__(self, name: str) -> None: ...

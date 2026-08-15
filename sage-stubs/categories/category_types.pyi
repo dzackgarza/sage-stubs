@@ -4,6 +4,7 @@ from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 from sage.categories.bimodules import Bimodules
 from sage.categories.schemes import Schemes
 from sage.misc.unknown import Unknown
+from sage.categories.category_types import AbelianCategory, Category_over_base_ring
 
 
 class Category_over_base(CategoryWithParameters):

@@ -1,4 +1,5 @@
-from typing import TYPE_CHECKING, Optional, overload, Any, Callable
+from typing import TYPE_CHECKING, Optional, overload, Any
+from collections.abc import Callable
 
 from sage.manifolds.manifold import TopologicalManifold
 from sage.structure.element import Element
@@ -9,7 +10,7 @@ class Chart:
     _manifold: TopologicalManifold
     _sindex: int
     _xx: tuple[str, ...]
-    _periods: Optional[tuple[Any, ...]]
+    _periods: tuple[Any, ...] | None
     _restrictions: frozenset[Any]
 
     @staticmethod
@@ -17,7 +18,7 @@ class Chart:
         cls: type[Chart],
         domain: TopologicalManifold,
         coordinates: str = "",
-        calc_method: Optional[str] = None,
+        calc_method: str | None = None,
         names: Any = None,
         coord_restrictions: Any = None,
         **coordinate_options: Any,
@@ -27,8 +28,8 @@ class Chart:
         self,
         domain: TopologicalManifold,
         coordinates: str,
-        calc_method: Optional[str] = None,
-        periods: Optional[tuple[Any, ...]] = None,
+        calc_method: str | None = None,
+        periods: tuple[Any, ...] | None = None,
         coord_restrictions: Any = None,
     ) -> None: ...
 
@@ -59,7 +60,7 @@ class Chart:
         
         ...
 
-    def periods(self) -> Optional[tuple[Any, ...]]:
+    def periods(self) -> tuple[Any, ...] | None:
         
         ...
 
@@ -89,18 +90,18 @@ class Chart:
         self,
         other: Chart,
         transformations: Any,
-        intersection_name: Optional[str] = None,
+        intersection_name: str | None = None,
         restrictions1: Any = None,
         restrictions2: Any = None,
     ) -> Any:
         
         ...
 
-    def preimage(self, codomain_subset: Any, name: Optional[str] = None, latex_name: Optional[str] = None) -> Any:
+    def preimage(self, codomain_subset: Any, name: str | None = None, latex_name: str | None = None) -> Any:
         
         ...
 
-    def pullback(self, codomain_subset: Any, name: Optional[str] = None, latex_name: Optional[str] = None) -> Any:
+    def pullback(self, codomain_subset: Any, name: str | None = None, latex_name: str | None = None) -> Any:
         
         ...
 
@@ -108,7 +109,7 @@ class Chart:
         
         ...
 
-    def function(self, expression: Any, calc_method: Optional[str] = None, expansion_symbol: Any = None, order: Optional[int] = None) -> Any:
+    def function(self, expression: Any, calc_method: str | None = None, expansion_symbol: Any = None, order: int | None = None) -> Any:
         
         ...
 

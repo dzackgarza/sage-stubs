@@ -4,8 +4,8 @@ from sage.manifolds.chart import Chart
 from sage.manifolds.manifold import TopologicalManifold
 class ScalarField:
     
-    _name: Optional[str]
-    _latex_name: Optional[str]
+    _name: str | None
+    _latex_name: str | None
     _domain: TopologicalManifold
     _manifold: TopologicalManifold
     _is_zero: bool
@@ -15,9 +15,9 @@ class ScalarField:
         self,
         parent,
         coord_expression=None,
-        chart: Optional[Chart] = None,
-        name: Optional[str] = None,
-        latex_name: Optional[str] = None,
+        chart: Chart | None = None,
+        name: str | None = None,
+        latex_name: str | None = None,
     ) -> None: ...
 
     def __bool__(self) -> bool: ...
@@ -43,7 +43,7 @@ class ScalarField:
     def _repr_(self) -> str: ...
     def _latex_(self) -> str: ...
 
-    def set_name(self, name: Optional[str] = None, latex_name: Optional[str] = None) -> None: ...
+    def set_name(self, name: str | None = None, latex_name: str | None = None) -> None: ...
 
     def domain(self) -> TopologicalManifold:
         
@@ -53,7 +53,7 @@ class ScalarField:
         
         ...
 
-    def copy(self, name: Optional[str] = None, latex_name: Optional[str] = None) -> ScalarField:
+    def copy(self, name: str | None = None, latex_name: str | None = None) -> ScalarField:
         
         ...
 
@@ -61,19 +61,19 @@ class ScalarField:
         
         ...
 
-    def coord_function(self, chart: Optional[Chart] = None, from_chart: Optional[Chart] = None):
+    def coord_function(self, chart: Chart | None = None, from_chart: Chart | None = None):
         
         ...
 
-    def expr(self, chart: Optional[Chart] = None, from_chart: Optional[Chart] = None):
+    def expr(self, chart: Chart | None = None, from_chart: Chart | None = None):
         
         ...
 
-    def set_expr(self, coord_expression, chart: Optional[Chart] = None) -> None:
+    def set_expr(self, coord_expression, chart: Chart | None = None) -> None:
         
         ...
 
-    def add_expr(self, coord_expression, chart: Optional[Chart] = None) -> None:
+    def add_expr(self, coord_expression, chart: Chart | None = None) -> None:
         
         ...
 
@@ -81,7 +81,7 @@ class ScalarField:
         
         ...
 
-    def display(self, chart: Optional[Chart] = None):
+    def display(self, chart: Chart | None = None):
         
         ...
 

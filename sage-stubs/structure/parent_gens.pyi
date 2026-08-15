@@ -9,7 +9,7 @@ from sage.structure.parent import Parent
 from sage.structure.parent_base import ParentWithBase
 from typing import TypeAlias
 
-ParentWithGensState: TypeAlias = dict[
+type ParentWithGensState = dict[
     str,
     Ring | tuple[Element, ...] | tuple[str, ...] | list[Element] | str | None,
 ]
