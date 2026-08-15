@@ -1,0 +1,3 @@
+from sage.structure.element import Element
+
+def O(*x: object, **kwds: object) -> Element: ...
