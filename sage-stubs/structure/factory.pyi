@@ -14,11 +14,21 @@ FactoryCacheKeyComponent: TypeAlias = (
 FactoryCacheKey: TypeAlias = tuple[FactoryCacheKeyComponent, ...]
 FactoryExtraArgs: TypeAlias = dict[str, bool]
 FactoryPickleState: TypeAlias = dict[str, Callable[..., SageObject]]
+type FactoryArgument = (
+    SageObject
+    | int
+    | str
+    | bool
+    | bytes
+    | None
+    | tuple[FactoryArgument, ...]
+    | dict[str, FactoryArgument]
+)
 
 class UniqueFactory(SageObject):
     def __init__(self, name: str) -> None: ...
     def __reduce__(self) -> tuple[Callable[[str], UniqueFactory], tuple[str]]: ...
-    def __call__(self, *args: object, **kwds: object) -> SageObject: ...
+    def __call__(self, *args: FactoryArgument, **kwds: FactoryArgument) -> SageObject: ...
     def get_object(
         self,
         version: FactoryVersion,
@@ -27,14 +37,14 @@ class UniqueFactory(SageObject):
     ) -> SageObject: ...
     def get_version(self, sage_version: FactoryVersion) -> FactoryVersion: ...
     def create_key_and_extra_args(
-        self, *args: object, **kwds: object
+        self, *args: FactoryArgument, **kwds: FactoryArgument
     ) -> tuple[FactoryCacheKey, FactoryExtraArgs]: ...
-    def create_key(self, *args: object, **kwds: object) -> FactoryCacheKey: ...
+    def create_key(self, *args: FactoryArgument, **kwds: FactoryArgument) -> FactoryCacheKey: ...
     def create_object(
         self,
         version: FactoryVersion,
         key: FactoryCacheKey,
-        **extra_args: object,
+        **extra_args: FactoryArgument,
     ) -> SageObject: ...
     def other_keys(self, key: FactoryCacheKey, obj: SageObject) -> list[FactoryCacheKey]: ...
     def reduce_data(
