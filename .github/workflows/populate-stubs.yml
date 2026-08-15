@@ -34,7 +34,10 @@ jobs:
           python-version: '3.12'
 
       - name: Install validation tools
-        run: python -m pip install --upgrade mypy ruff
+        run: |
+          python -m pip install --upgrade mypy ruff
+          ruff --version
+          mypy --version
 
       - name: Populate every missing source module
         run: python scripts/populate_all_stubs.py
@@ -45,14 +48,14 @@ jobs:
           set -euo pipefail
           sort -u /tmp/sage-stubs-generated-files.txt > /tmp/changed-stubs.txt
           if [[ -s /tmp/changed-stubs.txt ]]; then
-            xargs -r ruff check --fix -- < /tmp/changed-stubs.txt
+            xargs -r ruff check --fix --exit-zero -- < /tmp/changed-stubs.txt
           fi
 
       - name: Validate complete stub surface
         shell: bash
         run: |
           set -euo pipefail
-          ruff check sage-stubs/
+          ruff check --output-format=github sage-stubs/
           find sage-stubs -name '*.pyi' -print0 | xargs -0 python scripts/check_stubs.py
           python scripts/stub_coverage.py --threshold 1.0
           python -m mypy --strict sage-stubs/
