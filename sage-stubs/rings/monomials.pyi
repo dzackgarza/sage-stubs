@@ -1,0 +1,3 @@
+from sage.structure.element import Element
+
+def monomials(v: list[Element] | tuple[Element, ...], n: list[int] | tuple[int, ...]) -> list[Element]: ...
