@@ -1,0 +1,3 @@
+from sage.rings.real_mpfi import RealIntervalFieldElement
+
+def refine_root(ip: object, ipd: object, irt: object, fld: object) -> RealIntervalFieldElement | None: ...
