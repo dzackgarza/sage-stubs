@@ -26,13 +26,18 @@ def return_type(fn: ast.FunctionDef | ast.AsyncFunctionDef, local: set[str]) -> 
     return annotation if annotation and annotation != "object" else return_from_name(fn.name)
 
 
-def signature(fn: ast.FunctionDef | ast.AsyncFunctionDef, local: set[str]) -> str:
+def signature(fn: ast.FunctionDef | ast.AsyncFunctionDef, local: set[str], *, method: bool = False) -> str:
     args = fn.args
     positional = [*args.posonlyargs, *args.args]
     defaults: list[ast.expr | None] = [None] * (len(positional) - len(args.defaults)) + list(args.defaults)
     bits: list[str] = []
     for index, (arg, default) in enumerate(zip(positional, defaults)):
-        text = arg.arg if arg.arg in {"self", "cls"} else f"{arg.arg}: {param_type(arg, default, local)}"
+        if method and arg.arg == "self":
+            text = "self: Self"
+        elif method and arg.arg == "cls":
+            text = "cls: type[Self]"
+        else:
+            text = f"{arg.arg}: {param_type(arg, default, local)}"
         if default is not None:
             text += " = ..."
         bits.append(text)
@@ -93,7 +98,7 @@ def render_class(node: ast.ClassDef, local: set[str], indent: str = "") -> list[
             for decorator in decorators(item):
                 body.append(f"{indent}    {decorator}")
             prefix = "async def" if isinstance(item, ast.AsyncFunctionDef) else "def"
-            body.append(f"{indent}    {prefix} {item.name}{signature(item, local)}: ...")
+            body.append(f"{indent}    {prefix} {item.name}{signature(item, local, method=True)}: ...")
         else:
             for name in assigned_names(item):
                 if public(name) and name not in definitions and name not in seen:

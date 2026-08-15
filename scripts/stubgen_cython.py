@@ -27,7 +27,7 @@ def split_args(text: str) -> list[str]:
     return out
 
 
-def cy_signature(text: str, name: str) -> str:
+def cy_signature(text: str, name: str, *, method: bool = False) -> str:
     bits: list[str] = []
     for raw in split_args(text):
         raw = raw.strip()
@@ -40,7 +40,12 @@ def cy_signature(text: str, name: str) -> str:
         if not identifiers:
             continue
         arg = identifiers[-1]
-        annotation = "" if arg in {"self", "cls"} else ": object"
+        if method and arg == "self":
+            annotation = ": Self"
+        elif method and arg == "cls":
+            annotation = ": type[Self]"
+        else:
+            annotation = ": object"
         bits.append(f"{star}{arg}{annotation}" + (" = ..." if separator else ""))
     return f"({', '.join(bits)}) -> {return_from_name(name)}"
 
@@ -85,7 +90,7 @@ def parse_cython(path: Path) -> str:
                 body, seen = classes[-1][2], classes[-1][3]
                 if public(name, True) and name not in seen:
                     seen.add(name)
-                    body.append(f"def {name}{cy_signature(function_match.group('args'), name)}: ...")
+                    body.append(f"def {name}{cy_signature(function_match.group('args'), name, method=True)}: ...")
             elif indent == 0 and public(name) and name not in top_seen:
                 top_seen.add(name)
                 lines.append(f"def {name}{cy_signature(function_match.group('args'), name)}: ...\n")
