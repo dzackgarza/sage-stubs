@@ -2,38 +2,59 @@ from collections.abc import Callable
 from typing import Generic, Literal, TypeVar, overload
 
 from sage.matrix.matrix2 import Matrix
-from sage.categories.morphism import Morphism
+from sage.categories.map import Map
+from sage.categories.morphism import Morphism, SetMorphism
 from sage.categories.category import Category
-from sage.rings.ring import Ring
+from sage.categories.sets_cat import Sets
 from sage.structure.element import Element
-from sage.structure.parent import Parent, ParentCallInput
+from sage.structure.parent import ElementConstructorInput, Parent, ParentCallInput
 
-_DomainElementT = TypeVar("_DomainElementT", bound=Parent)
-_CodomainElementT = TypeVar("_CodomainElementT", bound=Parent)
+_DomainElement = TypeVar("_DomainElement", default=Element, covariant=True)
+_CodomainElement = TypeVar("_CodomainElement", default=Element, covariant=True)
+_M = TypeVar("_M", bound=Element, default=Element, covariant=True)
+_HomDomainElement = TypeVar("_HomDomainElement")
+_HomCodomainElement = TypeVar("_HomCodomainElement")
 type HomsetCallInput = Morphism | Callable[..., Element] | ParentCallInput
 
+@overload
 def Hom(
-    X: _DomainElementT,
-    Y: _CodomainElementT,
-    category: Category | None = None,
-    check: bool = True,
-) -> Homset[_DomainElementT, _CodomainElementT]: ...
+    X: Parent[_HomDomainElement],
+    Y: Parent[_HomCodomainElement],
+    category: Sets,
+    check: bool = ...,
+) -> Homset[
+    SetMorphism[_HomDomainElement, _HomCodomainElement],
+    _HomDomainElement,
+    _HomCodomainElement,
+]: ...
+@overload
+def Hom(
+    X: Parent[_HomDomainElement],
+    Y: Parent[_HomCodomainElement],
+    category: Category | None = ...,
+    check: bool = ...,
+) -> Homset[
+    Map[_HomDomainElement, _HomCodomainElement],
+    _HomDomainElement,
+    _HomCodomainElement,
+]: ...
 
 def hom(X: Parent, Y: Parent, f: HomsetCallInput) -> Morphism: ...
 
-def End(X: Parent, category: Category | None = None) -> Homset[Parent, Parent]: ...
+def End(X: Parent[_HomDomainElement], category: Category | None = None) -> Homset[Map[_HomDomainElement, _HomDomainElement], _HomDomainElement, _HomDomainElement]: ...
 
 def end(X: Parent, f: HomsetCallInput) -> Morphism: ...
 
-class Homset(Generic[_DomainElementT, _CodomainElementT]):
+class Homset(Parent[_M], Generic[_M, _DomainElement, _CodomainElement]):
     def __init__(
         self,
-        X: _DomainElementT,
-        Y: _CodomainElementT,
+        X: Parent[_DomainElement],
+        Y: Parent[_CodomainElement],
         category: Category | None = None,
-        base: Ring | None = None,
+        base: Parent[ElementConstructorInput] | None = None,
         check: bool = True,
     ) -> None: ...
+    def an_element(self) -> _M: ...
     @overload
     def __call__(self, x: HomsetCallInput = ..., check: bool | None = None) -> Morphism: ...
     @overload
@@ -83,8 +104,8 @@ class Homset(Generic[_DomainElementT, _CodomainElementT]):
     def __hash__(self) -> int: ...
     def __bool__(self) -> bool: ...
     def homset_category(self) -> Category: ...
-    def domain(self) -> _DomainElementT: ...
-    def codomain(self) -> _CodomainElementT: ...
+    def domain(self) -> Parent[_DomainElement]: ...
+    def codomain(self) -> Parent[_CodomainElement]: ...
     def __eq__(self, other: object) -> bool: ...
     def __ne__(self, other: object) -> bool: ...
     def __contains__(self, x: object) -> bool: ...
@@ -92,5 +113,5 @@ class Homset(Generic[_DomainElementT, _CodomainElementT]):
     def identity(self) -> Morphism: ...
     def one(self) -> Morphism: ...
 
-class HomsetWithBase(Homset[_DomainElementT, _CodomainElementT]):
+class HomsetWithBase(Homset[_M, _DomainElement, _CodomainElement]):
     ...

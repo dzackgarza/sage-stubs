@@ -4,7 +4,7 @@ from typing import TypeAlias
 from sage.categories.category import Category
 from sage.structure.category_object import CategoryObject
 from sage.structure.element import Element, Expression
-from sage.structure.parent import ParentCallInput, Set_generic
+from sage.structure.parent import MembershipInput, ParentCallInput, Set_generic
 from sage.structure.unique_representation import UniqueRepresentation
 
 from .set import Set_add_sub_operators, Set_base, Set_boolean_operators
@@ -38,3 +38,4 @@ class ConditionSet(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_ope
     def _an_element_(self) -> Element: ...
     def ambient(self) -> CategoryObject | Set_base | Iterable[_SetElementInput]: ...
     def __iter__(self) -> Iterator[Element]: ...
+    def __contains__(self, x: MembershipInput) -> bool: ...

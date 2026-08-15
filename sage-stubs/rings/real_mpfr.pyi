@@ -9,7 +9,8 @@ from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.rational import Rational
 from sage.rings.rational_field import RationalField
 from sage.rings.real_double import RealDoubleElement
-from sage.structure.element import Element
+from sage.structure.element import FieldElement
+from sage.structure.parent import MembershipInput
 from sage.structure.sage_object import SageCoercionAtom
 
 _String: TypeAlias = str
@@ -52,10 +53,16 @@ class RealField_class(RealField_abc):
 
 def RealField(prec: int | Integer = ..., sci_not: int = ..., rnd: _RoundMode | int | Integer = ...) -> RealField_class: ...
 
-class RealNumber(Element):
+RR: RealField_class
+
+class RealNumber(FieldElement):
     def __init__(self, parent: RealField_class, x: _RealInput | None = ..., base: int = ...) -> None: ...
     def real(self) -> RealNumber: ...
     def imag(self) -> RealNumber: ...
+    def __lt__(self, other: MembershipInput) -> bool: ...
+    def __le__(self, other: MembershipInput) -> bool: ...
+    def __gt__(self, other: MembershipInput) -> bool: ...
+    def __ge__(self, other: MembershipInput) -> bool: ...
     def str(
         self,
         base: int = ...,

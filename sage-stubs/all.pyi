@@ -1,4 +1,6 @@
 from collections.abc import Callable
+from copy import copy as copy, deepcopy as deepcopy
+from time import sleep as sleep
 
 from sage.arith.misc import (
     euler_phi as euler_phi,
@@ -27,6 +29,7 @@ from sage.rings.rational_field import QQ as QQ, RationalField
 from sage.rings.real_mpfr import RealField_class
 from sage.rings.complex_mpfr import ComplexField_class
 from sage.rings.infinity import infinity as oo
+from sage.rings.imaginary_unit import I as I
 from sage.structure.element import Element
 from sage.structure.parent import Parent
 

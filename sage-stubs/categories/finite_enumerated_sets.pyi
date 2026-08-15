@@ -1,9 +1,12 @@
-from sage.structure.element import Element
+from typing import Generic, TypeVar
+
+from sage.categories.enumerated_sets import EnumeratedSets
 from sage.rings.integer import Integer
 
+_E = TypeVar("_E")
 
-class FiniteEnumeratedSets:
-    class ParentMethods:
+class FiniteEnumeratedSets(EnumeratedSets):
+    class ParentMethods(EnumeratedSets.ParentMethods[_E], Generic[_E]):
         def __len__(self) -> int: ...
-        def cardinality(self, *ignored_args: Integer, **ignored_kwds: bool | Integer | str) -> int: ...
-        def random_element(self) -> Element: ...
+        def cardinality(self) -> Integer: ...
+        def random_element(self) -> _E: ...

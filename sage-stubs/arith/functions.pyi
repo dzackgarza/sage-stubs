@@ -1,10 +1,15 @@
 from collections.abc import Iterable
-from typing import overload
+from typing import TypeVar, overload
+from sage.rings.integer import Integer
 from sage.structure.element import Element
 
+_T = TypeVar("_T")
+
+@overload
+def lcm(a: int | Integer | Iterable[int | Integer], b: int | Integer = ...) -> Integer: ...
 @overload
 def lcm(a: Iterable[object], b: None = None) -> Element: ...
 @overload
 def lcm(a: object, b: object) -> Element: ...
 def LCM_list(v: Iterable[object]) -> Element: ...
-
+def LCM_generic(itr: Iterable[_T], ret: _T) -> _T: ...

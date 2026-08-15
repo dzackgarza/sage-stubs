@@ -3,8 +3,16 @@ from collections.abc import Iterable
 from sage.categories.category import Category
 from sage.categories.cartesian_product import CartesianProductFunctor
 from sage.misc.call import AttrCallObject
-from sage.structure.parent import Parent
+from sage.categories.sets_cat import Sets
+from sage.structure.parent import ElementConstructorInput, Parent
 from sage.structure.unique_representation import UniqueRepresentation
+
+class CartesianProduct_iters(
+    Sets.ParentMethods[tuple[ElementConstructorInput, ...]],
+):
+    def cartesian_factors(
+        self,
+    ) -> tuple[Sets.ParentMethods[ElementConstructorInput], ...]: ...
 
 class CartesianProduct(UniqueRepresentation, Parent):
     def __init__(

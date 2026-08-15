@@ -1,4 +1,7 @@
+from typing import Self
+
 from sage.misc.fast_methods import WithEqualityById
+from sage.structure.parent import ElementConstructorInput
 
 class WithPicklingByInitArgs:
     def __classcall__(cls, *args: object, **options: object) -> WithPicklingByInitArgs: ...
@@ -16,6 +19,12 @@ class CachedRepresentation(WithPicklingByInitArgs):
     def _clear_cache_(cls) -> None: ...
 
 class UniqueRepresentation(WithEqualityById, CachedRepresentation):
+    @classmethod
+    def __classcall__(
+        cls: type[Self],
+        *args: ElementConstructorInput,
+        **kwds: ElementConstructorInput,
+    ) -> Self: ...
     @classmethod
     def _reduction(cls) -> tuple[type, tuple[object, ...], dict[str, object]] | tuple[type, tuple[object, ...]]: ...
     def __reduce__(self) -> tuple[type, tuple[object, ...]]: ...

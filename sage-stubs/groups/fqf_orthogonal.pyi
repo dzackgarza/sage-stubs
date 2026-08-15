@@ -1,4 +1,5 @@
 from collections.abc import Iterator
+from sage.categories.groups import Groups
 from sage.groups.abelian_gps.abelian_aut import (
     AbelianGroupAutomorphism,
     AbelianGroupAutomorphismGroup_subgroup,
@@ -7,9 +8,9 @@ from sage.rings.integer import Integer
 type FqfMembershipInput = FqfIsometry | AbelianGroupAutomorphism
 
 class FqfIsometry(AbelianGroupAutomorphism):
-    def parent(self, x: None = None) -> FqfOrthogonalGroup: ...
+    def parent(self) -> FqfOrthogonalGroup: ...
 
-class FqfOrthogonalGroup(AbelianGroupAutomorphismGroup_subgroup):
+class FqfOrthogonalGroup(AbelianGroupAutomorphismGroup_subgroup, Groups.ParentMethods[FqfIsometry]):
     def gens(self) -> tuple[FqfIsometry, ...]: ...
     def ngens(self) -> int: ...
     def order(self) -> Integer: ...

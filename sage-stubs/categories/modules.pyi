@@ -1,17 +1,37 @@
 from collections.abc import Callable, Iterable
+from typing import Generic, TypeVar
 
 from sage.categories.category import Category
 from sage.categories.category_types import Category_module
 from sage.categories.morphism import Morphism, SetMorphism
 from sage.categories.tensor import TensorProductFunctor
 from sage.matrix.matrix2 import Matrix
+from sage.categories.rings import Rings
+from sage.rings.infinity import PlusInfinity
+from sage.rings.integer import Integer
 from sage.structure.category_object import CategoryObject
-from sage.structure.element import Element
+from sage.structure.element import Element, RingElement
 from sage.structure.parent import Parent
 from sage.structure.sage_object import SageCoercionAtom
 
-class Modules(Category_module):
-    def __init__(self, base_ring: Category | CategoryObject, dispatch: bool = True) -> None: ...
+_E = TypeVar("_E", default=Element, covariant=True)
+_CategoryScalar = TypeVar(
+    "_CategoryScalar",
+    bound=RingElement,
+    default=RingElement,
+    covariant=True,
+)
+_ParentScalar = TypeVar(
+    "_ParentScalar",
+    bound=RingElement,
+    default=RingElement,
+    covariant=True,
+)
+_CodomainElement = TypeVar("_CodomainElement", default=Element)
+
+class Modules(Category_module[_CategoryScalar], Generic[_CategoryScalar]):
+    def __init__(self, base_ring: Rings.ParentMethods[_CategoryScalar], dispatch: bool = True) -> None: ...
+    def base_ring(self) -> Rings.ParentMethods[_CategoryScalar]: ...
     class SubcategoryMethods:
         def base_ring(self) -> Parent: ...
         def TensorProducts(self) -> Category: ...
@@ -28,27 +48,34 @@ class Modules(Category_module):
             def extra_super_categories(self) -> list[Category]: ...
     class FinitelyPresented:
         def extra_super_categories(self) -> list[Category]: ...
-    class ParentMethods:
+    class ParentMethods(Parent[_E], Generic[_E, _ParentScalar]):
+        def base_ring(self) -> Rings.ParentMethods[_ParentScalar]: ...
+        def zero(self) -> _E: ...
+        def gen(self, i: int | Integer = ...) -> _E: ...
+        def gens(self) -> tuple[_E, ...]: ...
+        def ngens(self) -> int: ...
+        def is_finite(self) -> bool: ...
+        def cardinality(self) -> Integer | PlusInfinity: ...
         def linear_combination(
             self,
-            iter_of_elements_coeff: Iterable[tuple[Element, Element | SageCoercionAtom]],
+            iter_of_elements_coeff: Iterable[tuple[_E, _ParentScalar]],
             factor_on_left: bool = True,
-        ) -> Element: ...
-        def tensor_square(self) -> Parent: ...
+        ) -> _E: ...
+        def tensor_square(self) -> Modules.ParentMethods[Element, _ParentScalar]: ...
         def module_morphism(
             self,
             *,
-            function: Callable[..., Element],
+            function: Callable[[_E], _CodomainElement],
             category: Category | None = None,
-            codomain: Parent,
+            codomain: Modules.ParentMethods[_CodomainElement, _ParentScalar],
             **keywords: bool | int | str | Matrix | Callable[..., Element] | Element | Category | Parent,
-        ) -> SetMorphism: ...
+        ) -> Morphism[_E, _CodomainElement]: ...
         def quotient(
             self,
-            submodule: Parent | Iterable[Element],
+            submodule: Modules.ParentMethods[_E, _ParentScalar] | Iterable[_E],
             check: bool = True,
             **kwds: bool | int | str | Parent | Element,
-        ) -> Parent: ...
+        ) -> Modules.ParentMethods[Element, _ParentScalar]: ...
         def quotient_module(
             self,
             submodule: Parent | Iterable[Element],
@@ -76,3 +103,5 @@ class Modules(Category_module):
         class ParentMethods:
             def construction(self) -> tuple[TensorProductFunctor, tuple[Parent, ...]]: ...
             def tensor_factors(self) -> tuple[Parent, ...]: ...
+
+Module = Modules.ParentMethods

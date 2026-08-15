@@ -1,4 +1,5 @@
 from collections.abc import Callable
+from typing import Generic, TypeVar
 
 from sage.categories.map import Map
 from sage.categories.category import Category
@@ -10,10 +11,30 @@ from sage.structure.sage_object import SageCoercionAtom
 
 type MorphismCallInput = Element | SageCoercionAtom
 
-class Morphism(Map):
+_DomainElement = TypeVar("_DomainElement", default=Element)
+_CodomainElement = TypeVar("_CodomainElement", default=Element)
+_SourceElement = TypeVar("_SourceElement")
+_IdentityElement = TypeVar("_IdentityElement", default=Element)
 
+class Morphism(Map[_DomainElement, _CodomainElement], Generic[_DomainElement, _CodomainElement]):
 
-    def __call__(self, *args: MorphismCallInput, **kwargs: MorphismCallInput) -> Element: ...
+    def __init__(
+        self,
+        parent: Homset[
+            Map[_DomainElement, _CodomainElement],
+            _DomainElement,
+            _CodomainElement,
+        ],
+    ) -> None: ...
+    def domain(self) -> Parent[_DomainElement]: ...
+    def codomain(self) -> Parent[_CodomainElement]: ...
+    def category_for(self) -> Category: ...
+    def __call__(self, x: _DomainElement) -> _CodomainElement: ...
+    def _call_(self, x: _DomainElement) -> _CodomainElement: ...
+    def __mul__(
+        self,
+        right: Morphism[_SourceElement, _DomainElement],
+    ) -> Morphism[_SourceElement, _CodomainElement]: ...
     def is_endomorphism(self) -> bool: ...
     def is_identity(self) -> bool: ...
     def category(self) -> Category: ...
@@ -25,7 +46,7 @@ class Morphism(Map):
 class FormalCoercionMorphism(Morphism):
 
 
-    def __init__(self, parent: Homset[Parent, Parent]) -> None: ...
+    def __init__(self, parent: Homset[Map]) -> None: ...
     def _repr_type(self) -> str: ...
 
 class CallMorphism(Morphism):
@@ -33,10 +54,10 @@ class CallMorphism(Morphism):
 
     def _repr_type(self) -> str: ...
 
-class IdentityMorphism(Morphism):
+class IdentityMorphism(Morphism[_IdentityElement, _IdentityElement]):
 
 
-    def __init__(self, parent: Homset[Parent, Parent] | Parent) -> None: ...
+    def __init__(self, parent: Homset[Map] | Parent) -> None: ...
     def _repr_type(self) -> str: ...
     def __mul__(left: IdentityMorphism, right: Map) -> Map: ...
     def __invert__(self) -> IdentityMorphism: ...
@@ -45,11 +66,19 @@ class IdentityMorphism(Morphism):
     def is_surjective(self) -> bool: ...
     def is_injective(self) -> bool: ...
 
-class SetMorphism(Morphism):
+class SetMorphism(Morphism[_DomainElement, _CodomainElement]):
 
 
-    def __init__(self, parent: Homset[Parent, Parent], function: Callable[..., Element]) -> None: ...
-    _function: Callable[..., Element]
+    def __init__(
+        self,
+        parent: Homset[
+            Map[_DomainElement, _CodomainElement],
+            _DomainElement,
+            _CodomainElement,
+        ],
+        function: Callable[[_DomainElement], _CodomainElement],
+    ) -> None: ...
+    _function: Callable[[_DomainElement], _CodomainElement]
 
 class SetIsomorphism(SetMorphism):
 
