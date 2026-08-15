@@ -24,7 +24,7 @@ their tier-blocker dependency completes.
 | ID | Phase | Tier | Depends on | Source files | Status |
 |----|-------|------|------------|--------------|--------|
 | 01 | [Foundation completion](phases/phase-01-foundation.md) | 0 | — | ~145 | ✅ Complete |
-| 02 | [Core rings & arithmetic](phases/phase-02-core-rings.md) | 1 | 01 | ~80 | 🟡 In Progress |
+| 02 | [Core rings & arithmetic](phases/phase-02-core-rings.md) | 1 | 01 | ~80 | ✅ Complete |
 | 03 | [Polynomial rings](phases/phase-03-polynomial-rings.md) | 1 | 01 | ~95 | ⬜ Not Started |
 | 04 | [Number-theoretic rings](phases/phase-04-number-theory-rings.md) | 1 | 01 | ~130 | ⬜ Not Started |
 | 05 | [Linear algebra: matrices & modules](phases/phase-05-linear-algebra.md) | 1 | 01 | ~120 | ⬜ Not Started |
@@ -132,9 +132,9 @@ scaffolded stub that still contains `Any` will be rejected by
 
 ## At-a-glance next step
 
-> **PRIORITY ISSUE #4:** P0 stub requests all ✅ Done.
-> **Next:** Phase 02 remaining tasks T02.4–T02.12 (ring bases, series, quotients, lazy series, ring extensions, invariants).
-> **Status:** Phase 02 🟡 In Progress
+> **NEXT PHASE:** Phase 02 ✅ Complete. Tier 1 phases 03 (polynomial rings), 04 (number-theoretic rings), 05 (linear algebra) are all unblocked.
+> **Pick up:** any ⬜ Pending task in phases 03/04/05 whose Depends column is satisfied.
+> **Status:** Phase 02 Complete; Phases 03-05 ⬜ Not Started.
 
 Update this banner whenever a phase transitions between `Not Started`,
 `In Progress`, and `Complete`.
