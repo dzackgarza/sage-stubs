@@ -1,32 +1,18 @@
 ```
-# Python
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-*.egg-info/
+# Dependencies
+sage-src/
 
-# Build and distribution artifacts
-build/
-dist/
-*.egg
-*.whl
-
-# Virtual environments
-venv/
-.venv/
-env/
-ENV/
-
-# Logs
+# Logs and temp files
 *.log
-
-# OS generated files
-.DS_Store
-Thumbs.db
-
-# Temporary files
 *.tmp
 *.swp
-*~
+
+# Editors
+.vscode/
+.idea/
+
+# Environment
+.env
+.env.local
+*.env.*
 ```
