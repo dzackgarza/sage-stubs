@@ -11,7 +11,7 @@ from sage.structure.parent import Parent
 from sage.graphs.digraph import DiGraph
 from sage.combinat.root_system.cartan_type import CartanType_abstract
 
-class Crystals(Category_singleton): # type: ignore[misc]
+class Crystals(Category_singleton):
     def super_categories(self) -> list[Category]: ...
     def example(self, choice: str = "general") -> Parent: ...
 

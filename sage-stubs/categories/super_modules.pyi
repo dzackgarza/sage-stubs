@@ -1,4 +1,3 @@
-from typing import TYPE_CHECKING
 from sage.categories.category import Category
 from sage.categories.category_types import Category_over_base_ring
 from sage.categories.covariant_functorial_construction import CovariantConstructionCategory

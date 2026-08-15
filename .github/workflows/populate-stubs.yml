@@ -6,6 +6,7 @@ on:
     paths:
       - scripts/populate_all_stubs.py
       - scripts/stubgen_*.py
+      - "sage-stubs/**/*.pyi"
       - .github/workflows/populate-stubs.yml
   workflow_dispatch:
 

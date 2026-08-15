@@ -1,4 +1,3 @@
-from typing import TYPE_CHECKING
 from sage.categories.category import Category
 from sage.categories.category_singleton import Category_singleton
 from sage.categories.category_with_axiom import CategoryWithAxiom

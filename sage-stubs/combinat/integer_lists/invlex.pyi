@@ -1,5 +1,3 @@
-from typing import Any
-from collections.abc import Iterator, Iterable
 from sage.combinat.integer_lists.lists import IntegerLists
 
 class IntegerListsLex(IntegerLists):

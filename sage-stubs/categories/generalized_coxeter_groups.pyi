@@ -2,8 +2,8 @@ from sage.categories.category import Category
 from sage.categories.category_singleton import Category_singleton
 from sage.categories.category_with_axiom import CategoryWithAxiom
 
-class GeneralizedCoxeterGroups(Category_singleton):  # type: ignore[misc]
+class GeneralizedCoxeterGroups(Category_singleton):
     def super_categories(self) -> list[Category]: ...
     def additional_structure(self) -> None: ...
-    class Finite(CategoryWithAxiom):  # type: ignore[misc]
+    class Finite(CategoryWithAxiom):
         def extra_super_categories(self) -> list[Category]: ...
