@@ -9,42 +9,42 @@ class Dokchitser(SageObject):
     
 
     conductor: int
-    gammaV: list
+    gammaV: list[object]
     weight: int | float
     eps: int | float | complex
-    poles: list
-    residues: list | str
+    poles: list[object]
+    residues: list[object] | str
     prec: int
 
     def __new__(cls, *args, **kwargs) -> Self: ...
     def __init__(
         self,
         conductor: int,
-        gammaV: Sequence,
+        gammaV: Sequence[object],
         weight: float,
         eps: complex,
-        poles: Sequence | None = None,
-        residues: Sequence | str = ...,
+        poles: Sequence[object] | None = None,
+        residues: Sequence[object] | str = ...,
         prec: int = ...,
         init: str | None = None,
     ) -> None: ...
-    def __reduce__(self) -> tuple: ...
+    def __reduce__(self) -> tuple[object, ...]: ...
     def _repr_(self) -> str: ...
     def __del__(self) -> None: ...
-    def gp(self): ...
+    def gp(self) -> object: ...
     def cost(self, T: float = ...) -> Integer: ...
     def num_coeffs(self, T: float = ...) -> Integer: ...
     def init_coeffs(
         self,
-        v: str | list | tuple,
+        v: str | list[object] | tuple[object, ...],
         cutoff: float = ...,
-        w: str | list | tuple | None = None,
+        w: str | list[object] | tuple[object, ...] | None = None,
         pari_precode: str = ...,
         max_imaginary_part: float = ...,
         max_asymp_coeffs: int = ...,
     ) -> None: ...
     def _clear_value_cache(self) -> None: ...
-    def __call__(self, s: complex, c: float | None = None): ...
+    def __call__(self, s: complex, c: float | None = None) -> object: ...
     def derivative(self, s: complex, k: int = ...) -> complex: ...
     def taylor_series(
         self, a: complex = ..., k: int = ..., var: str = ...
