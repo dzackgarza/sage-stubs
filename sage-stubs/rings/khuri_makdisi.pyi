@@ -6,8 +6,6 @@ from sage.structure.element import Element
 from sage.structure.parent import Parent
 
 _ListElement = TypeVar("_ListElement")
-type MultiplicationMap = Callable[[Element, Element], Element]
-
 def listcat(lists: list[list[_ListElement]]) -> list[_ListElement]: ...
 
 class KhuriMakdisi_base:
@@ -32,7 +30,8 @@ class KhuriMakdisi_large(KhuriMakdisi_base):
     mu_mat33: Matrix
 
     def __init__(
-        self, V: Parent, mu: MultiplicationMap, w0: Matrix, d0: int, g: int
+        self, V: Parent, mu: Callable[[int, int, int, int], Element],
+        w0: Matrix, d0: int, g: int
     ) -> None: ...
 
     def equal(self, wd: Matrix, we: Matrix) -> bool: ...
@@ -51,7 +50,8 @@ class KhuriMakdisi_medium(KhuriMakdisi_base):
     mu_mat32: Matrix
 
     def __init__(
-        self, V: Parent, mu: MultiplicationMap, w0: Matrix, d0: int, g: int
+        self, V: Parent, mu: Callable[[int, int, int, int], Element],
+        w0: Matrix, d0: int, g: int
     ) -> None: ...
 
     def equal(self, wd: Matrix, we: Matrix) -> bool: ...
@@ -72,7 +72,8 @@ class KhuriMakdisi_small(KhuriMakdisi_base):
     mu_mat43: Matrix
 
     def __init__(
-        self, V: Parent, mu: MultiplicationMap, w0: Matrix, d0: int, g: int
+        self, V: Parent, mu: Callable[[int, int, int, int], Element],
+        w0: Matrix, d0: int, g: int
     ) -> None: ...
 
     def equal(self, wd: Matrix, we: Matrix) -> bool: ...

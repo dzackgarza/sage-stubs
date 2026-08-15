@@ -1,13 +1,12 @@
 from collections.abc import Callable
 from sage.symbolic.function import (
     ConversionTable,
-    SymbolicCallable,
+    FunctionCallable,
     SymbolicFunction,
-    SymbolicValue,
 )
 
 type FunctionOption = (
-    int | str | bool | ConversionTable | SymbolicCallable | None
+    int | str | bool | ConversionTable | FunctionCallable | None
 )
 
 def function_factory(
@@ -16,15 +15,15 @@ def function_factory(
     latex_name: str | None = None,
     conversions: ConversionTable | None = None,
     evalf_params_first: bool = True,
-    eval_func: SymbolicCallable | None = None,
-    evalf_func: SymbolicCallable | None = None,
-    conjugate_func: SymbolicCallable | None = None,
-    real_part_func: SymbolicCallable | None = None,
-    imag_part_func: SymbolicCallable | None = None,
-    derivative_func: SymbolicCallable | None = None,
-    tderivative_func: SymbolicCallable | None = None,
-    power_func: SymbolicCallable | None = None,
-    series_func: SymbolicCallable | None = None,
+    eval_func: FunctionCallable | None = None,
+    evalf_func: FunctionCallable | None = None,
+    conjugate_func: FunctionCallable | None = None,
+    real_part_func: FunctionCallable | None = None,
+    imag_part_func: FunctionCallable | None = None,
+    derivative_func: FunctionCallable | None = None,
+    tderivative_func: FunctionCallable | None = None,
+    power_func: FunctionCallable | None = None,
+    series_func: FunctionCallable | None = None,
     print_func: Callable[..., str] | None = None,
     print_latex_func: Callable[..., str] | None = None,
 ) -> SymbolicFunction: ...

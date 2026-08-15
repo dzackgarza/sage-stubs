@@ -1,13 +1,13 @@
 from collections.abc import Sequence
 
 from sage.structure.parent import Parent
-from sage.symbolic.function import Function, SymbolicValue
+from sage.symbolic.function import Function, FunctionArgument, FunctionResult
 
 def find_registered_function(name: str, nargs: int) -> int: ...
 def call_registered_function(
-    serial: int, nargs: int, args: list[SymbolicValue], hold: bool,
+    serial: int, nargs: int, args: list[FunctionArgument], hold: bool,
     allow_numeric_result: bool, result_parent: Parent,
-) -> SymbolicValue: ...
+) -> FunctionResult: ...
 def register_or_update_function(
     function: Function, name: str, latex_name: str, nargs: int,
     evalf_params_first: bool, update: bool,
