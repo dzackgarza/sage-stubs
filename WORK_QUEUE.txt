@@ -1,4 +1,3 @@
-     45 sage-stubs/structure/sequence.pyi
      27 sage-stubs/combinat/words/word.pyi
      21 sage-stubs/modular/hecke/submodule.pyi
      21 sage-stubs/groups/finitely_presented.pyi
