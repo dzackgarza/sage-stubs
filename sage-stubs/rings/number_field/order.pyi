@@ -1,7 +1,9 @@
 from sage.rings.number_field.number_field_element import NumberFieldElement
+from sage.rings.number_field.number_field_base import NumberField
 from sage.rings.integer import Integer
+from sage.structure.parent import Parent
 
-class Order:
+class Order(Parent):
     def ring_generators(self) -> list[NumberFieldElement]: ...
     def basis(self) -> list[NumberFieldElement]: ...
     def discriminant(self) -> Integer: ...
@@ -9,3 +11,12 @@ class Order:
     def is_maximal(self, p: Integer | None = ...) -> bool: ...
     def index(self) -> Integer: ...
     def uniformizer(self, p: Integer) -> NumberFieldElement: ...
+
+class RelativeOrder(Order):
+    def __init__(
+        self,
+        K: NumberField,
+        absolute_order: Order,
+        is_maximal: str = ...,
+        is_maximal_at: tuple[Integer, ...] = ...,
+    ) -> None: ...

@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, overload
+from typing import overload
 from sage.structure.element import Element
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
@@ -7,9 +7,7 @@ from sage.rings.integer import Integer
 from sage.combinat.partition import Partition
 from sage.combinat.tableau import Tableau
 
-if TYPE_CHECKING:
-    from collections.abc import Iterator
-
+from collections.abc import Iterator
 class PartitionTuple(Element):
     def level(self) -> int: ...
     def __len__(self) -> int: ...
@@ -83,16 +81,16 @@ class PartitionTuples_level_size(PartitionTuples):
     def _an_element_(self) -> PartitionTuple: ...
 
 class RegularPartitionTuples(PartitionTuples):
-    pass
+    ...
 
 class RegularPartitionTuples_all(RegularPartitionTuples):
-    pass
+    ...
 
 class RegularPartitionTuples_level(RegularPartitionTuples):
-    pass
+    ...
 
 class RegularPartitionTuples_size(RegularPartitionTuples):
-    pass
+    ...
 
 class RegularPartitionTuples_level_size(RegularPartitionTuples):
-    pass
+    ...

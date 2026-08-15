@@ -1,27 +1,19 @@
 from collections.abc import Iterator
-from typing import TYPE_CHECKING
 
+from sage.geometry.fan import RationalPolyhedralFan
+from sage.geometry.hyperplane_arrangement.arrangement import HyperplaneArrangementElement
+from sage.geometry.polyhedron.base7 import Polyhedron_base7
+from sage.geometry.polyhedron.constructor import Polyhedron
+from sage.geometry.polyhedron.face import PolyhedronFace
+from sage.geometry.polyhedron.representation import Vertex
+from sage.matrix.matrix import Matrix
+from sage.modules.free_module_element import FreeModuleElement
+from sage.numerical.mip import MixedIntegerLinearProgram
 from sage.rings.integer import Integer
 from sage.rings.rational import Rational
-
-if TYPE_CHECKING:
-    from sage.geometry.polyhedron.base0 import Polyhedron_base0
-    from sage.geometry.polyhedron.base7 import Polyhedron_base7
-    from sage.rings.ring import Ring
-    from sage.geometry.polyhedron.face import PolyhedronFace
-    from sage.geometry.polyhedron.representation import Vertex
-    from sage.geometry.polyhedron.constructor import Polyhedron
-    from sage.matrix.matrix import Matrix
-    from sage.modules.free_module_element import FreeModuleElement
-    from sage.numerical.mip import MixedIntegerLinearProgram
-    from sage.topology.simplicial_complex import SimplicialComplex
-    from sage.topology.cubical_complex import CubicalComplex
-    from sage.geometry.hyperplane_arrangement.arrangement import HyperplaneArrangement
-    from sage.geometry.fan import RationalPolyhedralFan
-else:
-    # We must inherit exactly what it says in source
-    # class Polyhedron_base(Polyhedron_base7):
-    Polyhedron_base7 = object
+from sage.rings.ring import Ring
+from sage.topology.cubical_complex import CubicalComplex
+from sage.topology.simplicial_complex import SimplicialComplex
 
 class Polyhedron_base(Polyhedron_base7):
     def to_linear_program(self, return_variable_vector: bool = ..., solver: str | None = ..., base_ring: Ring | None = ...) -> MixedIntegerLinearProgram | tuple[MixedIntegerLinearProgram, object]: ...
@@ -30,7 +22,7 @@ class Polyhedron_base(Polyhedron_base7):
     def radius_square(self) -> Rational: ...
     def radius(self) -> Rational: ...
     def is_inscribed(self, tolerance: float = ...) -> bool: ...
-    def hyperplane_arrangement(self) -> HyperplaneArrangement: ...
+    def hyperplane_arrangement(self) -> HyperplaneArrangementElement: ...
     def normal_fan(self, **kwargs: object) -> RationalPolyhedralFan: ...
     def face_fan(self, **kwargs: object) -> RationalPolyhedralFan: ...
     def is_minkowski_summand(self, other: Polyhedron_base) -> bool: ...

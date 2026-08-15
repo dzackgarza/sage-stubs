@@ -1,13 +1,9 @@
-from __future__ import annotations
 
-from typing import TYPE_CHECKING
 
-if TYPE_CHECKING:
-    from sage.rings.real_double import RealDoubleElement
-    from sage.rings.integer import Integer
-    from sage.schemes.elliptic_curves.ell_rational_field import EllipticCurve_rational_field
-    from sage.schemes.elliptic_curves.lseries_ell import Lseries_ell
-
+from sage.rings.real_double import RealDoubleElement
+from sage.rings.integer import Integer
+from sage.schemes.elliptic_curves.ell_rational_field import EllipticCurve_rational_field
+from sage.schemes.elliptic_curves.lseries_ell import Lseries_ell
 class LFunctionZeroSum_abstract:
     def ncpus(self, n: int | None = ...) -> int: ...
     def level(self) -> Integer: ...
@@ -49,7 +45,6 @@ class LFunctionZeroSum_EllipticCurve(LFunctionZeroSum_abstract):
         N: int | None = ...,
         ncpus: int = ...,
     ) -> None: ...
-    def __repr__(self) -> str: ...
     def elliptic_curve(self) -> EllipticCurve_rational_field: ...
     def lseries(self) -> Lseries_ell: ...
     def cn(self, n: int) -> RealDoubleElement: ...

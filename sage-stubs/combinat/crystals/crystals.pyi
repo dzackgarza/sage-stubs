@@ -1,12 +1,27 @@
-from __future__ import annotations
 
-from typing import TYPE_CHECKING
 
-if TYPE_CHECKING:
-    from sage.combinat.backtrack import GenericBacktracker
+from collections.abc import Iterable, Iterator
+from typing import Protocol
 
-class CrystalBacktracker(GenericBacktracker):
-    """Backtracker for crystals using depth-first search on spanning tree."""
+from sage.combinat.backtrack import GenericBacktracker
 
-    def __init__(self, crystal, index_set=None) -> None: ...
-    def _rec(self, x, state): ...
+class CrystalElement(Protocol):
+    def e(self, i: int) -> CrystalElement | None: ...
+    def f(self, i: int) -> CrystalElement | None: ...
+
+class CrystalProtocol(Protocol):
+    def index_set(self) -> Iterable[int]: ...
+    def highest_weight_vectors(self) -> Iterable[CrystalElement]: ...
+
+class CrystalBacktracker(GenericBacktracker[CrystalElement | None, str | None]):
+
+    def __init__(
+        self,
+        crystal: CrystalProtocol,
+        index_set: Iterable[int] | None = None,
+    ) -> None: ...
+    def _rec(
+        self,
+        x: CrystalElement | None,
+        state: str | None,
+    ) -> Iterator[tuple[CrystalElement, str, bool]]: ...

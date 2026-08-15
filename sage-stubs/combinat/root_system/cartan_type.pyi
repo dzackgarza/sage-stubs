@@ -1,11 +1,7 @@
-from typing import TYPE_CHECKING
-
+from sage.combinat.root_system.root_system import RootSystem
+from sage.graphs.graph import Graph
+from sage.matrix.matrix import Matrix
 from sage.structure.sage_object import SageObject
-
-if TYPE_CHECKING:
-    from sage.graphs.graph import Graph
-    from sage.matrix.matrix import Matrix
-    from sage.combinat.root_system.root_system import RootSystem
 
 class CartanType_abstract(SageObject):
     def type(self) -> str: ...

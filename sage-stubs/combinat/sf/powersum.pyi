@@ -1,12 +1,8 @@
-from __future__ import annotations
-from typing import TYPE_CHECKING
 from collections.abc import Callable
 
-if TYPE_CHECKING:
-    from sage.combinat.partition import Partition
-    from sage.rings.ring import Ring
-    from sage.structure.parent import Parent
-
+from sage.combinat.partition import Partition
+from sage.rings.ring import Ring
+from sage.structure.parent import Parent
 class SymmetricFunctionAlgebra_power:
     def __init__(self, Sym: object) -> None: ...
     def coproduct_on_generators(self, i: int) -> Parent: ...

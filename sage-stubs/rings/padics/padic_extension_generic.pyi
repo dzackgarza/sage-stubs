@@ -1,20 +1,15 @@
-from __future__ import annotations
 
-from typing import TYPE_CHECKING
 
 from sage.rings.integer import Integer
 from sage.rings.padics.padic_generic import pAdicGeneric
 
-if TYPE_CHECKING:
-    from sage.modules.free_module import FreeModule_generic
-    from sage.rings.number_field.number_field import NumberField_generic
-    from sage.rings.number_field.order import Order
-    from sage.rings.padics.local_generic import LocalGeneric
-    from sage.rings.polynomial.polynomial_element import Polynomial
-    from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
-    from sage.structure.element import Element
-
-
+from sage.modules.free_module import FreeModule_generic
+from sage.rings.number_field.number_field import NumberField_generic
+from sage.rings.number_field.order import Order
+from sage.rings.padics.local_generic import LocalGeneric
+from sage.rings.polynomial.polynomial_element import Polynomial
+from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+from sage.structure.element import Element
 class pAdicExtensionGeneric(pAdicGeneric):
     def _extension_type(self) -> str: ...
     def _repr_(self, do_latex: bool = ...) -> str: ...

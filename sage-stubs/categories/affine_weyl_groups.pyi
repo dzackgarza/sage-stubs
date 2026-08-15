@@ -1,11 +1,8 @@
-from typing import TYPE_CHECKING
 from sage.categories.category import Category
 from sage.categories.category_singleton import Category_singleton
-
-if TYPE_CHECKING:
-    from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet_forest
-    from sage.combinat.core import Core
-    from sage.combinat.partition import Partition
+from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet_forest
+from sage.combinat.core import Core
+from sage.combinat.partition import Partition
 
 class AffineWeylGroups(Category_singleton):
     def super_categories(self) -> list[Category]: ...

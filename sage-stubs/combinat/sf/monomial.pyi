@@ -1,11 +1,7 @@
-from __future__ import annotations
-from typing import TYPE_CHECKING
 
-if TYPE_CHECKING:
-    from sage.combinat.partition import Partition
-    from sage.rings.ring import Ring
-    from sage.structure.parent import Parent
-
+from sage.combinat.partition import Partition
+from sage.rings.ring import Ring
+from sage.structure.parent import Parent
 class SymmetricFunctionAlgebra_monomial:
     def __init__(self, Sym: object) -> None: ...
     def _dual_basis_default(self) -> Parent: ...

@@ -1,10 +1,6 @@
-from typing import TYPE_CHECKING
-
+from sage.modules.free_module import FreeModule_generic
 from sage.structure.parent import Parent
-
-if TYPE_CHECKING:
-    from sage.modules.free_module import FreeModule_generic
-    from sage.structure.sequence import Sequence_generic
+from sage.structure.sequence import Sequence_generic
 
 class ModularAbelianVariety_abstract(Parent):
     def __init__(

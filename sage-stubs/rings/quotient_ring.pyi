@@ -1,0 +1,6 @@
+from sage.rings.ring import Ring
+from sage.structure.parent import Parent
+
+class QuotientRing_nc(Parent): ...
+
+class QuotientRing_generic(QuotientRing_nc, Ring): ...

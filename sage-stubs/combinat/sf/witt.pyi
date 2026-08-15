@@ -1,14 +1,10 @@
-from __future__ import annotations
-from typing import TYPE_CHECKING
 from collections.abc import Callable
 
-if TYPE_CHECKING:
-    from sage.combinat.partition import Partition
-    from sage.rings.ring import Ring
-    from sage.structure.parent import Parent
-    from sage.rings.commutative_ring_element import CommutativeRingElement
-    from sage.structure.element import Element as SageElement
-
+from sage.combinat.partition import Partition
+from sage.rings.ring import Ring
+from sage.rings.commutative_ring_element import CommutativeRingElement
+from sage.structure.parent import Parent
+from sage.structure.element import Element as SageElement
 class SymmetricFunctionAlgebra_witt:
     _h: object
     _e: object

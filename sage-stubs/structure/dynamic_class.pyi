@@ -1,3 +1,5 @@
+class DynamicMetaclass(type): ...
+
 def dynamic_class(
     name: str,
     bases: tuple[type, ...],

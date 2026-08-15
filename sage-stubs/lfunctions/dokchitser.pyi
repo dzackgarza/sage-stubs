@@ -1,55 +1,53 @@
-from typing import TYPE_CHECKING
-from sage.structure.sage_object import SageObject
-from sage.rings.complex_mpfr import ComplexField
-from sage.rings.integer import Integer
-from sage.rings.power_series_ring_element import PowerSeriesRingElement
+from collections.abc import Sequence
+from typing import Self
 
-if TYPE_CHECKING:
-    from collections.abc import Iterator, Sequence
+from sage.structure.sage_object import SageObject
+from sage.interfaces.gp import Gp
+from sage.rings.complex_mpfr import ComplexNumber
+from sage.rings.integer import Integer
+from sage.rings.power_series_ring_element import PowerSeries
 
 class Dokchitser(SageObject):
-    """Dokchitser's L-functions calculator."""
-
     conductor: int
-    gammaV: list
-    weight: int | float
-    eps: int | float | complex
-    poles: list
-    residues: list | str
+    gammaV: list[complex]
+    weight: float
+    eps: complex
+    poles: list[complex]
+    residues: list[complex] | str
     prec: int
 
-    def __new__(cls, *args, **kwargs) -> Dokchitser: ...
+    def __new__(cls, *args: object, **kwargs: object) -> Self: ...
     def __init__(
         self,
         conductor: int,
-        gammaV: Sequence,
-        weight: int | float,
-        eps: int | float | complex,
-        poles: Sequence | None = None,
-        residues: Sequence | str = ...,
+        gammaV: Sequence[complex],
+        weight: float,
+        eps: complex,
+        poles: Sequence[complex] | None = None,
+        residues: Sequence[complex] | str = ...,
         prec: int = ...,
         init: str | None = None,
     ) -> None: ...
-    def __reduce__(self) -> tuple: ...
+    def __reduce__(self) -> tuple[object, ...]: ...
     def _repr_(self) -> str: ...
     def __del__(self) -> None: ...
-    def gp(self): ...
-    def cost(self, T: int | float = ...) -> Integer: ...
-    def num_coeffs(self, T: int | float = ...) -> Integer: ...
+    def gp(self) -> Gp: ...
+    def cost(self, T: float = ...) -> Integer: ...
+    def num_coeffs(self, T: float = ...) -> Integer: ...
     def init_coeffs(
         self,
-        v: str | list | tuple,
-        cutoff: int | float = ...,
-        w: str | list | tuple | None = None,
+        v: str | list[complex] | tuple[object, ...],
+        cutoff: float = ...,
+        w: str | list[complex] | tuple[complex, ...] | None = None,
         pari_precode: str = ...,
-        max_imaginary_part: int | float = ...,
+        max_imaginary_part: float = ...,
         max_asymp_coeffs: int = ...,
     ) -> None: ...
     def _clear_value_cache(self) -> None: ...
-    def __call__(self, s: int | float | complex, c: int | float | None = None): ...
-    def derivative(self, s: int | float | complex, k: int = ...) -> complex: ...
+    def __call__(self, s: complex, c: float | None = None) -> ComplexNumber: ...
+    def derivative(self, s: complex, k: int = ...) -> ComplexNumber: ...
     def taylor_series(
-        self, a: int | float | complex = ..., k: int = ..., var: str = ...
-    ) -> PowerSeriesRingElement: ...
-    def check_functional_equation(self, T: int | float = ...) -> complex: ...
+        self, a: complex = ..., k: int = ..., var: str = ...
+    ) -> PowerSeries: ...
+    def check_functional_equation(self, T: float = ...) -> ComplexNumber: ...
     def set_coeff_growth(self, coefgrow: str) -> None: ...

@@ -1,0 +1,6 @@
+from sage.structure.sage_object import SageObject
+
+
+class ConvexSet_base(SageObject): ...
+
+class ConvexSet_closed(ConvexSet_base): ...

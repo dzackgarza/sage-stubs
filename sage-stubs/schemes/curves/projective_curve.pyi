@@ -1,0 +1,16 @@
+from ..projective.projective_subscheme import (
+    AlgebraicScheme_subscheme_projective,
+    AlgebraicScheme_subscheme_projective_field,
+)
+
+from .curve import Curve_generic
+
+class ProjectiveCurve(Curve_generic, AlgebraicScheme_subscheme_projective): ...
+
+class ProjectivePlaneCurve(ProjectiveCurve): ...
+
+class ProjectiveCurve_field(ProjectiveCurve, AlgebraicScheme_subscheme_projective_field): ...
+
+class ProjectivePlaneCurve_field(ProjectivePlaneCurve, ProjectiveCurve_field): ...
+
+class ProjectivePlaneCurve_finite_field(ProjectivePlaneCurve_field): ...

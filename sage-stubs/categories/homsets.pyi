@@ -1,6 +1,6 @@
 from sage.categories.covariant_functorial_construction import FunctorialConstructionCategory
-from sage.categories.category_with_parameters import CategoryWithParameters
-from sage.categories.category import Category, Category_singleton
+from sage.categories.category import Category, CategoryWithParameters
+from sage.categories.category_singleton import Category_singleton
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.structure.parent import Parent
 
@@ -16,6 +16,9 @@ class Homsets(Category_singleton):
 
     class Endset(CategoryWithAxiom):
         def extra_super_categories(self) -> list[Category]: ...
+
+        class ParentMethods:
+            def is_endomorphism_set(self) -> bool: ...
 
     class ParentMethods:
         def is_endomorphism_set(self) -> bool: ...

@@ -1,18 +1,15 @@
-from typing import TYPE_CHECKING, Iterator
+from collections.abc import Iterator
 from sage.groups.matrix_gps.finitely_generated_gap import FinitelyGeneratedMatrixGroup_gap
 from sage.groups.matrix_gps.group_element_gap import MatrixGroupElement_gap
 from sage.groups.perm_gps.permgroup import PermutationGroup_generic
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.sets.family import Family
+from sage.sets.family import AbstractFamily as Family
 
-if TYPE_CHECKING:
-    from sage.combinat.root_system.cartan_type import CartanType_abstract
-    from sage.combinat.root_system.root_lattice_realizations import RootLatticeRealizations
-    from sage.matrix.matrix import Matrix
-    from sage.structure.element import Element
-    from sage.rings.integer import Integer
-
-
+from sage.combinat.root_system.cartan_type import CartanType_abstract
+from sage.combinat.root_system.root_lattice_realizations import RootLatticeRealizations
+from sage.matrix.matrix import Matrix
+from sage.structure.element import Element
+from sage.rings.integer import Integer
 def WeylGroup(
     x: object,
     prefix: str | None = None,
@@ -43,7 +40,6 @@ class WeylGroup_gens(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gap):
 class ClassicalWeylSubgroup(WeylGroup_gens):
     def cartan_type(self) -> CartanType_abstract: ...
     def simple_reflections(self) -> Family: ...
-    def __repr__(self) -> str: ...
     def weyl_group(self, prefix: str = "hereditary") -> WeylGroup_gens: ...
     def _test_is_finite(self, **options: object) -> None: ...
 
@@ -68,8 +64,8 @@ class WeylGroupElement(MatrixGroupElement_gap):
 
 class WeylGroup_permutation(UniqueRepresentation, PermutationGroup_generic):
     def __init__(self, cartan_type: CartanType_abstract, prefix: str | None) -> None: ...
-    def iteration(self, algorithm: str = "breadth", tracking_words: bool = True) -> Iterator: ...
-    def __iter__(self) -> Iterator: ...
+    def iteration(self, algorithm: str = "breadth", tracking_words: bool = True) -> Iterator[WeylGroupElement]: ...
+    def __iter__(self) -> Iterator[WeylGroupElement]: ...
     def _coerce_map_from_(self, P: object) -> bool: ...
     def rank(self) -> Integer: ...
     def simple_reflection(self, i: object) -> WeylGroupElement: ...

@@ -1,18 +1,17 @@
-from typing import TYPE_CHECKING, Callable, overload
+from typing import overload
+from collections.abc import Callable
 from sage.structure.sage_object import SageObject
 from sage.rings.rational_field import RationalField
 from sage.combinat.species.structure import StructuresWrapper, IsotypesWrapper
 
-if TYPE_CHECKING:
-    from sage.combinat.species.generating_series import (
-        OrdinaryGeneratingSeries,
-        ExponentialGeneratingSeries,
-        CycleIndexSeries,
-    )
-    from sage.rings.ring import Ring
-    from sage.graphs.digraph import DiGraph
-    from sage.rings.polynomial.polynomial_element import Polynomial
-
+from sage.combinat.species.generating_series import (
+    OrdinaryGeneratingSeries,
+    ExponentialGeneratingSeries,
+    CycleIndexSeries,
+)
+from sage.rings.ring import Ring
+from sage.graphs.digraph import DiGraph
+from sage.rings.polynomial.polynomial_element import Polynomial
 class GenericCombinatorialSpecies(SageObject):
     _weight: object
     _min: int | None
@@ -22,11 +21,10 @@ class GenericCombinatorialSpecies(SageObject):
     def __hash__(self) -> int: ...
     def _unique_info(self) -> tuple[type, int | None, int | None, object]: ...
     def __eq__(self, x: object) -> bool: ...
-    def __ne__(self, other: GenericCombinatorialSpecies) -> bool: ...
+    def __ne__(self, other: object) -> bool: ...
     def _getstate_(self) -> tuple[dict[int, object], dict[str, object]]: ...
     def _setstate_(self, state: tuple[dict[int, object], dict[str, object]]) -> None: ...
     def weighted(self, weight: object) -> GenericCombinatorialSpecies: ...
-    def __repr__(self) -> str: ...
     def __add__(self, g: GenericCombinatorialSpecies) -> GenericCombinatorialSpecies: ...
     def sum(self, g: GenericCombinatorialSpecies) -> GenericCombinatorialSpecies: ...
     def __mul__(self, g: GenericCombinatorialSpecies) -> GenericCombinatorialSpecies: ...

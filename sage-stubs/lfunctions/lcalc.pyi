@@ -1,12 +1,8 @@
-from __future__ import annotations
 
-from typing import TYPE_CHECKING
 
-if TYPE_CHECKING:
-    from sage.rings.integer import Integer
-    from sage.rings.real_mpfr import RealNumber
-    from sage.rings.complex_mpfr import ComplexNumber
-
+from sage.rings.integer import Integer
+from sage.rings.real_mpfr import RealNumber
+from sage.rings.complex_mpfr import ComplexNumber
 class LCalc:
     def __call__(self, args: str) -> str: ...
     def help(self) -> None: ...

@@ -1,10 +1,10 @@
-from typing import TYPE_CHECKING
+from sage.algebras.lie_conformal_algebras.virasoro_lie_conformal_algebra import (
+    VirasoroLieConformalAlgebra,
+)
 from sage.categories.category import Category
+from sage.categories.category_types import Category_over_base_ring
 
-if TYPE_CHECKING:
-    from sage.algebras.lie_conformal_algebras.virasoro_lie_conformal_algebra import VirasoroLieConformalAlgebra
-
-class LieConformalAlgebras:
+class LieConformalAlgebras(Category_over_base_ring):
     def super_categories(self) -> list[Category]: ...
     def example(self) -> VirasoroLieConformalAlgebra: ...
     def _repr_object_names(self) -> str: ...

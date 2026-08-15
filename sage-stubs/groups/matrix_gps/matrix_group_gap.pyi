@@ -1,0 +1,3 @@
+from sage.groups.matrix_gps.matrix_group import MatrixGroup_generic
+
+class MatrixGroup_gap(MatrixGroup_generic): ...

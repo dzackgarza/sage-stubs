@@ -1,0 +1,3 @@
+from sage.structure.list_clone import ClonableArray
+
+class GelfandTsetlinPattern(ClonableArray[list[int]]): ...

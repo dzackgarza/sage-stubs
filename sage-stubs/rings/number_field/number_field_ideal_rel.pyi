@@ -1,0 +1,3 @@
+from sage.rings.number_field.number_field_ideal import NumberFieldFractionalIdeal
+
+class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal): ...

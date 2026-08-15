@@ -1,12 +1,9 @@
-from typing import TYPE_CHECKING, overload
+from typing import overload
 
 from sage.graphs.graph import Graph
 
-if TYPE_CHECKING:
-    from sage.structure.element import Element
-    from sage.matrix.matrix import Matrix
-
-
+from sage.structure.element import Element
+from sage.matrix.matrix import Matrix
 class BipartiteGraph(Graph):
     left: set[object]
     right: set[object]
@@ -21,7 +18,6 @@ class BipartiteGraph(Graph):
         **kwds: object,
     ) -> None: ...
     def __hash__(self) -> int: ...
-    def __repr__(self) -> str: ...
     def _upgrade_from_graph(self) -> None: ...
     def add_vertex(
         self, name: object | None = ..., left: bool = ..., right: bool = ...

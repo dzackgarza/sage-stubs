@@ -1,0 +1,3 @@
+from sage.structure.element import Element
+
+class AlternatingSignMatrix(Element): ...
