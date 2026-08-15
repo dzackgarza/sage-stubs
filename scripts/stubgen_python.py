@@ -6,6 +6,8 @@ from pathlib import Path
 
 from stubgen_common import BOOL_NAMES, COMPARE, HEADER, INT_NAMES, STR_NAMES, literal_type, public, return_from_name, simple_annotation
 
+_ITERATOR_PROTOCOLS = {"__iter__", "__reversed__", "__await__"}
+
 
 def param_type(arg: ast.arg, default: ast.expr | None, local: set[str]) -> str:
     annotation = simple_annotation(arg.annotation, local)
@@ -26,6 +28,14 @@ def return_type(fn: ast.FunctionDef | ast.AsyncFunctionDef, local: set[str]) -> 
     if inferred == "None":
         return inferred
     annotation = simple_annotation(fn.returns, local)
+    if fn.name in _ITERATOR_PROTOCOLS:
+        if annotation and annotation.startswith("_Iterator["):
+            return annotation
+        if annotation and annotation.startswith("_Iterable["):
+            return "_Iterator[" + annotation.removeprefix("_Iterable[")
+        return inferred
+    if fn.name == "__aiter__":
+        return annotation if annotation and annotation.startswith("_AsyncIterator[") else inferred
     return annotation if annotation and annotation != "builtins.object" else inferred
 
 
