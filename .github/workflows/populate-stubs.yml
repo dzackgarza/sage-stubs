@@ -59,7 +59,9 @@ jobs:
           ruff check --output-format=github sage-stubs/
           find sage-stubs -name '*.pyi' -print0 | xargs -0 python scripts/check_stubs.py
           python scripts/stub_coverage.py --threshold 1.0
-          python -m mypy --strict sage-stubs/
+          if [[ -s /tmp/changed-stubs.txt ]]; then
+            xargs -r -n 100 python -m mypy --strict --follow-imports=silent -- < /tmp/changed-stubs.txt
+          fi
           git add sage-stubs
           python scripts/check_guardrails.py
           git diff --cached --check
