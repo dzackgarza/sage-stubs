@@ -14,7 +14,7 @@ class DoubleCosetReduction:
     x: object
     power: int
 
-    def __init__(self, Y, x, extrapow: int = 0) -> None: ...
+    def __init__(self, Y: object, x: object, extrapow: int = 0) -> None: ...
 
     def sign(self) -> int:
         
@@ -31,25 +31,25 @@ class DoubleCosetReduction:
 class BruhatTitsTree:
     
 
-    def __init__(self, p) -> None: ...
+    def __init__(self, p: Integer) -> None: ...
 
 class Vertex:
     
 
-    def __init__(self, parent, vdata, label: int) -> None: ...
+    def __init__(self, parent: BruhatTitsQuotient, vdata: object, label: int) -> None: ...
 
 class Edge:
     
 
-    def __init__(self, parent, edata, label: int) -> None: ...
+    def __init__(self, parent: BruhatTitsQuotient, edata: object, label: int) -> None: ...
 
 class BruhatTitsQuotient:
     
 
     def __init__(
         self,
-        p,
-        Nminus,
+        p: Integer,
+        Nminus: Integer,
         Nplus: int = 1,
         character: DirichletCharacter | None = None,
         use_magma: bool = False,
@@ -81,15 +81,15 @@ class BruhatTitsQuotient:
         
         ...
 
-    def get_vertex_list(self) -> list:
+    def get_vertex_list(self) -> list[Vertex]:
         
         ...
 
-    def get_edge_list(self) -> list:
+    def get_edge_list(self) -> list[Edge]:
         
         ...
 
-    def get_vertex_dict(self) -> dict:
+    def get_vertex_dict(self) -> dict[int, Vertex]:
         
         ...
 
@@ -101,7 +101,7 @@ class BruhatTitsQuotient:
         
         ...
 
-    def fundom_rep(self, v1) -> Vertex:
+    def fundom_rep(self, v1: Vertex) -> Vertex:
         
         ...
 
@@ -117,15 +117,15 @@ class BruhatTitsQuotient:
         
         ...
 
-    def get_stabilizers(self) -> list:
+    def get_stabilizers(self) -> list[object]:
         
         ...
 
-    def get_edge_stabilizers(self) -> list:
+    def get_edge_stabilizers(self) -> list[object]:
         
         ...
 
-    def get_vertex_stabs(self) -> list:
+    def get_vertex_stabs(self) -> list[object]:
         
         ...
 
