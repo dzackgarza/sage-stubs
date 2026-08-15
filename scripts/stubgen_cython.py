@@ -4,11 +4,12 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
-from stubgen_common import HEADER, public, return_from_name
+from stubgen_common import COMPARE, HEADER, public, return_from_name
 
 CLASS_RE = re.compile(r"^(?P<indent>\s*)(?:(?:cdef|cpdef)\s+)?class\s+(?P<name>[A-Za-z_]\w*)")
 DEF_RE = re.compile(r"^(?P<indent>\s*)(?:(?:cpdef|cdef|def)\s+|async\s+def\s+)(?P<head>[^(:=]+?)\s*\((?P<args>[^)]*)\)")
 ASSIGN_RE = re.compile(r"^(?P<name>[A-Za-z_]\w*)\s*=")
+DECORATOR_RE = re.compile(r"^(?P<indent>\s*)@(?P<name>staticmethod|classmethod|property)\b")
 
 
 def split_args(text: str) -> list[str]:
@@ -27,8 +28,8 @@ def split_args(text: str) -> list[str]:
     return out
 
 
-def cy_signature(text: str, name: str, *, method: bool = False) -> str:
-    bits: list[str] = []
+def cy_signature(text: str, name: str, *, kind: str | None = None, class_name: str | None = None) -> str:
+    parsed: list[tuple[str, bool, str]] = []
     for raw in split_args(text):
         raw = raw.strip()
         if not raw or raw in {"/", "*"}:
@@ -37,17 +38,30 @@ def cy_signature(text: str, name: str, *, method: bool = False) -> str:
         raw = raw[len(star):]
         left, separator, _ = raw.partition("=")
         identifiers = re.findall(r"[A-Za-z_]\w*", left.split(":", 1)[0])
-        if not identifiers:
-            continue
-        arg = identifiers[-1]
-        if method and arg == "self":
-            annotation = ": Self"
-        elif method and arg == "cls":
-            annotation = ": type[Self]"
+        if identifiers:
+            parsed.append((identifiers[-1], bool(separator), star))
+    bits: list[str] = []
+    receiver_index = 0 if kind in {"instance", "class"} and parsed else -1
+    for index, (arg, has_default, star) in enumerate(parsed):
+        if index == receiver_index and kind == "instance" and arg == "self":
+            rendered = "self"
+        elif index == receiver_index and kind == "class" and arg in {"cls", "self"}:
+            rendered = arg
         else:
-            annotation = ": object"
-        bits.append(f"{star}{arg}{annotation}" + (" = ..." if separator else ""))
-    return f"({', '.join(bits)}) -> {return_from_name(name)}"
+            first_value = index == receiver_index + 1 if receiver_index >= 0 else index == 0
+            annotation = "builtins.object" if first_value and (name in COMPARE or name == "__contains__") else "builtins.object"
+            rendered = f"{star}{arg}: {annotation}"
+        if has_default:
+            rendered += " = ..."
+        bits.append(rendered)
+    if kind == "instance" and not parsed:
+        bits.insert(0, "self")
+    elif kind == "class" and not parsed:
+        bits.insert(0, "cls")
+    result = return_from_name(name)
+    if kind == "static" and result == "Self":
+        result = class_name or "_SageObject"
+    return f"({', '.join(bits)}) -> {result}"
 
 
 def parse_cython(path: Path) -> str:
@@ -58,9 +72,12 @@ def parse_cython(path: Path) -> str:
     lines: list[str] = []
     classes: list[tuple[int, str, list[str], set[str]]] = []
     top_seen: set[str] = set()
+    pending_decorators: dict[int, list[str]] = {}
 
     def close_class() -> None:
         _, name, body, _ = classes.pop()
+        if not name:
+            return
         block = [f"class {name}:", *(["    " + item for item in body] or ["    ..."]), ""]
         if classes:
             classes[-1][2].extend(block)
@@ -74,27 +91,43 @@ def parse_cython(path: Path) -> str:
         indent = len(line) - len(line.lstrip())
         while classes and indent <= classes[-1][0]:
             close_class()
+        decorator_match = DECORATOR_RE.match(line)
+        if decorator_match:
+            pending_decorators.setdefault(indent, []).append(decorator_match.group("name"))
+            continue
         class_match = CLASS_RE.match(line)
         if class_match:
             name = class_match.group("name")
             if public(name):
-                classes.append((indent, name, [], set()))
+                seen = classes[-1][3] if classes and indent > classes[-1][0] else top_seen
+                if name in seen:
+                    classes.append((indent, "", [], set()))
+                else:
+                    seen.add(name)
+                    classes.append((indent, name, [], set()))
+            pending_decorators.pop(indent, None)
             continue
         function_match = DEF_RE.match(line)
         if function_match:
             names = re.findall(r"[A-Za-z_]\w*", function_match.group("head"))
             if not names:
+                pending_decorators.pop(indent, None)
                 continue
             name = names[-1]
+            decorator_names = pending_decorators.pop(indent, [])
+            kind = "static" if "staticmethod" in decorator_names else "class" if "classmethod" in decorator_names or name == "__new__" else "instance"
             if classes and indent > classes[-1][0]:
-                body, seen = classes[-1][2], classes[-1][3]
-                if public(name, True) and name not in seen:
+                class_name, body, seen = classes[-1][1], classes[-1][2], classes[-1][3]
+                if class_name and public(name, True) and name not in seen:
                     seen.add(name)
-                    body.append(f"def {name}{cy_signature(function_match.group('args'), name, method=True)}: ...")
+                    body.extend(f"@{decorator}" for decorator in decorator_names)
+                    body.append(f"def {name}{cy_signature(function_match.group('args'), name, kind=kind, class_name=class_name)}: ...")
             elif indent == 0 and public(name) and name not in top_seen:
                 top_seen.add(name)
+                lines.extend(f"@{decorator}" for decorator in decorator_names)
                 lines.append(f"def {name}{cy_signature(function_match.group('args'), name)}: ...\n")
             continue
+        pending_decorators.pop(indent, None)
         if indent == 0:
             assignment = ASSIGN_RE.match(line)
             if assignment:

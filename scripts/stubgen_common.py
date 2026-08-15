@@ -5,9 +5,11 @@ import ast
 from pathlib import Path
 
 EXCLUDED = {"__init__.py", "all.py", "all_cmdline.py", "all_test.py", "tests.py"}
-HEADER = """# Generated from the pinned Sage 10.7 source tree.\nfrom collections.abc import AsyncIterator, Iterator\nfrom typing import Self\n\nclass _SageObject: ...\n\n"""
-SAFE = {"None", "bool", "int", "float", "complex", "str", "bytes", "bytearray", "memoryview", "slice", "range", "type", "object", "Self", "Iterator", "AsyncIterator"}
-GENERIC = {"list", "tuple", "dict", "set", "frozenset", "type", "Iterator", "AsyncIterator"}
+HEADER = """# Generated from the pinned Sage 10.7 source tree.\nimport builtins\nfrom collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator\nfrom typing import Self\n\nclass _SageObject: ...\n\n"""
+BUILTINS = {"bool", "int", "float", "complex", "str", "bytes", "bytearray", "memoryview", "slice", "range", "type", "object", "list", "tuple", "dict", "set", "frozenset"}
+ITERATORS = {"Iterator": "_Iterator", "AsyncIterator": "_AsyncIterator", "Iterable": "_Iterable"}
+SAFE = {"None", "Self", *BUILTINS, *ITERATORS}
+GENERIC = {"list", "tuple", "dict", "set", "frozenset", "type", *ITERATORS}
 INT_NAMES = {"i", "j", "k", "m", "n", "p", "q", "r", "degree", "dimension", "length", "rank", "size", "start", "stop", "step", "prec", "precision"}
 BOOL_NAMES = {"check", "coerce", "copy", "exact", "immutable", "normalize", "proof", "recurse", "reduce", "sparse", "strict", "validate", "verify"}
 STR_NAMES = {"algorithm", "implementation", "label", "name", "prefix", "style", "variable_name"}
@@ -35,6 +37,30 @@ def union(types: list[str]) -> str:
     return " | ".join(out) if out else "_SageObject"
 
 
+def named_type(name: str, *, bare: bool = True) -> str | None:
+    if name == "None":
+        return "None"
+    if name == "Self":
+        return "Self"
+    if name in ITERATORS:
+        alias = ITERATORS[name]
+        return f"{alias}[_SageObject]" if bare else alias
+    if name in BUILTINS:
+        qualified = f"builtins.{name}"
+        if bare and name == "type":
+            return "builtins.type[builtins.object]"
+        if bare and name == "list":
+            return "builtins.list[_SageObject]"
+        if bare and name == "tuple":
+            return "builtins.tuple[_SageObject, ...]"
+        if bare and name == "dict":
+            return "builtins.dict[_SageObject, _SageObject]"
+        if bare and name in {"set", "frozenset"}:
+            return f"{qualified}[_SageObject]"
+        return qualified
+    return None
+
+
 def simple_annotation(node: ast.expr | None, local: set[str]) -> str | None:
     if node is None:
         return None
@@ -47,9 +73,13 @@ def simple_annotation(node: ast.expr | None, local: set[str]) -> str | None:
             except SyntaxError:
                 return None
     if isinstance(node, ast.Name):
-        return node.id if node.id in SAFE or node.id in local else None
+        if node.id in local:
+            return node.id
+        return named_type(node.id)
     if isinstance(node, ast.Attribute):
-        return node.attr if node.attr in SAFE or node.attr in local else None
+        if node.attr in local:
+            return node.attr
+        return named_type(node.attr)
     if isinstance(node, ast.BinOp) and isinstance(node.op, ast.BitOr):
         left, right = simple_annotation(node.left, local), simple_annotation(node.right, local)
         return union([left, right]) if left and right else None
@@ -59,7 +89,10 @@ def simple_annotation(node: ast.expr | None, local: set[str]) -> str | None:
             return None
         parts = node.slice.elts if isinstance(node.slice, ast.Tuple) else [node.slice]
         args = [simple_annotation(part, local) for part in parts]
-        return f"{base}[{', '.join(args)}]" if all(args) else None
+        if not all(args):
+            return None
+        rendered_base = ITERATORS[base] if base in ITERATORS else f"builtins.{base}"
+        return f"{rendered_base}[{', '.join(args)}]"
     return None
 
 
@@ -69,29 +102,33 @@ def literal_type(node: ast.expr | None) -> str | None:
     if isinstance(node, ast.Constant):
         value = node.value
         if value is None: return "None"
-        if isinstance(value, bool): return "bool"
-        if isinstance(value, int): return "int"
-        if isinstance(value, float): return "float"
-        if isinstance(value, complex): return "complex"
-        if isinstance(value, str): return "str"
-        if isinstance(value, bytes): return "bytes"
-    if isinstance(node, ast.List): return "list[_SageObject]"
-    if isinstance(node, ast.Tuple): return "tuple[_SageObject, ...]"
-    if isinstance(node, ast.Set): return "set[_SageObject]"
-    if isinstance(node, ast.Dict): return "dict[_SageObject, _SageObject]"
+        if isinstance(value, bool): return "builtins.bool"
+        if isinstance(value, int): return "builtins.int"
+        if isinstance(value, float): return "builtins.float"
+        if isinstance(value, complex): return "builtins.complex"
+        if isinstance(value, str): return "builtins.str"
+        if isinstance(value, bytes): return "builtins.bytes"
+    if isinstance(node, ast.List): return "builtins.list[_SageObject]"
+    if isinstance(node, ast.Tuple): return "builtins.tuple[_SageObject, ...]"
+    if isinstance(node, ast.Set): return "builtins.set[_SageObject]"
+    if isinstance(node, ast.Dict): return "builtins.dict[_SageObject, _SageObject]"
     return None
 
 
 def return_from_name(name: str) -> str:
     if name in NONE_RET: return "None"
-    if name in COMPARE or name in {"__bool__", "__contains__"} or name.startswith(("is_", "has_", "can_")): return "bool"
-    if name in {"__len__", "__hash__", "__index__", "__int__"}: return "int"
-    if name == "__float__": return "float"
-    if name == "__complex__": return "complex"
-    if name in {"__str__", "__repr__", "__format__"}: return "str"
-    if name == "__bytes__": return "bytes"
-    if name in {"__iter__", "__reversed__"}: return "Iterator[_SageObject]"
-    if name == "__aiter__": return "AsyncIterator[_SageObject]"
+    if name in COMPARE or name in {"__bool__", "__contains__"} or name.startswith(("is_", "has_", "can_")): return "builtins.bool"
+    if name in {"__len__", "__hash__", "__index__", "__int__", "__sizeof__", "__length_hint__"}: return "builtins.int"
+    if name == "__float__": return "builtins.float"
+    if name == "__complex__": return "builtins.complex"
+    if name in {"__str__", "__repr__", "__format__"}: return "builtins.str"
+    if name == "__bytes__": return "builtins.bytes"
+    if name in {"__iter__", "__reversed__", "__await__"}: return "_Iterator[_SageObject]"
+    if name == "__aiter__": return "_AsyncIterator[_SageObject]"
+    if name == "__dir__": return "_Iterable[builtins.str]"
+    if name in {"__reduce__", "__reduce_ex__"}: return "builtins.str | builtins.tuple[builtins.object, ...]"
+    if name == "__getnewargs__": return "builtins.tuple[builtins.object, ...]"
+    if name == "__getnewargs_ex__": return "builtins.tuple[builtins.tuple[builtins.object, ...], builtins.dict[builtins.str, builtins.object]]"
     if name in {"__enter__", "__new__"} or name in ARITH or name in INPLACE: return "Self"
-    if name == "__exit__": return "bool | None"
+    if name == "__exit__": return "builtins.bool | None"
     return "_SageObject"
