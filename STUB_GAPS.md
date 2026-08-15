@@ -7,6 +7,10 @@ interface surface.
 
 ## Ready Candidates
 
+(none)
+
+## Resolved Candidates
+
 ### P0 — `sage.categories.category_types` Category_module and Category_over_base
 
 Fresh baseline:
@@ -54,8 +58,6 @@ Sage 10.7 source defines these classes directly at:
 
 - `sage-src/src/sage/rings/padics/generic_nodes.py:1181` — `pAdicRingGeneric`
 - `sage-src/src/sage/rings/padics/generic_nodes.py:1305` — `pAdicFieldGeneric`
-
-## Resolved Candidates
 
 ### `sage.categories.finite_fields.FiniteFields.__contains__`
 

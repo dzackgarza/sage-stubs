@@ -26,9 +26,9 @@ Cover the root of `sage.rings/` (everything *not* under
 
 | Task | Subtree / Group | Files | Depends | Status | Notes |
 |------|-----------------|-------|---------|--------|-------|
-| T02.P0a | **`sage.categories.category_types`** — Category_module, Category_over_base classes | 1 | — | 🟡 In Progress | P0 from issue #4: sage-src/src/sage/categories/category_types.py:147,575 |
-| T02.P0b | **`sage.rings.abc`** — Approximate field ABCs: RealBallField, RealIntervalField, RealDoubleField, ComplexField, ComplexBallField, ComplexIntervalField, ComplexDoubleField | 1 | — | 🟡 In Progress | P0 from issue #4: sage-src/src/sage/rings/abc.pyx:194,219,244,269,294,319,344 |
-| T02.P0c | **`sage.rings.padics.generic_nodes`** — pAdicRingGeneric, pAdicFieldGeneric classes | 1 | — | 🟡 In Progress | P0 from issue #4: sage-src/src/sage/rings/padics/generic_nodes.py:1181,1305 |
+| T02.P0a | **`sage.categories.category_types`** — Category_module, Category_over_base classes | 1 | — | ✅ Done | P0 from issue #4: sage-src/src/sage/categories/category_types.py:147,575 |
+| T02.P0b | **`sage.rings.abc`** — Approximate field ABCs: RealBallField, RealIntervalField, RealDoubleField, ComplexField, ComplexBallField, ComplexIntervalField, ComplexDoubleField | 1 | — | ✅ Done | P0 from issue #4: sage-src/src/sage/rings/abc.pyx:194,219,244,269,294,319,344 |
+| T02.P0c | **`sage.rings.padics.generic_nodes`** — pAdicRingGeneric, pAdicFieldGeneric classes | 1 | — | ✅ Done | P0 from issue #4: sage-src/src/sage/rings/padics/generic_nodes.py:1181,1305 |
 | T02.1 | **`sage.arith`** — `misc`, `functions`, `multi_modular`, `numerical_approx`, `power`, `rational_reconstruction`, `srange`, `long`. | ~8 | — | ✅ Done | `misc` already has a stub; complete the rest. |
 | T02.2 | **Real / complex floating point** — audit & complete `real_mpfr`, `real_double`, `real_double_element_gsl`, `real_arb`, `real_interval_absolute`, `real_lazy`, `real_mpfi`, `real_field`, `complex_double`, `complex_mpfr`, `complex_mpc`, `complex_arb`, `complex_interval`, `complex_interval_field`, `complex_conversion`, `cc.py`, `cif.py`. | ~17 | — | ✅ Done | Several stubs already exist — extend, never narrow. |
 | T02.3 | **Integer / rational base** — audit & complete `integer`, `integer_ring`, `integer_fake`, `rational`, `rational_field`, `factorint`, `factorint_flint`, `factorint_pari`, `bernoulli_mod_p`, `bernmm` (root), `numbers_abc`, `fast_arith`. | ~12 | — | ✅ Done | Most files have existing stubs; audit Phase-1 / Phase-2 of AGENTS.md. |

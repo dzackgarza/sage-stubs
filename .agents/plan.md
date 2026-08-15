@@ -132,10 +132,9 @@ scaffolded stub that still contains `Any` will be rejected by
 
 ## At-a-glance next step
 
-> **PRIORITY ISSUE #4:** Implement the P0 stub requests from https://github.com/dzackgarza/sage-stubs/issues/4
-> **Why:** Critical for category_specs research integration and validation
-> **Pick up:** Issue #4 P0 tasks: category_types.pyi, rings/abc.pyi, rings/padics/generic_nodes.pyi
-> **Status:** All P0 tasks marked as 🟡 In Progress
+> **PRIORITY ISSUE #4:** P0 stub requests all ✅ Done.
+> **Next:** Phase 02 remaining tasks T02.4–T02.12 (ring bases, series, quotients, lazy series, ring extensions, invariants).
+> **Status:** Phase 02 🟡 In Progress
 
 Update this banner whenever a phase transitions between `Not Started`,
 `In Progress`, and `Complete`.
