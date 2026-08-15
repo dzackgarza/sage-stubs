@@ -1,11 +1,13 @@
 from typing import Literal, overload
+import sage.rings.abc
 from sage.structure.element import FieldElement
+from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
 from sage.categories.morphism import Morphism
 from sage.rings.integer import Integer
 from sage.rings.infinity import PlusInfinity
 from sage.rings.number_field.number_field_element import NumberFieldElement
-from sage.rings.qqbar import AlgebraicNumber
+from sage.rings.qqbar import AlgebraicField, AlgebraicNumber
 from sage.rings.polynomial.polynomial_element import Polynomial
 
 def late_import() -> None: ...
@@ -52,7 +54,7 @@ class UniversalCyclotomicFieldElement(FieldElement):
     def norm_of_galois_extension(self) -> Integer: ...
     def minpoly(self, var: str = ...) -> Polynomial: ...
 
-class UniversalCyclotomicField(Parent):
+class UniversalCyclotomicField(UniqueRepresentation, sage.rings.abc.UniversalCyclotomicField):
     Element = UniversalCyclotomicFieldElement
     def __init__(self, names: object = ...) -> None: ...
     def an_element(self) -> UniversalCyclotomicFieldElement: ...
@@ -63,3 +65,5 @@ class UniversalCyclotomicField(Parent):
     def characteristic(self) -> Integer: ...
     def gen(self, n: int | Integer, k: int | Integer = ...) -> UniversalCyclotomicFieldElement: ...
     zeta = gen
+    def degree(self) -> PlusInfinity: ...
+    def algebraic_closure(self) -> AlgebraicField: ...
