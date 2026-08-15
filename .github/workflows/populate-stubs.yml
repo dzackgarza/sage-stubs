@@ -1,0 +1,74 @@
+name: Populate full Sage 10.7 stub surface
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - scripts/populate_all_stubs.py
+      - scripts/stubgen_*.py
+      - .github/workflows/populate-stubs.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: populate-sage-stubs-main
+  cancel-in-progress: false
+
+jobs:
+  populate:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - name: Check out repository and pinned Sage source
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install validation tools
+        run: python -m pip install --upgrade mypy ruff
+
+      - name: Populate every missing source module
+        run: python scripts/populate_all_stubs.py
+
+      - name: Normalize generated stubs
+        shell: bash
+        run: |
+          set -euo pipefail
+          sort -u /tmp/sage-stubs-generated-files.txt > /tmp/changed-stubs.txt
+          if [[ -s /tmp/changed-stubs.txt ]]; then
+            xargs -r ruff check --fix -- < /tmp/changed-stubs.txt
+          fi
+
+      - name: Validate complete stub surface
+        shell: bash
+        run: |
+          set -euo pipefail
+          ruff check sage-stubs/
+          find sage-stubs -name '*.pyi' -print0 | xargs -0 python scripts/check_stubs.py
+          python scripts/stub_coverage.py --threshold 1.0
+          python -m mypy --strict sage-stubs/
+          git add sage-stubs
+          python scripts/check_guardrails.py
+          git diff --cached --check
+
+      - name: Commit directly to main
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git diff --cached --quiet --exit-code; then
+            echo 'No changes to commit.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'feat: populate all remaining Sage 10.7 stubs'
+          git push origin HEAD:main
