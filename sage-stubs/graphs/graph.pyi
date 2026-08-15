@@ -2,20 +2,18 @@ from typing import overload, TYPE_CHECKING
 
 from sage.graphs.generic_graph import GenericGraph
 
-if TYPE_CHECKING:
-    from sage.combinat.sf.sfa import SymmetricFunctionAlgebra_generic_Element
-    from sage.combinat.qsym.qsym import QuasisymmetricFunctionAlgebra_generic_Element
-    from sage.graphs.convexity_properties import GraphConvexityProperties
-    from sage.graphs.digraph import DiGraph
-    from sage.graphs.bipartite_graph import BipartiteGraph
-    from sage.matrix.matrix import Matrix
-    from sage.combinat.designs.twographs import TwoGraph
-    from sage.topology.simplicial_complex import SimplicialComplex
-    from sage.rings.polynomial.polynomial_element import Polynomial
-    from sage.graphs.graph_decompositions.modular_decomposition import ModularDecomposition_class
-    from sage.rings.fraction_field_element import FractionFieldElement as RationalFunction
-    from sage.structure.element import Element
-
+from sage.combinat.sf.sfa import SymmetricFunctionAlgebra_generic_Element
+from sage.combinat.qsym.qsym import QuasisymmetricFunctionAlgebra_generic_Element
+from sage.graphs.convexity_properties import GraphConvexityProperties
+from sage.graphs.digraph import DiGraph
+from sage.graphs.bipartite_graph import BipartiteGraph
+from sage.matrix.matrix import Matrix
+from sage.combinat.designs.twographs import TwoGraph
+from sage.topology.simplicial_complex import SimplicialComplex
+from sage.rings.polynomial.polynomial_element import Polynomial
+from sage.graphs.graph_decompositions.modular_decomposition import ModularDecomposition_class
+from sage.rings.fraction_field_element import FractionFieldElement as RationalFunction
+from sage.structure.element import Element
 class Graph(GenericGraph):
     def __init__(self, data: object = ..., pos: object = ..., loops: object = ..., format: object = ..., weighted: object = ..., data_structure: object = ..., vertex_labels: object = ..., name: object = ..., multiedges: object = ..., convert_empty_dict_labels_to_None: object = ..., sparse: object = ..., immutable: object = ..., hash_labels: object = ...) -> None: ...
     def graph6_string(self) -> str: ...

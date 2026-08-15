@@ -4,12 +4,9 @@ from sage.combinat.free_module import CombinatorialFreeModule
 from sage.categories.morphism import Morphism
 from sage.rings.ring_element import RingElement
 
-if TYPE_CHECKING:
-    from sage.structure.element import Element
-    from sage.sets.family import Family
-    from sage.combinat.root_system.root_system import RootSystem
-
-
+from sage.structure.element import Element
+from sage.sets.family import Family
+from sage.combinat.root_system.root_system import RootSystem
 class WeightSpace(CombinatorialFreeModule):
     root_system: RootSystem
     _extended: bool

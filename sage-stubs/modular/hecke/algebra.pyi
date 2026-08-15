@@ -1,4 +1,5 @@
-from typing import TYPE_CHECKING, Iterator, Optional
+from typing import TYPE_CHECKING, Optional
+from collections.abc import Iterator
 from sage.rings.commutative_ring import CommutativeRing
 from sage.rings.integer import Integer
 from sage.rings.infinity import PlusInfinity
@@ -6,11 +7,9 @@ from sage.structure.parent import Parent
 from sage.structure.unique_representation import CachedRepresentation
 from sage.matrix.matrix_space import MatrixSpace
 
-if TYPE_CHECKING:
-    from sage.modular.hecke.module import HeckeModule_generic, HeckeModule_free_module
-    from sage.modular.hecke.hecke_operator import HeckeOperator, HeckeAlgebraElement_matrix, DiamondBracketOperator
-    from sage.matrix.matrix_dense import Matrix
-
+from sage.modular.hecke.module import HeckeModule_generic, HeckeModule_free_module
+from sage.modular.hecke.hecke_operator import HeckeOperator, HeckeAlgebraElement_matrix, DiamondBracketOperator
+from sage.matrix.matrix_dense import Matrix
 class HeckeAlgebra_base(CachedRepresentation, Parent):
     def __init__(self, M: HeckeModule_generic) -> None: ...
     def level(self) -> Integer: ...

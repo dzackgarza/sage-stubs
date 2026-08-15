@@ -1,16 +1,14 @@
 from typing import TYPE_CHECKING
 
-if TYPE_CHECKING:
-    from sage.rings.ring import CommutativeRing
-    from sage.rings.finite_rings.finite_field_base import FiniteField
-    from sage.matrix.matrix import Matrix
-    from sage.modules.free_module import VectorSpace
-    from sage.modules.free_module_element import FreeModuleElement
-    from sage.coding.encoder import Encoder
-    from sage.coding.decoder import Decoder
-    from sage.rings.polynomial.polynomial_element import Polynomial
-    from sage.graphs.graph import Graph
-
+from sage.rings.ring import CommutativeRing
+from sage.rings.finite_rings.finite_field_base import FiniteField
+from sage.matrix.matrix import Matrix
+from sage.modules.free_module import VectorSpace
+from sage.modules.free_module_element import FreeModuleElement
+from sage.coding.encoder import Encoder
+from sage.coding.decoder import Decoder
+from sage.rings.polynomial.polynomial_element import Polynomial
+from sage.graphs.graph import Graph
 class AbstractLinearCode:
     _registered_encoders: dict[str, type]
     _registered_decoders: dict[str, type]

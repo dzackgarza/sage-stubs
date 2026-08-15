@@ -1,9 +1,7 @@
 from typing import TYPE_CHECKING
 from sage.categories.category import Category
 
-if TYPE_CHECKING:
-    from sage.combinat.colored_permutations import ColoredPermutations
-
+from sage.combinat.colored_permutations import ColoredPermutations
 class ComplexReflectionGroups:
     def super_categories(self) -> list[Category]: ...
     def additional_structure(self) -> None: ...

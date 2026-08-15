@@ -1,4 +1,4 @@
-from typing import Iterator
+from collections.abc import Iterator
 from sage.modular.arithgroup.arithgroup_generic import ArithmeticSubgroup
 from sage.modular.arithgroup.arithgroup_element import ArithmeticSubgroupElement
 

@@ -1,4 +1,3 @@
-from __future__ import annotations
 from sage.rings.integer import Integer
 from sage.rings.ring import Field
 from sage.structure.element import Element

@@ -1,16 +1,14 @@
-from typing import overload, TYPE_CHECKING, Callable
+from typing import overload, TYPE_CHECKING
+from collections.abc import Callable
 from sage.graphs.digraph import DiGraph
 from sage.rings.integer import Integer
 
-if TYPE_CHECKING:
-    from collections.abc import Iterator
-
+from collections.abc import Iterator
 class LatticeError(ValueError):
     fail: str
     x: object
     y: object
     def __init__(self, fail: str, x: object, y: object) -> None: ...
-    def __str__(self) -> str: ...
 
 class HasseDiagram(DiGraph):
     def _repr_(self) -> str: ...

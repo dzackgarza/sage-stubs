@@ -2,13 +2,10 @@ from typing import TYPE_CHECKING
 
 from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 
-if TYPE_CHECKING:
-    from sage.structure.element import Element
-    from sage.categories.category import Category
-    from sage.sets.family import Family
-    from sage.modules.free_module_morphism import FreeModuleMorphism
-
-
+from sage.structure.element import Element
+from sage.categories.category import Category
+from sage.sets.family import Family
+from sage.modules.free_module_morphism import FreeModuleMorphism
 class WeightLatticeRealizations(CategoryWithAxiom_over_base_ring):
     def super_categories(self) -> list[Category]: ...
 

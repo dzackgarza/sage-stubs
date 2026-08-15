@@ -1,12 +1,10 @@
 from typing import TYPE_CHECKING
 from sage.structure.sage_object import SageObject
 
-if TYPE_CHECKING:
-    from sage.coding.linear_code import AbstractLinearCode
-    from sage.modules.free_module import VectorSpace
-    from sage.modules.free_module_element import FreeModuleElement
-    from sage.matrix.matrix import Matrix
-
+from sage.coding.linear_code import AbstractLinearCode
+from sage.modules.free_module import VectorSpace
+from sage.modules.free_module_element import FreeModuleElement
+from sage.matrix.matrix import Matrix
 class Encoder(SageObject):
     def __init__(self, code: AbstractLinearCode) -> None: ...
     def encode(self, word: object) -> FreeModuleElement: ...
@@ -18,4 +16,4 @@ class Encoder(SageObject):
     def generator_matrix(self) -> Matrix: ...
 
 class EncodingError(Exception):
-    pass
+    ...

@@ -4,11 +4,9 @@ from sage.categories.morphism import Morphism
 from sage.categories.category import Category
 from sage.structure.parent import Parent
 
-if TYPE_CHECKING:
-    pass
-
-DomainElementT = TypeVar("DomainElementT", bound=Parent)
-CodomainElementT = TypeVar("CodomainElementT", bound=Parent)
+pass
+_ = TypeVarDomainElementT
+_ = TypeVarCodomainElementT
 
 def Hom(
     X: DomainElementT,
@@ -47,4 +45,4 @@ class Homset(Generic[DomainElementT, CodomainElementT]):
     def one(self) -> Morphism: ...
 
 class HomsetWithBase(Homset[DomainElementT, CodomainElementT]):
-    pass
+    ...

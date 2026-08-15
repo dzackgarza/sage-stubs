@@ -3,11 +3,9 @@ from sage.rings.integer import Integer
 from sage.schemes.elliptic_curves.ell_generic import EllipticCurve_generic
 from sage.schemes.curves.projective_curve import ProjectivePlaneCurve_field
 
-if TYPE_CHECKING:
-    from sage.rings.ring import Ring
-    from sage.rings.field import Field
-    from sage.schemes.elliptic_curves.ell_curve_isogeny import EllipticCurveIsogeny
-
+from sage.rings.ring import Ring
+from sage.rings.field import Field
+from sage.schemes.elliptic_curves.ell_curve_isogeny import EllipticCurveIsogeny
 class EllipticCurve_field(EllipticCurve_generic, ProjectivePlaneCurve_field):
     def __init__(self, R: Field, data, category=None) -> None: ...
     def genus(self) -> Integer: ...

@@ -3,12 +3,10 @@ from sage.rings.ideal import Ideal_generic
 from sage.rings.integer import Integer
 from sage.structure.sequence import Sequence
 
-if TYPE_CHECKING:
-    from sage.rings.polynomial.multi_polynomial import MPolynomial
-    from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
-    from sage.matrix.matrix2 import Matrix
-    from sage.modules.free_module import FreeModule
-
+from sage.rings.polynomial.multi_polynomial import MPolynomial
+from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
+from sage.matrix.matrix2 import Matrix
+from sage.modules.free_module import FreeModule
 class MPolynomialIdeal(Ideal_generic):
     def groebner_basis(self) -> PolynomialSequence: ...
     def basis_is_groebner(self) -> bool: ...

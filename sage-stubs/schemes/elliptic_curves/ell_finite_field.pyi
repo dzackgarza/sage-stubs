@@ -2,18 +2,16 @@ from typing import TYPE_CHECKING, Literal, overload
 from sage.rings.integer import Integer
 from sage.groups.additive_abelian.additive_abelian_wrapper import AdditiveAbelianGroupWrapper
 
-if TYPE_CHECKING:
-    from sage.schemes.elliptic_curves.ell_field import EllipticCurve_field
-    from sage.schemes.elliptic_curves.ell_point import EllipticCurvePoint_finite_field
-    from sage.schemes.curves.projective_curve import ProjectivePlaneCurve_finite_field
-    from sage.rings.finite_rings.finite_field_base import FiniteField
-    from sage.structure.sequence import Sequence
-    from sage.groups.abelian_gps.abelian_group import AbelianGroup_class
-    from sage.rings.number_field.number_field import NumberField
-    from sage.rings.integer_ring import IntegerRing_class
-
+from sage.schemes.elliptic_curves.ell_field import EllipticCurve_field
+from sage.schemes.elliptic_curves.ell_point import EllipticCurvePoint_finite_field
+from sage.schemes.curves.projective_curve import ProjectivePlaneCurve_finite_field
+from sage.rings.finite_rings.finite_field_base import FiniteField
+from sage.structure.sequence import Sequence
+from sage.groups.abelian_gps.abelian_group import AbelianGroup_class
+from sage.rings.number_field.number_field import NumberField
+from sage.rings.integer_ring import IntegerRing_class
 class EllipticCurve_finite_field(EllipticCurve_field, ProjectivePlaneCurve_finite_field):
-    """Elliptic curve over a finite field."""
+    
 
     def plot(self, *args, **kwds): ...
 

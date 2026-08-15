@@ -1,12 +1,10 @@
-from __future__ import annotations
 
-from typing import TYPE_CHECKING, Iterator, Callable, Any
+from typing import TYPE_CHECKING, Any
+from collections.abc import Iterator, Callable
 from typing_extensions import Generator
 
-if TYPE_CHECKING:
-    from sage.graphs.graph import Graph
-    from sage.graphs.bipartite_graph import BipartiteGraph
-
+from sage.graphs.graph import Graph
+from sage.graphs.bipartite_graph import BipartiteGraph
 class GraphGenerators:
     def __call__(
         self,

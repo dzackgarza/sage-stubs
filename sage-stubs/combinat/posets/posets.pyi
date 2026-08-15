@@ -3,12 +3,10 @@ from typing import TYPE_CHECKING
 
 from sage.structure.parent import Parent
 
-if TYPE_CHECKING:
-    from sage.combinat.posets.linear_extensions import LinearExtension
-    from sage.graphs.digraph import DiGraph
-    from sage.topology.simplicial_complex import SimplicialComplex
-    from sage.rings.polynomial.polynomial_element import Polynomial
-
+from sage.combinat.posets.linear_extensions import LinearExtension
+from sage.graphs.digraph import DiGraph
+from sage.topology.simplicial_complex import SimplicialComplex
+from sage.rings.polynomial.polynomial_element import Polynomial
 class FinitePoset(Parent):
     def cover_relations(self) -> list[tuple[object, object]]: ...
     def linear_extensions(self, facade: object = ...) -> list[LinearExtension]: ...

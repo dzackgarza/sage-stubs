@@ -7,9 +7,7 @@ from sage.misc.unknown import Unknown
 
 
 class Category_over_base(CategoryWithParameters):
-    r"""
-    A base class for categories over some base object.
-    """
+    
 
     def __init__(self, base: Category | object, name: str | None = None) -> None: ...
 
@@ -23,4 +21,4 @@ class Category_over_base(CategoryWithParameters):
 
 
 class Category_module(AbelianCategory, Category_over_base_ring):
-    pass
+    ...

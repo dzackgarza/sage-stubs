@@ -1,11 +1,10 @@
-from typing import TYPE_CHECKING, Callable
+from typing import TYPE_CHECKING
+from collections.abc import Callable
 from sage.structure.sage_object import SageObject
 from sage.combinat.root_system.cartan_type import CartanType
 
-if TYPE_CHECKING:
-    from sage.combinat.root_system.weyl_characters import WeylCharacter
-    from sage.modules.free_module_element import vector as FreeModuleElement
-
+from sage.combinat.root_system.weyl_characters import WeylCharacter
+from sage.modules.free_module_element import vector as FreeModuleElement
 class BranchingRule(SageObject):
     _R: CartanType
     _S: CartanType

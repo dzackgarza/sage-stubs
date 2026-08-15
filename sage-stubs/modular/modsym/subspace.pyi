@@ -3,9 +3,7 @@ from typing import TYPE_CHECKING
 from sage.modular.modsym.space import ModularSymbolsSpace
 from sage.structure.factorization import Factorization
 
-if TYPE_CHECKING:
-    from sage.modular.modsym.ambient import ModularSymbolsAmbient
-
+from sage.modular.modsym.ambient import ModularSymbolsAmbient
 class ModularSymbolsSubspace(ModularSymbolsSpace):
     def __init__(
         self,

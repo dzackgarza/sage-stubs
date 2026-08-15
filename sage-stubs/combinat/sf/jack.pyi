@@ -1,13 +1,10 @@
-from __future__ import annotations
 from typing import TYPE_CHECKING
 from collections.abc import Callable
 
-if TYPE_CHECKING:
-    from sage.combinat.partition import Partition
-    from sage.rings.ring import Ring
-    from sage.structure.parent import Parent
-    from sage.matrix.matrix import Matrix
-
+from sage.combinat.partition import Partition
+from sage.rings.ring import Ring
+from sage.structure.parent import Parent
+from sage.matrix.matrix import Matrix
 class Jack:
     t: object
     _sym: object
@@ -17,7 +14,6 @@ class Jack:
     @staticmethod
     def __classcall__(cls, Sym: object, t: str | object = ...) -> Jack: ...
     def __init__(self, Sym: object, t: object) -> None: ...
-    def __repr__(self) -> str: ...
     def base_ring(self) -> Ring: ...
     def symmetric_function_ring(self) -> Parent: ...
     def P(self) -> JackPolynomials_p: ...
@@ -73,13 +69,13 @@ class JackPolynomials_j(JackPolynomials_generic):
     def __init__(self, jack: Jack) -> None: ...
 
     class Element(JackPolynomials_generic.Element):
-        pass
+        ...
 
 class JackPolynomials_q(JackPolynomials_generic):
     def __init__(self, jack: Jack) -> None: ...
 
     class Element(JackPolynomials_generic.Element):
-        pass
+        ...
 
 class JackPolynomials_qp(JackPolynomials_generic):
     _self_to_h_cache: dict[object, object]
@@ -93,7 +89,7 @@ class JackPolynomials_qp(JackPolynomials_generic):
     def coproduct_by_coercion(self, elt: object) -> Parent: ...
 
     class Element(JackPolynomials_generic.Element):
-        pass
+        ...
 
 class SymmetricFunctionAlgebra_zonal:
     _sym: object

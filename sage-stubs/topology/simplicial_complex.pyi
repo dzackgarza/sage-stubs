@@ -1,8 +1,6 @@
 from typing import TYPE_CHECKING
 
-if TYPE_CHECKING:  # noqa: PYI002
-    from sage.groups.abelian_gps.abelian_group import AbelianGroup
-
+from sage.groups.abelian_gps.abelian_group import AbelianGroup
 class GenericCellComplex: ...
 
 class SimplicialComplex(GenericCellComplex):

@@ -1,10 +1,8 @@
 from typing import TYPE_CHECKING, Optional, Self
 from sage.structure.element import ModuleElement
 
-if TYPE_CHECKING:
-    from sage.modular.hecke.module import HeckeModule_generic, HeckeModule_free_module
-    from sage.modules.free_module import FreeModuleElement
-
+from sage.modular.hecke.module import HeckeModule_generic, HeckeModule_free_module
+from sage.modules.free_module import FreeModuleElement
 class HeckeModuleElement(ModuleElement):
     def __init__(self, parent: HeckeModule_generic, x: Optional[FreeModuleElement] = None) -> None: ...
     def element(self) -> FreeModuleElement: ...

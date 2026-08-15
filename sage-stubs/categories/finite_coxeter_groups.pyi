@@ -4,13 +4,11 @@ from sage.categories.category import Category
 from sage.structure.element import Element
 from sage.structure.parent import Parent
 
-if TYPE_CHECKING:
-    from sage.combinat.posets.posets import FinitePoset
-    from sage.rings.ring import Ring
-    from sage.geometry.polyhedron.base import Polyhedron_base
-    from sage.graphs.graph import Graph
-    from sage.topology.simplicial_complex import SimplicialComplex
-
+from sage.combinat.posets.posets import FinitePoset
+from sage.rings.ring import Ring
+from sage.geometry.polyhedron.base import Polyhedron_base
+from sage.graphs.graph import Graph
+from sage.topology.simplicial_complex import SimplicialComplex
 class FiniteCoxeterGroups:
     def extra_super_categories(self) -> list[Category]: ...
 

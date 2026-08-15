@@ -2,19 +2,15 @@ from typing import TYPE_CHECKING, overload
 
 from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 
-if TYPE_CHECKING:
-    from sage.combinat.root_system.cartan_type import CartanType_abstract
-    from sage.structure.element import Element
-    from sage.graphs.digraph import DiGraph
-    from sage.combinat.posets.posets import FinitePoset
-    from sage.modules.free_module_morphism import FreeModuleMorphism
-    from sage.groups.perm_gps.permgroup import PermutationGroup_generic
-    from sage.categories.homset import Homset
-    from sage.categories.category import Category
-
-    from sage.plot.graphics import Graphics
-
-
+from sage.combinat.root_system.cartan_type import CartanType_abstract
+from sage.structure.element import Element
+from sage.graphs.digraph import DiGraph
+from sage.combinat.posets.posets import FinitePoset
+from sage.modules.free_module_morphism import FreeModuleMorphism
+from sage.groups.perm_gps.permgroup import PermutationGroup_generic
+from sage.categories.homset import Homset
+from sage.categories.category import Category
+from sage.plot.graphics import Graphics
 class RootLatticeRealizations(CategoryWithAxiom_over_base_ring):
     def super_categories(self) -> list[Category]: ...
     

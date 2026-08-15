@@ -1,10 +1,5 @@
-from typing import TYPE_CHECKING
-if TYPE_CHECKING:
-    from sage.categories.category_with_axiom import CategoryWithAxiom
-    from sage.categories.graded_modules import GradedModulesCategory
-else:
-    CategoryWithAxiom = object
-    GradedModulesCategory = object
+from sage.categories.category_with_axiom import CategoryWithAxiom
+from sage.categories.graded_modules import GradedModulesCategory
 
 class LambdaBracketAlgebrasWithBasis(CategoryWithAxiom):
     class ElementMethods:

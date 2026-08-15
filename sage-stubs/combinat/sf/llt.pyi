@@ -1,12 +1,9 @@
-from __future__ import annotations
 from typing import TYPE_CHECKING
 from collections.abc import Callable
 
-if TYPE_CHECKING:
-    from sage.combinat.partition import Partition
-    from sage.rings.ring import Ring
-    from sage.structure.parent import Parent
-
+from sage.combinat.partition import Partition
+from sage.rings.ring import Ring
+from sage.structure.parent import Parent
 class LLT_class:
     _k: int
     _sym: object
@@ -18,7 +15,6 @@ class LLT_class:
     @staticmethod
     def __classcall__(cls, Sym: object, k: int, t: str | object = ...) -> LLT_class: ...
     def __init__(self, Sym: object, k: int, t: object) -> None: ...
-    def __repr__(self) -> str: ...
     def symmetric_function_ring(self) -> Parent: ...
     def base_ring(self) -> Ring: ...
     def level(self) -> int: ...
@@ -48,7 +44,7 @@ class LLT_generic:
     def basis_name(self) -> str: ...
 
     class Element:
-        pass
+        ...
 
 class LLT_spin(LLT_generic):
     _self_to_m_cache: dict[int, dict[object, object]]
@@ -58,7 +54,7 @@ class LLT_spin(LLT_generic):
     def _to_m(self, part: Partition) -> Callable[[Partition], Ring]: ...
 
     class Element(LLT_generic.Element):
-        pass
+        ...
 
 class LLT_cospin(LLT_generic):
     _self_to_m_cache: dict[int, dict[object, object]]
@@ -68,4 +64,4 @@ class LLT_cospin(LLT_generic):
     def _to_m(self, part: Partition) -> Callable[[Partition], Ring]: ...
 
     class Element(LLT_generic.Element):
-        pass
+        ...

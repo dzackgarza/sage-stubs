@@ -4,14 +4,12 @@ from sage.structure.element import AlgebraElement, Element
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.structure.factorization import Factorization
 
-if TYPE_CHECKING:
-    from sage.modular.hecke.algebra import HeckeAlgebra_base
-    from sage.modular.hecke.module import HeckeModule_generic, HeckeModule_free_module
-    from sage.modular.hecke.element import HeckeModuleElement
-    from sage.modular.hecke.submodule import HeckeSubmodule
-    from sage.modular.hecke.morphism import HeckeModuleMorphism_matrix as HeckeModuleMorphism_matrix_type
-    from sage.matrix.matrix_dense import Matrix
-
+from sage.modular.hecke.algebra import HeckeAlgebra_base
+from sage.modular.hecke.module import HeckeModule_generic, HeckeModule_free_module
+from sage.modular.hecke.element import HeckeModuleElement
+from sage.modular.hecke.submodule import HeckeSubmodule
+from sage.modular.hecke.morphism import HeckeModuleMorphism_matrix as HeckeModuleMorphism_matrix_type
+from sage.matrix.matrix_dense import Matrix
 class HeckeAlgebraElement(AlgebraElement):
     def __init__(self, parent: HeckeAlgebra_base) -> None: ...
     def domain(self) -> HeckeModule_generic: ...

@@ -3,14 +3,12 @@ from typing import TYPE_CHECKING, Optional
 from sage.rings.integer import Integer
 from sage.schemes.generic.algebraic_scheme import AlgebraicScheme_subscheme
 
-if TYPE_CHECKING:
-    from sage.rings.ring import Ring
-    from sage.schemes.projective.projective_space import ProjectiveSpace_field
-    from sage.schemes.affine.affine_subscheme import AlgebraicScheme_subscheme_affine
-    from sage.schemes.projective.projective_morphism import (
-        SchemeMorphism_polynomial_projective_subscheme_field,
-    )
-
+from sage.rings.ring import Ring
+from sage.schemes.projective.projective_space import ProjectiveSpace_field
+from sage.schemes.affine.affine_subscheme import AlgebraicScheme_subscheme_affine
+from sage.schemes.projective.projective_morphism import (
+SchemeMorphism_polynomial_projective_subscheme_field,
+)
 class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
     def __init__(
         self, A: ProjectiveSpace_field, polynomials

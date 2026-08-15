@@ -1,5 +1,4 @@
 from sage.plot.plot import GraphicObject
-from __future__ import annotations
 from builtins import str as String
 from sage.rings.integer import Integer
 from sage.rings.real_mpfr import RealField_class, RealNumber

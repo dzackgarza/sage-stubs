@@ -6,10 +6,8 @@ from sage.matrix.matrix import Matrix
 from sage.matrix.matrix_space import MatrixSpace
 from sage.rings.integer import Integer
 
-if TYPE_CHECKING:
-    from sage.modules.with_basis.representation import SignRepresentationMatrixGroup
-    from sage.modules.with_basis.representation import NaturalMatrixRepresentation
-
+from sage.modules.with_basis.representation import SignRepresentationMatrixGroup
+from sage.modules.with_basis.representation import NaturalMatrixRepresentation
 class MatrixGroup_base(Group):
     _ambient: object
     def _check_matrix(self, x: Matrix, *args: object) -> None: ...

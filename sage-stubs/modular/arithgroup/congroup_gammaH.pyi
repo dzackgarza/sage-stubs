@@ -1,5 +1,5 @@
 from sage.modular.dirichlet import DirichletCharacter
-from typing import Iterator
+from collections.abc import Iterator
 from sage.modular.arithgroup.congroup_generic import CongruenceSubgroupBase
 from sage.modular.arithgroup.arithgroup_generic import ArithmeticSubgroup
 from sage.modular.arithgroup.arithgroup_element import ArithmeticSubgroupElement

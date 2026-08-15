@@ -2,13 +2,11 @@ from typing import TYPE_CHECKING, Literal
 from sage.rings.integer import Integer
 from sage.groups.abelian_gps.abelian_group import AbelianGroup_class, AbelianGroup_subgroup
 
-if TYPE_CHECKING:
-    from sage.rings.number_field.number_field import NumberField
-    from sage.groups.perm_gps.permgroup import PermutationGroup
-    from sage.categories.morphism import RingMorphism
-
+from sage.rings.number_field.number_field import NumberField
+from sage.groups.perm_gps.permgroup import PermutationGroup
+from sage.categories.morphism import RingMorphism
 class _GMixin:
-    """Base mixin providing common functionality for Galois groups."""
+    
 
     @property
     def _default_algorithm(self) -> str: ...
@@ -27,7 +25,7 @@ class _GMixin:
     def _gc_map(self) -> RingMorphism: ...
 
 class _GaloisMixin(_GMixin):
-    """Mixin for Galois groups of field extensions."""
+    
 
     @property
     def _field(self) -> NumberField: ...
@@ -44,7 +42,7 @@ class _GaloisMixin(_GMixin):
     def is_galois(self) -> bool: ...
 
 class _SubGaloisMixin(_GMixin):
-    """Mixin for subgroups of Galois groups."""
+    
 
     @property
     def _ambient_group(self): ...
@@ -55,7 +53,7 @@ class _SubGaloisMixin(_GMixin):
     def _gcdata(self) -> tuple: ...
 
 class GaloisGroup_ab(_GaloisMixin, AbelianGroup_class):
-    """Abelian Galois groups."""
+    
 
     def __init__(self, field: NumberField, generator_orders: tuple[int, ...], algorithm: str | None = None, gen_names: str = 'sigma') -> None: ...
 
@@ -69,12 +67,11 @@ class GaloisGroup_ab(_GaloisMixin, AbelianGroup_class):
     def transitive_number(self, algorithm: str | None = None, recompute: bool = False) -> Integer: ...
 
 class GaloisGroup_cyc(GaloisGroup_ab):
-    """Cyclic Galois groups."""
+    
 
     def transitive_number(self, algorithm: str | None = None, recompute: bool = False) -> Integer: ...
 
     def signature(self) -> Integer: ...
 
 class GaloisSubgroup_ab(AbelianGroup_subgroup, _SubGaloisMixin):
-    """Subgroups of abelian Galois groups."""
-    pass
+    ...

@@ -4,10 +4,8 @@ from typing import TYPE_CHECKING
 from sage.combinat.posets.posets import FinitePoset
 from sage.structure.element import Element
 
-if TYPE_CHECKING:
-    from sage.matrix.matrix import Matrix
-    from sage.structure.parent import Parent
-
+from sage.matrix.matrix import Matrix
+from sage.structure.parent import Parent
 class FiniteMeetSemilattice(FinitePoset):
     def meet_matrix(self) -> Matrix: ...
     def meet(self, x: object, y: object | None = ...) -> Element: ...

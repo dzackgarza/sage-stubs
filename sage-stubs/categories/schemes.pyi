@@ -3,10 +3,8 @@ from sage.categories.category import Category
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.homsets import HomsetsCategory
 
-if TYPE_CHECKING:
-    from sage.schemes.generic.scheme import Scheme
-    from sage.schemes.generic.morphism import SchemeMorphism
-
+from sage.schemes.generic.scheme import Scheme
+from sage.schemes.generic.morphism import SchemeMorphism
 class Schemes(Category):
     def super_categories(self) -> list[Category]: ...
     def _call_(self, x: object) -> Scheme | SchemeMorphism: ...

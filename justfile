@@ -1,5 +1,22 @@
 # sage-stubs quality pipeline
 
+# Bootstrap: install uv and just if missing (idempotent)
+bootstrap:
+	@if ! command -v uv &> /dev/null; then \
+		echo "Installing uv..."; \
+		curl -LsSf https://astral.sh/uv/install.sh | sh; \
+	else \
+		echo "uv already installed"; \
+	fi
+	@if ! command -v just &> /dev/null; then \
+		echo "Installing just..."; \
+		curl -LSsf https://just.systems/install.sh | bash -s '--' --to ~/bin; \
+		echo "Add ~/bin to your PATH if not already there"; \
+	else \
+		echo "just already installed"; \
+	fi
+	@echo "Bootstrap complete."
+
 # Full quality check — run before every commit (also enforced by .githooks/pre-commit).
 check:
     @echo "--- ruff: deprecated patterns + missing annotations ---"
@@ -45,7 +62,7 @@ scaffold module:
 
 # One-shot setup: point git at the tracked hooks under .githooks/.
 # Run this once per clone. Idempotent.
-setup:
+setup: bootstrap
     git config core.hooksPath .githooks
     @git submodule update --init --depth 1
     @echo "sage-stubs ready: hooks active, sage-src initialised."

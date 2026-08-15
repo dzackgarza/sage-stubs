@@ -1,11 +1,9 @@
 from typing import TYPE_CHECKING, Self
 
-if TYPE_CHECKING:
-    from sage.rings.number_field.number_field import NumberField_generic
-    from sage.matrix.matrix_base import Matrix
-    from sage.schemes.elliptic_curves.ell_local_data import EllipticCurveLocalData
-    from sage.schemes.elliptic_curves.ell_field import EllipticCurve_field
-
+from sage.rings.number_field.number_field import NumberField_generic
+from sage.matrix.matrix_base import Matrix
+from sage.schemes.elliptic_curves.ell_local_data import EllipticCurveLocalData
+from sage.schemes.elliptic_curves.ell_field import EllipticCurve_field
 from sage.rings.ring import Ring
 from sage.structure.element import RingElement
 from sage.rings.integer import Integer

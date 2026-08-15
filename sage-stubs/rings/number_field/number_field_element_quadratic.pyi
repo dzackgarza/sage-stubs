@@ -2,17 +2,10 @@ from typing import TYPE_CHECKING, overload, Literal
 from sage.rings.integer import Integer
 from sage.rings.rational import Rational
 
-if TYPE_CHECKING:
-    from sage.rings.number_field.number_field_element import NumberFieldElement_absolute
-    from sage.rings.number_field.number_field import NumberField
-
+from sage.rings.number_field.number_field_element import NumberFieldElement_absolute
+from sage.rings.number_field.number_field import NumberField
 class NumberFieldElement_quadratic(NumberFieldElement_absolute):
-    """
-    Element of a quadratic number field, optimized for fast computation.
-
-    Elements are represented as (a + b*sqrt(D)) / c where a, b, c are integers
-    with gcd(a,b,c) = 1 and c > 0.
-    """
+    
 
     def __init__(self, parent: NumberField, f) -> None: ...
 
@@ -57,9 +50,7 @@ class NumberFieldElement_quadratic(NumberFieldElement_absolute):
     def __reduce__(self): ...
 
 class NumberFieldElement_quadratic_sqrt(NumberFieldElement_quadratic):
-    """Element of a quadratic field of the form Q(sqrt(D))."""
-    pass
+    ...
 
 class OrderElement_quadratic(NumberFieldElement_quadratic):
-    """Element of an order in a quadratic number field."""
-    pass
+    ...

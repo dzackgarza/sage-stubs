@@ -2,13 +2,11 @@ from typing import TYPE_CHECKING
 from sage.schemes.generic.algebraic_scheme import AlgebraicScheme_subscheme
 from sage.rings.integer import Integer
 
-if TYPE_CHECKING:
-    from sage.schemes.affine.affine_space import AffineSpace
-    from sage.rings.polynomial.multi_polynomial_ideal import MPolynomialIdeal
-    from sage.matrix.matrix2 import Matrix
-    from sage.schemes.projective.projective_subscheme import AlgebraicScheme_subscheme_projective
-    from sage.schemes.generic.point import SchemeTopologicalPoint
-
+from sage.schemes.affine.affine_space import AffineSpace
+from sage.rings.polynomial.multi_polynomial_ideal import MPolynomialIdeal
+from sage.matrix.matrix2 import Matrix
+from sage.schemes.projective.projective_subscheme import AlgebraicScheme_subscheme_projective
+from sage.schemes.generic.point import SchemeTopologicalPoint
 class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
     def dimension(self) -> Integer: ...
     def projective_closure(

@@ -1,134 +1,133 @@
-from typing import TYPE_CHECKING, Optional, overload
+from typing import TYPE_CHECKING, Optional, overload, Any, Callable
 
-if TYPE_CHECKING:
-    from sage.manifolds.manifold import TopologicalManifold
+from sage.manifolds.manifold import TopologicalManifold
+from sage.structure.element import Element
 
 class Chart:
-    """Chart on a topological manifold."""
+    
     _domain: TopologicalManifold
     _manifold: TopologicalManifold
     _sindex: int
-    _xx: tuple
-    _periods: Optional[tuple]
-    _restrictions: frozenset
+    _xx: tuple[str, ...]
+    _periods: Optional[tuple[Any, ...]]
+    _restrictions: frozenset[Any]
 
     @staticmethod
     def __classcall__(
-        cls,
+        cls: type[Chart],
         domain: TopologicalManifold,
         coordinates: str = "",
         calc_method: Optional[str] = None,
-        names=None,
-        coord_restrictions=None,
-        **coordinate_options,
+        names: Any = None,
+        coord_restrictions: Any = None,
+        **coordinate_options: Any,
     ) -> Chart: ...
 
     def __init__(
         self,
         domain: TopologicalManifold,
-        coordinates,
+        coordinates: str,
         calc_method: Optional[str] = None,
-        periods: Optional[tuple] = None,
-        coord_restrictions=None,
+        periods: Optional[tuple[Any, ...]] = None,
+        coord_restrictions: Any = None,
     ) -> None: ...
 
     @classmethod
-    def _parse_coordinates(cls, domain: TopologicalManifold, coordinates):
-        """Initialization of the coordinates as symbolic variables."""
+    def _parse_coordinates(cls: type[Chart], domain: TopologicalManifold, coordinates: str) -> tuple[str, ...]:
+        
         ...
 
     @staticmethod
-    def _normalize_coord_restrictions(coordinates, coord_restrictions) -> frozenset: ...
+    def _normalize_coord_restrictions(coordinates: Any, coord_restrictions: Any) -> frozenset[Any]: ...
 
     def _repr_(self) -> str: ...
     def _latex_(self) -> str: ...
-    def _first_ngens(self, n: int): ...
-    def __getitem__(self, i):
-        """Access to the coordinates."""
+    def _first_ngens(self, n: int) -> tuple[str, ...]: ...
+    def __getitem__(self, i: int) -> str:
+        
         ...
 
-    def __call__(self, point):
-        """Return the coordinates of a given point."""
+    def __call__(self, point: Any) -> tuple[Any, ...]:
+        
         ...
 
     def domain(self) -> TopologicalManifold:
-        """Return the open subset on which the chart is defined."""
+        
         ...
 
     def manifold(self) -> TopologicalManifold:
-        """Return the manifold on which the chart is defined."""
+        
         ...
 
-    def periods(self) -> Optional[tuple]:
-        """Return the coordinate periods."""
+    def periods(self) -> Optional[tuple[Any, ...]]:
+        
         ...
 
-    def add_restrictions(self, restrictions) -> None: ...
+    def add_restrictions(self, restrictions: Any) -> None: ...
 
-    def restrict(self, subset: TopologicalManifold, restrictions=None) -> Chart:
-        """Return the restriction of self to some open subset of its domain."""
+    def restrict(self, subset: TopologicalManifold, restrictions: Any = None) -> Chart:
+        
         ...
 
-    def valid_coordinates(self, *coordinates, **kwds) -> bool:
-        """Check whether a tuple of coordinates can be the coordinates of a point."""
+    def valid_coordinates(self, *coordinates: Any, **kwds: Any) -> bool:
+        
         ...
 
-    def _check_restrictions(self, restrict, substitutions) -> bool:
-        """Recursive helper function to check the validity of coordinates."""
+    def _check_restrictions(self, restrict: Any, substitutions: Any) -> bool:
+        
         ...
 
-    def codomain(self):
-        """Return the codomain of self as a set."""
+    def codomain(self) -> Any:
+        
         ...
 
-    def _restrict_set(self, universe, coord_restrictions):
-        """Return a set corresponding to coordinate restrictions."""
+    def _restrict_set(self, universe: Any, coord_restrictions: Any) -> Any:
+        
         ...
 
     def transition_map(
         self,
         other: Chart,
-        transformations,
+        transformations: Any,
         intersection_name: Optional[str] = None,
-        restrictions1=None,
-        restrictions2=None,
-    ):
-        """Construct the transition map between the current chart and another one."""
+        restrictions1: Any = None,
+        restrictions2: Any = None,
+    ) -> Any:
+        
         ...
 
-    def preimage(self, codomain_subset, name: Optional[str] = None, latex_name: Optional[str] = None):
-        """Return the preimage (pullback) of codomain_subset under self."""
+    def preimage(self, codomain_subset: Any, name: Optional[str] = None, latex_name: Optional[str] = None) -> Any:
+        
         ...
 
-    def pullback(self, codomain_subset, name: Optional[str] = None, latex_name: Optional[str] = None):
-        """Alias for preimage."""
+    def pullback(self, codomain_subset: Any, name: Optional[str] = None, latex_name: Optional[str] = None) -> Any:
+        
         ...
 
-    def function_ring(self):
-        """Return the ring of coordinate functions on self."""
+    def function_ring(self) -> Any:
+        
         ...
 
-    def function(self, expression, calc_method: Optional[str] = None, expansion_symbol=None, order: Optional[int] = None):
-        """Define a coordinate function to the base field."""
+    def function(self, expression: Any, calc_method: Optional[str] = None, expansion_symbol: Any = None, order: Optional[int] = None) -> Any:
+        
         ...
 
-    def zero_function(self):
-        """Return the zero function of the coordinates."""
+    def zero_function(self) -> Any:
+        
         ...
 
-    def one_function(self):
-        """Return the constant function of the coordinates equal to one."""
+    def one_function(self) -> Any:
+        
         ...
 
-    def calculus_method(self):
-        """Return the interface governing the calculus engine for expressions."""
+    def calculus_method(self) -> str:
+        
         ...
 
-    def multifunction(self, *expressions):
-        """Define a coordinate function to some Cartesian power of the base field."""
+    def multifunction(self, *expressions: Any) -> Any:
+        
         ...
 
 
 class RealChart(Chart):
-    """Chart on a topological manifold over RR."""
     ...

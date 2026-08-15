@@ -1,4 +1,5 @@
-from typing import TYPE_CHECKING, Optional, Sequence
+from typing import TYPE_CHECKING, Optional
+from collections.abc import Sequence
 from sage.rings.commutative_ring import CommutativeRing
 from sage.rings.integer import Integer
 from sage.matrix.matrix_dense import Matrix
@@ -8,13 +9,11 @@ from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.modules.free_module_element import FreeModuleElement
 from sage.structure.element import Element
 
-if TYPE_CHECKING:
-    from sage.modular.hecke.algebra import HeckeAlgebra_full, HeckeAlgebra_anemic
-    from sage.modular.hecke.hecke_operator import HeckeOperator, DiamondBracketOperator
-    from sage.modular.hecke.element import HeckeModuleElement
-    from sage.modular.hecke.submodule import HeckeSubmodule
-    from sage.modular.hecke.morphism import HeckeModuleMorphism_matrix
-
+from sage.modular.hecke.algebra import HeckeAlgebra_full, HeckeAlgebra_anemic
+from sage.modular.hecke.hecke_operator import HeckeOperator, DiamondBracketOperator
+from sage.modular.hecke.element import HeckeModuleElement
+from sage.modular.hecke.submodule import HeckeSubmodule
+from sage.modular.hecke.morphism import HeckeModuleMorphism_matrix
 class HeckeModule_generic(Module):
     def __init__(self, base_ring: CommutativeRing, level: Integer, category=None) -> None: ...
     def __hash__(self) -> int: ...

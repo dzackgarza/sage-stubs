@@ -1,19 +1,18 @@
-from typing import TYPE_CHECKING, Optional, Sequence
+from typing import TYPE_CHECKING, Optional
+from collections.abc import Sequence
 
 from sage.rings.integer import Integer
 from sage.rings.rational_field import QQ
 from sage.modular.hecke.module import HeckeModule_free_module
 from sage.structure.factorization import Factorization
 
-if TYPE_CHECKING:
-    from sage.modular.modsym.subspace import ModularSymbolsSubspace
-    from sage.modular.modsym.ambient import ModularSymbolsAmbient
-    from sage.modular.modsym.boundary import BoundarySpace
-    from sage.modular.dirichlet import DirichletCharacter
-    from sage.modules.free_module import FreeModule_generic
-    from sage.rings.ring import Ring
-    from sage.modular.arithgroup.congroup_generic import CongruenceSubgroup
-
+from sage.modular.modsym.subspace import ModularSymbolsSubspace
+from sage.modular.modsym.ambient import ModularSymbolsAmbient
+from sage.modular.modsym.boundary import BoundarySpace
+from sage.modular.dirichlet import DirichletCharacter
+from sage.modules.free_module import FreeModule_generic
+from sage.rings.ring import Ring
+from sage.modular.arithgroup.congroup_generic import CongruenceSubgroup
 class ModularSymbolsSpace(HeckeModule_free_module):
     def __init__(
         self,

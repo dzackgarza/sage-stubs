@@ -1,14 +1,11 @@
-from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-if TYPE_CHECKING:
-    from sage.matrix.matrix_dense import Matrix
-    from .module import HeckeModule_free_module
-    from .ambient_module import AmbientHeckeModule
-
+from sage.matrix.matrix_dense import Matrix
+from .module import HeckeModule_free_module
+from .ambient_module import AmbientHeckeModule
 class HeckeSubmodule(HeckeModule_free_module):
-    """Submodule of a Hecke module."""
+    
 
     def __init__(
         self,

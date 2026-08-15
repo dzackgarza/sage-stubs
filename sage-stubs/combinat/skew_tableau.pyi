@@ -3,13 +3,11 @@ from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from typing import TYPE_CHECKING, overload
 
-if TYPE_CHECKING:
-    import sage.combinat.partition
-    import sage.combinat.skew_partition
-    import sage.combinat.words.word
-    import sage.combinat.permutation
-    import sage.combinat.tableau
-
+import sage.combinat.partition
+import sage.combinat.skew_partition
+import sage.combinat.words.word
+import sage.combinat.permutation
+import sage.combinat.tableau
 class SkewTableau(ClonableList):
     def check(self) -> None: ...
     def outer_shape(self) -> sage.combinat.partition.Partition: ...

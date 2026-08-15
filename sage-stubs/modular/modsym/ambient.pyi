@@ -7,21 +7,17 @@ from sage.rings.commutative_ring import CommutativeRing
 from sage.rings.integer import Integer
 from sage.structure.factorization import Factorization
 
-if TYPE_CHECKING:
-    from sage.modular.arithgroup.congruence_subgroup import CongruenceSubgroup
-    from sage.modular.dirichlet import DirichletCharacter
-    from sage.modules.free_module import FreeModule
-    from sage.modular.modsym.element import ModularSymbolsElement
-    from sage.modular.hecke.morphism import HeckeModuleMorphism_matrix
-    from sage.modular.modsym.manin_symbol_list import ManinSymbolList_gamma0
-    from sage.modular.modsym.p1list import P1List
-    from sage.modular.modsym.boundary import BoundarySpace_wtk_g0
-    from sage.modular.hecke.morphism import HeckeModuleMorphism
-
+from sage.modular.arithgroup.congruence_subgroup import CongruenceSubgroup
+from sage.modular.dirichlet import DirichletCharacter
+from sage.modules.free_module import FreeModule
+from sage.modular.modsym.element import ModularSymbolsElement
+from sage.modular.hecke.morphism import HeckeModuleMorphism_matrix
+from sage.modular.modsym.manin_symbol_list import ManinSymbolList_gamma0
+from sage.modular.modsym.p1list import P1List
+from sage.modular.modsym.boundary import BoundarySpace_wtk_g0
+from sage.modular.hecke.morphism import HeckeModuleMorphism
 class ModularSymbolsAmbient(ModularSymbolsSpace, HeckeModule):
-    """
-    An ambient space of modular symbols for a congruence subgroup.
-    """
+    
 
     def __init__(
         self,
@@ -72,9 +68,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, HeckeModule):
     def compact_newform_eigenvalues(self, v: list[int], names: str = "alpha") -> list: ...
 
 class ModularSymbolsAmbient_wtk_g0(ModularSymbolsAmbient):
-    """
-    Modular symbols for Gamma_0(N) of weight k >= 2.
-    """
+    
 
     def __init__(
         self,
@@ -95,9 +89,7 @@ class ModularSymbolsAmbient_wtk_g0(ModularSymbolsAmbient):
     def _hecke_images(self, i: int, v: list[int]) -> Matrix_dense: ...
 
 class ModularSymbolsAmbient_wt2_g0(ModularSymbolsAmbient_wtk_g0):
-    """
-    Modular symbols for Gamma_0(N) of weight 2.
-    """
+    
 
     def __init__(
         self,
@@ -111,22 +103,13 @@ class ModularSymbolsAmbient_wt2_g0(ModularSymbolsAmbient_wtk_g0):
     def _cuspidal_submodule_dimension_formula(self) -> int: ...
 
 class ModularSymbolsAmbient_wtk_g1(ModularSymbolsAmbient):
-    """
-    Modular symbols for Gamma_1(N) of weight k >= 2.
-    """
-
     ...
+
 
 class ModularSymbolsAmbient_wtk_gamma_h(ModularSymbolsAmbient):
-    """
-    Modular symbols for GammaH(N) of weight k >= 2.
-    """
-
     ...
+
 
 class ModularSymbolsAmbient_wtk_eps(ModularSymbolsAmbient):
-    """
-    Modular symbols for character eps of weight k >= 2.
-    """
-
     ...
+

@@ -1,12 +1,10 @@
 from typing import TYPE_CHECKING
 
-if TYPE_CHECKING:
-    from sage.categories.category import Category
-    from sage.categories.homset import Homset
-    from sage.categories.morphism import Morphism
-    from sage.structure.element import Element
-    from sage.rings.ring import Ring
-
+from sage.categories.category import Category
+from sage.categories.homset import Homset
+from sage.categories.morphism import Morphism
+from sage.structure.element import Element
+from sage.rings.ring import Ring
 from .category_object import CategoryObject
 
 class Parent(CategoryObject):

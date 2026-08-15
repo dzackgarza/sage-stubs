@@ -1,13 +1,12 @@
-from typing import TYPE_CHECKING, Iterator
+from typing import TYPE_CHECKING
+from collections.abc import Iterator
 from sage.structure.sage_object import SageObject
 from sage.rings.integer import Integer
 
-if TYPE_CHECKING:
-    from sage.rings.polynomial.multi_polynomial_ideal import MPolynomialIdeal
-    from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
-    from sage.geometry.fan import Fan
-    from sage.modules.free_module_element import vector
-
+from sage.rings.polynomial.multi_polynomial_ideal import MPolynomialIdeal
+from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
+from sage.geometry.fan import Fan
+from sage.modules.free_module_element import vector
 class PolyhedralCone(SageObject):
     def __init__(self, gfan_polyhedral_cone, ring=...) -> None: ...
     def _repr_(self) -> str: ...

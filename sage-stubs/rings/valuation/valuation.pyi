@@ -1,11 +1,9 @@
 from typing import TYPE_CHECKING
 from sage.categories.morphism import Morphism
 
-if TYPE_CHECKING:
-    from sage.rings.ring import Ring
-    from sage.rings.ideal import Ideal
-    from sage.structure.richcmp import ComparisonOperator
-
+from sage.rings.ring import Ring
+from sage.rings.ideal import Ideal
+from sage.structure.richcmp import ComparisonOperator
 class DiscretePseudoValuation(Morphism):
     def __init__(self, parent: Morphism) -> None: ...
     def is_equivalent(self, f, g) -> bool: ...

@@ -1,12 +1,10 @@
 from typing import TYPE_CHECKING
 from sage.structure.sage_object import SageObject
 
-if TYPE_CHECKING:
-    from sage.coding.linear_code import AbstractLinearCode
-    from sage.coding.encoder import Encoder
-    from sage.modules.free_module import VectorSpace
-    from sage.modules.free_module_element import FreeModuleElement
-
+from sage.coding.linear_code import AbstractLinearCode
+from sage.coding.encoder import Encoder
+from sage.modules.free_module import VectorSpace
+from sage.modules.free_module_element import FreeModuleElement
 class Decoder(SageObject):
     @classmethod
     def decoder_type(cls) -> set[str]: ...
@@ -21,4 +19,4 @@ class Decoder(SageObject):
     def decoding_radius(self, **kwargs: object) -> int: ...
 
 class DecodingError(Exception):
-    pass
+    ...

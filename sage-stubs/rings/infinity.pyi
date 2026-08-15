@@ -1,4 +1,3 @@
-from __future__ import annotations
 from typing import NoReturn as _NoReturn
 from sage.rings.ring import CommutativeRing
 from sage.structure.element import Element

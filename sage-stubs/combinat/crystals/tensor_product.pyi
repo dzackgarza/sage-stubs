@@ -3,11 +3,9 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.element import Element
 from typing import TYPE_CHECKING
 
-if TYPE_CHECKING:
-    import sage.combinat.partition
-    import sage.combinat.crystals.letters
-    import sage.combinat.root_system.cartan_type
-
+import sage.combinat.partition
+import sage.combinat.crystals.letters
+import sage.combinat.root_system.cartan_type
 class CrystalOfWords(UniqueRepresentation, Parent):
     def _element_constructor_(self, *crystalElements: Element) -> CrystalOfWordsElement: ...
     class Element: ...
@@ -35,26 +33,26 @@ class TensorProductOfCrystalsElement(Element):
     def __len__(self) -> int: ...
 
 class TensorProductOfCrystalsWithGenerators(TensorProductOfCrystals):
-    pass
+    ...
 
 class FullTensorProductOfCrystals(TensorProductOfCrystals):
     def list(self) -> list[TensorProductOfCrystalsElement]: ...
     def cardinality(self) -> int: ...
 
 class FullTensorProductOfRegularCrystals(FullTensorProductOfCrystals):
-    pass
+    ...
 
 class TensorProductOfRegularCrystalsWithGenerators(TensorProductOfCrystalsWithGenerators):
-    pass
+    ...
 
 class FullTensorProductOfSuperCrystals(FullTensorProductOfCrystals):
-    pass
+    ...
 
 class QueerSuperCrystalsMixin:
-    pass
+    ...
 
 class FullTensorProductOfQueerSuperCrystals(FullTensorProductOfCrystals, QueerSuperCrystalsMixin):
-    pass
+    ...
 
 class CrystalOfTableaux(CrystalOfWords):
     @staticmethod
@@ -73,4 +71,4 @@ class CrystalOfTableauxElement(Element):
     def __iter__(self): ...
 
 class CrystalOfQueerTableaux(CrystalOfWords, QueerSuperCrystalsMixin):
-    pass
+    ...

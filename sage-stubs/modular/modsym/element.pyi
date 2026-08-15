@@ -3,20 +3,14 @@ from typing import TYPE_CHECKING
 from sage.modular.hecke.module import HeckeModuleElement
 from sage.structure.formal_sum import FormalSum
 
-if TYPE_CHECKING:
-    from sage.modular.modsym.space import ModularSymbolsSpace
-    from sage.modules.free_module_element import FreeModuleElement
-
+from sage.modular.modsym.space import ModularSymbolsSpace
+from sage.modules.free_module_element import FreeModuleElement
 def set_modsym_print_mode(mode: str = "manin") -> None:
-    """
-    Set the mode for printing of modular symbols elements.
-    """
+    
     ...
 
 class ModularSymbolsElement(HeckeModuleElement):
-    """
-    An element of a space of modular symbols.
-    """
+    
 
     def __init__(
         self,

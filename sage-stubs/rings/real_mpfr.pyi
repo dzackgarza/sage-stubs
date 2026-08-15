@@ -1,4 +1,3 @@
-from __future__ import annotations
 from builtins import str as String
 from sage.rings.integer import Integer
 from sage.rings.abc import RealField

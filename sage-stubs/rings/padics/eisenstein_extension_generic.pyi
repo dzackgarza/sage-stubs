@@ -1,4 +1,3 @@
-from __future__ import annotations
 
 from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.infinity import PlusInfinity

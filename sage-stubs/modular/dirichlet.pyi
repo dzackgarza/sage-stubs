@@ -1,12 +1,10 @@
 from typing import TYPE_CHECKING
 
-if TYPE_CHECKING:
-    from sage.rings.number_field.number_field import NumberField_generic
-    from sage.rings.polynomial.polynomial_element import Polynomial
-    from sage.lfunctions.pari import LFunction
-    from sage.structure.parent import Parent
-    from sage.rings.ring import Ring
-
+from sage.rings.number_field.number_field import NumberField_generic
+from sage.rings.polynomial.polynomial_element import Polynomial
+from sage.lfunctions.pari import LFunction
+from sage.structure.parent import Parent
+from sage.rings.ring import Ring
 from sage.rings.integer import Integer
 from sage.structure.element import MultiplicativeGroupElement, RingElement
 

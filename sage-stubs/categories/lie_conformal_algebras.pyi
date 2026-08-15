@@ -1,9 +1,7 @@
 from typing import TYPE_CHECKING
 from sage.categories.category import Category
 
-if TYPE_CHECKING:
-    from sage.algebras.lie_conformal_algebras.virasoro_lie_conformal_algebra import VirasoroLieConformalAlgebra
-
+from sage.algebras.lie_conformal_algebras.virasoro_lie_conformal_algebra import VirasoroLieConformalAlgebra
 class LieConformalAlgebras:
     def super_categories(self) -> list[Category]: ...
     def example(self) -> VirasoroLieConformalAlgebra: ...

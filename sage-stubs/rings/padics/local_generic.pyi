@@ -1,4 +1,3 @@
-from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
@@ -6,14 +5,11 @@ from sage.rings.integer import Integer
 from sage.rings.padics.padic_generic import pAdicGeneric
 from sage.structure.parent import Parent
 
-if TYPE_CHECKING:
-    from sage.rings.finite_rings.finite_field_base import FiniteField
-    from sage.rings.integer_ring import IntegerRing_class
-    from sage.rings.polynomial.polynomial_element import Polynomial
-    from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
-    from sage.structure.element import Element
-
-
+from sage.rings.finite_rings.finite_field_base import FiniteField
+from sage.rings.integer_ring import IntegerRing_class
+from sage.rings.polynomial.polynomial_element import Polynomial
+from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+from sage.structure.element import Element
 class LocalGeneric(Parent):
     def is_capped_relative(self) -> bool: ...
     def is_capped_absolute(self) -> bool: ...
