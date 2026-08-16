@@ -1,7 +1,7 @@
 # Phase 04 — Number-Theoretic Rings
 
 **Tier:** 1
-**Status:** ⬜ Not Started
+**Status:** 🟡 In Progress
 **Depends on:** Phase 01
 **Unblocks:** Phase 13, 14, 17
 
@@ -17,7 +17,7 @@ be audited and expanded, not rewritten.
 
 | Task | Subtree / Group | Files | Depends | Status | Notes |
 |------|-----------------|-------|---------|--------|-------|
-| T04.1 | **Finite rings: element types** — `element_base`, `element_givaro`, `element_ntl_gf2e`, `element_pari_ffelt`, `integer_mod`. | 5 | — | ⬜ | `integer_mod` has an existing stub. |
+| T04.1 | **Finite rings: element types** — `element_base`, `element_givaro`, `element_ntl_gf2e`, `element_pari_ffelt`, `integer_mod`. | 5 | — | ✅ Done | element_base: FiniteRingElement (4) + FinitePolyExtElement (25) + Cache_base; element_givaro: FiniteField_givaroElement (35) + Cache_givaro (19) + iterator; element_ntl_gf2e / element_pari_ffelt REWRITTEN — CI population had replaced them with stubgen slop (`_SageObject`, `builtins.object`); integer_mod: IntegerMod_abstract (48) + gmp/int/int64 (30 each) + 4 hom classes + NativeIntStruct + Mod/IntegerMod/lucas/square_root_mod helpers. |
 | T04.2 | **Finite rings: fields & rings** — `finite_field_base`, `finite_field_constructor`, `finite_field_givaro`, `finite_field_ntl_gf2e`, `finite_field_pari_ffelt`, `finite_field_prime_modn`, `integer_mod_ring`. | 7 | T04.1 | ⬜ | All have existing stubs except `ntl_gf2e`. |
 | T04.3 | **Finite rings: homs & residue fields** — `hom_finite_field`, `hom_finite_field_givaro`, `hom_prime_finite_field`, `homset`, `galois_group`, `maps_finite_field`, `residue_field`, `residue_field_givaro`, `residue_field_ntl_gf2e`, `residue_field_pari_ffelt`, `conway_polynomials`, `algebraic_closure_finite_field`. | ~12 | T04.2 | ⬜ | `algebraic_closure_finite_field` lives at `sage.rings/` root. |
 | T04.4 | **Number field core** — `number_field`, `number_field_base`, `number_field_element`, `number_field_element_base`, `number_field_element_quadratic`, `number_field_ideal`, `number_field_ideal_rel`, `number_field_rel`, `number_field_morphisms`, `morphism`. | ~10 | — | ⬜ | All have existing stubs — audit. |
