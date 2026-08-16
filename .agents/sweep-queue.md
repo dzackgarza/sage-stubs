@@ -39,7 +39,7 @@ Rules:
 | 14 | `sage-stubs/combinat/tableau_tuple.pyi` | 109 | ✅ |
 | 15 | `sage-stubs/databases/findstat.pyi` | 108 | ✅ |
 | 16 | `sage-stubs/combinat/interval_posets.pyi` | 107 | ✅ |
-| 17 | `sage-stubs/matrix/benchmark.pyi` | 106 | ⬜ |
+| 17 | `sage-stubs/matrix/benchmark.pyi` | 106 | ✅ |
 | 18 | `sage-stubs/topology/simplicial_set.pyi` | 102 | ⬜ |
 | 19 | `sage-stubs/numerical/interactive_simplex_method.pyi` | 101 | ⬜ |
 | 20 | `sage-stubs/libs/ntl/ntl_mat_ZZ.pyi` | 100 | ⬜ |
