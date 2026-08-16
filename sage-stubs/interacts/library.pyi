@@ -1,53 +1,145 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from collections.abc import Callable
 
-class _SageObject: ...
+from sage.symbolic.expression import Expression
 
-x: _SageObject
-def library_interact(decorator_target: builtins.object = ..., **widgets: builtins.object) -> _SageObject: ...
+def library_interact(
+    decorator_target: Callable[..., object] | None = ..., **widgets: Callable[..., object]
+) -> Callable[..., object]: ...
 
-def html(obj: builtins.object) -> _SageObject: ...
+def html(obj: str) -> None: ...
 
-def demo(n: builtins.int, m: builtins.int) -> _SageObject: ...
+def demo(n: int, m: int) -> None: ...
 
-def taylor_polynomial(title: builtins.object, f: builtins.object, order: builtins.int) -> _SageObject: ...
+def taylor_polynomial(title: str, f: Expression, order: int) -> None: ...
 
-def definite_integral(title: builtins.object, f: builtins.object, g: builtins.object, interval: builtins.object, x_range: builtins.object, selection: builtins.object) -> _SageObject: ...
+def definite_integral(
+    title: str,
+    f: Expression,
+    g: Expression,
+    interval: list[float],
+    x_range: list[float],
+    selection: list[str],
+) -> None: ...
 
-def function_derivative(title: builtins.object, function: builtins.object, x_range: builtins.object, y_range: builtins.object) -> _SageObject: ...
+def function_derivative(
+    title: str, function: Expression, x_range: list[float], y_range: list[float]
+) -> None: ...
 
-def difference_quotient(title: builtins.object, f: builtins.object, interval: builtins.object, a: builtins.object, x0: builtins.object) -> _SageObject: ...
+def difference_quotient(
+    title: str, f: Expression, interval: list[float], a: float, x0: float
+) -> None: ...
 
-def quadratic_equation(A: builtins.object, B: builtins.object, C: builtins.object) -> _SageObject: ...
+def quadratic_equation(A: float, B: float, C: float) -> None: ...
 
-def trigonometric_properties_triangle(a0: builtins.object, a1: builtins.object, a2: builtins.object) -> _SageObject: ...
+def trigonometric_properties_triangle(
+    a0: tuple[float, float], a1: tuple[float, float], a2: tuple[float, float]
+) -> None: ...
 
-def unit_circle(function: builtins.object, x: builtins.object) -> _SageObject: ...
+def unit_circle(function: Expression, x: float) -> None: ...
 
-def special_points(title: builtins.object, a0: builtins.object, a1: builtins.object, a2: builtins.object, show_median: builtins.object, show_pb: builtins.object, show_alt: builtins.object, show_ab: builtins.object, show_incircle: builtins.object, show_euler: builtins.object) -> _SageObject: ...
+def special_points(
+    title: str,
+    a0: tuple[float, float],
+    a1: tuple[float, float],
+    a2: tuple[float, float],
+    show_median: bool,
+    show_pb: bool,
+    show_alt: bool,
+    show_ab: bool,
+    show_incircle: bool,
+    show_euler: bool,
+) -> None: ...
 
-def coin(n: builtins.int, interval: builtins.object) -> _SageObject: ...
+def coin(n: int, interval: list[float]) -> None: ...
 
-def bisection_method(title: builtins.object, f: builtins.object, interval: builtins.object, d: builtins.object, maxn: builtins.object) -> _SageObject: ...
+def bisection_method(
+    title: str, f: Expression, interval: list[float], d: float, maxn: int
+) -> None: ...
 
-def secant_method(title: builtins.object, f: builtins.object, interval: builtins.object, d: builtins.object, maxn: builtins.object) -> _SageObject: ...
+def secant_method(
+    title: str, f: Expression, interval: list[float], d: float, maxn: int
+) -> None: ...
 
-def newton_method(title: builtins.object, f: builtins.object, c: builtins.object, d: builtins.object, maxn: builtins.object, interval: builtins.object, list_steps: builtins.object) -> _SageObject: ...
+def newton_method(
+    title: str,
+    f: Expression,
+    c: float,
+    d: float,
+    maxn: int,
+    interval: list[float],
+    list_steps: bool,
+) -> None: ...
 
-def trapezoid_integration(title: builtins.object, f: builtins.object, n: builtins.int, interval_input: builtins.object, interval_s: builtins.object, interval_g: builtins.object, output_form: builtins.object) -> _SageObject: ...
+def trapezoid_integration(
+    title: str,
+    f: Expression,
+    n: int,
+    interval_input: list[float],
+    interval_s: list[float],
+    interval_g: list[float],
+    output_form: str,
+) -> None: ...
 
-def simpson_integration(title: builtins.object, f: builtins.object, n: builtins.int, interval_input: builtins.object, interval_s: builtins.object, interval_g: builtins.object, output_form: builtins.object) -> _SageObject: ...
+def simpson_integration(
+    title: str,
+    f: Expression,
+    n: int,
+    interval_input: list[float],
+    interval_s: list[float],
+    interval_g: list[float],
+    output_form: str,
+) -> Expression: ...
 
-def riemann_sum(title: builtins.object, f: builtins.object, n: builtins.int, hr1: builtins.object, interval_input: builtins.object, interval_s: builtins.object, interval_g: builtins.object, hr2: builtins.object, list_table: builtins.object, auto_update: builtins.bool = ...) -> _SageObject: ...
+def riemann_sum(
+    title: str,
+    f: Expression,
+    n: int,
+    hr1: float,
+    interval_input: list[float],
+    interval_s: list[float],
+    interval_g: list[float],
+    hr2: float,
+    list_table: bool,
+    auto_update: bool = ...,
+) -> None: ...
 
-def function_tool(f: builtins.object, g: builtins.object, xrange: builtins.object, yrange: builtins.object, a: builtins.object, action: builtins.object, do_plot: builtins.object) -> _SageObject: ...
+def function_tool(
+    f: Expression,
+    g: Expression,
+    xrange: list[float],
+    yrange: list[float],
+    a: float,
+    action: list[str],
+    do_plot: bool,
+) -> None: ...
 
-def julia(expo: builtins.object, c_real: builtins.object, c_imag: builtins.object, iterations: builtins.object, zoom_x: builtins.object, zoom_y: builtins.object, plot_points: builtins.object, dpi: builtins.object) -> _SageObject: ...
+def julia(
+    expo: int,
+    c_real: float,
+    c_imag: float,
+    iterations: int,
+    zoom_x: list[float],
+    zoom_y: list[float],
+    plot_points: int,
+    dpi: int,
+) -> None: ...
 
-def mandelbrot(expo: builtins.object, iterations: builtins.object, zoom_x: builtins.object, zoom_y: builtins.object, plot_points: builtins.object, dpi: builtins.object) -> _SageObject: ...
+def mandelbrot(
+    expo: int,
+    iterations: int,
+    zoom_x: list[float],
+    zoom_y: list[float],
+    plot_points: int,
+    dpi: int,
+) -> None: ...
 
-def cellular_automaton(N: builtins.int, rule_number: builtins.object, size: builtins.int) -> _SageObject: ...
+def cellular_automaton(N: int, rule_number: int, size: int) -> None: ...
 
-def polar_prime_spiral(interval: builtins.object, show_factors: builtins.object, highlight_primes: builtins.object, show_curves: builtins.object, n: builtins.int, dpi: builtins.object) -> _SageObject: ...
+def polar_prime_spiral(
+    interval: list[float],
+    show_factors: bool,
+    highlight_primes: bool,
+    show_curves: bool,
+    n: int,
+    dpi: int,
+) -> None: ...
