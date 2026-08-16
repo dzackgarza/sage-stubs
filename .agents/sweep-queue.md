@@ -29,7 +29,7 @@ Rules:
 | 4 | `sage-stubs/combinat/matrices/hadamard_matrix.pyi` | 133 | ✅ |
 | 5 | `sage-stubs/combinat/growth.pyi` | 133 | ✅ |
 | 6 | `sage-stubs/combinat/cluster_algebra_quiver/cluster_seed.pyi` | 131 | ✅ |
-| 7 | `sage-stubs/combinat/k_tableau.pyi` | 120 | ⬜ |
+| 7 | `sage-stubs/combinat/k_tableau.pyi` | 120 | ✅ |
 | 8 | `sage-stubs/combinat/designs/difference_family.pyi` | 117 | ⬜ |
 | 9 | `sage-stubs/combinat/matrices/latin.pyi` | 116 | ⬜ |
 | 10 | `sage-stubs/crypto/mq/sr.pyi` | 115 | ⬜ |
