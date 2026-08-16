@@ -1,0 +1,37 @@
+{
+  "base_main": "133ae4f1fc4eeebb9fc73ea53ce8e9e9034cad5e",
+  "basedpyright": {
+    "errorCount": 13017,
+    "filesAnalyzed": 3166,
+    "informationCount": 0,
+    "timeInSec": 7.68,
+    "warningCount": 0
+  },
+  "candidate_commit_before_status": "72f9709cafaad51be1b63cf2eec2c7d75526466d",
+  "mypy_error_lines": 4680,
+  "residual_justified": 1733,
+  "residual_unresolved": 80447,
+  "ruff_lines": 9172,
+  "semantic_by_rule": {
+    "domain-parameter-as-scalar": 340,
+    "empty-class-surface": 653,
+    "empty-public-surface": 194,
+    "erased-generic-argument": 978,
+    "fabricated-sage-object": 1904,
+    "generated-arithmetic-self": 138,
+    "generated-class-without-bases": 1286,
+    "generated-scaffold": 945,
+    "name-inferred-integer": 113,
+    "opaque-object-annotation": 22799,
+    "placeholder-sage-object-annotation": 20074,
+    "unused-generated-boilerplate": 3632,
+    "verbose-builtins-annotation": 29124
+  },
+  "semantic_by_severity": {
+    "error": 23471,
+    "warning": 58709
+  },
+  "semantic_total": 82180,
+  "semgrep_engine_errors": 0,
+  "semgrep_results": 96150
+}
