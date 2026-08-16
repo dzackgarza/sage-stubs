@@ -35,7 +35,7 @@ Rules:
 | 10 | `sage-stubs/crypto/mq/sr.pyi` | 115 | ✅ |
 | 11 | `sage-stubs/modular/modform_hecketriangle/space.pyi` | 114 | ✅ |
 | 12 | `sage-stubs/interacts/library.pyi` | 114 | ✅ |
-| 13 | `sage-stubs/symbolic/expression_conversions.pyi` | 112 | ⬜ |
+| 13 | `sage-stubs/symbolic/expression_conversions.pyi` | 112 | ✅ |
 | 14 | `sage-stubs/combinat/tableau_tuple.pyi` | 109 | ⬜ |
 | 15 | `sage-stubs/databases/findstat.pyi` | 108 | ⬜ |
 | 16 | `sage-stubs/combinat/interval_posets.pyi` | 107 | ⬜ |
