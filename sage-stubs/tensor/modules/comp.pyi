@@ -3,6 +3,7 @@ from typing import Generic, Protocol, Self, TypeVar, overload
 
 from sage.matrix.matrix2 import Matrix
 from sage.rings.integer import Integer
+from sage.structure.element import Element
 from sage.structure.sage_object import SageObject
 from sage.tensor.modules.format_utilities import FormattedExpansion
 
@@ -81,7 +82,7 @@ class Components(SageObject, Generic[_Component, _Formatted, _FormatSpec]):
         args: _Access | tuple[_Index | slice | _FormatSpec, ...],
         value: _ComponentValues[_Component],
     ) -> None: ...
-    def items(self) -> Iterator: ...
+    def items(self) -> Iterator[Element]: ...
     def display(
         self,
         symbol: str,
@@ -122,8 +123,8 @@ class Components(SageObject, Generic[_Component, _Formatted, _FormatSpec]):
     def contract(
         self, *args: int | Components[_Component, _Formatted, _FormatSpec]
     ) -> _Component | Components[_Component, _Formatted, _FormatSpec]: ...
-    def index_generator(self) -> Iterator: ...
-    def non_redundant_index_generator(self) -> Iterator: ...
+    def index_generator(self) -> Iterator[Element]: ...
+    def non_redundant_index_generator(self) -> Iterator[Element]: ...
     def symmetrize(
         self, *pos: int
     ) -> CompWithSym[Components, Components, Components]: ...
@@ -167,7 +168,7 @@ class CompWithSym(Components[_Component, _Formatted, _FormatSpec]):
     def trace(
         self, pos1: int, pos2: int
     ) -> CompWithSym | Components[CompWithSym, CompWithSym, CompWithSym]: ...
-    def non_redundant_index_generator(self) -> Iterator: ...
+    def non_redundant_index_generator(self) -> Iterator[Element]: ...
     def symmetrize(
         self, *pos: int
     ) -> CompWithSym[CompWithSym, CompWithSym, CompWithSym]: ...
@@ -225,7 +226,9 @@ class KroneckerDelta(CompFullySym[_Component, _Formatted, _FormatSpec]):
         ring: _Ring[_Component],
         frame: Sized,
         start_index: int = ...,
-        output_formatter: _Formatter[_Component, _FormatSpec, _Formatted] | int | None = ...,
+        output_formatter: _Formatter[_Component, _FormatSpec, _Formatted]
+        | int
+        | None = ...,
     ) -> None: ...
     def __setitem__(
         self,

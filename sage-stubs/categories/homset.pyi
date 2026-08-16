@@ -18,10 +18,7 @@ type HomsetCallInput = Morphism | Callable[..., Element] | ParentCallInput
 
 @overload
 def Hom(
-    X: Parent[_HomDomainElement],
-    Y: Parent[_HomCodomainElement],
-    category: Sets,
-    check: bool = ...,
+    self, Y: Parent[_HomCodomainElement], category: Sets, check: bool = ...
 ) -> Homset[
     SetMorphism[_HomDomainElement, _HomCodomainElement],
     _HomDomainElement,

@@ -23,9 +23,7 @@ from sage.tensor.modules.free_module_tensor import FreeModuleTensor
 
 type _Degree = int | Integer
 type _Scalar = Element | Expression | Integer | int
-type _DisplayArgument = (
-    Chart | Integer | int | str | list[str] | FreeModuleBasis | None
-)
+type _DisplayArgument = Chart | Integer | int | str | list[str] | FreeModuleBasis | None
 type _BilinearForm = PseudoRiemannianMetric | SymplecticForm
 type _InteriorResult = DiffScalarField | MultivectorField | MultivectorFieldParal
 

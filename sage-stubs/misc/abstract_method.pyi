@@ -12,7 +12,7 @@ class AbstractMethod(Generic[_P, _R]):
 
 @overload
 def abstract_method(
-    func: None = None, /, *, optional: bool = False
+    self=None, /, *, optional: bool = False
 ) -> Callable[[Callable[_P, _R]], Callable[_P, _R]]: ...
 @overload
 def abstract_method(
