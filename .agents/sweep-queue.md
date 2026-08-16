@@ -26,7 +26,7 @@ Rules:
 | 1 | `sage-stubs/schemes/elliptic_curves/heegner.pyi` | 260 | ✅ |
 | 2 | `sage-stubs/combinat/finite_state_machine.pyi` | 207 | ✅ |
 | 3 | `sage-stubs/combinat/diagram_algebras.pyi` | 148 | ✅ |
-| 4 | `sage-stubs/combinat/matrices/hadamard_matrix.pyi` | 133 | ⬜ |
+| 4 | `sage-stubs/combinat/matrices/hadamard_matrix.pyi` | 133 | ✅ |
 | 5 | `sage-stubs/combinat/growth.pyi` | 133 | ⬜ |
 | 6 | `sage-stubs/combinat/cluster_algebra_quiver/cluster_seed.pyi` | 131 | ⬜ |
 | 7 | `sage-stubs/combinat/k_tableau.pyi` | 120 | ⬜ |
