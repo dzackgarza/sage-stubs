@@ -1,7 +1,6 @@
-# Generated from the pinned Sage 10.7 source tree.
 import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+
+from sage.rings.padics.pow_computer_relative import PowComputer_relative_maker
 
 class _SageObject: ...
 
@@ -13,19 +12,85 @@ class pAdicRelativeBaseringSection:
     def __init__(self, S: builtins.object, R: builtins.int) -> None: ...
 
 class RelativeRamifiedExtensionRingFixedMod:
-    def __init__(self, exact_modulus: builtins.object, approx_modulus: builtins.object, prec: builtins.int, print_mode: builtins.object, shift_seed: builtins.object, names: builtins.object, implementation: builtins.str) -> None: ...
+    prime_pow: PowComputer_relative_maker
+
+    def __init__(
+        self,
+        exact_modulus: builtins.object,
+        approx_modulus: builtins.object,
+        prec: builtins.int,
+        print_mode: builtins.object,
+        shift_seed: builtins.object,
+        names: builtins.object,
+        implementation: builtins.str,
+    ) -> None: ...
 
 class RelativeRamifiedExtensionRingCappedAbsolute:
-    def __init__(self, exact_modulus: builtins.object, approx_modulus: builtins.object, prec: builtins.int, print_mode: builtins.object, shift_seed: builtins.object, names: builtins.object, implementation: builtins.str) -> None: ...
+    prime_pow: PowComputer_relative_maker
+
+    def __init__(
+        self,
+        exact_modulus: builtins.object,
+        approx_modulus: builtins.object,
+        prec: builtins.int,
+        print_mode: builtins.object,
+        shift_seed: builtins.object,
+        names: builtins.object,
+        implementation: builtins.str,
+    ) -> None: ...
 
 class RelativeRamifiedExtensionRingCappedRelative:
-    def __init__(self, exact_modulus: builtins.object, approx_modulus: builtins.object, prec: builtins.int, print_mode: builtins.object, shift_seed: builtins.object, names: builtins.object, implementation: builtins.str) -> None: ...
+    prime_pow: PowComputer_relative_maker
+
+    def __init__(
+        self,
+        exact_modulus: builtins.object,
+        approx_modulus: builtins.object,
+        prec: builtins.int,
+        print_mode: builtins.object,
+        shift_seed: builtins.object,
+        names: builtins.object,
+        implementation: builtins.str,
+    ) -> None: ...
 
 class RelativeRamifiedExtensionFieldCappedRelative:
-    def __init__(self, exact_modulus: builtins.object, approx_modulus: builtins.object, prec: builtins.int, print_mode: builtins.object, shift_seed: builtins.object, names: builtins.object, implementation: builtins.str) -> None: ...
+    prime_pow: PowComputer_relative_maker
+
+    def __init__(
+        self,
+        exact_modulus: builtins.object,
+        approx_modulus: builtins.object,
+        prec: builtins.int,
+        print_mode: builtins.object,
+        shift_seed: builtins.object,
+        names: builtins.object,
+        implementation: builtins.str,
+    ) -> None: ...
 
 class RelativeRamifiedExtensionRingFloatingPoint:
-    def __init__(self, exact_modulus: builtins.object, approx_modulus: builtins.object, prec: builtins.int, print_mode: builtins.object, shift_seed: builtins.object, names: builtins.object, implementation: builtins.str) -> None: ...
+    prime_pow: PowComputer_relative_maker
+
+    def __init__(
+        self,
+        exact_modulus: builtins.object,
+        approx_modulus: builtins.object,
+        prec: builtins.int,
+        print_mode: builtins.object,
+        shift_seed: builtins.object,
+        names: builtins.object,
+        implementation: builtins.str,
+    ) -> None: ...
 
 class RelativeRamifiedExtensionFieldFloatingPoint:
-    def __init__(self, exact_modulus: builtins.object, approx_modulus: builtins.object, prec: builtins.int, print_mode: builtins.object, shift_seed: builtins.object, names: builtins.object, implementation: builtins.str) -> None: ...
+    prime_pow: PowComputer_relative_maker
+
+    def __init__(
+        self,
+        exact_modulus: builtins.object,
+        approx_modulus: builtins.object,
+        prec: builtins.int,
+        print_mode: builtins.object,
+        shift_seed: builtins.object,
+        names: builtins.object,
+        implementation: builtins.str,
+    ) -> None: ...

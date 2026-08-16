@@ -1,22 +1,56 @@
-# Generated from the pinned Sage 10.7 source tree.
 import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
 
 class _SageObject: ...
 
-def is_dominating(G: builtins.object, dom: builtins.object, focus: builtins.object = ...) -> builtins.bool: ...
-
-def is_redundant(G: builtins.object, dom: builtins.object, focus: builtins.object = ...) -> builtins.bool: ...
-
-def private_neighbors(G: builtins.object, vertex: builtins.object, dom: builtins.object) -> _SageObject: ...
-
-def dominating_sets(g: builtins.object, k: builtins.int = ..., independent: builtins.bool = ..., total: builtins.bool = ..., connected: builtins.bool = ..., solver: builtins.object = ..., verbose: builtins.int = ..., *, integrality_tolerance: builtins.float = ...) -> _SageObject: ...
-
-def dominating_set(g: builtins.object, k: builtins.int = ..., independent: builtins.bool = ..., total: builtins.bool = ..., connected: builtins.bool = ..., value_only: builtins.bool = ..., solver: builtins.object = ..., verbose: builtins.int = ..., *, integrality_tolerance: builtins.float = ...) -> _SageObject: ...
-
-def minimal_dominating_sets(G: builtins.object, to_dominate: builtins.object = ..., work_on_copy: builtins.bool = ..., k: builtins.int = ...) -> _SageObject: ...
-
-def greedy_dominating_set(G: builtins.object, k: builtins.int = ..., vertices: builtins.object = ..., ordering: builtins.object = ..., return_sets: builtins.bool = ..., closest: builtins.bool = ...) -> _SageObject: ...
-
-def maximum_leaf_number(G: builtins.object, solver: builtins.object = ..., verbose: builtins.int = ..., integrality_tolerance: builtins.float = ...) -> _SageObject: ...
+def is_dominating(
+    self, dom: builtins.object, focus: builtins.object = ...
+) -> builtins.bool: ...
+def is_redundant(
+    self, dom: builtins.object, focus: builtins.object = ...
+) -> builtins.bool: ...
+def private_neighbors(
+    self, vertex: builtins.object, dom: builtins.object
+) -> _SageObject: ...
+def dominating_sets(
+    self,
+    k: builtins.int = ...,
+    independent: builtins.bool = ...,
+    total: builtins.bool = ...,
+    connected: builtins.bool = ...,
+    solver: builtins.object = ...,
+    verbose: builtins.int = ...,
+    *,
+    integrality_tolerance: builtins.float = ...,
+) -> _SageObject: ...
+def dominating_set(
+    self,
+    k: builtins.int = ...,
+    independent: builtins.bool = ...,
+    total: builtins.bool = ...,
+    connected: builtins.bool = ...,
+    value_only: builtins.bool = ...,
+    solver: builtins.object = ...,
+    verbose: builtins.int = ...,
+    *,
+    integrality_tolerance: builtins.float = ...,
+) -> _SageObject: ...
+def minimal_dominating_sets(
+    self,
+    to_dominate: builtins.object = ...,
+    work_on_copy: builtins.bool = ...,
+    k: builtins.int = ...,
+) -> _SageObject: ...
+def greedy_dominating_set(
+    self,
+    k: builtins.int = ...,
+    vertices: builtins.object = ...,
+    ordering: builtins.object = ...,
+    return_sets: builtins.bool = ...,
+    closest: builtins.bool = ...,
+) -> _SageObject: ...
+def maximum_leaf_number(
+    self,
+    solver: builtins.object = ...,
+    verbose: builtins.int = ...,
+    integrality_tolerance: builtins.float = ...,
+) -> _SageObject: ...

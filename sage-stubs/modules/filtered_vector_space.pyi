@@ -1,9 +1,7 @@
-from collections.abc import Mapping, Iterable
+from collections.abc import Iterable, Mapping
+
 from sage.modules.free_module import FreeModule_ambient_field
 from sage.rings.ring import Field
-from sage.rings.integer import Integer
-from sage.structure.element import Element
-from sage.modules.free_module_element import FreeModuleElement
 
 class FilteredVectorSpace_class(FreeModule_ambient_field):
     def __init__(
@@ -21,13 +19,15 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
     def is_separated(self) -> bool: ...
     def graded(self, degree: int) -> FreeModule_ambient_field: ...
     def grading_type(self) -> str: ...
-    def presentation(self) -> tuple[tuple[object, ...], dict[object, tuple[int, ...]]]: ...
+    def presentation(
+        self,
+    ) -> tuple[tuple[object, ...], dict[object, tuple[int, ...]]]: ...
     def support(self) -> list[object]: ...
     def num_graded_parts(self) -> int: ...
     def graded_dimension(self, degree: int) -> int: ...
 
 def FilteredVectorSpace(
-    generators: Iterable[object] | int | None = ...,
+    self=...,
     filtration: Mapping[object, tuple[int, ...]] | None = ...,
     base_ring: Field | None = ...,
 ) -> FilteredVectorSpace_class: ...

@@ -1,4 +1,5 @@
 from collections.abc import Callable
+
 from sage.modules.with_basis.indexed_element import IndexedFreeModuleElement
 
 class ModuleMorphism:
@@ -17,7 +18,7 @@ class ModuleMorphismFromFunction(ModuleMorphism):
         domain: object,
         codomain: object,
         function: Callable[[object], object],
-        category: object = ...,
+        category: object | bool = ...,
     ) -> None: ...
 
 class ModuleMorphismByLinearity(ModuleMorphism):
@@ -26,7 +27,7 @@ class ModuleMorphismByLinearity(ModuleMorphism):
         domain: object,
         codomain: object = ...,
         on_basis: Callable[[object], object] | None = ...,
-        category: object = ...,
+        category: object | bool = ...,
     ) -> None: ...
 
 class TriangularModuleMorphism(ModuleMorphism):
@@ -35,9 +36,10 @@ class TriangularModuleMorphism(ModuleMorphism):
         domain: object,
         codomain: object = ...,
         on_basis: Callable[[object], object] | None = ...,
-        category: object = ...,
+        category: object | bool = ...,
         unitriangular: str = ...,
     ) -> None: ...
 
-class TriangularModuleMorphismByLinearity(ModuleMorphismByLinearity, TriangularModuleMorphism):
-    ...
+class TriangularModuleMorphismByLinearity(
+    ModuleMorphismByLinearity, TriangularModuleMorphism
+): ...

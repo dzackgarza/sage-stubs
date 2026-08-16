@@ -1,14 +1,28 @@
 from typing import TypeVar
 
+from sage.structure.sage_object import SageObject
+
 _T = TypeVar("_T")
 
 class GlobalOptionsMetaMeta(type):
-    def __call__(self, name: str, bases: tuple[type, ...], dict: dict[str, object]) -> type: ...
+    def __call__(
+        self, name: str, bases: tuple[type, ...], dict: dict[str, object]
+    ) -> type[SageObject]: ...
 
 class GlobalOptionsMeta(type, metaclass=GlobalOptionsMetaMeta):
-    def __init__(self, NAME: str | None = ..., module: str = ..., option_class: str = ..., doc: str = ..., end_doc: str = ..., **options: object) -> None: ...
+    def __init__(
+        self,
+        NAME: str | None = ...,
+        module: str = ...,
+        option_class: str = ...,
+        doc: str = ...,
+        end_doc: str = ...,
+        **options: object,
+    ) -> None: ...
 
 class GlobalOptions(metaclass=GlobalOptionsMeta):
     def __call__(self, *args: object, **kwds: object) -> GlobalOptions | None: ...
     def _reset(self, option: str | None = ...) -> None: ...
-    def dispatch(self, obj: _T, dispatch_to: str, option: str, *args: object, **kwds: object) -> _T: ...
+    def dispatch(
+        self, obj: _T, dispatch_to: str, option: str, *args: object, **kwds: object
+    ) -> _T: ...

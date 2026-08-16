@@ -1,12 +1,21 @@
-# Generated from the pinned Sage 10.7 source tree.
 import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
 
 class _SageObject: ...
 
-def reduced_homeomorphic_graph(G: builtins.object, allow_multiple_edges: builtins.bool = ..., allow_loops: builtins.bool = ..., return_steps: builtins.bool = ..., immutable: builtins.bool = ...) -> _SageObject: ...
-
-def is_homeomorphic(G: builtins.object, H: builtins.object) -> builtins.bool: ...
-
-def has_homomorphism_to(G: builtins.object, H: builtins.object, core: builtins.bool = ..., solver: builtins.object = ..., verbose: builtins.int = ..., *, integrality_tolerance: builtins.float = ...) -> builtins.bool: ...
+def reduced_homeomorphic_graph(
+    self,
+    allow_multiple_edges: builtins.bool = ...,
+    allow_loops: builtins.bool = ...,
+    return_steps: builtins.bool = ...,
+    immutable: builtins.bool = ...,
+) -> _SageObject: ...
+def is_homeomorphic(self, H: builtins.object) -> builtins.bool: ...
+def has_homomorphism_to(
+    self,
+    H: builtins.object,
+    core: builtins.bool = ...,
+    solver: builtins.object = ...,
+    verbose: builtins.int = ...,
+    *,
+    integrality_tolerance: builtins.float = ...,
+) -> builtins.bool: ...

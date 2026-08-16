@@ -6,11 +6,10 @@ from types import (
     MethodType,
     WrapperDescriptorType,
 )
-from typing import TypeAlias
 
 from sage.structure.sage_object import SageObject
 
-AttributeValue: TypeAlias = (
+type AttributeValue = (
     property
     | Callable[..., object]
     | FunctionType
@@ -31,6 +30,6 @@ class AttributeErrorMessage:
 
 def raw_getattr(obj: object, name: str) -> AttributeValue: ...
 def getattr_from_other_class(
-    self: object, cls: type, name: str | None
+    self, cls: type[SageObject], name: str | None
 ) -> AttributeValue: ...
-def dir_with_other_class(self: object, *cls: type) -> list[str]: ...
+def dir_with_other_class(self, *cls: type) -> list[str]: ...

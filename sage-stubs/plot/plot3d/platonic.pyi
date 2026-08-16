@@ -1,20 +1,33 @@
-# Generated from the pinned Sage 10.7 source tree.
 import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
 
 class _SageObject: ...
 
-def index_face_set(face_list: builtins.object, point_list: builtins.object, enclosed: builtins.object, **kwds: builtins.object) -> _SageObject: ...
-
-def prep(G: builtins.object, center: builtins.object, size: builtins.int, kwds: builtins.object) -> _SageObject: ...
-
-def tetrahedron(center: builtins.tuple[_SageObject, ...] = ..., size: builtins.int = ..., **kwds: builtins.object) -> _SageObject: ...
-
-def cube(center: builtins.tuple[_SageObject, ...] = ..., size: builtins.int = ..., color: builtins.object = ..., frame_thickness: builtins.int = ..., frame_color: builtins.object = ..., **kwds: builtins.object) -> _SageObject: ...
-
-def octahedron(center: builtins.tuple[_SageObject, ...] = ..., size: builtins.int = ..., **kwds: builtins.object) -> _SageObject: ...
-
-def dodecahedron(center: builtins.tuple[_SageObject, ...] = ..., size: builtins.int = ..., **kwds: builtins.object) -> _SageObject: ...
-
-def icosahedron(center: builtins.tuple[_SageObject, ...] = ..., size: builtins.int = ..., **kwds: builtins.object) -> _SageObject: ...
+def index_face_set(
+    self,
+    point_list: builtins.object,
+    enclosed: builtins.object,
+    **kwds: builtins.object,
+) -> _SageObject: ...
+def prep(
+    self, center: builtins.object, size: builtins.int, kwds: builtins.object
+) -> _SageObject: ...
+def tetrahedron(
+    self=..., size: builtins.int = ..., **kwds: builtins.object
+) -> _SageObject: ...
+def cube(
+    self=...,
+    size: builtins.int = ...,
+    color: builtins.object = ...,
+    frame_thickness: builtins.int = ...,
+    frame_color: builtins.object = ...,
+    **kwds: builtins.object,
+) -> _SageObject: ...
+def octahedron(
+    self=..., size: builtins.int = ..., **kwds: builtins.object
+) -> _SageObject: ...
+def dodecahedron(
+    self=..., size: builtins.int = ..., **kwds: builtins.object
+) -> _SageObject: ...
+def icosahedron(
+    self=..., size: builtins.int = ..., **kwds: builtins.object
+) -> _SageObject: ...

@@ -1,17 +1,19 @@
 from sage.matrix.matrix_dense import Matrix_dense
+from sage.modular.dirichlet import DirichletCharacter
 from sage.modular.hecke.morphism import HeckeModuleMorphism, HeckeModuleMorphism_matrix
 from sage.modular.modsym.ambient import ModularSymbolsAmbient
 from sage.modular.modsym.space import ModularSymbolsSpace
 from sage.modules.free_module import FreeModule_generic
+from sage.rings.integer import Integer
 from sage.structure.factorization import Factorization
 
 class ModularSymbolsSubspace(ModularSymbolsSpace):
     def __init__(
         self,
-        ambient_hecke_module: ModularSymbolsAmbient,
-        submodule: FreeModule_generic,
-        dual_free_module: FreeModule_generic | None = None,
-        check: bool = False,
+        ambient_hecke_module: ModularSymbolsAmbient | CongruenceSubgroup,
+        submodule: FreeModule_generic | Integer,
+        dual_free_module: FreeModule_generic | Optional[DirichletCharacter] | None = None,
+        check: bool | Integer = False,
     ) -> None: ...
     def _repr_(self) -> str: ...
     def ambient_hecke_module(self) -> ModularSymbolsAmbient: ...

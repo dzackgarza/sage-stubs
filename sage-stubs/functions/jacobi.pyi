@@ -1,11 +1,9 @@
-# Generated from the pinned Sage 10.7 source tree.
 import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
 
 class _SageObject: ...
 
 HALF: _SageObject
+
 class Jacobi:
     def __init__(self, kind: builtins.object) -> None: ...
 
@@ -21,6 +19,7 @@ jacobi_sc: _SageObject
 jacobi_cn: _SageObject
 jacobi_cd: _SageObject
 jacobi_cs: _SageObject
+
 class InverseJacobi:
     def __init__(self, kind: builtins.object) -> None: ...
 
@@ -36,14 +35,18 @@ inverse_jacobi_sc: _SageObject
 inverse_jacobi_cn: _SageObject
 inverse_jacobi_cd: _SageObject
 inverse_jacobi_cs: _SageObject
-def jacobi(kind: builtins.object, z: builtins.object, m: builtins.int, **kwargs: builtins.object) -> _SageObject: ...
 
-def inverse_jacobi(kind: builtins.object, x: builtins.object, m: builtins.int, **kwargs: builtins.object) -> _SageObject: ...
+def jacobi(
+    self, z: builtins.object, m: builtins.int, **kwargs: builtins.object
+) -> _SageObject: ...
+def inverse_jacobi(
+    self, x: builtins.object, m: builtins.int, **kwargs: builtins.object
+) -> _SageObject: ...
 
 class JacobiAmplitude:
     def __init__(self) -> None: ...
 
 jacobi_am: _SageObject
-def inverse_jacobi_f(kind: builtins.object, x: builtins.object, m: builtins.int) -> _SageObject: ...
 
-def jacobi_am_f(x: builtins.object, m: builtins.int) -> _SageObject: ...
+def inverse_jacobi_f(self, x: builtins.object, m: builtins.int) -> _SageObject: ...
+def jacobi_am_f(self, m: builtins.int) -> _SageObject: ...

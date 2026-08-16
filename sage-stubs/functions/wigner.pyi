@@ -1,18 +1,61 @@
-# Generated from the pinned Sage 10.7 source tree.
 import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
 
 class _SageObject: ...
 
-def wigner_3j(j_1: builtins.object, j_2: builtins.object, j_3: builtins.object, m_1: builtins.object, m_2: builtins.object, m_3: builtins.object, prec: builtins.int = ...) -> _SageObject: ...
-
-def clebsch_gordan(j_1: builtins.object, j_2: builtins.object, j_3: builtins.object, m_1: builtins.object, m_2: builtins.object, m_3: builtins.object, prec: builtins.int = ...) -> _SageObject: ...
-
-def racah(aa: builtins.object, bb: builtins.object, cc: builtins.object, dd: builtins.object, ee: builtins.object, ff: builtins.object, prec: builtins.int = ...) -> _SageObject: ...
-
-def wigner_6j(j_1: builtins.object, j_2: builtins.object, j_3: builtins.object, j_4: builtins.object, j_5: builtins.object, j_6: builtins.object, prec: builtins.int = ...) -> _SageObject: ...
-
-def wigner_9j(j_1: builtins.object, j_2: builtins.object, j_3: builtins.object, j_4: builtins.object, j_5: builtins.object, j_6: builtins.object, j_7: builtins.object, j_8: builtins.object, j_9: builtins.object, prec: builtins.int = ...) -> _SageObject: ...
-
-def gaunt(l_1: builtins.object, l_2: builtins.object, l_3: builtins.object, m_1: builtins.object, m_2: builtins.object, m_3: builtins.object, prec: builtins.int = ...) -> _SageObject: ...
+def wigner_3j(
+    self,
+    j_2: builtins.object,
+    j_3: builtins.object,
+    m_1: builtins.object,
+    m_2: builtins.object,
+    m_3: builtins.object,
+    prec: builtins.int = ...,
+) -> _SageObject: ...
+def clebsch_gordan(
+    self,
+    j_2: builtins.object,
+    j_3: builtins.object,
+    m_1: builtins.object,
+    m_2: builtins.object,
+    m_3: builtins.object,
+    prec: builtins.int = ...,
+) -> _SageObject: ...
+def racah(
+    self,
+    bb: builtins.object,
+    cc: builtins.object,
+    dd: builtins.object,
+    ee: builtins.object,
+    ff: builtins.object,
+    prec: builtins.int = ...,
+) -> _SageObject: ...
+def wigner_6j(
+    self,
+    j_2: builtins.object,
+    j_3: builtins.object,
+    j_4: builtins.object,
+    j_5: builtins.object,
+    j_6: builtins.object,
+    prec: builtins.int = ...,
+) -> _SageObject: ...
+def wigner_9j(
+    self,
+    j_2: builtins.object,
+    j_3: builtins.object,
+    j_4: builtins.object,
+    j_5: builtins.object,
+    j_6: builtins.object,
+    j_7: builtins.object,
+    j_8: builtins.object,
+    j_9: builtins.object,
+    prec: builtins.int = ...,
+) -> _SageObject: ...
+def gaunt(
+    self,
+    l_2: builtins.object,
+    l_3: builtins.object,
+    m_1: builtins.object,
+    m_2: builtins.object,
+    m_3: builtins.object,
+    prec: builtins.int = ...,
+) -> _SageObject: ...

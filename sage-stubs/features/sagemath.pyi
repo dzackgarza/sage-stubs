@@ -1,7 +1,3 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
 
 class _SageObject: ...
 
@@ -92,4 +88,4 @@ class sage__schemes:
 class sage__symbolic:
     def __init__(self) -> None: ...
 
-def all_features() -> _SageObject: ...
+def all_features(self) -> _SageObject: ...

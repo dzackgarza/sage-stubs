@@ -1,36 +1,92 @@
-# Generated from the pinned Sage 10.7 source tree.
 import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
 
 class _SageObject: ...
 
-def init_sage(controller: builtins.object = ...) -> None: ...
-
-def showwarning_with_traceback(message: builtins.object, category: builtins.object, filename: builtins.object, lineno: builtins.object, file: builtins.object = ..., line: builtins.object = ...) -> _SageObject: ...
+def init_sage(self=...) -> None: ...
+def showwarning_with_traceback(
+    self,
+    category: builtins.object,
+    filename: builtins.object,
+    lineno: builtins.object,
+    file: builtins.object = ...,
+    line: builtins.object = ...,
+) -> _SageObject: ...
 
 class SageSpoofInOut:
-    def __init__(self, outfile: builtins.object = ..., infile: builtins.object = ...) -> None: ...
+    outfile: TemporaryFile
+    position: int
+    spoofing: bool
+
+    def __init__(
+        self, outfile: builtins.object = ..., infile: builtins.object = ...
+    ) -> None: ...
     def __del__(self) -> _SageObject: ...
     def start_spoofing(self) -> _SageObject: ...
     def stop_spoofing(self) -> _SageObject: ...
     def getvalue(self) -> _SageObject: ...
 
 TestResults: _SageObject
+
 class SageDocTestRunner:
+    total_walltime: int
+    total_performed_tests: int
+    total_walltime_skips: int
+
     def __init__(self, *args: builtins.object, **kwds: builtins.object) -> None: ...
-    def run(self, test: builtins.object, compileflags: builtins.int = ..., out: builtins.object = ..., clear_globs: builtins.bool = ...) -> _SageObject: ...
+    def run(
+        self,
+        test: builtins.object,
+        compileflags: builtins.int = ...,
+        out: builtins.object = ...,
+        clear_globs: builtins.bool = ...,
+    ) -> _SageObject: ...
     def summarize(self, verbose: builtins.object = ...) -> _SageObject: ...
     def update_digests(self, example: builtins.object) -> _SageObject: ...
-    def compile_and_execute(self, example: builtins.object, compiler: builtins.object, globs: builtins.object) -> _SageObject: ...
-    def report_start(self, out: builtins.object, test: builtins.object, example: builtins.object) -> _SageObject: ...
-    def report_success(self, out: builtins.object, test: builtins.object, example: builtins.object, got: builtins.object, *, check_timer: builtins.object = ...) -> _SageObject: ...
-    def report_failure(self, out: builtins.object, test: builtins.object, example: builtins.object, got: builtins.object, globs: builtins.object) -> _SageObject: ...
-    def report_overtime(self, out: builtins.object, test: builtins.object, example: builtins.object, got: builtins.object, *, check_timer: builtins.object = ...) -> _SageObject: ...
-    def report_unexpected_exception(self, out: builtins.object, test: builtins.object, example: builtins.object, exc_info: builtins.object) -> _SageObject: ...
+    def compile_and_execute(
+        self,
+        example: builtins.object,
+        compiler: builtins.object,
+        globs: builtins.object,
+    ) -> _SageObject: ...
+    def report_start(
+        self, out: builtins.object, test: builtins.object, example: builtins.object
+    ) -> _SageObject: ...
+    def report_success(
+        self,
+        out: builtins.object,
+        test: builtins.object,
+        example: builtins.object,
+        got: builtins.object,
+        *,
+        check_timer: builtins.object = ...,
+    ) -> _SageObject: ...
+    def report_failure(
+        self,
+        out: builtins.object,
+        test: builtins.object,
+        example: builtins.object,
+        got: builtins.object,
+        globs: builtins.object,
+    ) -> _SageObject: ...
+    def report_overtime(
+        self,
+        out: builtins.object,
+        test: builtins.object,
+        example: builtins.object,
+        got: builtins.object,
+        *,
+        check_timer: builtins.object = ...,
+    ) -> _SageObject: ...
+    def report_unexpected_exception(
+        self,
+        out: builtins.object,
+        test: builtins.object,
+        example: builtins.object,
+        exc_info: builtins.object,
+    ) -> _SageObject: ...
     def update_results(self, D: builtins.object) -> _SageObject: ...
 
-def dummy_handler(sig: builtins.object, frame: builtins.object) -> _SageObject: ...
+def dummy_handler(self, frame: builtins.object) -> _SageObject: ...
 
 class DocTestDispatcher:
     def __init__(self, controller: builtins.object) -> None: ...
@@ -39,7 +95,19 @@ class DocTestDispatcher:
     def dispatch(self) -> _SageObject: ...
 
 class DocTestWorker:
-    def __init__(self, source: builtins.object, options: builtins.object, funclist: builtins.list[_SageObject] = ..., baseline: builtins.object = ...) -> None: ...
+    process_tree_before_kill: str | None
+    killed: bool
+    messages: str
+    outtmpfile: NamedTemporaryFile
+    result_queue: Queue
+
+    def __init__(
+        self,
+        source: builtins.object,
+        options: builtins.object,
+        funclist: builtins.list[_SageObject] = ...,
+        baseline: builtins.object = ...,
+    ) -> None: ...
     def run(self) -> _SageObject: ...
     def start(self) -> _SageObject: ...
     def read_messages(self) -> _SageObject: ...
@@ -48,4 +116,12 @@ class DocTestWorker:
 
 class DocTestTask:
     def __init__(self, source: builtins.object) -> None: ...
-    def __call__(self, options: builtins.object, outtmpfile: builtins.object = ..., msgfile: builtins.object = ..., result_queue: builtins.object = ..., *, baseline: builtins.object = ...) -> _SageObject: ...
+    def __call__(
+        self,
+        options: builtins.object,
+        outtmpfile: builtins.object = ...,
+        msgfile: builtins.object = ...,
+        result_queue: builtins.object = ...,
+        *,
+        baseline: builtins.object = ...,
+    ) -> _SageObject: ...

@@ -1,7 +1,7 @@
 from collections.abc import Callable
 
-from sage.symbolic.expression import Expression
 from sage.structure.element import Element
+from sage.symbolic.expression import Expression
 
 type FunctionArgument = Expression | Element | int | float | complex
 type FunctionResult = Expression | Element | int | float | complex
@@ -13,8 +13,12 @@ type SymbolicFunctionState = tuple[
 
 class Function:
     def __init__(
-        self, name: str, nargs: int, latex_name: str | None = None,
-        conversions: ConversionTable | None = None, evalf_params_first: bool = True,
+        self,
+        name: str,
+        nargs: int,
+        latex_name: str | None = None,
+        conversions: ConversionTable | None = None,
+        evalf_params_first: bool = True,
         alt_name: str | None = None,
     ) -> None: ...
     def _evalf_try_(self, *args: FunctionArgument) -> FunctionResult | None: ...
@@ -41,21 +45,34 @@ class Function:
 
 class GinacFunction(Function):
     def __init__(
-        self, name: str, nargs: int = 1, latex_name: str | None = None,
-        conversions: ConversionTable | None = None, ginac_name: str | None = None,
-        evalf_params_first: bool = True, preserved_arg: int | None = None,
+        self,
+        name: str,
+        nargs: int = 1,
+        latex_name: str | None = None,
+        conversions: ConversionTable | None = None,
+        ginac_name: str | bool | None = None,
+        evalf_params_first: bool | str | None = True,
+        preserved_arg: int | None = None,
         alt_name: str | None = None,
     ) -> None: ...
 
 class BuiltinFunction(Function):
     def __init__(
-        self, name: str, nargs: int = 1, latex_name: str | None = None,
-        conversions: ConversionTable | None = None, evalf_params_first: bool = True,
-        alt_name: str | None = None, preserved_arg: int | None = None,
+        self,
+        name: str,
+        nargs: int = 1,
+        latex_name: str | None = None,
+        conversions: ConversionTable | None = None,
+        evalf_params_first: bool = True,
+        alt_name: str | None = None,
+        preserved_arg: int | None = None,
     ) -> None: ...
     def _method_arguments(self, arg: FunctionArgument) -> list[FunctionArgument]: ...
     def __call__(
-        self, *args: FunctionArgument, coerce: bool = True, hold: bool = False,
+        self,
+        *args: FunctionArgument,
+        coerce: bool = True,
+        hold: bool = False,
         dont_call_method_on_arg: bool = False,
     ) -> FunctionResult: ...
     def _is_registered(self) -> bool: ...
@@ -65,8 +82,12 @@ class BuiltinFunction(Function):
 
 class SymbolicFunction(Function):
     def __init__(
-        self, name: str, nargs: int = 0, latex_name: str | None = None,
-        conversions: ConversionTable | None = None, evalf_params_first: bool = True,
+        self,
+        name: str,
+        nargs: int = 0,
+        latex_name: str | None = None,
+        conversions: ConversionTable | None = None,
+        evalf_params_first: bool = True,
     ) -> None: ...
     def _is_registered(self) -> bool: ...
     def _hash_(self) -> int: ...

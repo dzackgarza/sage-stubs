@@ -1,11 +1,13 @@
-# Generated from the pinned Sage 10.7 source tree.
 import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from collections.abc import (
+    Hashable,
+)
+
+from sage.structure.element import Element
 
 class _SageObject: ...
 
 class DCompletePoset:
     def get_hook(self, elmt: builtins.object) -> _SageObject: ...
-    def get_hooks(self) -> builtins.dict[_SageObject, _SageObject]: ...
+    def get_hooks(self) -> dict[Hashable, Element]: ...
     def hook_product(self) -> _SageObject: ...

@@ -1,16 +1,25 @@
 from sage.categories.category import Category
 from sage.categories.category_types import Category_over_base_ring
 from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
-from sage.categories.covariant_functorial_construction import RegressiveCovariantConstructionCategory
+from sage.categories.covariant_functorial_construction import (
+    RegressiveCovariantConstructionCategory,
+)
+from sage.categories.rings import Rings
+from sage.structure.sage_object import SageObject
 
-class FilteredModulesCategory(RegressiveCovariantConstructionCategory, Category_over_base_ring):
-    def __init__(self, base_category: Category) -> None: ...
+class FilteredModulesCategory(
+    RegressiveCovariantConstructionCategory, Category_over_base_ring
+):
+    def __init__(
+        self, base_category: Category | Rings.ParentMethods[_Scalar]
+    ) -> None: ...
     def _repr_object_names(self) -> str: ...
-    def _make_named_class_key(self, name: str) -> type: ...
+    def _make_named_class_key(self, name: str) -> type[SageObject]: ...
 
 class FilteredModules(FilteredModulesCategory):
     def extra_super_categories(self) -> list[Category]: ...
+
     class SubcategoryMethods:
         def Connected(self) -> Category: ...
-    class Connected(CategoryWithAxiom_over_base_ring):
-        ...
+
+    class Connected(CategoryWithAxiom_over_base_ring): ...

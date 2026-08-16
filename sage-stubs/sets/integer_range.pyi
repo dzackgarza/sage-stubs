@@ -1,29 +1,30 @@
 from collections.abc import Iterator
+
+from sage.rings.infinity import PlusInfinity
 from sage.rings.integer import Integer
-from sage.rings.infinity import MinusInfinity, PlusInfinity
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 
 from .finite_enumerated_set import FiniteEnumeratedSet
 
 class IntegerRange(UniqueRepresentation, Parent):
+    @staticmethod
     def __classcall_private__(
-        cls,
-        *args: object,
-        **kwds: object,
-    ) -> IntegerRangeEmpty | IntegerRangeFinite | IntegerRangeInfinite | IntegerRangeFromMiddle: ...
+        cls, *args: object, **kwds: object
+    ) -> (
+        IntegerRangeEmpty
+        | IntegerRangeFinite
+        | IntegerRangeInfinite
+        | IntegerRangeFromMiddle
+    ): ...
     def _element_constructor_(self, x: object) -> Integer: ...
 
 class IntegerRangeEmpty(IntegerRange, FiniteEnumeratedSet):
+    @staticmethod
     def __classcall__(cls, *args: object, **options: object) -> IntegerRangeEmpty: ...
 
 class IntegerRangeFinite(IntegerRange):
-    def __init__(
-        self,
-        begin: Integer,
-        end: Integer,
-        step: Integer = ...,
-    ) -> None: ...
+    def __init__(self, begin: Integer, end: Integer, step: Integer = ...) -> None: ...
     def __contains__(self, x: object) -> bool: ...
     def cardinality(self) -> int: ...
     def _repr_(self) -> str: ...
@@ -34,10 +35,7 @@ class IntegerRangeFinite(IntegerRange):
 
 class IntegerRangeInfinite(IntegerRange):
     def __init__(
-        self,
-        begin: Integer,
-        end: PlusInfinity,
-        step: Integer = ...,
+        self, begin: Integer, end: PlusInfinity, step: Integer = ...
     ) -> None: ...
     def _repr_(self) -> str: ...
     def __contains__(self, x: object) -> bool: ...

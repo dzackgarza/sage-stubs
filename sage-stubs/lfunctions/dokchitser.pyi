@@ -1,11 +1,10 @@
 from collections.abc import Sequence
-from typing import Self
 
-from sage.structure.sage_object import SageObject
 from sage.interfaces.gp import Gp
 from sage.rings.complex_mpfr import ComplexNumber
 from sage.rings.integer import Integer
 from sage.rings.power_series_ring_element import PowerSeries
+from sage.structure.sage_object import SageObject
 
 class Dokchitser(SageObject):
     conductor: int
@@ -16,7 +15,7 @@ class Dokchitser(SageObject):
     residues: list[complex] | str
     prec: int
 
-    def __new__(cls, *args: object, **kwargs: object) -> Self: ...
+    def __new__(cls, *args: object, **kwargs: object) -> Dokchitser: ...
     def __init__(
         self,
         conductor: int,

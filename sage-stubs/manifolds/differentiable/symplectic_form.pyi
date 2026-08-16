@@ -1,4 +1,4 @@
-from typing import TypeAlias, overload
+from typing import overload
 
 from sage.manifolds.differentiable.diff_form import DiffForm, DiffFormParal
 from sage.manifolds.differentiable.diff_map import DiffMap
@@ -11,23 +11,31 @@ from sage.manifolds.differentiable.vectorfield import VectorField
 from sage.manifolds.differentiable.vectorfield_module import VectorFieldModule
 from sage.structure.element import Expression
 
-_SymplecticDomain: TypeAlias = DifferentiableManifold | VectorFieldModule
+type _SymplecticDomain = DifferentiableManifold | VectorFieldModule
 
 class SymplecticForm(DiffForm):
     def __init__(
         self,
-        manifold: _SymplecticDomain,
-        name: str | None = None,
+        manifold: _SymplecticDomain | VectorFieldModule,
+        name: str | _Degree | None = None,
         latex_name: str | None = None,
     ) -> None: ...
-    def restrict(self, subdomain: DifferentiableManifold, dest_map: DiffMap | None = None) -> SymplecticForm: ...
+    def restrict(
+        self, subdomain: DifferentiableManifold, dest_map: DiffMap | None = None
+    ) -> DiffForm: ...
     @staticmethod
-    def wrap(form: DiffForm, name: str | None = None, latex_name: str | None = None) -> SymplecticForm: ...
-    def poisson(self, expansion_symbol: Expression | None = None, order: int = 1) -> PoissonTensorField: ...
+    def wrap(
+        form: DiffForm, name: str | None = None, latex_name: str | None = None
+    ) -> SymplecticForm: ...
+    def poisson(
+        self, expansion_symbol: Expression | None = None, order: int = 1
+    ) -> PoissonTensorField: ...
     def hamiltonian_vector_field(self, function: DiffScalarField) -> VectorField: ...
     def flat(self, vector_field: VectorField) -> DiffForm: ...
     def sharp(self, form: DiffForm) -> VectorField: ...
-    def poisson_bracket(self, f: DiffScalarField, g: DiffScalarField) -> DiffScalarField: ...
+    def poisson_bracket(
+        self, f: DiffScalarField, g: DiffScalarField
+    ) -> DiffScalarField: ...
     @overload
     def volume_form(self) -> DiffForm: ...
     @overload
@@ -38,9 +46,13 @@ class SymplecticForm(DiffForm):
 class SymplecticFormParal(SymplecticForm, DiffFormParal):
     def __init__(
         self,
-        vector_field_module: VectorFieldModule,
-        name: str | None = None,
+        vector_field_module: VectorFieldModule | _SymplecticDomain,
+        name: str | _Degree | None = None,
         latex_name: str | None = None,
     ) -> None: ...
-    def restrict(self, subdomain: DifferentiableManifold, dest_map: DiffMap | None = None) -> SymplecticFormParal: ...
-    def poisson(self, expansion_symbol: Expression | None = None, order: int = 1) -> PoissonTensorField: ...
+    def restrict(
+        self, subdomain: DifferentiableManifold, dest_map: DiffMap | None = None
+    ) -> SymplecticFormParal: ...
+    def poisson(
+        self, expansion_symbol: Expression | None = None, order: int = 1
+    ) -> TensorFieldParal: ...

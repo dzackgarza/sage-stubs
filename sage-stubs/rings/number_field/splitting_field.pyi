@@ -1,7 +1,6 @@
-# Generated from the pinned Sage 10.7 source tree.
 import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+
+from sage.rings.integer import Integer
 
 class _SageObject: ...
 
@@ -9,8 +8,18 @@ class SplittingFieldAbort:
     def __init__(self, div: builtins.object, mult: builtins.object) -> None: ...
 
 class SplittingData:
+    dm: Integer
+
     def __init__(self, _pol: builtins.object, _dm: builtins.object) -> None: ...
     def key(self) -> _SageObject: ...
     def poldegree(self) -> _SageObject: ...
 
-def splitting_field(poly: builtins.object, name: builtins.str, map: builtins.bool = ..., degree_multiple: builtins.object = ..., abort_degree: builtins.object = ..., simplify: builtins.bool = ..., simplify_all: builtins.bool = ...) -> _SageObject: ...
+def splitting_field(
+    self,
+    name: builtins.str,
+    map: builtins.bool = ...,
+    degree_multiple: builtins.object = ...,
+    abort_degree: builtins.object = ...,
+    simplify: builtins.bool = ...,
+    simplify_all: builtins.bool = ...,
+) -> _SageObject: ...

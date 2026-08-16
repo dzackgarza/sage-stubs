@@ -1,19 +1,55 @@
-# Generated from the pinned Sage 10.7 source tree.
 import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
 
 class _SageObject: ...
 
 auto_optional_tags: _SageObject
+
 class DocTestDefaults:
-    def __init__(self, runtest_default: builtins.bool = ..., **kwds: builtins.object) -> None: ...
-    def __eq__(self, other: builtins.object) -> builtins.bool: ...
-    def __ne__(self, other: builtins.object) -> builtins.bool: ...
+    gc: int
+    probe: str
+    hide: str
+    format: str
+    baseline_stats_path: None
+    show_skipped: bool
+    new: bool
+    failed: bool
+    omega: bool
+    cachegrind: bool
+    massif: bool
+    valgrind: bool
+    lldb: bool
+    gdb: bool
+    only_errors: bool
+    debug: bool
+    verbose: bool
+    if_installed: bool
+    force_lib: bool
+    exitfirst: bool
+    initial: bool
+    environment: str
+    randorder: None
+    long: bool
+    logfile: None
+    installed: bool
+    all_except: None
+    all: bool
+    serial: bool
+    nthreads: int
 
-def skipdir(dirname: builtins.object) -> builtins.bool: ...
+    def __init__(
+        self, runtest_default: builtins.bool = ..., **kwds: builtins.object
+    ) -> None: ...
+    def __eq__(self, other: object) -> bool: ...
+    def __ne__(self, other: object) -> bool: ...
 
-def skipfile(filename: builtins.object, tested_optional_tags: builtins.bool = ..., *, if_installed: builtins.bool = ..., log: builtins.object = ...) -> _SageObject: ...
+def skipdir(self) -> bool: ...
+def skipfile(
+    self,
+    tested_optional_tags: builtins.bool = ...,
+    *,
+    if_installed: builtins.bool = ...,
+    log: builtins.object = ...,
+) -> _SageObject: ...
 
 class Logger:
     def __init__(self, *files: builtins.object) -> None: ...
@@ -21,6 +57,9 @@ class Logger:
     def flush(self) -> _SageObject: ...
 
 class DocTestController:
+    logger: Logger
+    logfile: None
+
     def __init__(self, options: builtins.object, args: builtins.object) -> None: ...
     def __del__(self) -> _SageObject: ...
     def load_environment(self) -> _SageObject: ...
@@ -39,6 +78,6 @@ class DocTestController:
     def run_val_gdb(self, testing: builtins.bool = ...) -> _SageObject: ...
     def run(self) -> _SageObject: ...
 
-def run_doctests(module: builtins.object, options: builtins.object = ...) -> _SageObject: ...
+def run_doctests(self, options: builtins.object = ...) -> _SageObject: ...
 
 test_hide: _SageObject

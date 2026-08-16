@@ -1,17 +1,17 @@
 from collections.abc import Iterable, Iterator
-from typing import Literal, overload
+from typing import overload
 
+from sage.categories.morphism import Morphism
 from sage.categories.rings import Rings
 from sage.modules.free_module import FreeModule_generic
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing_generic
 from sage.rings.ideal import Ideal_pid
+from sage.rings.infinity import PlusInfinity as Infinity
 from sage.rings.integer import Integer
+from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.rational_field import RationalField
 from sage.rings.ring import PrincipalIdealDomain, Ring
-from sage.rings.infinity import PlusInfinity as Infinity
-from sage.structure.parent import ElementConstructorInput, MembershipInput, Parent
-from sage.categories.morphism import Morphism
-from sage.rings.polynomial.polynomial_element import Polynomial
+from sage.structure.parent import ElementConstructorInput, Parent
 
 class IntegerRing_class(PrincipalIdealDomain, Rings.ParentMethods[Integer]):
     def __init__(self) -> None: ...
@@ -33,13 +33,11 @@ class IntegerRing_class(PrincipalIdealDomain, Rings.ParentMethods[Integer]):
     def zero(self) -> Integer: ...
     def one(self) -> Integer: ...
     def __iter__(self) -> Iterator[Integer]: ...
-    def __contains__(self, x: MembershipInput) -> bool: ...
+    def __contains__(self, x: object) -> bool: ...
     def __rmul__(self, other: int | Integer) -> Ideal_pid[Integer]: ...
     def __pow__(self, n: int | Integer) -> FreeModule_generic[Integer]: ...
     def ideal(
-        self,
-        *args: ElementConstructorInput,
-        **kwds: ElementConstructorInput,
+        self, *args: ElementConstructorInput, **kwds: ElementConstructorInput
     ) -> Ideal_pid[Integer]: ...
     def quotient(
         self,
@@ -61,10 +59,7 @@ class IntegerRing_class(PrincipalIdealDomain, Rings.ParentMethods[Integer]):
         extras: dict[str, str] | None = ...,
     ) -> Parent: ...
     def residue_field(
-        self,
-        prime: int | Integer,
-        check: bool = ...,
-        names: str | None = ...,
+        self, prime: int | Integer, check: bool = ..., names: str | None = ...
     ) -> Parent: ...
     @overload
     def range(self, end: int) -> Iterator[Integer]: ...

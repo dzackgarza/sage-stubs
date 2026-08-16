@@ -2,4 +2,5 @@ from sage.modules.free_module import FreeModule_generic_pid
 
 class PeriodLattice(FreeModule_generic_pid): ...
 
-class PeriodLattice_ell(PeriodLattice): ...
+class PeriodLattice_ell(PeriodLattice):
+    real_flag: int

@@ -1,8 +1,5 @@
-# Generated from the pinned Sage 10.7 source tree.
 import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
 
 class _SageObject: ...
 
-def read_data(f: builtins.object, t: builtins.object) -> _SageObject: ...
+def read_data(self, t: builtins.object) -> _SageObject: ...

@@ -1,14 +1,22 @@
-# Generated from the pinned Sage 10.7 source tree.
 import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+
+from sage.rings.cc import CC
 
 class _SageObject: ...
-
-class HyperbolicArcCore:
-    ...
+class HyperbolicArcCore: ...
 
 class HyperbolicArc:
-    def __init__(self, A: builtins.object, B: builtins.object, model: builtins.object, options: builtins.object) -> None: ...
+    B: CC
+    A: CC
 
-def hyperbolic_arc(a: builtins.object, b: builtins.object, model: builtins.str = ..., **options: builtins.object) -> _SageObject: ...
+    def __init__(
+        self,
+        A: builtins.object,
+        B: builtins.object,
+        model: builtins.object,
+        options: builtins.object,
+    ) -> None: ...
+
+def hyperbolic_arc(
+    self, b: builtins.object, model: builtins.str = ..., **options: builtins.object
+) -> _SageObject: ...

@@ -1,7 +1,4 @@
-# Generated from the pinned Sage 10.7 source tree.
 import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
 
 class _SageObject: ...
 
@@ -13,7 +10,7 @@ class FunctionFieldDerivation_inseparable:
 
 class FunctionFieldHigherDerivation:
     def __init__(self, field: builtins.object) -> None: ...
-    def __eq__(self, other: builtins.object) -> builtins.bool: ...
+    def __eq__(self, other: object) -> bool: ...
 
 class RationalFunctionFieldHigherDerivation_global:
     def __init__(self, field: builtins.object) -> None: ...

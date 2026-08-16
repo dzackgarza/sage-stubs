@@ -5,12 +5,9 @@ from sage.categories.morphism import Morphism
 from sage.matrix.matrix import Matrix
 from sage.structure.parent import Parent
 
-
 class MatrixMorphism_abstract(Morphism):
     def __init__(
-        self,
-        parent: Homset[Parent, Parent],
-        side: Literal["left", "right"] = "left",
+        self, parent: Homset[Parent, Parent], side: Literal["left", "right"] = "left"
     ) -> None: ...
     def matrix(self) -> Matrix: ...
     def side(self) -> Literal["left", "right"]: ...
@@ -28,12 +25,11 @@ class MatrixMorphism_abstract(Morphism):
     def restrict_codomain(self, sub: Parent) -> Self: ...
     def restrict(self, sub: Parent) -> Self: ...
 
-
 class MatrixMorphism(MatrixMorphism_abstract):
     def __init__(
         self,
         parent: Homset[Parent, Parent],
-        A: Matrix | MatrixMorphism_abstract,
+        A: Matrix | MatrixMorphism_abstract | Literal["left", "right"],
         copy_matrix: bool = True,
         side: Literal["left", "right"] = "left",
     ) -> None: ...

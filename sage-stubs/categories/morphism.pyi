@@ -1,40 +1,36 @@
 from collections.abc import Callable
 from typing import Generic, TypeVar
 
-from sage.categories.map import Map
 from sage.categories.category import Category
+from sage.categories.homset import Homset
+from sage.categories.map import Map
 from sage.structure.element import Element
 from sage.structure.parent import Parent
-
-from sage.categories.homset import Homset
 from sage.structure.sage_object import SageCoercionAtom
 
 type MorphismCallInput = Element | SageCoercionAtom
-
 _DomainElement = TypeVar("_DomainElement", default=Element)
 _CodomainElement = TypeVar("_CodomainElement", default=Element)
 _SourceElement = TypeVar("_SourceElement")
 _IdentityElement = TypeVar("_IdentityElement", default=Element)
 
-class Morphism(Map[_DomainElement, _CodomainElement], Generic[_DomainElement, _CodomainElement]):
-
+class Morphism(
+    Map[_DomainElement, _CodomainElement], Generic[_DomainElement, _CodomainElement]
+):
     def __init__(
         self,
         parent: Homset[
-            Map[_DomainElement, _CodomainElement],
-            _DomainElement,
-            _CodomainElement,
+            Map[_DomainElement, _CodomainElement], _DomainElement, _CodomainElement
         ],
     ) -> None: ...
-    def domain(self) -> Parent[_DomainElement]: ...
-    def codomain(self) -> Parent[_CodomainElement]: ...
+    def domain(self) -> Parent[Morphism]: ...
+    def codomain(self) -> Parent[Morphism]: ...
     def category_for(self) -> Category: ...
-    def __call__(self, x: _DomainElement) -> _CodomainElement: ...
-    def _call_(self, x: _DomainElement) -> _CodomainElement: ...
+    def __call__(self, x: _DomainElement) -> Morphism: ...
+    def _call_(self, x: _DomainElement) -> Morphism: ...
     def __mul__(
-        self,
-        right: Morphism[_SourceElement, _DomainElement],
-    ) -> Morphism[_SourceElement, _CodomainElement]: ...
+        self, right: Morphism[_SourceElement, _DomainElement]
+    ) -> Morphism[_SourceElement, Morphism]: ...
     def is_endomorphism(self) -> bool: ...
     def is_identity(self) -> bool: ...
     def category(self) -> Category: ...
@@ -44,22 +40,31 @@ class Morphism(Map[_DomainElement, _CodomainElement], Generic[_DomainElement, _C
     def __hash__(self) -> int: ...
 
 class FormalCoercionMorphism(Morphism):
-
-
-    def __init__(self, parent: Homset[Map]) -> None: ...
+    def __init__(
+        self,
+        parent: Homset[Map]
+        | Homset[
+            Map[_DomainElement, _CodomainElement], _DomainElement, _CodomainElement
+        ],
+    ) -> None: ...
     def _repr_type(self) -> str: ...
 
 class CallMorphism(Morphism):
-
-
     def _repr_type(self) -> str: ...
 
 class IdentityMorphism(Morphism[_IdentityElement, _IdentityElement]):
-
-
-    def __init__(self, parent: Homset[Map] | Parent) -> None: ...
+    def __init__(
+        self,
+        parent: Homset[Map]
+        | Parent
+        | Homset[
+            Map[_DomainElement, _CodomainElement], _DomainElement, _CodomainElement
+        ],
+    ) -> None: ...
     def _repr_type(self) -> str: ...
-    def __mul__(left: IdentityMorphism, right: Map) -> Map: ...
+    def __mul__(
+        left: IdentityMorphism | Morphism[_SourceElement, _DomainElement], right: Map
+    ) -> Map: ...
     def __invert__(self) -> IdentityMorphism: ...
     def is_identity(self) -> bool: ...
     def section(self) -> IdentityMorphism: ...
@@ -67,22 +72,16 @@ class IdentityMorphism(Morphism[_IdentityElement, _IdentityElement]):
     def is_injective(self) -> bool: ...
 
 class SetMorphism(Morphism[_DomainElement, _CodomainElement]):
-
-
     def __init__(
         self,
         parent: Homset[
-            Map[_DomainElement, _CodomainElement],
-            _DomainElement,
-            _CodomainElement,
+            Map[_DomainElement, _CodomainElement], _DomainElement, _CodomainElement
         ],
         function: Callable[[_DomainElement], _CodomainElement],
     ) -> None: ...
     _function: Callable[[_DomainElement], _CodomainElement]
 
 class SetIsomorphism(SetMorphism):
-
-
     def _set_inverse(self, inverse: SetIsomorphism) -> None: ...
     def __invert__(self) -> SetIsomorphism: ...
     def section(self) -> SetIsomorphism: ...

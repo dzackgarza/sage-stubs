@@ -1,25 +1,42 @@
-# Generated from the pinned Sage 10.7 source tree.
 import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
 
 class _SageObject: ...
 
 class AbelianLieAlgebra:
     @staticmethod
-    def __classcall_private__(cls: builtins.object, R: builtins.int, names: builtins.object = ..., index_set: builtins.object = ..., category: builtins.object = ..., **kwds: builtins.object) -> _SageObject: ...
-    def __init__(self, R: builtins.int, names: builtins.object, index_set: builtins.object, category: builtins.object, **kwds: builtins.object) -> None: ...
-    def is_abelian(self) -> builtins.bool: ...
+    def __classcall_private__(
+        cls: builtins.object,
+        R: builtins.int,
+        names: builtins.object = ...,
+        index_set: builtins.object = ...,
+        category: builtins.object = ...,
+        **kwds: builtins.object,
+    ) -> _SageObject: ...
+    def __init__(
+        self,
+        R: builtins.int,
+        names: builtins.object,
+        index_set: builtins.object,
+        category: builtins.object,
+        **kwds: builtins.object,
+    ) -> None: ...
+    def is_abelian(self) -> bool: ...
     is_nilpotent: _SageObject
     is_solvable: _SageObject
-    class Element:
-        ...
+
+    class Element: ...
 
 class InfiniteDimensionalAbelianLieAlgebra:
-    def __init__(self, R: builtins.int, index_set: builtins.object, prefix: builtins.str = ..., **kwds: builtins.object) -> None: ...
+    def __init__(
+        self,
+        R: builtins.int,
+        index_set: builtins.object,
+        prefix: builtins.str = ...,
+        **kwds: builtins.object,
+    ) -> None: ...
     def dimension(self) -> _SageObject: ...
-    def is_abelian(self) -> builtins.bool: ...
+    def is_abelian(self) -> bool: ...
     is_nilpotent: _SageObject
     is_solvable: _SageObject
-    class Element:
-        ...
+
+    class Element: ...

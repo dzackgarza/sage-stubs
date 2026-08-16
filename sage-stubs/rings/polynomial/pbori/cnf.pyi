@@ -1,6 +1,10 @@
+from random import Random
+
 from sage.rings.polynomial.pbori.pbori import BooleanMonomial, BooleanPolynomial
 
 class CNFEncoder:
+    random_generator: Random
+
     def __init__(self, r: object, random_seed: int = 16) -> None: ...
     def zero_blocks(self, f: object) -> list[BooleanMonomial]: ...
     def clauses(self, f: BooleanPolynomial) -> list[object]: ...

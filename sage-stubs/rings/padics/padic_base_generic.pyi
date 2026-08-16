@@ -1,11 +1,14 @@
-from sage.rings.padics.padic_generic import pAdicGeneric
-from sage.rings.rational_field import RationalField
-from sage.rings.integer_ring import IntegerRing_class
-from sage.rings.integer import Integer
-from sage.structure.element import Element
 from sage.plot.graphics import Graphics
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import IntegerRing_class
+from sage.rings.padics.padic_generic import pAdicGeneric
+from sage.rings.padics.pow_computer import PowComputer
+from sage.rings.rational_field import RationalField
+from sage.structure.element import Element
 
 class pAdicBaseGeneric(pAdicGeneric):
+    prime_pow: PowComputer
+
     def exact_field(self) -> RationalField: ...
     def exact_ring(self) -> IntegerRing_class: ...
     def is_isomorphic(self, ring: object) -> bool: ...

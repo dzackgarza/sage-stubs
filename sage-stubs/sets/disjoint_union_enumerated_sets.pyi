@@ -1,4 +1,5 @@
-from collections.abc import Iterable, Iterator
+from collections.abc import Iterator
+
 from sage.rings.infinity import PlusInfinity
 from sage.structure.element import Element
 from sage.structure.element_wrapper import ElementWrapper
@@ -8,16 +9,14 @@ from sage.structure.unique_representation import UniqueRepresentation
 from .family import Family
 
 class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
-    class Element(ElementWrapper):
-        ...
+    class Element(ElementWrapper): ...
 
-    def __classcall_private__(cls, *args: object, **options: object) -> DisjointUnionEnumeratedSets: ...
+    @staticmethod
+    def __classcall_private__(
+        cls, *args: object, **options: object
+    ) -> DisjointUnionEnumeratedSets: ...
     def __init__(
-        self,
-        family: Family,
-        keepkey: bool = ...,
-        facade: bool = ...,
-        **kwargs: object,
+        self, family: Family, keepkey: bool = ..., facade: bool = ..., **kwargs: object
     ) -> None: ...
     def _repr_(self) -> str: ...
     def _is_a(self, x: object) -> bool: ...

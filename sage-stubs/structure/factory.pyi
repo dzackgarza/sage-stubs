@@ -1,5 +1,5 @@
 from collections.abc import Callable
-from typing import overload, TypeAlias
+from typing import overload
 
 from sage.rings.integer import Integer
 from sage.rings.polynomial.polynomial_element import Polynomial
@@ -7,13 +7,13 @@ from sage.rings.ring import Ring
 from sage.structure.parent import Parent
 from sage.structure.sage_object import SageObject
 
-FactoryVersion: TypeAlias = tuple[int, ...]
-FactoryCacheKeyComponent: TypeAlias = (
+type FactoryVersion = tuple[int, ...]
+type FactoryCacheKeyComponent = (
     Integer | int | str | bool | None | tuple[str, ...] | Polynomial | Ring
 )
-FactoryCacheKey: TypeAlias = tuple[FactoryCacheKeyComponent, ...]
-FactoryExtraArgs: TypeAlias = dict[str, bool]
-FactoryPickleState: TypeAlias = dict[str, Callable[..., SageObject]]
+type FactoryCacheKey = tuple[FactoryCacheKeyComponent, ...]
+type FactoryExtraArgs = dict[str, bool]
+type FactoryPickleState = dict[str, Callable[..., SageObject]]
 type FactoryArgument = (
     SageObject
     | int
@@ -28,7 +28,9 @@ type FactoryArgument = (
 class UniqueFactory(SageObject):
     def __init__(self, name: str) -> None: ...
     def __reduce__(self) -> tuple[Callable[[str], UniqueFactory], tuple[str]]: ...
-    def __call__(self, *args: FactoryArgument, **kwds: FactoryArgument) -> SageObject: ...
+    def __call__(
+        self, *args: FactoryArgument, **kwds: FactoryArgument
+    ) -> SageObject: ...
     def get_object(
         self,
         version: FactoryVersion,
@@ -39,29 +41,36 @@ class UniqueFactory(SageObject):
     def create_key_and_extra_args(
         self, *args: FactoryArgument, **kwds: FactoryArgument
     ) -> tuple[FactoryCacheKey, FactoryExtraArgs]: ...
-    def create_key(self, *args: FactoryArgument, **kwds: FactoryArgument) -> FactoryCacheKey: ...
+    def create_key(
+        self, *args: FactoryArgument, **kwds: FactoryArgument
+    ) -> FactoryCacheKey: ...
     def create_object(
         self,
         version: FactoryVersion,
         key: FactoryCacheKey,
         **extra_args: FactoryArgument,
     ) -> SageObject: ...
-    def other_keys(self, key: FactoryCacheKey, obj: SageObject) -> list[FactoryCacheKey]: ...
+    def other_keys(
+        self, key: FactoryCacheKey, obj: SageObject
+    ) -> list[FactoryCacheKey]: ...
     def reduce_data(
         self, obj: SageObject
-    ) -> tuple[
-        Callable[..., SageObject],
-        tuple[UniqueFactory, FactoryVersion, FactoryCacheKey, FactoryExtraArgs],
-    ] | tuple[
-        Callable[..., SageObject],
+    ) -> (
         tuple[
-            UniqueFactory,
-            FactoryVersion,
-            FactoryCacheKey,
-            FactoryExtraArgs,
-            FactoryPickleState,
-        ],
-    ]: ...
+            Callable[..., SageObject],
+            tuple[UniqueFactory, FactoryVersion, FactoryCacheKey, FactoryExtraArgs],
+        ]
+        | tuple[
+            Callable[..., SageObject],
+            tuple[
+                UniqueFactory,
+                FactoryVersion,
+                FactoryCacheKey,
+                FactoryExtraArgs,
+                FactoryPickleState,
+            ],
+        ]
+    ): ...
 
 def register_factory_unpickle(name: str, callable: Callable[..., Parent]) -> None: ...
 @overload
@@ -79,7 +88,9 @@ def generic_factory_unpickle(
     extra_args: FactoryExtraArgs,
     state: FactoryPickleState,
 ) -> SageObject: ...
-def generic_factory_reduce(self: SageObject, proto: int) -> tuple[Callable[..., SageObject], ...]: ...
+def generic_factory_reduce(
+    self, proto: int
+) -> tuple[Callable[..., SageObject], ...]: ...
 def generic_factory_getstate(obj: SageObject) -> FactoryPickleState: ...
-def generic_factory_setstate(self: SageObject, d: FactoryPickleState) -> None: ...
+def generic_factory_setstate(self, d: FactoryPickleState) -> None: ...
 def lookup_global(name: str) -> UniqueFactory: ...

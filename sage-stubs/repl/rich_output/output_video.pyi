@@ -1,15 +1,16 @@
-# Generated from the pinned Sage 10.7 source tree.
 import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
 
 class _SageObject: ...
 
 class OutputVideoBase:
+    loop: builtins.bool
+
     def __init__(self, video: builtins.object, loop: builtins.bool = ...) -> None: ...
     @classmethod
     def example(cls) -> _SageObject: ...
-    def html_fragment(self, url: builtins.object, link_attrs: builtins.str = ...) -> _SageObject: ...
+    def html_fragment(
+        self, url: builtins.object, link_attrs: builtins.str = ...
+    ) -> _SageObject: ...
 
 class OutputVideoOgg:
     ext: _SageObject

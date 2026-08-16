@@ -1,6 +1,4 @@
-# Generated from the pinned Sage 10.7 source tree.
 import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
 from typing import Self
 
 class _SageObject: ...
@@ -28,8 +26,22 @@ class Octonion:
 
 class OctonionAlgebra:
     @staticmethod
-    def __classcall_private__(cls: builtins.object, R: builtins.object, a: builtins.object = ..., b: builtins.object = ..., c: builtins.object = ..., names: builtins.object = ...) -> _SageObject: ...
-    def __init__(self, R: builtins.object, a: builtins.object, b: builtins.object, c: builtins.object, names: builtins.object) -> None: ...
+    def __classcall_private__(
+        cls,
+        R: builtins.object,
+        a: builtins.object = ...,
+        b: builtins.object = ...,
+        c: builtins.object = ...,
+        names: builtins.object = ...,
+    ) -> _SageObject: ...
+    def __init__(
+        self,
+        R: builtins.object,
+        a: builtins.object,
+        b: builtins.object,
+        c: builtins.object,
+        names: builtins.object,
+    ) -> None: ...
     def some_elements(self) -> _SageObject: ...
     def one_basis(self) -> _SageObject: ...
     def gens(self) -> _SageObject: ...

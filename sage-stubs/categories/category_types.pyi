@@ -5,18 +5,18 @@ from sage.categories.rings import Rings
 from sage.rings.ideal import Ideal_generic as Ideal
 from sage.rings.number_field.number_field_ideal import NumberFieldIdeal
 from sage.rings.ring import Ring
-from sage.structure.element import Element, RingElement
 from sage.structure.category_object import CategoryObject
-from sage.structure.parent import Parent
+from sage.structure.element import Element, RingElement
 from sage.structure.sage_object import SageCoercionAtom
 
 type _IdealInput = Element | SageCoercionAtom | Ideal | NumberFieldIdeal
 type _IdealArg = _IdealInput | list[_IdealInput] | tuple[_IdealInput, ...]
-
 _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement, covariant=True)
 
 class Category_over_base(CategoryWithParameters):
-    def __init__(self, base: Category | CategoryObject, name: str | None = None) -> None: ...
+    def __init__(
+        self, base: Category | CategoryObject, name: str | None = None
+    ) -> None: ...
     @classmethod
     def an_instance(cls) -> Self: ...
     def base(self) -> Category | CategoryObject: ...
@@ -25,15 +25,21 @@ class AbelianCategory(Category):
     def is_abelian(self) -> bool: ...
 
 class Category_over_base_ring(Category_over_base, Generic[_Scalar]):
-    def __init__(self, base: Rings.ParentMethods[_Scalar], name: str | None = None) -> None: ...
-    def base_ring(self) -> Rings.ParentMethods[_Scalar]: ...
+    def __init__(
+        self,
+        base: Rings.ParentMethods[_Scalar] | Category | CategoryObject,
+        name: str | None = None,
+    ) -> None: ...
+    def base_ring(self) -> Rings.ParentMethods[RingElement]: ...
     def __contains__(self, x: object) -> bool: ...
 
 class Category_in_ambient(Category):
     def __init__(self, ambient: CategoryObject, name: str | None = None) -> None: ...
     def ambient(self) -> CategoryObject: ...
 
-class Category_module(AbelianCategory, Category_over_base_ring[_Scalar], Generic[_Scalar]): ...
+class Category_module(
+    AbelianCategory, Category_over_base_ring[_Scalar], Generic[_Scalar]
+): ...
 
 class Category_ideal(Category_in_ambient):
     @classmethod

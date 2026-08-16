@@ -1,17 +1,17 @@
-from collections.abc import Iterable, Iterator, Sequence
+from collections.abc import Iterable
 
 from sage.categories.category import Category
-from sage.categories.sets_cat import EmptySetError
+from sage.rings.infinity import PlusInfinity
 from sage.rings.integer import Integer
 from sage.rings.rational import Rational
-from sage.rings.infinity import PlusInfinity
 from sage.structure.unique_representation import UniqueRepresentation
 
 from .set import Set_generic
 
-def _repr_items(items: Sequence[object], left: int = ..., right: int = ...) -> str: ...
+def _repr_items(self, left: int = ..., right: int = ...) -> str: ...
 
 class Primes(Set_generic, UniqueRepresentation):
+    @staticmethod
     def __classcall__(cls, *args: object, **options: object) -> Primes: ...
     def __init__(
         self,
@@ -37,14 +37,10 @@ class Primes(Set_generic, UniqueRepresentation):
     def is_cofinite(self) -> bool: ...
     def density(self) -> Rational: ...
     def include(
-        self,
-        elements: Integer | int | Iterable[Integer | int],
-        check: bool = ...,
+        self, elements: Integer | int | Iterable[Integer | int], check: bool = ...
     ) -> Primes: ...
     def exclude(
-        self,
-        elements: Integer | int | Iterable[Integer | int],
-        check: bool = ...,
+        self, elements: Integer | int | Iterable[Integer | int], check: bool = ...
     ) -> Primes: ...
     def complement_in_primes(self) -> Primes: ...
     def intersection(self, other: Primes) -> Primes: ...

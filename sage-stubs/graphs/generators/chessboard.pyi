@@ -1,18 +1,47 @@
-# Generated from the pinned Sage 10.7 source tree.
 import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
 
 class _SageObject: ...
 
-def ChessboardGraphGenerator(dim_list: builtins.object, rook: builtins.bool = ..., rook_radius: builtins.object = ..., bishop: builtins.bool = ..., bishop_radius: builtins.object = ..., knight: builtins.bool = ..., knight_x: builtins.int = ..., knight_y: builtins.int = ..., relabel: builtins.bool = ..., immutable: builtins.bool = ...) -> _SageObject: ...
-
-def QueenGraph(dim_list: builtins.object, radius: builtins.object = ..., relabel: builtins.bool = ..., immutable: builtins.bool = ...) -> _SageObject: ...
-
-def KingGraph(dim_list: builtins.object, radius: builtins.object = ..., relabel: builtins.bool = ..., immutable: builtins.bool = ...) -> _SageObject: ...
-
-def KnightGraph(dim_list: builtins.object, one: builtins.int = ..., two: builtins.int = ..., relabel: builtins.bool = ..., immutable: builtins.bool = ...) -> _SageObject: ...
-
-def RookGraph(dim_list: builtins.object, radius: builtins.object = ..., relabel: builtins.bool = ..., immutable: builtins.bool = ...) -> _SageObject: ...
-
-def BishopGraph(dim_list: builtins.object, radius: builtins.object = ..., relabel: builtins.bool = ..., immutable: builtins.bool = ...) -> _SageObject: ...
+def ChessboardGraphGenerator(
+    self,
+    rook: builtins.bool = ...,
+    rook_radius: builtins.object = ...,
+    bishop: builtins.bool = ...,
+    bishop_radius: builtins.object = ...,
+    knight: builtins.bool = ...,
+    knight_x: builtins.int = ...,
+    knight_y: builtins.int = ...,
+    relabel: builtins.bool = ...,
+    immutable: builtins.bool = ...,
+) -> _SageObject: ...
+def QueenGraph(
+    self,
+    radius: builtins.object = ...,
+    relabel: builtins.bool = ...,
+    immutable: builtins.bool = ...,
+) -> _SageObject: ...
+def KingGraph(
+    self,
+    radius: builtins.object = ...,
+    relabel: builtins.bool = ...,
+    immutable: builtins.bool = ...,
+) -> _SageObject: ...
+def KnightGraph(
+    self,
+    one: builtins.int = ...,
+    two: builtins.int = ...,
+    relabel: builtins.bool = ...,
+    immutable: builtins.bool = ...,
+) -> _SageObject: ...
+def RookGraph(
+    self,
+    radius: builtins.object = ...,
+    relabel: builtins.bool = ...,
+    immutable: builtins.bool = ...,
+) -> _SageObject: ...
+def BishopGraph(
+    self,
+    radius: builtins.object = ...,
+    relabel: builtins.bool = ...,
+    immutable: builtins.bool = ...,
+) -> _SageObject: ...

@@ -1,3 +1,4 @@
+from sage.categories.category import Category
 from sage.modular.arithgroup.congroup_generic import CongruenceSubgroup
 from sage.modular.dirichlet import DirichletCharacter
 from sage.modular.hecke.module import HeckeModule_generic
@@ -8,9 +9,9 @@ from sage.rings.ring import CommutativeRing
 class BoundarySpace(HeckeModule_generic):
     def __init__(
         self,
-        group: CongruenceSubgroup = ...,
+        group: CongruenceSubgroup | CommutativeRing = ...,
         weight: int | Integer = ...,
-        sign: int | Integer = ...,
+        sign: int | Integer | Category | None = ...,
         base_ring: CommutativeRing = ...,
         character: DirichletCharacter | None = ...,
     ) -> None: ...

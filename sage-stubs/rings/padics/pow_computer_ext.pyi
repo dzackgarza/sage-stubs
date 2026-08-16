@@ -1,18 +1,35 @@
-# Generated from the pinned Sage 10.7 source tree.
 import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
 
 class _SageObject: ...
 
-def ZZ_pX_Eis_init(prime_pow: builtins.object, shift_seed: builtins.object) -> _SageObject: ...
-
-def ZZ_pX_eis_shift_test(_shifter: builtins.object, _a: builtins.object, _n: builtins.object, _finalprec: builtins.object) -> _SageObject: ...
-
-def ZZ_pX_eis_shift_p(self: builtins.object, x: builtins.object, a: builtins.object, n: builtins.object, finalprec: builtins.object) -> _SageObject: ...
+def ZZ_pX_Eis_init(
+    prime_pow: builtins.object, shift_seed: builtins.object
+) -> _SageObject: ...
+def ZZ_pX_eis_shift_test(
+    _shifter: builtins.object,
+    _a: builtins.object,
+    _n: builtins.object,
+    _finalprec: builtins.object,
+) -> _SageObject: ...
+def ZZ_pX_eis_shift_p(
+    self,
+    x: builtins.object,
+    a: builtins.object,
+    n: builtins.object,
+    finalprec: builtins.object,
+) -> _SageObject: ...
 
 class PowComputer_ext:
-    def __cinit__(self, prime: builtins.object, cache_limit: builtins.object, prec_cap: builtins.object, ram_prec_cap: builtins.object, in_field: builtins.object, poly: builtins.object, shift_seed: builtins.object = ...) -> _SageObject: ...
+    def __cinit__(
+        self,
+        prime: builtins.object,
+        cache_limit: builtins.object,
+        prec_cap: builtins.object,
+        ram_prec_cap: builtins.object,
+        in_field: builtins.object,
+        poly: builtins.object,
+        shift_seed: builtins.object = ...,
+    ) -> _SageObject: ...
     def __dealloc__(self) -> _SageObject: ...
     def __reduce__(self) -> builtins.str | builtins.tuple[builtins.object, ...]: ...
     def cleanup_ext(self) -> _SageObject: ...
@@ -22,7 +39,16 @@ class PowComputer_ext:
     def pow_ZZ_top(self) -> _SageObject: ...
 
 class PowComputer_ZZ_pX:
-    def __cinit__(self, prime: builtins.object, cache_limit: builtins.object, prec_cap: builtins.object, ram_prec_cap: builtins.object, in_field: builtins.object, poly: builtins.object, shift_seed: builtins.object = ...) -> _SageObject: ...
+    def __cinit__(
+        self,
+        prime: builtins.object,
+        cache_limit: builtins.object,
+        prec_cap: builtins.object,
+        ram_prec_cap: builtins.object,
+        in_field: builtins.object,
+        poly: builtins.object,
+        shift_seed: builtins.object = ...,
+    ) -> _SageObject: ...
     def polynomial(self) -> _SageObject: ...
     def get_context(self, n: builtins.object) -> _SageObject: ...
     def get_context_capdiv(self, n: builtins.object) -> _SageObject: ...
@@ -35,25 +61,72 @@ class PowComputer_ZZ_pX:
     def get_modulus_capdiv(self, n: builtins.object) -> _SageObject: ...
     def get_top_modulus(self) -> _SageObject: ...
     def capdiv(self, n: builtins.object) -> _SageObject: ...
-    def eis_shift(self, x: builtins.object, a: builtins.object, n: builtins.object, finalprec: builtins.object) -> _SageObject: ...
-    def eis_shift_capdiv(self, x: builtins.object, a: builtins.object, n: builtins.object, finalprec: builtins.object) -> _SageObject: ...
-    def teichmuller_set_c(self, x: builtins.object, a: builtins.object, absprec: builtins.object) -> _SageObject: ...
+    def eis_shift(
+        self,
+        x: builtins.object,
+        a: builtins.object,
+        n: builtins.object,
+        finalprec: builtins.object,
+    ) -> _SageObject: ...
+    def eis_shift_capdiv(
+        self,
+        x: builtins.object,
+        a: builtins.object,
+        n: builtins.object,
+        finalprec: builtins.object,
+    ) -> _SageObject: ...
+    def teichmuller_set_c(
+        self, x: builtins.object, a: builtins.object, absprec: builtins.object
+    ) -> _SageObject: ...
 
 class PowComputer_ZZ_pX_FM:
-    def __cinit__(self, prime: builtins.object, cache_limit: builtins.object, prec_cap: builtins.object, ram_prec_cap: builtins.object, in_field: builtins.object, poly: builtins.object, shift_seed: builtins.object = ...) -> _SageObject: ...
+    def __cinit__(
+        self,
+        prime: builtins.object,
+        cache_limit: builtins.object,
+        prec_cap: builtins.object,
+        ram_prec_cap: builtins.object,
+        in_field: builtins.object,
+        poly: builtins.object,
+        shift_seed: builtins.object = ...,
+    ) -> _SageObject: ...
     def get_top_context(self) -> _SageObject: ...
     def restore_top_context(self) -> _SageObject: ...
     def get_top_modulus(self) -> _SageObject: ...
     def get_modulus(self, n: builtins.object) -> _SageObject: ...
 
 class PowComputer_ZZ_pX_FM_Eis:
-    def __cinit__(self, prime: builtins.object, cache_limit: builtins.object, prec_cap: builtins.object, ram_prec_cap: builtins.object, in_field: builtins.object, poly: builtins.object, shift_seed: builtins.object = ...) -> _SageObject: ...
+    def __cinit__(
+        self,
+        prime: builtins.object,
+        cache_limit: builtins.object,
+        prec_cap: builtins.object,
+        ram_prec_cap: builtins.object,
+        in_field: builtins.object,
+        poly: builtins.object,
+        shift_seed: builtins.object = ...,
+    ) -> _SageObject: ...
     def __dealloc__(self) -> _SageObject: ...
     def cleanup_ZZ_pX_FM_Eis(self) -> _SageObject: ...
-    def eis_shift(self, x: builtins.object, a: builtins.object, n: builtins.object, finalprec: builtins.object) -> _SageObject: ...
+    def eis_shift(
+        self,
+        x: builtins.object,
+        a: builtins.object,
+        n: builtins.object,
+        finalprec: builtins.object,
+    ) -> _SageObject: ...
 
 class PowComputer_ZZ_pX_small:
-    def __cinit__(self, prime: builtins.object, cache_limit: builtins.object, prec_cap: builtins.object, ram_prec_cap: builtins.object, in_field: builtins.object, poly: builtins.object, shift_seed: builtins.object = ...) -> _SageObject: ...
+    def __cinit__(
+        self,
+        prime: builtins.object,
+        cache_limit: builtins.object,
+        prec_cap: builtins.object,
+        ram_prec_cap: builtins.object,
+        in_field: builtins.object,
+        poly: builtins.object,
+        shift_seed: builtins.object = ...,
+    ) -> _SageObject: ...
     def __dealloc__(self) -> _SageObject: ...
     def cleanup_ZZ_pX_small(self) -> _SageObject: ...
     def get_context(self, n: builtins.object) -> _SageObject: ...
@@ -64,13 +137,37 @@ class PowComputer_ZZ_pX_small:
     def get_top_modulus(self) -> _SageObject: ...
 
 class PowComputer_ZZ_pX_small_Eis:
-    def __cinit__(self, prime: builtins.object, cache_limit: builtins.object, prec_cap: builtins.object, ram_prec_cap: builtins.object, in_field: builtins.object, poly: builtins.object, shift_seed: builtins.object = ...) -> _SageObject: ...
+    def __cinit__(
+        self,
+        prime: builtins.object,
+        cache_limit: builtins.object,
+        prec_cap: builtins.object,
+        ram_prec_cap: builtins.object,
+        in_field: builtins.object,
+        poly: builtins.object,
+        shift_seed: builtins.object = ...,
+    ) -> _SageObject: ...
     def __dealloc__(self) -> _SageObject: ...
     def cleanup_ZZ_pX_small_Eis(self) -> _SageObject: ...
-    def eis_shift(self, x: builtins.object, a: builtins.object, n: builtins.object, finalprec: builtins.object) -> _SageObject: ...
+    def eis_shift(
+        self,
+        x: builtins.object,
+        a: builtins.object,
+        n: builtins.object,
+        finalprec: builtins.object,
+    ) -> _SageObject: ...
 
 class PowComputer_ZZ_pX_big:
-    def __cinit__(self, prime: builtins.object, cache_limit: builtins.object, prec_cap: builtins.object, ram_prec_cap: builtins.object, in_field: builtins.object, poly: builtins.object, shift_seed: builtins.object = ...) -> _SageObject: ...
+    def __cinit__(
+        self,
+        prime: builtins.object,
+        cache_limit: builtins.object,
+        prec_cap: builtins.object,
+        ram_prec_cap: builtins.object,
+        in_field: builtins.object,
+        poly: builtins.object,
+        shift_seed: builtins.object = ...,
+    ) -> _SageObject: ...
     def __dealloc__(self) -> _SageObject: ...
     def cleanup_ZZ_pX_big(self) -> _SageObject: ...
     def reset_dictionaries(self) -> _SageObject: ...
@@ -81,9 +178,34 @@ class PowComputer_ZZ_pX_big:
     def get_top_modulus(self) -> _SageObject: ...
 
 class PowComputer_ZZ_pX_big_Eis:
-    def __cinit__(self, prime: builtins.object, cache_limit: builtins.object, prec_cap: builtins.object, ram_prec_cap: builtins.object, in_field: builtins.object, poly: builtins.object, shift_seed: builtins.object = ...) -> _SageObject: ...
+    def __cinit__(
+        self,
+        prime: builtins.object,
+        cache_limit: builtins.object,
+        prec_cap: builtins.object,
+        ram_prec_cap: builtins.object,
+        in_field: builtins.object,
+        poly: builtins.object,
+        shift_seed: builtins.object = ...,
+    ) -> _SageObject: ...
     def __dealloc__(self) -> _SageObject: ...
     def cleanup_ZZ_pX_big_Eis(self) -> _SageObject: ...
-    def eis_shift(self, x: builtins.object, a: builtins.object, n: builtins.object, finalprec: builtins.object) -> _SageObject: ...
+    def eis_shift(
+        self,
+        x: builtins.object,
+        a: builtins.object,
+        n: builtins.object,
+        finalprec: builtins.object,
+    ) -> _SageObject: ...
 
-def PowComputer_ext_maker(prime: builtins.object, cache_limit: builtins.object, prec_cap: builtins.object, ram_prec_cap: builtins.object, in_field: builtins.object, poly: builtins.object, prec_type: builtins.object = ..., ext_type: builtins.object = ..., shift_seed: builtins.object = ...) -> _SageObject: ...
+def PowComputer_ext_maker(
+    prime: builtins.object,
+    cache_limit: builtins.object,
+    prec_cap: builtins.object,
+    ram_prec_cap: builtins.object,
+    in_field: builtins.object,
+    poly: builtins.object,
+    prec_type: builtins.object = ...,
+    ext_type: builtins.object = ...,
+    shift_seed: builtins.object = ...,
+) -> _SageObject: ...

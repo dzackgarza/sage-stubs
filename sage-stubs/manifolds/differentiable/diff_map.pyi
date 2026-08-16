@@ -1,6 +1,7 @@
 from collections.abc import Mapping, Sequence
-from typing import TypeAlias, overload
+from typing import overload
 
+from sage.categories.homset import Homset
 from sage.manifolds.chart import Chart
 from sage.manifolds.chart_func import ChartFunction
 from sage.manifolds.continuous_map import ContinuousMap
@@ -8,6 +9,7 @@ from sage.manifolds.differentiable.scalarfield import DiffScalarField
 from sage.manifolds.differentiable.tensorfield import TensorField
 from sage.manifolds.differentiable.tensorfield_paral import TensorFieldParal
 from sage.manifolds.differentiable.vectorfield import VectorField
+from sage.manifolds.manifold import TopologicalManifold
 from sage.manifolds.point import ManifoldPoint
 from sage.manifolds.subset import ManifoldSubset
 from sage.manifolds.subsets.pullback import ManifoldSubsetPullback
@@ -16,21 +18,23 @@ from sage.structure.element import Element, Expression
 from sage.structure.parent import Parent
 from sage.tensor.modules.free_module_morphism import FiniteRankFreeModuleMorphism
 
-_CoordinateFunction: TypeAlias = Element | Expression | int | float | complex | str | ChartFunction
-_CoordinateFunctions: TypeAlias = (
+type _CoordinateFunction = (
+    Element | Expression | int | float | complex | str | ChartFunction
+)
+type _CoordinateFunctions = (
     _CoordinateFunction
     | Sequence[_CoordinateFunction]
     | Mapping[tuple[Chart, Chart], _CoordinateFunction | Sequence[_CoordinateFunction]]
 )
-_ChartFunctionRow: TypeAlias = Sequence[ChartFunction]
-_JacobianFunctions: TypeAlias = Sequence[_ChartFunctionRow]
-_MatrixEntry: TypeAlias = Element | Expression | Integer | int
-_JacobianMatrix: TypeAlias = Sequence[Sequence[_MatrixEntry]]
+type _ChartFunctionRow = Sequence[ChartFunction]
+type _JacobianFunctions = Sequence[_ChartFunctionRow]
+type _MatrixEntry = Element | Expression | Integer | int
+type _JacobianMatrix = Sequence[Sequence[_MatrixEntry]]
 
 class DiffMap(ContinuousMap):
     def __init__(
         self,
-        parent: Parent,
+        parent: Parent | Homset[TopologicalManifold, TopologicalManifold],
         coord_functions: _CoordinateFunctions | None = None,
         name: str | None = None,
         latex_name: str | None = None,
@@ -38,8 +42,12 @@ class DiffMap(ContinuousMap):
         is_identity: bool = False,
     ) -> None: ...
     def differential(self, point: ManifoldPoint) -> FiniteRankFreeModuleMorphism: ...
-    def differential_functions(self, chart1: Chart | None = None, chart2: Chart | None = None) -> _JacobianFunctions: ...
-    def jacobian_matrix(self, chart1: Chart | None = None, chart2: Chart | None = None) -> _JacobianMatrix: ...
+    def differential_functions(
+        self, chart1: Chart | None = None, chart2: Chart | None = None
+    ) -> _JacobianFunctions: ...
+    def jacobian_matrix(
+        self, chart1: Chart | None = None, chart2: Chart | None = None
+    ) -> _JacobianMatrix: ...
     @overload
     def pullback(
         self,
@@ -62,6 +70,8 @@ class DiffMap(ContinuousMap):
         latex_name: str | None = None,
     ) -> TensorField | TensorFieldParal: ...
     @overload
-    def pushforward(self, tensor: VectorField | TensorFieldParal) -> TensorFieldParal: ...
+    def pushforward(
+        self, tensor: VectorField | TensorFieldParal
+    ) -> TensorFieldParal: ...
     @overload
     def pushforward(self, tensor: Element) -> Element: ...

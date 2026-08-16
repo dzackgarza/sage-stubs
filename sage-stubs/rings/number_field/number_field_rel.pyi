@@ -1,15 +1,12 @@
-from typing import Literal, NoReturn, TypeAlias, overload
+from typing import Literal, NoReturn, overload
 
 from sage.categories.category import Category
 from sage.categories.map import Map
 from sage.libs.pari.gen import gen as pari_gen
 from sage.modules.free_module import FreeModule_ambient_field
 from sage.rings.integer import Integer
+from sage.rings.integer_ring import IntegerRing_class
 from sage.rings.morphism import RingHomomorphism
-from sage.rings.number_field.number_field import NumberField_generic
-from sage.rings.number_field.number_field_base import NumberField
-from sage.rings.number_field.number_field_element import NumberFieldElement
-from sage.rings.number_field.number_field_ideal_rel import NumberFieldFractionalIdeal_rel
 from sage.rings.number_field.homset import RelativeNumberFieldHomset
 from sage.rings.number_field.maps import (
     MapRelativeNumberFieldToRelativeVectorSpace,
@@ -17,22 +14,30 @@ from sage.rings.number_field.maps import (
     MapRelativeVectorSpaceToRelativeNumberField,
     MapVectorSpaceToRelativeNumberField,
 )
+from sage.rings.number_field.number_field import NumberField_generic
+from sage.rings.number_field.number_field_base import NumberField
+from sage.rings.number_field.number_field_element import NumberFieldElement
+from sage.rings.number_field.number_field_ideal_rel import (
+    NumberFieldFractionalIdeal_rel,
+)
 from sage.rings.number_field.order import RelativeOrder
 from sage.rings.number_field.structure import NumberFieldStructure
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.rational import Rational
 from sage.rings.rational_field import RationalField
-from sage.rings.integer_ring import IntegerRing_class
+from sage.structure.element import Element
 from sage.structure.sequence import Sequence_generic
 
-_ExactScalar: TypeAlias = int | Integer | Rational
-_ElementInput: TypeAlias = NumberFieldElement | Polynomial | pari_gen | _ExactScalar | list[_ExactScalar]
-_RelativeVectorSpaceMaps: TypeAlias = tuple[
+type _ExactScalar = int | Integer | Rational
+type _ElementInput = (
+    NumberFieldElement | Polynomial | pari_gen | _ExactScalar | list[_ExactScalar]
+)
+type _RelativeVectorSpaceMaps = tuple[
     FreeModule_ambient_field,
     MapRelativeVectorSpaceToRelativeNumberField,
     MapRelativeNumberFieldToRelativeVectorSpace,
 ]
-_AbsoluteVectorSpaceMaps: TypeAlias = tuple[
+type _AbsoluteVectorSpaceMaps = tuple[
     FreeModule_ambient_field,
     MapVectorSpaceToRelativeNumberField,
     MapRelativeNumberFieldToVectorSpace,
@@ -51,9 +56,11 @@ class NumberField_relative(NumberField_generic):
         structure: NumberFieldStructure | None = ...,
     ) -> None: ...
     def change_names(self, names: tuple[str, ...] | str) -> NumberField_relative: ...
-    def subfields(self, degree: int = ..., name: str | None = ...) -> Sequence_generic: ...
+    def subfields(
+        self, degree: int = ..., name: str | None = ...
+    ) -> Sequence_generic: ...
     def is_absolute(self) -> bool: ...
-    def gens(self) -> tuple[NumberFieldElement, ...]: ...
+    def gens(self) -> tuple[Element, ...]: ...
     def _first_ngens(self, n: int) -> tuple[NumberFieldElement, ...]: ...
     def ngens(self) -> int: ...
     def gen(self, n: int = ...) -> NumberFieldElement: ...
@@ -68,16 +75,27 @@ class NumberField_relative(NumberField_generic):
     def absolute_degree(self) -> int: ...
     def relative_degree(self) -> int: ...
     def degree(self) -> int: ...
-    def _maximal_order(self, v: tuple[Integer, ...] = ..., assume_maximal: str = ...) -> RelativeOrder: ...
+    def _maximal_order(
+        self, v: tuple[Integer, ...] = ..., assume_maximal: str = ...
+    ) -> RelativeOrder: ...
     def _repr_(self) -> str: ...
-    def _Hom_(self, codomain: NumberField_generic, category: Category | None = ...) -> RelativeNumberFieldHomset: ...
+    def _Hom_(
+        self, codomain: NumberField_generic, category: Category | None = ...
+    ) -> RelativeNumberFieldHomset: ...
     def _latex_(self) -> str: ...
-    def _coerce_from_other_number_field(self, x: NumberFieldElement) -> NumberFieldElement: ...
-    def _convert_non_number_field_element(self, x: Polynomial | list[_ExactScalar] | _ExactScalar) -> NumberFieldElement: ...
+    def _coerce_from_other_number_field(
+        self, x: NumberFieldElement
+    ) -> NumberFieldElement: ...
+    def _convert_non_number_field_element(
+        self, x: Polynomial | list[_ExactScalar] | _ExactScalar
+    ) -> NumberFieldElement: ...
     def _coerce_map_from_(
-        self, R: type[int] | IntegerRing_class | RationalField | NumberField | RelativeOrder
+        self,
+        R: type[int] | IntegerRing_class | RationalField | NumberField | RelativeOrder,
     ) -> Map | None: ...
-    def _element_constructor_(self, x: _ElementInput, check: bool = ...) -> NumberFieldElement: ...
+    def _element_constructor_(
+        self, x: _ElementInput, check: bool = ...
+    ) -> NumberFieldElement: ...
     def _fractional_ideal_class_(self) -> type[NumberFieldFractionalIdeal_rel]: ...
     def is_galois(self) -> bool: ...
     def is_galois_relative(self) -> bool: ...
@@ -88,7 +106,10 @@ class NumberField_relative(NumberField_generic):
     def is_CM_extension(self) -> bool: ...
     @overload
     def free_module(
-        self, base: NumberField | RationalField | None = ..., basis: None = ..., map: Literal[False] = False
+        self,
+        base: NumberField | RationalField | None = ...,
+        basis: None = ...,
+        map: Literal[False] = False,
     ) -> FreeModule_ambient_field: ...
     @overload
     def free_module(
@@ -99,22 +120,36 @@ class NumberField_relative(NumberField_generic):
     ) -> _RelativeVectorSpaceMaps | _AbsoluteVectorSpaceMaps: ...
     @overload
     def relative_vector_space(
-        self, base: NumberField | None = ..., basis: None = ..., map: Literal[False] = False
+        self,
+        base: NumberField | None = ...,
+        basis: None = ...,
+        map: Literal[False] = False,
     ) -> FreeModule_ambient_field: ...
     @overload
     def relative_vector_space(
-        self, base: NumberField | None = ..., basis: None = ..., map: Literal[True] = True
+        self,
+        base: NumberField | None = ...,
+        basis: None = ...,
+        map: Literal[True] = True,
     ) -> _RelativeVectorSpaceMaps: ...
     @overload
     def absolute_vector_space(
-        self, base: RationalField | None = ..., basis: None = ..., map: Literal[False] = False
+        self,
+        base: RationalField | None = ...,
+        basis: None = ...,
+        map: Literal[False] = False,
     ) -> FreeModule_ambient_field: ...
     @overload
     def absolute_vector_space(
-        self, base: RationalField | None = ..., basis: None = ..., map: Literal[True] = True
+        self,
+        base: RationalField | None = ...,
+        basis: None = ...,
+        map: Literal[True] = True,
     ) -> _AbsoluteVectorSpaceMaps: ...
     def vector_space(self) -> NoReturn: ...
-    def absolute_base_field(self) -> tuple[NumberField_generic, RingHomomorphism, RingHomomorphism]: ...
+    def absolute_base_field(
+        self,
+    ) -> tuple[NumberField_generic, RingHomomorphism, RingHomomorphism]: ...
     def _pari_rnfeq(self) -> pari_gen: ...
     def _pari_nfzk(self) -> pari_gen: ...
     def _pari_relative_structure(self) -> tuple[pari_gen, pari_gen, pari_gen]: ...

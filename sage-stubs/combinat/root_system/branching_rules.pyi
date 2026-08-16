@@ -1,9 +1,9 @@
 from collections.abc import Callable
-from sage.structure.sage_object import SageObject
-from sage.combinat.root_system.cartan_type import CartanType_abstract as CartanType
 
+from sage.combinat.root_system.cartan_type import CartanType_abstract as CartanType
 from sage.combinat.root_system.weyl_characters import WeylCharacterRing
 from sage.modules.free_module_element import FreeModuleElement
+from sage.structure.sage_object import SageObject
 
 WeylCharacter = WeylCharacterRing.Element
 
@@ -25,7 +25,9 @@ class BranchingRule(SageObject):
         intermediate_names: list[str] | None = ...,
     ) -> None: ...
     def _repr_(self) -> str: ...
-    def __call__(self, x: list[int] | FreeModuleElement) -> list[int] | tuple[int, ...]: ...
+    def __call__(
+        self, x: list[int] | FreeModuleElement
+    ) -> list[int] | tuple[int, ...]: ...
     def __eq__(self, other: object) -> bool: ...
     def __ne__(self, other: object) -> bool: ...
     def __mul__(self, other: BranchingRule) -> BranchingRule: ...
@@ -37,19 +39,11 @@ class BranchingRule(SageObject):
     def branch(self, chi: WeylCharacter, style: str | None = ...) -> WeylCharacter: ...
 
 def branch_weyl_character(
-    chi: WeylCharacter,
-    R: CartanType | str,
-    S: CartanType | str,
-    rule: str | BranchingRule = ...,
+    self, R: CartanType | str, S: CartanType | str, rule: str | BranchingRule = ...
 ) -> WeylCharacter: ...
-
 def branching_rule(
-    Rtype: CartanType | str,
+    self,
     Stype: CartanType | str,
     rule: str | BranchingRule | list[BranchingRule | str] = ...,
 ) -> BranchingRule: ...
-
-def branching_rule_from_plethysm(
-    chi: WeylCharacter,
-    Rtype: CartanType | str,
-) -> BranchingRule: ...
+def branching_rule_from_plethysm(self, Rtype: CartanType | str) -> BranchingRule: ...

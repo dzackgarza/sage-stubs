@@ -1,10 +1,11 @@
-from collections.abc import Iterable, Iterator
-from sage.rings.integer import Integer
+from collections.abc import Iterator
+
 from sage.structure.element import Element
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 
 class FiniteEnumeratedSet(UniqueRepresentation, Parent):
+    @staticmethod
     def __classcall__(cls, *args: object, **options: object) -> FiniteEnumeratedSet: ...
     def __init__(self, elements: tuple[object, ...]) -> None: ...
     def __bool__(self) -> bool: ...

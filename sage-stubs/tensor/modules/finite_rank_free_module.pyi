@@ -1,5 +1,5 @@
-from collections.abc import Iterable, Iterator, Sequence
-from typing import Literal, Protocol, TypeAlias, overload
+from collections.abc import Iterable, Sequence
+from typing import Literal, Protocol, overload
 
 from sage.categories.morphism import SetIsomorphism
 from sage.categories.pushout import VectorFunctor
@@ -12,7 +12,10 @@ from sage.structure.element import Element as SageElement
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.tensor.modules.comp import Components
-from sage.tensor.modules.ext_pow_free_module import ExtPowerDualFreeModule, ExtPowerFreeModule
+from sage.tensor.modules.ext_pow_free_module import (
+    ExtPowerDualFreeModule,
+    ExtPowerFreeModule,
+)
 from sage.tensor.modules.free_module_alt_form import FreeModuleAltForm
 from sage.tensor.modules.free_module_automorphism import FreeModuleAutomorphism
 from sage.tensor.modules.free_module_basis import FreeModuleBasis
@@ -28,17 +31,17 @@ from sage.tensor.modules.reflexive_module import (
 from sage.tensor.modules.tensor_free_module import TensorFreeModule
 from sage.tensor.modules.tensor_free_submodule import TensorFreeSubmodule_sym
 
-_Name: TypeAlias = str | None
-_BasisSymbol: TypeAlias = str | Sequence[str]
-_BasisIndices: TypeAlias = Sequence[str] | None
-_TensorType: TypeAlias = tuple[int, int]
-_IndexBlock: TypeAlias = Iterable[int]
-_Symmetry: TypeAlias = _IndexBlock | Iterable[_IndexBlock] | None
-_TensorKeyword: TypeAlias = str | _Symmetry
-_RingElementInput: TypeAlias = SageElement | int | Integer
-_ComponentVector: TypeAlias = Sequence[_RingElementInput]
-_ComponentMatrix: TypeAlias = Sequence[_ComponentVector]
-_MatrixLike: TypeAlias = Matrix | _ComponentMatrix
+type _Name = str | None
+type _BasisSymbol = str | Sequence[str]
+type _BasisIndices = Sequence[str] | None
+type _TensorType = tuple[int, int]
+type _IndexBlock = Iterable[int]
+type _Symmetry = _IndexBlock | Iterable[_IndexBlock] | None
+type _TensorKeyword = str | _Symmetry
+type _RingElementInput = SageElement | int | Integer
+type _ComponentVector = Sequence[_RingElementInput]
+type _ComponentMatrix = Sequence[_ComponentVector]
+type _MatrixLike = Matrix | _ComponentMatrix
 
 class _Formatter1(Protocol):
     def __call__(self, value: SageElement) -> SageElement: ...
@@ -46,7 +49,7 @@ class _Formatter1(Protocol):
 class _Formatter2(Protocol):
     def __call__(self, value: SageElement, format_spec: int | str) -> SageElement: ...
 
-_OutputFormatter: TypeAlias = _Formatter1 | _Formatter2
+type _OutputFormatter = _Formatter1 | _Formatter2
 
 class FiniteRankFreeModule_abstract(UniqueRepresentation, ReflexiveModule_abstract):
     def __init__(
@@ -62,15 +65,15 @@ class FiniteRankFreeModule_abstract(UniqueRepresentation, ReflexiveModule_abstra
     def zero(self) -> FiniteRankFreeModuleElement | FreeModuleTensor: ...
     def ambient_module(self) -> ReflexiveModule_abstract: ...
     ambient = ambient_module
+
     def is_submodule(self, other: ReflexiveModule_abstract) -> bool: ...
     def isomorphism_with_fixed_basis(
-        self,
-        basis: FreeModuleBasis | None = ...,
-        codomain: Parent | None = ...,
+        self, basis: FreeModuleBasis | None = ..., codomain: Parent | None = ...
     ) -> SetIsomorphism: ...
 
 class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
     Element: type[FiniteRankFreeModuleElement]
+
     @staticmethod
     def __classcall_private__(
         cls: type[FiniteRankFreeModule],
@@ -89,8 +92,8 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
         rank: int | Integer,
         name: _Name = ...,
         latex_name: _Name = ...,
-        start_index: int | Integer = ...,
-        output_formatter: _OutputFormatter | None = ...,
+        start_index: int | Integer | CategoryObject | None = ...,
+        output_formatter: _OutputFormatter | ReflexiveModule_abstract | None = ...,
         category: CategoryObject | None = ...,
         ambient: ReflexiveModule_abstract | None = ...,
     ) -> None: ...
@@ -121,7 +124,12 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
         *,
         sym: _Symmetry = ...,
         antisym: _Symmetry = ...,
-    ) -> FiniteRankFreeModule | ReflexiveModule_dual | TensorFreeModule | TensorFreeSubmodule_sym: ...
+    ) -> (
+        FiniteRankFreeModule
+        | ReflexiveModule_dual
+        | TensorFreeModule
+        | TensorFreeSubmodule_sym
+    ): ...
     def symmetric_power(self, p: int | Integer) -> ReflexiveModule_abstract: ...
     def dual_symmetric_power(self, p: int | Integer) -> ReflexiveModule_abstract: ...
     @overload
@@ -129,13 +137,17 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
     @overload
     def exterior_power(self, p: Literal[1]) -> FiniteRankFreeModule: ...
     @overload
-    def exterior_power(self, p: int | Integer) -> CommutativeRing | FiniteRankFreeModule | ExtPowerFreeModule: ...
+    def exterior_power(
+        self, p: int | Integer
+    ) -> CommutativeRing | FiniteRankFreeModule | ExtPowerFreeModule: ...
     @overload
     def dual_exterior_power(self, p: Literal[0]) -> CommutativeRing: ...
     @overload
     def dual_exterior_power(self, p: Literal[1]) -> FiniteRankDualFreeModule: ...
     @overload
-    def dual_exterior_power(self, p: int | Integer) -> CommutativeRing | FiniteRankDualFreeModule | ExtPowerDualFreeModule: ...
+    def dual_exterior_power(
+        self, p: int | Integer
+    ) -> CommutativeRing | FiniteRankDualFreeModule | ExtPowerDualFreeModule: ...
     def general_linear_group(self) -> FreeModuleLinearGroup: ...
     def basis(
         self,
@@ -148,11 +160,17 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
         latex_symbol_dual: _BasisSymbol | None = ...,
     ) -> FreeModuleBasis: ...
     @overload
-    def tensor(self, tensor_type: _TensorType, **kwds: _TensorKeyword) -> FreeModuleTensor | FreeModuleAltForm | FiniteRankFreeModuleElement: ...
+    def tensor(
+        self, tensor_type: _TensorType, **kwds: _TensorKeyword
+    ) -> FreeModuleTensor | FreeModuleAltForm | FiniteRankFreeModuleElement: ...
     @overload
-    def tensor(self, first: Parent, *args: Parent, **kwds: _TensorKeyword) -> ReflexiveModule_abstract: ...
+    def tensor(
+        self, first: Parent, *args: Parent, **kwds: _TensorKeyword
+    ) -> ReflexiveModule_abstract: ...
     @overload
-    def tensor(self, *args: ReflexiveModule_abstract, **kwds: _TensorKeyword) -> ReflexiveModule_abstract: ...
+    def tensor(
+        self, *args: ReflexiveModule_abstract, **kwds: _TensorKeyword
+    ) -> ReflexiveModule_abstract: ...
     def tensor_from_comp(
         self,
         tensor_type: _TensorType,
@@ -162,33 +180,23 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
     ) -> FreeModuleTensor | FreeModuleAltForm | FiniteRankFreeModuleElement: ...
     @overload
     def alternating_contravariant_tensor(
-        self,
-        degree: Literal[1],
-        name: _Name = ...,
-        latex_name: _Name = ...,
+        self, degree: Literal[1], name: _Name = ..., latex_name: _Name = ...
     ) -> FiniteRankFreeModuleElement: ...
     @overload
     def alternating_contravariant_tensor(
-        self,
-        degree: int | Integer,
-        name: _Name = ...,
-        latex_name: _Name = ...,
+        self, degree: int | Integer, name: _Name = ..., latex_name: _Name = ...
     ) -> FreeModuleTensor | FiniteRankFreeModuleElement: ...
     @overload
     def alternating_form(
-        self,
-        degree: Literal[0],
-        name: _Name = ...,
-        latex_name: _Name = ...,
+        self, degree: Literal[0], name: _Name = ..., latex_name: _Name = ...
     ) -> CommutativeRingElement: ...
     @overload
     def alternating_form(
-        self,
-        degree: int | Integer,
-        name: _Name = ...,
-        latex_name: _Name = ...,
+        self, degree: int | Integer, name: _Name = ..., latex_name: _Name = ...
     ) -> CommutativeRingElement | FreeModuleAltForm: ...
-    def linear_form(self, name: _Name = ..., latex_name: _Name = ...) -> FreeModuleAltForm: ...
+    def linear_form(
+        self, name: _Name = ..., latex_name: _Name = ...
+    ) -> FreeModuleAltForm: ...
     def automorphism(
         self,
         matrix: _MatrixLike | None = ...,
@@ -196,14 +204,20 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
         name: _Name = ...,
         latex_name: _Name = ...,
     ) -> FreeModuleAutomorphism: ...
-    def sym_bilinear_form(self, name: _Name = ..., latex_name: _Name = ...) -> FreeModuleTensor: ...
+    def sym_bilinear_form(
+        self, name: _Name = ..., latex_name: _Name = ...
+    ) -> FreeModuleTensor: ...
     def dual(self) -> FiniteRankDualFreeModule: ...
-    def irange(self, start: int | Integer | None = ...) -> Iterator[int]: ...
+    def irange(
+        self, start: int | Integer | None = ...
+    ) -> Generator[int, None, None]: ...
     def default_basis(self) -> FreeModuleBasis | None: ...
     def set_default_basis(self, basis: FreeModuleBasis) -> None: ...
     def print_bases(self) -> None: ...
     def bases(self) -> list[FreeModuleBasis]: ...
-    def change_of_basis(self, basis1: FreeModuleBasis, basis2: FreeModuleBasis) -> FreeModuleAutomorphism: ...
+    def change_of_basis(
+        self, basis1: FreeModuleBasis, basis2: FreeModuleBasis
+    ) -> FreeModuleAutomorphism: ...
     def set_change_of_basis(
         self,
         basis1: FreeModuleBasis,
@@ -226,10 +240,18 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
         name: _Name = ...,
         latex_name: _Name = ...,
     ) -> FiniteRankFreeModuleMorphism: ...
-    def identity_map(self, name: str = ..., latex_name: _Name = ...) -> FreeModuleAutomorphism: ...
+    def identity_map(
+        self, name: str = ..., latex_name: _Name = ...
+    ) -> FreeModuleAutomorphism: ...
 
 class FiniteRankDualFreeModule(ReflexiveModule_dual, FiniteRankFreeModule_abstract):
     Element: type[FreeModuleAltForm]
-    def __init__(self, fmodule: FiniteRankFreeModule, name: _Name = ..., latex_name: _Name = ...) -> None: ...
+
+    def __init__(
+        self,
+        fmodule: FiniteRankFreeModule | CommutativeRing,
+        name: _Name | int | Integer = ...,
+        latex_name: _Name = ...,
+    ) -> None: ...
     def zero(self) -> FreeModuleAltForm: ...
     def base_module(self) -> FiniteRankFreeModule: ...

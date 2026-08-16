@@ -1,12 +1,14 @@
-# Generated from the pinned Sage 10.7 source tree.
 import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
 
 class _SageObject: ...
 
 class DatabaseCremona:
-    def __init__(self, name: builtins.str = ..., spkg: builtins.str = ..., type: builtins.str = ...) -> None: ...
+    def __init__(
+        self,
+        name: builtins.str = ...,
+        spkg: builtins.str = ...,
+        type: builtins.str = ...,
+    ) -> None: ...
 
 class DatabaseEllcurves:
     def __init__(self) -> None: ...
@@ -29,4 +31,4 @@ class DatabaseCubicHecke:
 class DatabaseReflexivePolytopes:
     def __init__(self, name: builtins.str = ...) -> None: ...
 
-def all_features() -> _SageObject: ...
+def all_features(self) -> _SageObject: ...

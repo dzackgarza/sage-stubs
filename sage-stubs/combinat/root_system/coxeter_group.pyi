@@ -1,8 +1,8 @@
-from sage.structure.parent import Parent
 from sage.groups.matrix_gps.coxeter_group import CoxeterMatrixGroup
+from sage.structure.parent import Parent
 
 def CoxeterGroup(
-    data: object,
+    self,
     implementation: str = "reflection",
     base_ring: object | None = None,
     index_set: object | None = None,

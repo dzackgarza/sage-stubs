@@ -1,12 +1,15 @@
-# Generated from the pinned Sage 10.7 source tree.
 import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+
+from sage.repl.rich_output.buffer import OutputBuffer
 
 class _SageObject: ...
 
 latex_re: _SageObject
+
 class OutputHtml:
+    latex: OutputBuffer
+    html: OutputBuffer
+
     def __init__(self, html: builtins.object) -> None: ...
     @classmethod
     def example(cls) -> _SageObject: ...

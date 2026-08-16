@@ -1,14 +1,29 @@
-# Generated from the pinned Sage 10.7 source tree.
 import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
 
 class _SageObject: ...
 
-def group_divisible_design(v: builtins.object, K: builtins.int, G: builtins.object, existence: builtins.bool = ..., check: builtins.bool = ...) -> _SageObject: ...
-
-def GDD_4_2(q: builtins.int, existence: builtins.bool = ..., check: builtins.bool = ...) -> _SageObject: ...
+def group_divisible_design(
+    self,
+    K: builtins.int,
+    G: builtins.object,
+    existence: builtins.bool = ...,
+    check: builtins.bool = ...,
+) -> _SageObject: ...
+def GDD_4_2(
+    self, existence: builtins.bool = ..., check: builtins.bool = ...
+) -> _SageObject: ...
 
 class GroupDivisibleDesign:
-    def __init__(self, points: builtins.object, groups: builtins.object, blocks: builtins.object, G: builtins.object = ..., K: builtins.int = ..., lambd: builtins.int = ..., check: builtins.bool = ..., copy: builtins.bool = ..., **kwds: builtins.object) -> None: ...
+    def __init__(
+        self,
+        points: builtins.object,
+        groups: builtins.object,
+        blocks: builtins.object,
+        G: builtins.object = ...,
+        K: builtins.int = ...,
+        lambd: builtins.int = ...,
+        check: builtins.bool = ...,
+        copy: builtins.bool = ...,
+        **kwds: builtins.object,
+    ) -> None: ...
     def groups(self) -> _SageObject: ...

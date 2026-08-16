@@ -4,12 +4,9 @@ from typing import Literal, overload
 from sage.categories.category import Category
 from sage.categories.homset import Homset, HomsetCallInput
 from sage.categories.morphism import Morphism
-from sage.matrix.matrix2 import Matrix
-from sage.manifolds.continuous_map import (
-    _CoordinateFunctions,
-    ContinuousMap,
-)
+from sage.manifolds.continuous_map import ContinuousMap, _CoordinateFunctions
 from sage.manifolds.manifold import TopologicalManifold
+from sage.matrix.matrix2 import Matrix
 from sage.structure.element import Element as SageElement
 from sage.structure.parent import Parent, ParentCallInput
 from sage.structure.unique_representation import UniqueRepresentation
@@ -22,10 +19,10 @@ class TopologicalManifoldHomset(
 
     def __init__(
         self,
-        domain: TopologicalManifold,
-        codomain: TopologicalManifold,
-        name: str | None = None,
-        latex_name: str | None = None,
+        domain: TopologicalManifold | Parent[_DomainElement],
+        codomain: TopologicalManifold | Parent[_CodomainElement],
+        name: str | Category | None = None,
+        latex_name: str | Parent[ElementConstructorInput] | None = None,
     ) -> None: ...
     def _latex_(self) -> str: ...
     def _element_constructor_(
@@ -39,7 +36,9 @@ class TopologicalManifoldHomset(
     def _an_element_(self) -> ContinuousMap: ...
     def _coerce_map_from_(self, other: ParentCallInput) -> bool: ...
     @overload
-    def __call__(self, x: HomsetCallInput = ..., check: bool | None = None) -> ContinuousMap: ...
+    def __call__(
+        self, x: HomsetCallInput = ..., check: bool | None = None
+    ) -> ContinuousMap: ...
     @overload
     def __call__(
         self,

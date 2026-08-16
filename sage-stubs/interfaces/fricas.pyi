@@ -1,7 +1,7 @@
-# Generated from the pinned Sage 10.7 source tree.
 import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from collections.abc import (
+    Iterator as _Iterator,
+)
 
 class _SageObject: ...
 
@@ -16,13 +16,32 @@ FRICAS_HELPER_CODE: _SageObject
 FRICAS_LINENUMBER_OFF_CODE: _SageObject
 FRICAS_FIRST_PROMPT: _SageObject
 FRICAS_LINENUMBER_OFF_PROMPT: _SageObject
+
 class FriCAS:
-    def __init__(self, name: builtins.str = ..., command: builtins.object = ..., script_subdirectory: builtins.object = ..., logfile: builtins.object = ..., server: builtins.object = ..., server_tmpdir: builtins.object = ...) -> None: ...
+    def __init__(
+        self,
+        name: builtins.str = ...,
+        command: builtins.object = ...,
+        script_subdirectory: builtins.object = ...,
+        logfile: builtins.object = ...,
+        server: builtins.object = ...,
+        server_tmpdir: builtins.object = ...,
+    ) -> None: ...
     def set(self, var: builtins.object, value: builtins.object) -> _SageObject: ...
     def get(self, var: builtins.object) -> _SageObject: ...
     def get_string(self, var: builtins.object) -> _SageObject: ...
     def __reduce__(self) -> builtins.str | builtins.tuple[builtins.object, ...]: ...
-    def eval(self, code: builtins.object, strip: builtins.bool = ..., synchronize: builtins.bool = ..., locals: builtins.object = ..., allow_use_file: builtins.bool = ..., split_lines: builtins.str = ..., reformat: builtins.bool = ..., **kwds: builtins.object) -> _SageObject: ...
+    def eval(
+        self,
+        code: builtins.object,
+        strip: builtins.bool = ...,
+        synchronize: builtins.bool = ...,
+        locals: builtins.object = ...,
+        allow_use_file: builtins.bool = ...,
+        split_lines: builtins.str = ...,
+        reformat: builtins.bool = ...,
+        **kwds: builtins.object,
+    ) -> _SageObject: ...
     def console(self) -> _SageObject: ...
 
 class FriCASElement:
@@ -42,6 +61,6 @@ class FriCASExpectFunction:
     def __init__(self, parent: builtins.object, name: builtins.str) -> None: ...
 
 fricas: _SageObject
-def reduce_load_fricas() -> _SageObject: ...
 
-def fricas_console() -> _SageObject: ...
+def reduce_load_fricas(self) -> _SageObject: ...
+def fricas_console(self) -> _SageObject: ...

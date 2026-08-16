@@ -1,25 +1,30 @@
-from collections.abc import Callable, Iterable, Hashable
+from collections.abc import Callable, Hashable, Iterable
 
 from sage.categories.category import Category
 from sage.categories.pushout import VectorFunctor
 from sage.modules.free_module_element import FreeModuleElement
 from sage.modules.module import Module
-from sage.rings.ring import Ring
+from sage.rings.infinity import PlusInfinity
+from sage.rings.ring import CommutativeRing, Ring
+from sage.sets.family import AbstractFamily
 from sage.structure.element import CommutativeRingElement
 from sage.structure.element import Element as SageElement
 from sage.structure.indexed_generators import IndexedGenerators
+from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.rings.ring import CommutativeRing
-from sage.sets.family import AbstractFamily
-from sage.rings.infinity import PlusInfinity
 
-class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators[AbstractFamily]):
+class CombinatorialFreeModule(
+    UniqueRepresentation, Module, IndexedGenerators[AbstractFamily]
+):
+    Element: type[SageElement] | None
+
     class Element(SageElement): ...
+
     def __init__(
         self,
-        R: CommutativeRing,
-        basis_keys: Iterable[Hashable] | AbstractFamily | None = None,
-        element_class: type[SageElement] | None = None,
+        R: CommutativeRing | Ring | _T,
+        basis_keys: Iterable[Hashable] | AbstractFamily | Category | str | None = None,
+        element_class: type[SageElement] | str | tuple[str, ...] | None = None,
         category: Category | tuple[Category, ...] | None = None,
         prefix: str | None = None,
         names: str | tuple[str, ...] | None = None,
@@ -30,9 +35,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators[Ab
     def some_elements(self) -> list[Element]: ...
     def ngens(self) -> int: ...
     def gen(self, i: int) -> Element: ...
-
-    # Existing methods
-    def element_class(self) -> type: ...
+    def element_class(self) -> type[SageObject]: ...
     def construction(self) -> tuple[VectorFunctor, CommutativeRing] | None: ...
     def change_ring(self, R: Ring) -> CombinatorialFreeModule: ...
     def dimension(self) -> int | PlusInfinity: ...
@@ -40,10 +43,23 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators[Ab
     def set_order(self, order: Iterable[Hashable]) -> None: ...
     def get_order(self) -> list[Hashable]: ...
     def get_order_key(self) -> Callable[[Hashable], int]: ...
-    def from_vector(self, vector: FreeModuleElement, order: Iterable[Hashable] | None = ..., coerce: bool = ...) -> Element: ...
+    def from_vector(
+        self,
+        vector: FreeModuleElement,
+        order: Iterable[Hashable] | None = ...,
+        coerce: bool = ...,
+    ) -> Element: ...
     def sum(self, iter_of_elements: Iterable[Element]) -> Element: ...
-    def linear_combination(self, iter_of_elements_coeff: Iterable[tuple[Element, CommutativeRingElement]], factor_on_left: bool = ...) -> Element: ...
+    def linear_combination(
+        self,
+        iter_of_elements_coeff: Iterable[tuple[Element, CommutativeRingElement]],
+        factor_on_left: bool = ...,
+    ) -> Element: ...
     def term(self, index: Hashable, coeff: CommutativeRingElement = ...) -> Element: ...
     def monomial(self, index: Hashable) -> Element: ...
-    def sum_of_terms(self, terms: Iterable[tuple[Hashable, CommutativeRingElement]], distinct: bool = ...) -> Element: ...
+    def sum_of_terms(
+        self,
+        terms: Iterable[tuple[Hashable, CommutativeRingElement]],
+        distinct: bool = ...,
+    ) -> Element: ...
     def zero(self) -> Element: ...

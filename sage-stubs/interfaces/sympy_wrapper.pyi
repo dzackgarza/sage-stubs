@@ -1,12 +1,12 @@
-# Generated from the pinned Sage 10.7 source tree.
 import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from collections.abc import (
+    Iterator as _Iterator,
+)
 
 class _SageObject: ...
 
 class SageSet:
-    def __new__(cls, sage_set: builtins.object) -> Self: ...
+    def __new__(cls, sage_set: builtins.object) -> SageSet: ...
     @property
     def is_empty(self) -> builtins.bool: ...
     @property

@@ -1,14 +1,26 @@
-# Generated from the pinned Sage 10.7 source tree.
 import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
 
 class _SageObject: ...
 
 class DiscreteGaussianDistributionLatticeSampler:
+    r: builtins.int
+    VS: None
+    D: None
+    is_spherical: bool
+
     @staticmethod
-    def compute_precision(precision: builtins.int, sigma: builtins.object) -> _SageObject: ...
-    def __init__(self, B: builtins.object, sigma: builtins.int = ..., c: builtins.int = ..., r: builtins.int = ..., precision: builtins.int = ..., sigma_basis: builtins.bool = ...) -> None: ...
+    def compute_precision(
+        precision: builtins.int, sigma: builtins.object
+    ) -> _SageObject: ...
+    def __init__(
+        self,
+        B: builtins.object,
+        sigma: builtins.int = ...,
+        c: builtins.int = ...,
+        r: builtins.int = ...,
+        precision: builtins.int = ...,
+        sigma_basis: builtins.bool = ...,
+    ) -> None: ...
     def __call__(self) -> _SageObject: ...
     def f(self, x: builtins.object) -> _SageObject: ...
     def sigma(self) -> _SageObject: ...

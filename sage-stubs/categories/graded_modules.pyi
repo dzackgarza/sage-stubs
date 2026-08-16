@@ -1,15 +1,22 @@
 from sage.categories.category import Category
 from sage.categories.category_types import Category_over_base_ring
-from sage.categories.covariant_functorial_construction import RegressiveCovariantConstructionCategory
+from sage.categories.covariant_functorial_construction import (
+    RegressiveCovariantConstructionCategory,
+)
+from sage.categories.rings import Rings
 
-class GradedModulesCategory(RegressiveCovariantConstructionCategory, Category_over_base_ring):
-    def __init__(self, base_category: Category) -> None: ...
+class GradedModulesCategory(
+    RegressiveCovariantConstructionCategory, Category_over_base_ring
+):
+    def __init__(
+        self, base_category: Category | Rings.ParentMethods[_Scalar]
+    ) -> None: ...
     def _repr_object_names(self) -> str: ...
     @classmethod
-    def default_super_categories(cls, category: Category, *args: Category) -> Category: ...
+    def default_super_categories(
+        cls, category: Category, *args: Category
+    ) -> Category: ...
 
 class GradedModules(GradedModulesCategory):
-    class ParentMethods:
-        ...
-    class ElementMethods:
-        ...
+    class ParentMethods: ...
+    class ElementMethods: ...

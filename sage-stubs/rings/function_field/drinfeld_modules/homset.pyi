@@ -1,17 +1,27 @@
-# Generated from the pinned Sage 10.7 source tree.
 import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
 
 class _SageObject: ...
 
 class DrinfeldModuleMorphismAction:
-    def __init__(self, A: builtins.object, H: builtins.object, is_left: builtins.object, op: builtins.object) -> None: ...
+    def __init__(
+        self,
+        A: builtins.object,
+        H: builtins.object,
+        is_left: builtins.object,
+        op: builtins.object,
+    ) -> None: ...
 
 class DrinfeldModuleHomset:
     Element: _SageObject
-    def __init__(self, X: builtins.object, Y: builtins.object, category: builtins.object = ..., check: builtins.bool = ...) -> None: ...
-    def __contains__(self, x: builtins.object) -> builtins.bool: ...
+
+    def __init__(
+        self,
+        X: builtins.object,
+        Y: builtins.object,
+        category: builtins.object = ...,
+        check: builtins.bool = ...,
+    ) -> None: ...
+    def __contains__(self, x: object) -> bool: ...
     def an_element(self, degree: builtins.int = ...) -> _SageObject: ...
     def zero(self) -> _SageObject: ...
     def basis(self, degree: builtins.int = ...) -> _SageObject: ...

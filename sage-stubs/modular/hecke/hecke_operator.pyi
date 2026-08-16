@@ -1,8 +1,10 @@
 from sage.matrix.matrix import Matrix
 from sage.modular.hecke.algebra import HeckeAlgebra_base
 from sage.modular.hecke.element import HeckeModuleElement
-from sage.modular.hecke.module import HeckeModule_free_module, HeckeModule_generic
-from sage.modular.hecke.morphism import HeckeModuleMorphism_matrix as HeckeModuleMorphism_matrix_type
+from sage.modular.hecke.module import HeckeModule_generic
+from sage.modular.hecke.morphism import (
+    HeckeModuleMorphism_matrix as HeckeModuleMorphism_matrix_type,
+)
 from sage.modular.hecke.submodule import HeckeSubmodule
 from sage.rings.integer import Integer
 from sage.rings.polynomial.polynomial_element import Polynomial
@@ -35,7 +37,7 @@ class HeckeAlgebraElement_matrix(HeckeAlgebraElement):
     def _mul_(self, other: HeckeAlgebraElement) -> HeckeAlgebraElement: ...
 
 class DiamondBracketOperator(HeckeAlgebraElement_matrix):
-    def __init__(self, parent: HeckeAlgebra_base, d: Integer) -> None: ...
+    def __init__(self, parent: HeckeAlgebra_base, d: Integer | Matrix) -> None: ...
 
 class HeckeOperator(HeckeAlgebraElement):
     def __init__(self, parent: HeckeAlgebra_base, n: Integer) -> None: ...

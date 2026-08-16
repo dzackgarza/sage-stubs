@@ -1,10 +1,17 @@
+from sage.categories.homset import Homset
 from sage.categories.map import Map
 from sage.rings.morphism import RingHomomorphism, RingMap
 from sage.rings.ring import Ring
-from sage.structure.element import Element
+from sage.structure.parent import Parent
 
 class RingExtensionHomomorphism(RingMap):
-    def __init__(self, parent: object, defn: object, base_map: RingHomomorphism | None = None, check: bool = True) -> None: ...
+    def __init__(
+        self,
+        parent: object,
+        defn: object,
+        base_map: RingHomomorphism | None = None,
+        check: bool = True,
+    ) -> None: ...
     def base_map(self) -> RingHomomorphism | None: ...
     def is_identity(self) -> bool: ...
     def is_injective(self) -> bool: ...
@@ -17,11 +24,25 @@ class RingExtensionBackendReverseIsomorphism(RingExtensionHomomorphism):
     def __init__(self, parent: object) -> None: ...
 
 class MapFreeModuleToRelativeRing(Map):
-    def __init__(self, E: Ring, K: Ring) -> None: ...
+    def __init__(
+        self,
+        E: Ring
+        | Homset[
+            Map[_DomainElement, _CodomainElement], _DomainElement, _CodomainElement
+        ],
+        K: Ring | Parent[_CodomainElement] | None,
+    ) -> None: ...
     def is_injective(self) -> bool: ...
     def is_surjective(self) -> bool: ...
 
 class MapRelativeRingToFreeModule(Map):
-    def __init__(self, E: Ring, K: Ring) -> None: ...
+    def __init__(
+        self,
+        E: Ring
+        | Homset[
+            Map[_DomainElement, _CodomainElement], _DomainElement, _CodomainElement
+        ],
+        K: Ring | Parent[_CodomainElement] | None,
+    ) -> None: ...
     def is_injective(self) -> bool: ...
     def is_surjective(self) -> bool: ...

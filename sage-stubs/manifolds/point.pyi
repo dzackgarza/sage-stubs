@@ -1,5 +1,5 @@
 from collections.abc import Mapping, Sequence
-from typing import Protocol, TypeAlias
+from typing import Protocol, Self
 
 from sage.manifolds.chart import Chart
 from sage.manifolds.manifold import TopologicalManifold
@@ -7,11 +7,12 @@ from sage.manifolds.subset import ManifoldSubset
 from sage.plot.graphics import Graphics
 from sage.plot.plot3d.base import Graphics3d
 from sage.structure.element import Element, Expression
+from sage.structure.parent import Parent
 
-_Scalar: TypeAlias = Element | Expression | int | float | complex | str
-_Coordinates: TypeAlias = tuple[_Scalar, ...]
-_CoordinateInput: TypeAlias = Sequence[_Scalar]
-_Parameters: TypeAlias = Mapping[Expression, _Scalar]
+type _Scalar = Element | Expression | int | float | complex | str
+type _Coordinates = tuple[_Scalar, ...]
+type _CoordinateInput = Sequence[_Scalar]
+type _Parameters = Mapping[Expression, _Scalar]
 
 class _PointMap(Protocol):
     def __call__(self, point: ManifoldPoint) -> ManifoldPoint: ...
@@ -24,30 +25,35 @@ class ManifoldPoint(Element):
 
     def __init__(
         self,
-        parent: ManifoldSubset,
+        parent: ManifoldSubset | Parent[Self],
         coords: _CoordinateInput | None = None,
         chart: Chart | None = None,
         name: str | None = None,
         latex_name: str | None = None,
         check_coords: bool = True,
     ) -> None: ...
-
     def _repr_(self) -> str: ...
     def _latex_(self) -> str: ...
     def coordinates(
         self, chart: Chart | None = None, old_chart: Chart | None = None
     ) -> _Coordinates: ...
-    def coord(self, chart: Chart | None = None, old_chart: Chart | None = None) -> _Coordinates: ...
+    def coord(
+        self, chart: Chart | None = None, old_chart: Chart | None = None
+    ) -> _Coordinates: ...
     def set_coordinates(
         self, coords: _CoordinateInput, chart: Chart | None = None
     ) -> None: ...
-    def set_coord(self, coords: _CoordinateInput, chart: Chart | None = None) -> None: ...
+    def set_coord(
+        self, coords: _CoordinateInput, chart: Chart | None = None
+    ) -> None: ...
     def add_coordinates(
         self, coords: _CoordinateInput, chart: Chart | None = None
     ) -> None: ...
-    def add_coord(self, coords: _CoordinateInput, chart: Chart | None = None) -> None: ...
-    def __eq__(self, other: object) -> bool: ...
-    def __ne__(self, other: object) -> bool: ...
+    def add_coord(
+        self, coords: _CoordinateInput, chart: Chart | None = None
+    ) -> None: ...
+    def __eq__(self, other: object | MembershipInput) -> bool: ...
+    def __ne__(self, other: object | MembershipInput) -> bool: ...
     def __hash__(self) -> int: ...
     def plot(
         self,

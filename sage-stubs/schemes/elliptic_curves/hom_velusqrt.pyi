@@ -1,16 +1,35 @@
-# Generated from the pinned Sage 10.7 source tree.
 import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+
+from sage.interfaces.r import R
+from sage.rings.generic import ProductTree
 
 class _SageObject: ...
 
 class FastEllipticPolynomial:
-    def __init__(self, E: builtins.object, n: builtins.int, P: builtins.int, Q: builtins.int = ...) -> None: ...
-    def __call__(self, alpha: builtins.object, *, derivative: builtins.bool = ...) -> _SageObject: ...
+    hK: R
+    hItree: ProductTree
+
+    def __init__(
+        self,
+        E: builtins.object,
+        n: builtins.int,
+        P: builtins.int,
+        Q: builtins.int = ...,
+    ) -> None: ...
+    def __call__(
+        self, alpha: builtins.object, *, derivative: builtins.bool = ...
+    ) -> _SageObject: ...
 
 class EllipticCurveHom_velusqrt:
-    def __init__(self, E: builtins.object, P: builtins.int, *, codomain: builtins.object = ..., model: builtins.object = ..., Q: builtins.int = ...) -> None: ...
+    def __init__(
+        self,
+        E: builtins.object,
+        P: builtins.int,
+        *,
+        codomain: builtins.object = ...,
+        model: builtins.object = ...,
+        Q: builtins.int = ...,
+    ) -> None: ...
     def kernel_polynomial(self) -> _SageObject: ...
     def as_EllipticCurveIsogeny(self) -> _SageObject: ...
     def dual(self) -> _SageObject: ...

@@ -1,11 +1,13 @@
 from collections.abc import Iterable, Sequence
-from typing import TypeAlias, overload
+from typing import overload
 
+from sage.manifolds.differentiable.metric import PseudoRiemannianMetric
+from sage.manifolds.differentiable.poisson_tensor import PoissonTensorField
+from sage.manifolds.differentiable.symplectic_form import SymplecticForm
 from sage.rings.integer import Integer
 from sage.structure.element import Element, Expression, ModuleElementWithMutability
+from sage.structure.parent import Parent
 from sage.tensor.modules.comp import (
-    CompFullyAntiSym,
-    CompFullySym,
     Components,
     CompWithSym,
 )
@@ -14,31 +16,35 @@ from sage.tensor.modules.format_utilities import FormattedExpansion
 from sage.tensor.modules.free_module_basis import FreeModuleBasis
 from sage.tensor.modules.tensor_with_indices import TensorWithIndices
 
-from sage.manifolds.differentiable.metric import PseudoRiemannianMetric
-from sage.manifolds.differentiable.poisson_tensor import PoissonTensorField
-from sage.manifolds.differentiable.symplectic_form import SymplecticForm
-
-_Scalar: TypeAlias = Element | Expression | Integer | int
-_FormatSpec: TypeAlias = int | Integer
-_TensorType: TypeAlias = tuple[int | Integer, int | Integer]
-_Index: TypeAlias = int | Integer
-_IndexTuple: TypeAlias = tuple[_Index, ...]
-_ComponentRows: TypeAlias = list[_Scalar] | list[list[_Scalar]] | list[list[list[_Scalar]]]
-_ComponentData: TypeAlias = _Scalar | _ComponentRows
-_Symmetry: TypeAlias = Iterable[int | Integer] | Iterable[Iterable[int | Integer]] | None
-_BasisArg: TypeAlias = FreeModuleBasis | None
-_Components: TypeAlias = Components[_Scalar, _Scalar, _FormatSpec]
+type _Scalar = Element | Expression | Integer | int
+type _FormatSpec = int | Integer
+type _TensorType = tuple[int | Integer, int | Integer]
+type _Index = int | Integer
+type _IndexTuple = tuple[_Index, ...]
+type _ComponentRows = (
+    list[_Scalar] | list[list[_Scalar]] | list[list[list[_Scalar]]]
+)
+type _ComponentData = _Scalar | _ComponentRows
+type _Symmetry = (
+    Iterable[int | Integer] | Iterable[Iterable[int | Integer]] | None
+)
+type _BasisArg = FreeModuleBasis | None
+type _Components = Components[_Scalar, _Scalar, _FormatSpec]
 
 class FreeModuleTensor(ModuleElementWithMutability):
     def __init__(
         self,
-        fmodule: FiniteRankFreeModule,
-        tensor_type: _TensorType | Sequence[int | Integer],
+        fmodule: FiniteRankFreeModule | Parent,
+        tensor_type: _TensorType | Sequence[int | Integer] | bool,
         name: str | None = ...,
         latex_name: str | None = ...,
         sym: _Symmetry = ...,
         antisym: _Symmetry = ...,
-        parent: TensorFreeModule | ExtPowerFreeModule | ExtPowerDualFreeModule | FiniteRankFreeModule | None = ...,
+        parent: TensorFreeModule
+        | ExtPowerFreeModule
+        | ExtPowerDualFreeModule
+        | FiniteRankFreeModule
+        | None = ...,
     ) -> None: ...
     def __bool__(self) -> bool: ...
     def _repr_(self) -> str: ...
@@ -49,9 +55,14 @@ class FreeModuleTensor(ModuleElementWithMutability):
     def tensor_rank(self) -> int | Integer: ...
     def base_module(self) -> FiniteRankFreeModule: ...
     def symmetries(self) -> None: ...
-    def _preparse_display(self, basis: _BasisArg = ..., format_spec: _FormatSpec | None = ...) -> tuple[FreeModuleBasis, _FormatSpec | None]: ...
-    def display(self, basis: _BasisArg = ..., format_spec: _FormatSpec | None = ...) -> FormattedExpansion: ...
+    def _preparse_display(
+        self, basis: _BasisArg = ..., format_spec: _FormatSpec | None = ...
+    ) -> tuple[FreeModuleBasis, _FormatSpec | None]: ...
+    def display(
+        self, basis: _BasisArg = ..., format_spec: _FormatSpec | None = ...
+    ) -> FormattedExpansion: ...
     disp = display
+
     def display_comp(
         self,
         basis: _BasisArg = ...,
@@ -63,11 +74,18 @@ class FreeModuleTensor(ModuleElementWithMutability):
         only_nonzero: bool = ...,
         only_nonredundant: bool = ...,
     ) -> FormattedExpansion: ...
-    def set_name(self, name: str | None = ..., latex_name: str | None = ...) -> None: ...
+    def set_name(
+        self, name: str | None = ..., latex_name: str | None = ...
+    ) -> None: ...
     def _new_instance(self) -> FreeModuleTensor: ...
-    def _new_comp(self, basis: FreeModuleBasis) -> _Components | CompWithSym[_Scalar, _Scalar, _FormatSpec]: ...
-    def components(self, basis: _BasisArg = ..., from_basis: _BasisArg = ...) -> _Components: ...
+    def _new_comp(
+        self, basis: FreeModuleBasis
+    ) -> _Components | CompWithSym[_Scalar, _Scalar, _FormatSpec]: ...
+    def components(
+        self, basis: _BasisArg = ..., from_basis: _BasisArg = ...
+    ) -> Components: ...
     comp = components
+
     def _set_comp_unsafe(self, basis: _BasisArg = ...) -> _Components: ...
     def set_comp(self, basis: _BasisArg = ...) -> _Components: ...
     def _add_comp_unsafe(self, basis: _BasisArg = ...) -> _Components: ...
@@ -76,14 +94,29 @@ class FreeModuleTensor(ModuleElementWithMutability):
     @overload
     def __getitem__(self, args: str) -> TensorWithIndices: ...
     @overload
-    def __getitem__(self, args: _Index | slice | _IndexTuple | list[_Index | slice] | tuple[FreeModuleBasis, _Index | slice] | tuple[FreeModuleBasis, _Index, _Index]) -> _Scalar | _ComponentRows: ...
+    def __getitem__(
+        self,
+        args: _Index
+        | slice
+        | _IndexTuple
+        | list[_Index | slice]
+        | tuple[FreeModuleBasis, _Index | slice]
+        | tuple[FreeModuleBasis, _Index, _Index],
+    ) -> Components: ...
     def __setitem__(
         self,
-        args: _Index | slice | _IndexTuple | list[_Index | slice] | tuple[FreeModuleBasis, _Index | slice] | tuple[FreeModuleBasis, _Index, _Index],
+        args: _Index
+        | slice
+        | _IndexTuple
+        | list[_Index | slice]
+        | tuple[FreeModuleBasis, _Index | slice]
+        | tuple[FreeModuleBasis, _Index, _Index],
         value: _ComponentData,
     ) -> None: ...
     def copy_from(self, other: FreeModuleTensor) -> None: ...
-    def copy(self, name: str | None = ..., latex_name: str | None = ...) -> FreeModuleTensor: ...
+    def copy(
+        self, name: str | None = ..., latex_name: str | None = ...
+    ) -> FreeModuleTensor: ...
     def common_basis(self, other: FreeModuleTensor) -> FreeModuleBasis | None: ...
     def pick_a_basis(self) -> FreeModuleBasis: ...
     def __eq__(self, other: object) -> bool: ...
@@ -95,16 +128,28 @@ class FreeModuleTensor(ModuleElementWithMutability):
     def _rmul_(self, other: _Scalar) -> FreeModuleTensor: ...
     def __mul__(self, other: FreeModuleTensor | _Scalar) -> FreeModuleTensor: ...
     def __truediv__(self, other: _Scalar) -> FreeModuleTensor: ...
-    def __call__(self, *args: FreeModuleTensor) -> _Scalar: ...
+    def __call__(self, *args: FreeModuleTensor) -> Expression: ...
     def trace(
         self,
         pos1: int = ...,
         pos2: int = ...,
-        using: PseudoRiemannianMetric | SymplecticForm | PoissonTensorField | None = ...,
+        using: PseudoRiemannianMetric
+        | SymplecticForm
+        | PoissonTensorField
+        | None = ...,
     ) -> FreeModuleTensor | _Scalar: ...
-    def contract(self, *args: int | Integer | FreeModuleTensor) -> FreeModuleTensor | _Scalar: ...
-    def symmetrize(self, *pos: int | Integer, basis: FreeModuleBasis | None = ...) -> FreeModuleTensor: ...
-    def antisymmetrize(self, *pos: int | Integer, basis: FreeModuleBasis | None = ...) -> FreeModuleTensor: ...
+    def contract(
+        self, *args: int | Integer | FreeModuleTensor
+    ) -> FreeModuleTensor | _Scalar: ...
+    def symmetrize(
+        self, *pos: int | Integer, basis: FreeModuleBasis | None = ...
+    ) -> FreeModuleTensor: ...
+    def antisymmetrize(
+        self, *pos: int | Integer, basis: FreeModuleBasis | None = ...
+    ) -> FreeModuleTensor: ...
 
-from sage.tensor.modules.ext_pow_free_module import ExtPowerDualFreeModule, ExtPowerFreeModule
+from sage.tensor.modules.ext_pow_free_module import (
+    ExtPowerDualFreeModule,
+    ExtPowerFreeModule,
+)
 from sage.tensor.modules.tensor_free_module import TensorFreeModule

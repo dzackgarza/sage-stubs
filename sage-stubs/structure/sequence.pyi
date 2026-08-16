@@ -1,14 +1,14 @@
 from collections.abc import Iterable
-from typing import SupportsIndex, TypeAlias, overload
+from typing import SupportsIndex, overload
 
-from sage.structure.sage_object import SageCoercionAtom, SageObject
-from sage.structure.parent import Parent
 from sage.categories.category import Category
+from sage.structure.parent import Parent
+from sage.structure.sage_object import SageCoercionAtom, SageObject
 
-_SequenceElement: TypeAlias = SageCoercionAtom
+type _SequenceElement = SageCoercionAtom
 
 def Sequence(
-    x: Iterable[_SequenceElement],
+    self,
     universe: Parent | Category | None = None,
     check: bool = True,
     immutable: bool = False,
@@ -38,7 +38,9 @@ class Sequence_generic(SageObject, list[_SequenceElement]):
     @overload
     def __getitem__(self, n: slice) -> Sequence_generic: ...
     def __getslice__(self, i: int, j: int) -> Sequence_generic: ...
-    def __setslice__(self, i: int, j: int, value: Iterable[_SequenceElement]) -> None: ...
+    def __setslice__(
+        self, i: int, j: int, value: Iterable[_SequenceElement]
+    ) -> None: ...
     def append(self, x: _SequenceElement) -> None: ...
     def extend(self, iterable: Iterable[_SequenceElement]) -> None: ...
     def insert(self, index: SupportsIndex, value: _SequenceElement) -> None: ...

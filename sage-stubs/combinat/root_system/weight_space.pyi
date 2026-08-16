@@ -1,10 +1,12 @@
+from collections.abc import Hashable, Iterable
+
+from sage.categories.morphism import Morphism
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.root_system.root_system import RootSystem
-from sage.categories.morphism import Morphism
+from sage.interfaces.sage0 import SageElement
 from sage.rings.ring_element import RingElement
 from sage.sets.family import AbstractFamily
 from sage.structure.element import Element
-
 
 class WeightSpace(CombinatorialFreeModule):
     root_system: RootSystem
@@ -12,9 +14,17 @@ class WeightSpace(CombinatorialFreeModule):
 
     @staticmethod
     def __classcall_private__(
-        cls: type[WeightSpace], root_system: RootSystem, base_ring: object, extended: bool = ...
+        cls: type[WeightSpace],
+        root_system: RootSystem,
+        base_ring: object,
+        extended: bool = ...,
     ) -> WeightSpace: ...
-    def __init__(self, root_system: RootSystem, base_ring: object, extended: bool) -> None: ...
+    def __init__(
+        self,
+        root_system: RootSystem | CommutativeRing,
+        base_ring: object | Iterable[Hashable] | AbstractFamily | None,
+        extended: bool | type[SageElement] | None,
+    ) -> None: ...
     def is_extended(self) -> bool: ...
     def _repr_(self) -> str: ...
     def _name_string(
@@ -27,7 +37,6 @@ class WeightSpace(CombinatorialFreeModule):
     def _latex_term(self, m: object) -> str: ...
     def _to_classical_on_basis(self, i: object | str) -> Element: ...
     def to_ambient_space_morphism(self) -> Morphism: ...
-
 
 class WeightSpaceElement(CombinatorialFreeModule.Element):
     def scalar(self, lambdacheck: Element) -> RingElement: ...

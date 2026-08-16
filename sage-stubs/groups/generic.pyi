@@ -1,73 +1,74 @@
 from typing import TypeVar
+
 from sage.rings.integer import Integer
 
-_T = TypeVar('_T')
+_T = TypeVar("_T")
 
 def multiple(
-    a: _T,
+    self,
     n: object,
-    operation: str = '*',
+    operation: str = "*",
     identity: object = None,
     inverse: object = None,
     op: object = None,
 ) -> _T: ...
 def bsgs(
-    a: object,
+    self,
     b: object,
     bounds: object,
-    operation: str = '*',
+    operation: str = "*",
     identity: object = None,
     inverse: object = None,
     op: object = None,
 ) -> Integer: ...
 def discrete_log_rho(
-    a: object,
+    self,
     base: object,
     ord: object = None,
-    operation: str = '*',
+    operation: str = "*",
     identity: object = None,
     inverse: object = None,
     op: object = None,
     hash_function: object = ...,
 ) -> Integer: ...
 def discrete_log(
-    a: object,
+    self,
     base: object,
     ord: object = None,
     bounds: object = None,
-    operation: str = '*',
+    operation: str = "*",
     identity: object = None,
     inverse: object = None,
     op: object = None,
-    algorithm: str = 'bsgs',
+    algorithm: str = "bsgs",
     *,
     verify: bool = True,
 ) -> Integer: ...
 def discrete_log_generic(
-    a: object,
+    self,
     base: object,
     ord: object = None,
     bounds: object = None,
-    operation: str = '*',
+    operation: str = "*",
     identity: object = None,
     inverse: object = None,
     op: object = None,
-    algorithm: str = 'bsgs',
+    algorithm: str = "bsgs",
 ) -> Integer: ...
 def discrete_log_lambda(
-    a: object,
+    self,
     base: object,
     bounds: object,
-    operation: str = '*',
+    operation: str = "*",
     identity: object = None,
     inverse: object = None,
     op: object = None,
     hash_function: object = ...,
 ) -> Integer: ...
 def linear_relation(
-    P: object,
+    self,
     Q: object,
-    operation: str = '+',
+    operation: str = "+",
     identity: object = None,
     inverse: object = None,
     op: object = None,
@@ -76,32 +77,32 @@ def linear_relation(
     ord_q: object = None,
 ) -> tuple[object, ...]: ...
 def order_from_multiple(
-    P: object,
+    self,
     m: object,
     plist: object = None,
     factorization: object = None,
     check: bool = True,
-    operation: str = '+',
+    operation: str = "+",
     identity: object = None,
     inverse: object = None,
     op: object = None,
 ) -> Integer: ...
 def order_from_bounds(
-    P: object,
+    self,
     bounds: object,
     d: object = None,
-    operation: str = '+',
+    operation: str = "+",
     identity: object = None,
     inverse: object = None,
     op: object = None,
 ) -> Integer: ...
-def has_order(P: object, n: object, operation: str = '+') -> bool: ...
+def has_order(self, n: object, operation: str = "+") -> bool: ...
 def merge_points(
-    P1: object,
+    self,
     P2: object,
-    operation: str = '+',
+    operation: str = "+",
     identity: object = None,
     inverse: object = None,
     op: object = None,
 ) -> tuple[object, ...]: ...
-def structure_description(G: object, latex: bool = False) -> str: ...
+def structure_description(self, latex: bool = False) -> str: ...

@@ -1,7 +1,4 @@
-# Generated from the pinned Sage 10.7 source tree.
 import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
 
 class _SageObject: ...
 
@@ -13,7 +10,10 @@ GET_OPER_FLAGS: _SageObject
 OPERATIONS: _SageObject
 NameFunction: _SageObject
 NAME_RE: _SageObject
+
 class OperationInspector:
+    flags: FlagsType
+
     def __init__(self, libgap_element: builtins.object) -> None: ...
     @property
     def obj(self) -> _SageObject: ...

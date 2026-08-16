@@ -1,14 +1,23 @@
-# Generated from the pinned Sage 10.7 source tree.
 import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from collections.abc import (
+    Hashable,
+)
+
+from sage.structure.element import Element
 
 class _SageObject: ...
 
-def theta_series(self: builtins.object, Max: builtins.int = ..., var_str: builtins.str = ..., safe_flag: builtins.bool = ...) -> _SageObject: ...
-
-def theta_by_pari(self: builtins.object, Max: builtins.object, var_str: builtins.str = ..., safe_flag: builtins.bool = ...) -> _SageObject: ...
-
-def theta_by_cholesky(self: builtins.object, q_prec: builtins.object) -> _SageObject: ...
-
-def theta_series_degree_2(Q: builtins.int, prec: builtins.int) -> builtins.dict[_SageObject, _SageObject]: ...
+def theta_series(
+    self,
+    Max: builtins.int = ...,
+    var_str: builtins.str = ...,
+    safe_flag: builtins.bool = ...,
+) -> _SageObject: ...
+def theta_by_pari(
+    self,
+    Max: builtins.object,
+    var_str: builtins.str = ...,
+    safe_flag: builtins.bool = ...,
+) -> _SageObject: ...
+def theta_by_cholesky(self, q_prec: builtins.object) -> _SageObject: ...
+def theta_series_degree_2(self, prec: builtins.int) -> dict[Hashable, Element]: ...

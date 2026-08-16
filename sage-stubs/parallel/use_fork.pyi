@@ -1,13 +1,31 @@
-# Generated from the pinned Sage 10.7 source tree.
 import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
 
 class _SageObject: ...
 
 class WorkerData:
-    def __init__(self, input_value: builtins.object, starttime: builtins.object = ..., failure: builtins.str = ...) -> None: ...
+    failure: builtins.str
+
+    def __init__(
+        self,
+        input_value: builtins.object,
+        starttime: builtins.object = ...,
+        failure: builtins.str = ...,
+    ) -> None: ...
 
 class p_iter_fork:
-    def __init__(self, ncpus: builtins.object, timeout: builtins.int = ..., verbose: builtins.bool = ..., reset_interfaces: builtins.bool = ..., reseed_rng: builtins.bool = ...) -> None: ...
+    worker_seed: None
+    reseed_rng: builtins.bool
+    reset_interfaces: builtins.bool
+    verbose: builtins.bool
+    timeout: float
+    ncpus: int
+
+    def __init__(
+        self,
+        ncpus: builtins.object,
+        timeout: builtins.int = ...,
+        verbose: builtins.bool = ...,
+        reset_interfaces: builtins.bool = ...,
+        reseed_rng: builtins.bool = ...,
+    ) -> None: ...
     def __call__(self, f: builtins.object, inputs: builtins.object) -> _SageObject: ...

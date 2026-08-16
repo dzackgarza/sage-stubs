@@ -1,18 +1,24 @@
-# Generated from the pinned Sage 10.7 source tree.
 import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+
+from sage.graphs.digraph import DiGraph
 
 class _SageObject: ...
 
 class HighestWeightCrystalOfTypeA:
+    n: builtins.int
+
     def __init__(self, n: builtins.int = ...) -> None: ...
+
     class Element:
         def e(self, i: builtins.int) -> _SageObject: ...
         def f(self, i: builtins.int) -> _SageObject: ...
 
 class NaiveCrystal:
+    G: DiGraph
+    n: int
+
     def __init__(self) -> None: ...
+
     class Element:
         def e(self, i: builtins.int) -> _SageObject: ...
         def f(self, i: builtins.int) -> _SageObject: ...

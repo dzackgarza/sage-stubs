@@ -1,5 +1,4 @@
 from collections.abc import Iterable, Sequence
-from typing import TypeAlias
 
 from sage.categories.morphism import Morphism
 from sage.rings.integer import Integer
@@ -12,13 +11,18 @@ from sage.tensor.modules.free_module_tensor import FreeModuleTensor
 from sage.tensor.modules.reflexive_module import ReflexiveModule_abstract
 from sage.tensor.modules.tensor_free_module import TensorFreeModule
 
-_Scalar: TypeAlias = Element | Expression | Integer | int
-_FormatSpec: TypeAlias = int | Integer
-_TensorType: TypeAlias = tuple[int, int]
-_ComponentRows: TypeAlias = Sequence[_Scalar] | Sequence[Sequence[_Scalar]] | Sequence[Sequence[Sequence[_Scalar]]]
-_ComponentData: TypeAlias = _Scalar | _ComponentRows | FreeModuleTensor
-_IndexBlock: TypeAlias = Iterable[int | Integer]
-_Symmetry: TypeAlias = _IndexBlock | Iterable[_IndexBlock] | None
+type _Scalar = Element | Expression | Integer | int
+type _FormatSpec = int | Integer
+type _TensorType = tuple[int, int]
+type _ComponentRows = (
+    Sequence[_Scalar]
+    | Sequence[Sequence[_Scalar]]
+    | Sequence[Sequence[Sequence[_Scalar]]]
+)
+type _ComponentData = _Scalar | _ComponentRows | FreeModuleTensor
+type _IndexBlock = Iterable[int | Integer]
+type _Symmetry = _IndexBlock | Iterable[_IndexBlock] | None
+
 class TensorFreeSubmodule_sym(TensorFreeModule):
     def __init__(
         self,
@@ -26,7 +30,7 @@ class TensorFreeSubmodule_sym(TensorFreeModule):
         tensor_type: _TensorType | Sequence[int | Integer],
         name: str | None = ...,
         latex_name: str | None = ...,
-        sym: _Symmetry = ...,
+        sym: _Symmetry | CategoryObject | None = ...,
         antisym: _Symmetry = ...,
         *,
         category: CategoryObject | None = ...,
@@ -37,8 +41,10 @@ class TensorFreeSubmodule_sym(TensorFreeModule):
     def _repr_(self) -> str: ...
     def _is_symmetry_coarsening_of(
         self,
-        coarser_comp: Components[_Scalar, _Scalar, _FormatSpec] | tuple[_Symmetry, _Symmetry],
-        finer_comp: Components[_Scalar, _Scalar, _FormatSpec] | tuple[_Symmetry, _Symmetry],
+        coarser_comp: Components[_Scalar, _Scalar, _FormatSpec]
+        | tuple[_Symmetry, _Symmetry],
+        finer_comp: Components[_Scalar, _Scalar, _FormatSpec]
+        | tuple[_Symmetry, _Symmetry],
     ) -> bool: ...
     def _element_constructor_(
         self,
@@ -50,9 +56,6 @@ class TensorFreeSubmodule_sym(TensorFreeModule):
         antisym: _Symmetry = ...,
     ) -> FreeModuleTensor: ...
     def is_submodule(self, other: ReflexiveModule_abstract) -> bool: ...
-    @property
     def lift(self) -> Morphism: ...
-    @property
     def reduce(self) -> Morphism: ...
-    @property
     def retract(self) -> Morphism: ...

@@ -1,14 +1,24 @@
-# Generated from the pinned Sage 10.7 source tree.
 import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
 
 class _SageObject: ...
 
 class TreeNode:
-    def __init__(self, parent: builtins.object = ..., children: builtins.object = ..., label: builtins.str = ...) -> None: ...
+    number_of_descendants: int
+    label: builtins.str
+
+    def __init__(
+        self,
+        parent: builtins.object = ...,
+        children: builtins.object = ...,
+        label: builtins.str = ...,
+    ) -> None: ...
     def compute_number_of_descendants(self) -> _SageObject: ...
     def compute_depth_of_self_and_children(self) -> _SageObject: ...
     def append_child(self, child: builtins.object) -> _SageObject: ...
 
-def minimal_schnyder_wood(graph: builtins.object, root_edge: builtins.object = ..., minimal: builtins.bool = ..., check: builtins.bool = ...) -> _SageObject: ...
+def minimal_schnyder_wood(
+    self,
+    root_edge: builtins.object = ...,
+    minimal: builtins.bool = ...,
+    check: builtins.bool = ...,
+) -> _SageObject: ...

@@ -1,14 +1,25 @@
-# Generated from the pinned Sage 10.7 source tree.
 import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
 
 class _SageObject: ...
 
-def normalize_args_vectorspace(*args: builtins.object, **kwds: builtins.object) -> _SageObject: ...
-
-def normalize_args_invariant_form(R: builtins.int, d: builtins.object, invariant_form: builtins.object) -> _SageObject: ...
+def normalize_args_vectorspace(
+    self, *args: builtins.object, **kwds: builtins.object
+) -> _SageObject: ...
+def normalize_args_invariant_form(
+    self, d: builtins.object, invariant_form: builtins.object
+) -> _SageObject: ...
 
 class NamedMatrixGroup_generic:
-    def __init__(self, degree: builtins.int, base_ring: builtins.object, special: builtins.object, sage_name: builtins.str, latex_string: builtins.object, category: builtins.object = ..., invariant_form: builtins.object = ...) -> None: ...
-    def __richcmp__(self, other: builtins.object, op: builtins.object) -> _SageObject: ...
+    def __init__(
+        self,
+        degree: builtins.int,
+        base_ring: builtins.object,
+        special: builtins.object,
+        sage_name: builtins.str,
+        latex_string: builtins.object,
+        category: builtins.object = ...,
+        invariant_form: builtins.object = ...,
+    ) -> None: ...
+    def __richcmp__(
+        self, other: builtins.object, op: builtins.object
+    ) -> _SageObject: ...

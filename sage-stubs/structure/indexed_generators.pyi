@@ -1,16 +1,16 @@
-from sage.typeset.unicode_art import UnicodeArt
-from sage.typeset.ascii_art import AsciiArt
 from typing import TypeVar, overload
-from collections.abc import Iterable
+
+from sage.typeset.ascii_art import AsciiArt
+from sage.typeset.unicode_art import UnicodeArt
 
 _T = TypeVar("_T")
-
 from typing import Generic
 
 class IndexedGenerators(Generic[_T]):
     _indices: _T
-    def __init__(self, indices: _T, prefix: str = 'x', **kwds: object) -> None: ...
-    def indices(self) -> _T: ...
+
+    def __init__(self, indices: _T, prefix: str = "x", **kwds: object) -> None: ...
+    def indices(self) -> IndexedGenerators: ...
     def prefix(self) -> str: ...
     @overload
     def print_options(self) -> dict[str, object]: ...

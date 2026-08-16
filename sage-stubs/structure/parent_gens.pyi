@@ -7,17 +7,15 @@ from sage.rings.ring import Ring
 from sage.structure.element import Element
 from sage.structure.parent import Parent
 from sage.structure.parent_base import ParentWithBase
-from typing import TypeAlias
 
-ParentWithGensState: TypeAlias = dict[
-    str,
-    Ring | tuple[Element, ...] | tuple[str, ...] | list[Element] | str | None,
+type ParentWithGensState = dict[
+    str, Ring | tuple[Element, ...] | tuple[str, ...] | list[Element] | str | None
 ]
 
 class ParentWithGens(ParentWithBase):
     def __init__(
         self,
-        base: Ring,
+        base: Ring | Parent,
         names: str | tuple[str, ...] | None = None,
         normalize: bool = True,
         category: Category | None = None,
@@ -26,9 +24,7 @@ class ParentWithGens(ParentWithBase):
     def gen(self, i: int = 0) -> Element: ...
     def gens(self) -> tuple[Element, ...]: ...
     def _assign_names(
-        self,
-        names: str | tuple[str, ...] | None = None,
-        normalize: bool = True,
+        self, names: str | tuple[str, ...] | None = None, normalize: bool = True
     ) -> None: ...
     def __getstate__(self) -> ParentWithGensState: ...
     def __setstate__(self, d: ParentWithGensState) -> None: ...

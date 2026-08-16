@@ -1,18 +1,19 @@
-from collections.abc import Iterable, Iterator, Sequence
-from typing import Protocol, TypeAlias
+from collections.abc import Iterator, Sequence
+from typing import Protocol
 
 from sage.rings.infinity import InfinityElement
 from sage.rings.integer import Integer
 from sage.structure.element import Element
 from sage.structure.parent import Parent
 
-_RealBound: TypeAlias = Element | int | float | InfinityElement
+type _RealBound = Element | int | float | InfinityElement
 
 class SympySet(Protocol):
     def _sage_(self) -> Parent: ...
 
 class InternalRealInterval(Parent):
     element_class: type[Element]
+
     def __init__(
         self,
         lower: _RealBound,
@@ -32,7 +33,9 @@ class InternalRealInterval(Parent):
     def _sympy_(self) -> SympySet: ...
 
 class RealSet(Parent):
-    def __init__(self, *intervals: InternalRealInterval, normalized: bool = ...) -> None: ...
+    def __init__(
+        self, *intervals: InternalRealInterval, normalized: bool = ...
+    ) -> None: ...
     def __iter__(self) -> Iterator[InternalRealInterval]: ...
     def n_components(self) -> Integer: ...
     def cardinality(self) -> Integer | InfinityElement: ...
@@ -53,50 +56,86 @@ class RealSet(Parent):
         **kwds: str | int | bool | Parent,
     ) -> RealSet: ...
     @staticmethod
-    def open(lower: _RealBound, upper: _RealBound, **kwds: str | int | bool | Parent) -> RealSet: ...
+    def open(
+        lower: _RealBound, upper: _RealBound, **kwds: str | int | bool | Parent
+    ) -> RealSet: ...
     @staticmethod
-    def closed(lower: _RealBound, upper: _RealBound, **kwds: str | int | bool | Parent) -> RealSet: ...
+    def closed(
+        lower: _RealBound, upper: _RealBound, **kwds: str | int | bool | Parent
+    ) -> RealSet: ...
     @staticmethod
     def point(p: _RealBound, **kwds: str | int | bool | Parent) -> RealSet: ...
     @staticmethod
-    def open_closed(lower: _RealBound, upper: _RealBound, **kwds: str | int | bool | Parent) -> RealSet: ...
+    def open_closed(
+        lower: _RealBound, upper: _RealBound, **kwds: str | int | bool | Parent
+    ) -> RealSet: ...
     @staticmethod
-    def closed_open(lower: _RealBound, upper: _RealBound, **kwds: str | int | bool | Parent) -> RealSet: ...
+    def closed_open(
+        lower: _RealBound, upper: _RealBound, **kwds: str | int | bool | Parent
+    ) -> RealSet: ...
     @staticmethod
-    def unbounded_below_closed(bound: _RealBound, **kwds: str | int | bool | Parent) -> RealSet: ...
+    def unbounded_below_closed(
+        bound: _RealBound, **kwds: str | int | bool | Parent
+    ) -> RealSet: ...
     @staticmethod
-    def unbounded_below_open(bound: _RealBound, **kwds: str | int | bool | Parent) -> RealSet: ...
+    def unbounded_below_open(
+        bound: _RealBound, **kwds: str | int | bool | Parent
+    ) -> RealSet: ...
     @staticmethod
-    def unbounded_above_closed(bound: _RealBound, **kwds: str | int | bool | Parent) -> RealSet: ...
+    def unbounded_above_closed(
+        bound: _RealBound, **kwds: str | int | bool | Parent
+    ) -> RealSet: ...
     @staticmethod
-    def unbounded_above_open(bound: _RealBound, **kwds: str | int | bool | Parent) -> RealSet: ...
+    def unbounded_above_open(
+        bound: _RealBound, **kwds: str | int | bool | Parent
+    ) -> RealSet: ...
     @staticmethod
     def real_line(**kwds: str | int | bool | Parent) -> RealSet: ...
-    @staticmethod
-    def normalize(intervals: Iterable[InternalRealInterval]) -> tuple[InternalRealInterval, ...]: ...
+    def normalize(self) -> tuple[InternalRealInterval, ...]: ...
     def union(
         self,
-        *real_set_collection: RealSet | InternalRealInterval | tuple[_RealBound, _RealBound] | list[_RealBound] | _RealBound,
+        *real_set_collection: RealSet
+        | InternalRealInterval
+        | tuple[_RealBound, _RealBound]
+        | list[_RealBound]
+        | _RealBound,
     ) -> RealSet: ...
     def intersection(
         self,
-        *real_set_collection: RealSet | InternalRealInterval | tuple[_RealBound, _RealBound] | list[_RealBound] | _RealBound,
+        *real_set_collection: RealSet
+        | InternalRealInterval
+        | tuple[_RealBound, _RealBound]
+        | list[_RealBound]
+        | _RealBound,
     ) -> RealSet: ...
     def inf(self) -> _RealBound: ...
     def sup(self) -> _RealBound: ...
     def complement(self) -> RealSet: ...
     def difference(
         self,
-        *other: RealSet | InternalRealInterval | tuple[_RealBound, _RealBound] | list[_RealBound] | _RealBound,
+        *other: RealSet
+        | InternalRealInterval
+        | tuple[_RealBound, _RealBound]
+        | list[_RealBound]
+        | _RealBound,
     ) -> RealSet: ...
     def symmetric_difference(
         self,
-        *other: RealSet | InternalRealInterval | tuple[_RealBound, _RealBound] | list[_RealBound] | _RealBound,
+        *other: RealSet
+        | InternalRealInterval
+        | tuple[_RealBound, _RealBound]
+        | list[_RealBound]
+        | _RealBound,
     ) -> RealSet: ...
-    def convex_hull(self) -> RealSet: ...
+    @staticmethod
+    def convex_hull() -> RealSet: ...
     def is_disjoint(
         self,
-        *other: RealSet | InternalRealInterval | tuple[_RealBound, _RealBound] | list[_RealBound] | _RealBound,
+        *other: RealSet
+        | InternalRealInterval
+        | tuple[_RealBound, _RealBound]
+        | list[_RealBound]
+        | _RealBound,
     ) -> bool: ...
     @staticmethod
     def are_pairwise_disjoint(real_set_collection: Sequence[RealSet]) -> bool: ...
@@ -104,7 +143,11 @@ class RealSet(Parent):
     def __contains__(self, x: object) -> bool: ...
     def is_subset(
         self,
-        *other: RealSet | InternalRealInterval | tuple[_RealBound, _RealBound] | list[_RealBound] | _RealBound,
+        *other: RealSet
+        | InternalRealInterval
+        | tuple[_RealBound, _RealBound]
+        | list[_RealBound]
+        | _RealBound,
     ) -> bool: ...
     def _an_element_(self) -> _RealBound: ...
     def _sympy_(self) -> SympySet: ...

@@ -1,28 +1,65 @@
-# Generated from the pinned Sage 10.7 source tree.
 import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
 
 class _SageObject: ...
 
-def lex_BFS(G: builtins.object, reverse: builtins.object = ..., tree: builtins.object = ..., initial_vertex: builtins.object = ..., algorithm: builtins.object = ...) -> _SageObject: ...
-
-def lex_UP(G: builtins.object, reverse: builtins.object = ..., tree: builtins.object = ..., initial_vertex: builtins.object = ...) -> _SageObject: ...
-
-def lex_DFS(G: builtins.object, reverse: builtins.object = ..., tree: builtins.object = ..., initial_vertex: builtins.object = ...) -> _SageObject: ...
-
-def lex_DOWN(G: builtins.object, reverse: builtins.object = ..., tree: builtins.object = ..., initial_vertex: builtins.object = ...) -> _SageObject: ...
-
-def lex_M(self: builtins.object, triangulation: builtins.object = ..., labels: builtins.object = ..., initial_vertex: builtins.object = ..., algorithm: builtins.object = ...) -> _SageObject: ...
-
-def lex_M_slow(G: builtins.object, triangulation: builtins.object = ..., labels: builtins.object = ..., initial_vertex: builtins.object = ...) -> _SageObject: ...
-
-def lex_M_fast(G: builtins.object, triangulation: builtins.object = ..., initial_vertex: builtins.object = ...) -> _SageObject: ...
-
-def is_valid_lex_M_order(G: builtins.object, alpha: builtins.object, F: builtins.object) -> builtins.bool: ...
-
-def maximum_cardinality_search(G: builtins.object, reverse: builtins.object = ..., tree: builtins.object = ..., initial_vertex: builtins.object = ...) -> _SageObject: ...
-
-def swap(alpha: builtins.object, alpha_inv: builtins.object, u: builtins.object, new_pos_u: builtins.object) -> _SageObject: ...
-
-def maximum_cardinality_search_M(G: builtins.object, initial_vertex: builtins.object = ...) -> _SageObject: ...
+def lex_BFS(
+    G: builtins.object,
+    reverse: builtins.object = ...,
+    tree: builtins.object = ...,
+    initial_vertex: builtins.object = ...,
+    algorithm: builtins.object = ...,
+) -> _SageObject: ...
+def lex_UP(
+    G: builtins.object,
+    reverse: builtins.object = ...,
+    tree: builtins.object = ...,
+    initial_vertex: builtins.object = ...,
+) -> _SageObject: ...
+def lex_DFS(
+    G: builtins.object,
+    reverse: builtins.object = ...,
+    tree: builtins.object = ...,
+    initial_vertex: builtins.object = ...,
+) -> _SageObject: ...
+def lex_DOWN(
+    G: builtins.object,
+    reverse: builtins.object = ...,
+    tree: builtins.object = ...,
+    initial_vertex: builtins.object = ...,
+) -> _SageObject: ...
+def lex_M(
+    self,
+    triangulation: builtins.object = ...,
+    labels: builtins.object = ...,
+    initial_vertex: builtins.object = ...,
+    algorithm: builtins.object = ...,
+) -> _SageObject: ...
+def lex_M_slow(
+    G: builtins.object,
+    triangulation: builtins.object = ...,
+    labels: builtins.object = ...,
+    initial_vertex: builtins.object = ...,
+) -> _SageObject: ...
+def lex_M_fast(
+    G: builtins.object,
+    triangulation: builtins.object = ...,
+    initial_vertex: builtins.object = ...,
+) -> _SageObject: ...
+def is_valid_lex_M_order(
+    G: builtins.object, alpha: builtins.object, F: builtins.object
+) -> builtins.bool: ...
+def maximum_cardinality_search(
+    G: builtins.object,
+    reverse: builtins.object = ...,
+    tree: builtins.object = ...,
+    initial_vertex: builtins.object = ...,
+) -> _SageObject: ...
+def swap(
+    alpha: builtins.object,
+    alpha_inv: builtins.object,
+    u: builtins.object,
+    new_pos_u: builtins.object,
+) -> _SageObject: ...
+def maximum_cardinality_search_M(
+    G: builtins.object, initial_vertex: builtins.object = ...
+) -> _SageObject: ...

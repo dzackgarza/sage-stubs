@@ -6,11 +6,11 @@ from types import (
     MethodType,
     WrapperDescriptorType,
 )
-from typing import TypeAlias, TypeVar, overload
+from typing import TypeVar, overload
 
 from sage.structure.sage_object import SageObject
 
-AttributeValue: TypeAlias = (
+type AttributeValue = (
     property
     | Callable[..., object]
     | FunctionType
@@ -25,7 +25,6 @@ AttributeValue: TypeAlias = (
     | type
     | SageObject
 )
-
 _D = TypeVar("_D")
 
 def shortrepr(obj: object, max: int = 50) -> str: ...
@@ -33,4 +32,4 @@ def shortrepr(obj: object, max: int = 50) -> str: ...
 def getattr_debug(obj: object, name: str) -> AttributeValue: ...
 @overload
 def getattr_debug(obj: object, name: str, default: _D) -> AttributeValue | _D: ...
-def type_debug(cls: type) -> None: ...
+def type_debug(cls) -> None: ...
