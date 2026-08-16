@@ -32,7 +32,7 @@ Rules:
 | 7 | `sage-stubs/combinat/k_tableau.pyi` | 120 | ✅ |
 | 8 | `sage-stubs/combinat/designs/difference_family.pyi` | 117 | ✅ |
 | 9 | `sage-stubs/combinat/matrices/latin.pyi` | 116 | ✅ |
-| 10 | `sage-stubs/crypto/mq/sr.pyi` | 115 | ⬜ |
+| 10 | `sage-stubs/crypto/mq/sr.pyi` | 115 | ✅ |
 | 11 | `sage-stubs/modular/modform_hecketriangle/space.pyi` | 114 | ⬜ |
 | 12 | `sage-stubs/interacts/library.pyi` | 114 | ⬜ |
 | 13 | `sage-stubs/symbolic/expression_conversions.pyi` | 112 | ⬜ |
@@ -793,7 +793,7 @@ Rules:
 | 768 | `sage-stubs/databases/knotinfo_db.pyi` | 10 | ⬜ |
 | 769 | `sage-stubs/databases/jones.pyi` | 10 | ⬜ |
 | 770 | `sage-stubs/crypto/stream_cipher.pyi` | 10 | ⬜ |
-| 771 | `sage-stubs/crypto/mq/mpolynomialsystemgenerator.pyi` | 10 | ⬜ |
+| 771 | `sage-stubs/crypto/mq/mpolynomialsystemgenerator.pyi` | 10 | ✅ |
 | 772 | `sage-stubs/combinat/root_system/type_relabel.pyi` | 10 | ⬜ |
 | 773 | `sage-stubs/combinat/root_system/type_D.pyi` | 10 | ⬜ |
 | 774 | `sage-stubs/combinat/path_tableaux/frieze.pyi` | 10 | ⬜ |
