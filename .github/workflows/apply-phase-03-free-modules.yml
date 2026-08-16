@@ -1,0 +1,71 @@
+name: Apply phase 03 free modules
+
+on:
+  workflow_run:
+    workflows: ["Apply phase 02 ring kernel"]
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: phase-03-free-modules-main
+  cancel-in-progress: true
+
+jobs:
+  apply:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out current main and pinned Sage source
+        uses: actions/checkout@v7
+        with:
+          ref: main
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+
+      - name: Install formatter
+        run: python -m pip install --upgrade ruff
+
+      - name: Require phases 01 and 02
+        run: |
+          python scripts/check_category_kernel.py
+          python scripts/check_ring_kernel.py
+
+      - name: Apply source-asserted free-module kernel
+        run: |
+          set -euo pipefail
+          python scripts/refine_free_module_kernel.py
+          ruff format \
+            sage-stubs/modules/module.pyi \
+            sage-stubs/modules/free_module.pyi \
+            sage-stubs/modules/free_module_element.pyi \
+            typing_tests/free_module_kernel/scalars_and_vectors.py
+          python scripts/check_free_module_kernel.py
+
+      - name: Commit and push phase 03
+        run: |
+          set -euo pipefail
+          git add \
+            sage-stubs/modules/module.pyi \
+            sage-stubs/modules/free_module.pyi \
+            sage-stubs/modules/free_module_element.pyi \
+            typing_tests/free_module_kernel/scalars_and_vectors.py
+          git diff --cached --check
+          if git diff --cached --quiet; then
+            echo 'Phase 03 is already present.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'refactor(types): preserve scalar and vector types in free modules'
+          git push origin HEAD:main
