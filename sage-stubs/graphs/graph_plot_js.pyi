@@ -1,8 +1,3 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from sage.structure.element import Element
 
-class _SageObject: ...
-
-def gen_html_code(G: builtins.object, vertex_labels: builtins.bool = ..., edge_labels: builtins.bool = ..., vertex_partition: builtins.list[_SageObject] = ..., vertex_colors: builtins.object = ..., edge_partition: builtins.list[_SageObject] = ..., force_spring_layout: builtins.bool = ..., charge: builtins.object = ..., link_distance: builtins.int = ..., link_strength: builtins.int = ..., gravity: builtins.float = ..., vertex_size: builtins.int = ..., edge_thickness: builtins.int = ...) -> _SageObject: ...
+def gen_html_code(G: Element | int | str | bool | None, vertex_labels: Element | int | str | bool | None, edge_labels: Element | int | str | bool | None, vertex_partition: Element | int | str | bool | None, vertex_colors: Element | int | str | bool | None, edge_partition: Element | int | str | bool | None, force_spring_layout: Element | int | str | bool | None, charge: Element | int | str | bool | None, link_distance: Element | int | str | bool | None, link_strength: Element | int | str | bool | None, gravity: Element | int | str | bool | None, vertex_size: Element | int | str | bool | None, edge_thickness: Element | int | str | bool | None) -> Element: ...

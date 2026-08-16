@@ -1,8 +1,3 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from sage.structure.element import Element
 
-class _SageObject: ...
-
-def mcqd(G: builtins.object) -> _SageObject: ...
+def mcqd(G: Element | int | str | bool | None) -> Element: ...

@@ -1,8 +1,3 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from sage.structure.element import Element
 
-class _SageObject: ...
-
-def revolution_plot3d(curve: builtins.object, trange: builtins.object, phirange: builtins.object = ..., parallel_axis: builtins.str = ..., axis: builtins.tuple[_SageObject, ...] = ..., print_vector: builtins.bool = ..., show_curve: builtins.bool = ..., **kwds: builtins.object) -> _SageObject: ...
+def revolution_plot3d(curve: Element | int | str | bool | None, trange: Element | int | str | bool | None, phirange: Element | int | str | bool | None, parallel_axis: Element | int | str | bool | None, axis: Element | int | str | bool | None, print_vector: Element | int | str | bool | None, show_curve: Element | int | str | bool | None) -> Element: ...

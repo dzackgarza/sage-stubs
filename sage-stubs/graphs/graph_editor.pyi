@@ -1,8 +1,3 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from sage.structure.element import Element
 
-class _SageObject: ...
-
-def graph_editor(graph: builtins.object = ..., **display_options: builtins.object) -> _SageObject: ...
+def graph_editor(graph: Element | int | str | bool | None) -> Element: ...

@@ -1,8 +1,3 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from sage.structure.element import Element
 
-class _SageObject: ...
-
-def lovasz_theta(graph: builtins.object) -> _SageObject: ...
+def lovasz_theta(graph: Element | int | str | bool | None) -> Element: ...

@@ -1,8 +1,3 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from sage.structure.element import Element
 
-class _SageObject: ...
-
-def is_planar(g: builtins.object, kuratowski: builtins.object = ..., set_pos: builtins.object = ..., set_embedding: builtins.object = ..., immutable: builtins.object = ...) -> builtins.bool: ...
+def is_planar(g: Element, kuratowski: Element | int | str | bool | None, set_pos: Element | int | str | bool | None, set_embedding: Element | int | str | bool | None, immutable: Element | int | str | bool | None) -> bool: ...

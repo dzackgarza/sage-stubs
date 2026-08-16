@@ -1,9 +1,6 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from sage.structure.element import Element
 
-class _SageObject: ...
+class Polyhedron_base_number_field(Polyhedron_base):
+    def _compute_data_lists_and_internal_base_ring(self, data_lists: Element | int | str | bool | None, convert_QQ: Element | int | str | bool | None, convert_NF: Element | int | str | bool | None) -> Element: ...
 
-class Polyhedron_base_number_field:
-    ...
+class Polyhedron_base: ...

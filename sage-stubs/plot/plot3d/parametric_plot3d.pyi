@@ -1,8 +1,3 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from sage.structure.element import Element
 
-class _SageObject: ...
-
-def parametric_plot3d(f: builtins.object, urange: builtins.object, vrange: builtins.object = ..., plot_points: builtins.str = ..., boundary_style: builtins.object = ..., **kwds: builtins.object) -> _SageObject: ...
+def parametric_plot3d(f: Element, urange: Element | int | str | bool | None, vrange: Element | int | str | bool | None, plot_points: Element | int | str | bool | None, boundary_style: Element | int | str | bool | None) -> Element: ...

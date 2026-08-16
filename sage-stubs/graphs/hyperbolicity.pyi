@@ -1,8 +1,3 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from sage.structure.element import Element
 
-class _SageObject: ...
-
-def hyperbolicity_distribution(G: builtins.object, algorithm: builtins.object = ..., sampling_size: builtins.object = ...) -> _SageObject: ...
+def hyperbolicity_distribution(G: Element | int | str | bool | None, algorithm: str, sampling_size: Element | int | str | bool | None) -> Element: ...
