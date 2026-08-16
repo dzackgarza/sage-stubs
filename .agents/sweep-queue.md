@@ -23,7 +23,7 @@ Rules:
 
 | # | File | Violations | Status |
 |---|------|-----------:|--------|
-| 1 | `sage-stubs/schemes/elliptic_curves/heegner.pyi` | 260 | ⬜ |
+| 1 | `sage-stubs/schemes/elliptic_curves/heegner.pyi` | 260 | ✅ |
 | 2 | `sage-stubs/combinat/finite_state_machine.pyi` | 207 | ⬜ |
 | 3 | `sage-stubs/combinat/diagram_algebras.pyi` | 148 | ⬜ |
 | 4 | `sage-stubs/combinat/matrices/hadamard_matrix.pyi` | 133 | ⬜ |
