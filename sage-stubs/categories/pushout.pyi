@@ -1,10 +1,10 @@
 from typing import Self
-from sage.structure.parent import Parent
-from sage.categories.morphism import Morphism
-from sage.categories.homset import Homset
-from sage.categories.map import Map
 
-class ConstructionFunctor:
+from sage.categories.functor import Functor
+from sage.categories.morphism import Morphism
+from sage.structure.parent import Parent
+
+class ConstructionFunctor(Functor):
     def __mul__(self, other: ConstructionFunctor) -> ConstructionFunctor: ...
     def pushout(self, other: ConstructionFunctor) -> ConstructionFunctor: ...
     def __eq__(self, other: object) -> bool: ...
