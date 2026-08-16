@@ -1,9 +1,12 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from sage.rings.finite_rings.element_pari_ffelt import FiniteFieldElement_pari_ffelt
+from sage.rings.finite_rings.finite_field_pari_ffelt import FiniteField_pari_ffelt
+from sage.rings.finite_rings.maps_finite_field import FiniteFieldVectorSpaceIsomorphism
+from sage.rings.finite_rings.residue_field import ResidueField_generic
+from sage.rings.ideal import Ideal_generic
+from sage.rings.integer import Integer
+from sage.rings.polynomial.polynomial_element import Polynomial
+from sage.structure.element import Element
 
-class _SageObject: ...
-
-class ResidueFiniteField_pari_ffelt:
-    def __init__(self, p: builtins.object, characteristic: builtins.object, name: builtins.object, modulus: builtins.object, to_vs: builtins.object, to_order: builtins.object, PB: builtins.object) -> None: ...
+class ResidueFiniteField_pari_ffelt(ResidueField_generic, FiniteField_pari_ffelt):
+    def __init__(self, p: Ideal_generic, characteristic: Integer, name: str, modulus: Polynomial, to_vs: FiniteFieldVectorSpaceIsomorphism, to_order: FiniteFieldVectorSpaceIsomorphism, PB: list[Element]) -> None: ...
+    def _element_constructor_(self, x: Element) -> FiniteFieldElement_pari_ffelt: ...
