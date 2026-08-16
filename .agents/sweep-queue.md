@@ -33,7 +33,7 @@ Rules:
 | 8 | `sage-stubs/combinat/designs/difference_family.pyi` | 117 | ✅ |
 | 9 | `sage-stubs/combinat/matrices/latin.pyi` | 116 | ✅ |
 | 10 | `sage-stubs/crypto/mq/sr.pyi` | 115 | ✅ |
-| 11 | `sage-stubs/modular/modform_hecketriangle/space.pyi` | 114 | ⬜ |
+| 11 | `sage-stubs/modular/modform_hecketriangle/space.pyi` | 114 | ✅ |
 | 12 | `sage-stubs/interacts/library.pyi` | 114 | ⬜ |
 | 13 | `sage-stubs/symbolic/expression_conversions.pyi` | 112 | ⬜ |
 | 14 | `sage-stubs/combinat/tableau_tuple.pyi` | 109 | ⬜ |
@@ -119,7 +119,7 @@ Rules:
 | 94 | `sage-stubs/schemes/elliptic_curves/kraus.pyi` | 56 | ⬜ |
 | 95 | `sage-stubs/rings/padics/lattice_precision.pyi` | 56 | ⬜ |
 | 96 | `sage-stubs/rings/function_field/khuri_makdisi.pyi` | 56 | ⬜ |
-| 97 | `sage-stubs/modular/modform_hecketriangle/abstract_space.pyi` | 56 | ⬜ |
+| 97 | `sage-stubs/modular/modform_hecketriangle/abstract_space.pyi` | 56 | ✅ |
 | 98 | `sage-stubs/doctest/forker.pyi` | 56 | ⬜ |
 | 99 | `sage-stubs/rings/padics/padic_valuation.pyi` | 55 | ⬜ |
 | 100 | `sage-stubs/modular/pollack_stevens/distributions.pyi` | 55 | ⬜ |
@@ -338,7 +338,7 @@ Rules:
 | 313 | `sage-stubs/numerical/backends/glpk_graph_backend.pyi` | 27 | ⬜ |
 | 314 | `sage-stubs/modules/fp_graded/morphism.pyi` | 27 | ⬜ |
 | 315 | `sage-stubs/modules/fp_graded/free_module.pyi` | 27 | ⬜ |
-| 316 | `sage-stubs/modular/modform_hecketriangle/abstract_ring.pyi` | 27 | ⬜ |
+| 316 | `sage-stubs/modular/modform_hecketriangle/abstract_ring.pyi` | 27 | ✅ |
 | 317 | `sage-stubs/modular/abvar/homology.pyi` | 27 | ⬜ |
 | 318 | `sage-stubs/matrix/matrix_rational_sparse.pyi` | 27 | ⬜ |
 | 319 | `sage-stubs/logic/logic.pyi` | 27 | ⬜ |
@@ -1020,7 +1020,7 @@ Rules:
 | 995 | `sage-stubs/quadratic_forms/quadratic_form__reduction_theory.pyi` | 5 | ⬜ |
 | 996 | `sage-stubs/modules/ore_module_element.pyi` | 5 | ⬜ |
 | 997 | `sage-stubs/modules/free_module_homspace.pyi` | 5 | ⬜ |
-| 998 | `sage-stubs/modular/modform_hecketriangle/element.pyi` | 5 | ⬜ |
+| 998 | `sage-stubs/modular/modform_hecketriangle/element.pyi` | 5 | ✅ |
 | 999 | `sage-stubs/modular/modform_hecketriangle/analytic_type.pyi` | 5 | ⬜ |
 | 1000 | `sage-stubs/modular/abvar/constructor.pyi` | 5 | ⬜ |
 | 1001 | `sage-stubs/misc/method_decorator.pyi` | 5 | ⬜ |
