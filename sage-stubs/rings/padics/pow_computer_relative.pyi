@@ -1,3 +1,5 @@
+from collections.abc import Callable
+
 from sage.rings.integer import Integer
 from sage.rings.padics.pow_computer import PowComputer_class
 from sage.rings.polynomial.polynomial_element import (
@@ -5,10 +7,11 @@ from sage.rings.polynomial.polynomial_element import (
     Polynomial_generic_dense,
 )
 from sage.structure.element import Element
+from sage.structure.factory import FactoryArgument
 
 class PowComputer_relative(PowComputer_class):
     def __init__(self, prime: Integer, cache_limit: int, prec_cap: int, ram_prec_cap: int, in_field: bool, poly: Polynomial | None = None, shift_seed: Element | None = None) -> None: ...
-    def __reduce__(self) -> tuple[object, tuple[object, ...]]: ...
+    def __reduce__(self) -> tuple[Callable[..., PowComputer_class], tuple[FactoryArgument, ...]]: ...
     def _repr_(self) -> str: ...
     def polynomial(self, n: int | None = None, var: str = 'x') -> Polynomial_generic_dense: ...
 
