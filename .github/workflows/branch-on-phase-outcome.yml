@@ -1,0 +1,81 @@
+name: Branch on current phase outcome
+
+on:
+  push:
+    branches: [phase-outcome-discovery]
+    paths:
+      - .github/workflows/branch-on-phase-outcome.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  branch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create exactly one current-state outcome branch
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          git switch -C phase-outcome origin/main
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          import re
+
+          entries = []
+          for path in sorted(Path('.agents/phases').glob('phase-*.md')):
+              text = path.read_text()
+              number_match = re.search(r'phase-(\d+)', path.name)
+              status_match = re.search(r'^\*\*Status:\*\*\s*(.+)$', text, re.MULTILINE)
+              title_match = re.search(r'^#\s+(.+)$', text, re.MULTILINE)
+              if not number_match or not status_match:
+                  continue
+              entries.append({
+                  'number': int(number_match.group(1)),
+                  'file': str(path),
+                  'title': title_match.group(1).strip() if title_match else path.stem,
+                  'status': status_match.group(1).strip(),
+                  'complete': '✅ Complete' in status_match.group(1),
+              })
+          entries.sort(key=lambda item: item['number'])
+          unfinished = [item for item in entries if not item['complete']]
+          Path('.agents/phase-outcome.json').write_text(
+              json.dumps({'unfinished': unfinished, 'all': entries}, indent=2) + '\n'
+          )
+          if unfinished:
+              Path('.agents/active-phase.json').write_text(
+                  json.dumps({'next': unfinished[0], 'unfinished': unfinished, 'all': entries}, indent=2) + '\n'
+              )
+              Path('.agents/active-phase.md').write_text(Path(unfinished[0]['file']).read_text())
+              Path('/tmp/outcome-branch').write_text('phase-program-blocked')
+              Path('/tmp/outcome-message').write_text(
+                  f"chore: select blocking Phase {unfinished[0]['number']:02d}"
+              )
+          else:
+              Path('.agents/phase-program-complete.md').write_text(
+                  '# Implementation phase program complete\n\n'
+                  + '\n'.join(
+                      f"- Phase {item['number']:02d}: {item['title']} — {item['status']}"
+                      for item in entries
+                  )
+                  + '\n'
+              )
+              Path('/tmp/outcome-branch').write_text('phase-program-complete')
+              Path('/tmp/outcome-message').write_text('chore: record completed implementation phase program')
+          PY
+
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add .agents/phase-outcome.json .agents/active-phase.json .agents/active-phase.md .agents/phase-program-complete.md 2>/dev/null || true
+          if ! git diff --cached --quiet; then
+            git commit -F /tmp/outcome-message
+          fi
+          branch=$(cat /tmp/outcome-branch)
+          git push --force origin HEAD:"$branch"
