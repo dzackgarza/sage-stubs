@@ -1,0 +1,55 @@
+name: Apply Phase 04 correction checkpoint
+
+on:
+  push:
+    branches: [phase-04-correction-checkpoint]
+    paths:
+      - .github/workflows/apply-phase04-correction-checkpoint.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Decode validated patch
+        run: |
+          set -euo pipefail
+          base64 -d .agents/phase04-correction-1.patch.b64 > /tmp/phase04-correction-1.patch.bz2
+          echo 'e65d24d4f483b22f81f89ebf039b63748b5e57b19c3fe8819b5b73f8a2788e97  /tmp/phase04-correction-1.patch.bz2' | sha256sum -c -
+          bzip2 -dc /tmp/phase04-correction-1.patch.bz2 > /tmp/phase04-correction-1.patch
+      - name: Apply, validate, commit, and push
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          git switch -C main origin/main
+          test "$(git rev-parse HEAD)" = '32dbcdcaf6151c1ff71240e611c20f2857c8b50d'
+          git apply --check /tmp/phase04-correction-1.patch
+          git apply /tmp/phase04-correction-1.patch
+          python -m pip install --upgrade pip ruff
+          targets=(
+            sage-stubs/rings/finite_rings
+            sage-stubs/rings/number_field
+            sage-stubs/rings/padics
+            sage-stubs/rings/function_field
+            sage-stubs/rings/valuation
+            sage-stubs/rings/asymptotic
+            sage-stubs/rings/semirings
+          )
+          ruff check "${targets[@]}"
+          ruff format --check "${targets[@]}"
+          python scripts/check_stubs.py $(find "${targets[@]}" -name '*.pyi' -print)
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add pyproject.toml "${targets[@]}"
+          git commit -m 'fix(stubs): normalize Phase 04 signatures'
+          git push origin main
