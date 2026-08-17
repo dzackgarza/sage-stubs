@@ -12,44 +12,240 @@ from sage.structure.factory import (
 )
 from sage.structure.parent import Parent
 
-type _QInput = Integer | int | tuple[Integer, int] | list[tuple[Integer, int]] | Factorization
+type _QInput = (
+    Integer | int | tuple[Integer, int] | list[tuple[Integer, int]] | Factorization
+)
 
 class Qp_class(UniqueFactory):
-    def create_key(self, *args: FactoryArgument, **kwds: FactoryArgument) -> FactoryCacheKey: ...
-    def create_object(self, version: FactoryVersion, key: FactoryCacheKey, **extra_args: FactoryArgument) -> pAdicFieldGeneric: ...
+    def create_key(
+        self, *args: FactoryArgument, **kwds: FactoryArgument
+    ) -> FactoryCacheKey: ...
+    def create_object(
+        self,
+        version: FactoryVersion,
+        key: FactoryCacheKey,
+        **extra_args: FactoryArgument,
+    ) -> pAdicFieldGeneric: ...
 
 class Zp_class(UniqueFactory):
-    def create_key(self, *args: FactoryArgument, **kwds: FactoryArgument) -> FactoryCacheKey: ...
-    def create_object(self, version: FactoryVersion, key: FactoryCacheKey, **extra_args: FactoryArgument) -> pAdicRingGeneric: ...
+    def create_key(
+        self, *args: FactoryArgument, **kwds: FactoryArgument
+    ) -> FactoryCacheKey: ...
+    def create_object(
+        self,
+        version: FactoryVersion,
+        key: FactoryCacheKey,
+        **extra_args: FactoryArgument,
+    ) -> pAdicRingGeneric: ...
 
 class pAdicExtension_class(UniqueFactory):
-    def create_key_and_extra_args(self, *args: FactoryArgument, **kwds: FactoryArgument) -> tuple[FactoryCacheKey, FactoryExtraArgs]: ...
-    def create_object(self, version: FactoryVersion, key: FactoryCacheKey, **extra_args: FactoryArgument) -> pAdicRingGeneric | pAdicFieldGeneric: ...
+    def create_key_and_extra_args(
+        self, *args: FactoryArgument, **kwds: FactoryArgument
+    ) -> tuple[FactoryCacheKey, FactoryExtraArgs]: ...
+    def create_object(
+        self,
+        version: FactoryVersion,
+        key: FactoryCacheKey,
+        **extra_args: FactoryArgument,
+    ) -> pAdicRingGeneric | pAdicFieldGeneric: ...
 
-def _canonicalize_show_prec(type: str, print_mode: str | None, show_prec: bool | str | None = None) -> tuple[str, bool]: ...
-def get_key_base(p: Integer, prec: Integer | int | None, type: str, print_mode: str | None, names: str | tuple[str, ...] | None, ram_name: str | None, print_pos: int | None, print_sep: str | None, print_alphabet: tuple[str, ...] | None, print_max_terms: int | None, show_prec: bool | str | None, check: bool, valid_types: list[str], label: str | None = None) -> FactoryCacheKey: ...
-def Qp(p: Integer, prec: Integer | int | None = None, type: str = 'capped-rel', print_mode: str | None = None, names: str | tuple[str, ...] | None = None, ram_name: str | None = None, print_pos: int | None = None, print_sep: str | None = None, print_alphabet: tuple[str, ...] | None = None, print_max_terms: int | None = None, show_prec: bool | str | None = None, check: bool = True, label: str | None = None) -> Field: ...
-def Zp(p: Integer, prec: Integer | int | None = None, type: str = 'capped-rel', print_mode: str | None = None, names: str | tuple[str, ...] | None = None, ram_name: str | None = None, print_pos: int | None = None, print_sep: str | None = None, print_alphabet: tuple[str, ...] | None = None, print_max_terms: int | None = None, show_prec: bool | str | None = None, check: bool = True, label: str | None = None) -> Ring: ...
-def QpCR(p: Integer, prec: Integer | int | None = None, *args: FactoryArgument, **kwds: FactoryArgument) -> Field: ...
-def QpFP(p: Integer, prec: Integer | int | None = None, *args: FactoryArgument, **kwds: FactoryArgument) -> Field: ...
-def QpLC(p: Integer, prec: Integer | int | None = None, *args: FactoryArgument, **kwds: FactoryArgument) -> Field: ...
-def QpLF(p: Integer, prec: Integer | int | None = None, *args: FactoryArgument, **kwds: FactoryArgument) -> Field: ...
-def QpER(p: Integer, prec: Integer | int | None = None, halt: int | None = None, secure: bool = False, *args: FactoryArgument, **kwds: FactoryArgument) -> Field: ...
-def Qq(q: _QInput, prec: Integer | int | None = None, type: str = 'capped-rel', modulus: Polynomial | None = None, names: str | tuple[str, ...] | None = None, print_mode: str | None = None, ram_name: str | None = None, res_name: str | None = None, print_pos: int | None = None, print_sep: str | None = None, print_max_ram_terms: int | None = None, print_max_unram_terms: int | None = None, print_max_terse_terms: int | None = None, show_prec: bool | str | None = None, check: bool = True, implementation: str = 'FLINT') -> Field: ...
-def QqCR(q: _QInput, prec: Integer | int | None = None, *args: FactoryArgument, **kwds: FactoryArgument) -> Field: ...
-def QqFP(q: _QInput, prec: Integer | int | None = None, *args: FactoryArgument, **kwds: FactoryArgument) -> Field: ...
-def Zq(q: _QInput, prec: Integer | int | None = None, type: str = 'capped-rel', modulus: Polynomial | None = None, names: str | tuple[str, ...] | None = None, print_mode: str | None = None, ram_name: str | None = None, res_name: str | None = None, print_pos: int | None = None, print_sep: str | None = None, print_max_ram_terms: int | None = None, print_max_unram_terms: int | None = None, print_max_terse_terms: int | None = None, show_prec: bool | str | None = None, check: bool = True, implementation: str = 'FLINT') -> Ring: ...
-def ZpCR(p: Integer, prec: Integer | int | None = None, *args: FactoryArgument, **kwds: FactoryArgument) -> Ring: ...
-def ZpCA(p: Integer, prec: Integer | int | None = None, *args: FactoryArgument, **kwds: FactoryArgument) -> Ring: ...
-def ZpFM(p: Integer, prec: Integer | int | None = None, *args: FactoryArgument, **kwds: FactoryArgument) -> Ring: ...
-def ZpFP(p: Integer, prec: Integer | int | None = None, *args: FactoryArgument, **kwds: FactoryArgument) -> Ring: ...
-def ZqCR(q: _QInput, prec: Integer | int | None = None, *args: FactoryArgument, **kwds: FactoryArgument) -> Ring: ...
-def ZqCA(q: _QInput, prec: Integer | int | None = None, *args: FactoryArgument, **kwds: FactoryArgument) -> Ring: ...
-def ZqFM(q: _QInput, prec: Integer | int | None = None, *args: FactoryArgument, **kwds: FactoryArgument) -> Ring: ...
-def ZqFP(q: _QInput, prec: Integer | int | None = None, *args: FactoryArgument, **kwds: FactoryArgument) -> Ring: ...
-def ZpLC(p: Integer, prec: Integer | int | None = None, *args: FactoryArgument, **kwds: FactoryArgument) -> Ring: ...
-def ZpLF(p: Integer, prec: Integer | int | None = None, *args: FactoryArgument, **kwds: FactoryArgument) -> Ring: ...
-def ZpER(p: Integer, prec: Integer | int | None = None, halt: int | None = None, secure: bool = False, *args: FactoryArgument, **kwds: FactoryArgument) -> Ring: ...
+def _canonicalize_show_prec(
+    type: str, print_mode: str | None, show_prec: bool | str | None = None
+) -> tuple[str, bool]: ...
+def get_key_base(
+    p: Integer,
+    prec: Integer | int | None,
+    type: str,
+    print_mode: str | None,
+    names: str | tuple[str, ...] | None,
+    ram_name: str | None,
+    print_pos: int | None,
+    print_sep: str | None,
+    print_alphabet: tuple[str, ...] | None,
+    print_max_terms: int | None,
+    show_prec: bool | str | None,
+    check: bool,
+    valid_types: list[str],
+    label: str | None = None,
+) -> FactoryCacheKey: ...
+def Qp(
+    p: Integer,
+    prec: Integer | int | None = None,
+    type: str = "capped-rel",
+    print_mode: str | None = None,
+    names: str | tuple[str, ...] | None = None,
+    ram_name: str | None = None,
+    print_pos: int | None = None,
+    print_sep: str | None = None,
+    print_alphabet: tuple[str, ...] | None = None,
+    print_max_terms: int | None = None,
+    show_prec: bool | str | None = None,
+    check: bool = True,
+    label: str | None = None,
+) -> Field: ...
+def Zp(
+    p: Integer,
+    prec: Integer | int | None = None,
+    type: str = "capped-rel",
+    print_mode: str | None = None,
+    names: str | tuple[str, ...] | None = None,
+    ram_name: str | None = None,
+    print_pos: int | None = None,
+    print_sep: str | None = None,
+    print_alphabet: tuple[str, ...] | None = None,
+    print_max_terms: int | None = None,
+    show_prec: bool | str | None = None,
+    check: bool = True,
+    label: str | None = None,
+) -> Ring: ...
+def QpCR(
+    p: Integer,
+    prec: Integer | int | None = None,
+    *args: FactoryArgument,
+    **kwds: FactoryArgument,
+) -> Field: ...
+def QpFP(
+    p: Integer,
+    prec: Integer | int | None = None,
+    *args: FactoryArgument,
+    **kwds: FactoryArgument,
+) -> Field: ...
+def QpLC(
+    p: Integer,
+    prec: Integer | int | None = None,
+    *args: FactoryArgument,
+    **kwds: FactoryArgument,
+) -> Field: ...
+def QpLF(
+    p: Integer,
+    prec: Integer | int | None = None,
+    *args: FactoryArgument,
+    **kwds: FactoryArgument,
+) -> Field: ...
+def QpER(
+    p: Integer,
+    prec: Integer | int | None = None,
+    halt: int | None = None,
+    secure: bool = False,
+    *args: FactoryArgument,
+    **kwds: FactoryArgument,
+) -> Field: ...
+def Qq(
+    q: _QInput,
+    prec: Integer | int | None = None,
+    type: str = "capped-rel",
+    modulus: Polynomial | None = None,
+    names: str | tuple[str, ...] | None = None,
+    print_mode: str | None = None,
+    ram_name: str | None = None,
+    res_name: str | None = None,
+    print_pos: int | None = None,
+    print_sep: str | None = None,
+    print_max_ram_terms: int | None = None,
+    print_max_unram_terms: int | None = None,
+    print_max_terse_terms: int | None = None,
+    show_prec: bool | str | None = None,
+    check: bool = True,
+    implementation: str = "FLINT",
+) -> Field: ...
+def QqCR(
+    q: _QInput,
+    prec: Integer | int | None = None,
+    *args: FactoryArgument,
+    **kwds: FactoryArgument,
+) -> Field: ...
+def QqFP(
+    q: _QInput,
+    prec: Integer | int | None = None,
+    *args: FactoryArgument,
+    **kwds: FactoryArgument,
+) -> Field: ...
+def Zq(
+    q: _QInput,
+    prec: Integer | int | None = None,
+    type: str = "capped-rel",
+    modulus: Polynomial | None = None,
+    names: str | tuple[str, ...] | None = None,
+    print_mode: str | None = None,
+    ram_name: str | None = None,
+    res_name: str | None = None,
+    print_pos: int | None = None,
+    print_sep: str | None = None,
+    print_max_ram_terms: int | None = None,
+    print_max_unram_terms: int | None = None,
+    print_max_terse_terms: int | None = None,
+    show_prec: bool | str | None = None,
+    check: bool = True,
+    implementation: str = "FLINT",
+) -> Ring: ...
+def ZpCR(
+    p: Integer,
+    prec: Integer | int | None = None,
+    *args: FactoryArgument,
+    **kwds: FactoryArgument,
+) -> Ring: ...
+def ZpCA(
+    p: Integer,
+    prec: Integer | int | None = None,
+    *args: FactoryArgument,
+    **kwds: FactoryArgument,
+) -> Ring: ...
+def ZpFM(
+    p: Integer,
+    prec: Integer | int | None = None,
+    *args: FactoryArgument,
+    **kwds: FactoryArgument,
+) -> Ring: ...
+def ZpFP(
+    p: Integer,
+    prec: Integer | int | None = None,
+    *args: FactoryArgument,
+    **kwds: FactoryArgument,
+) -> Ring: ...
+def ZqCR(
+    q: _QInput,
+    prec: Integer | int | None = None,
+    *args: FactoryArgument,
+    **kwds: FactoryArgument,
+) -> Ring: ...
+def ZqCA(
+    q: _QInput,
+    prec: Integer | int | None = None,
+    *args: FactoryArgument,
+    **kwds: FactoryArgument,
+) -> Ring: ...
+def ZqFM(
+    q: _QInput,
+    prec: Integer | int | None = None,
+    *args: FactoryArgument,
+    **kwds: FactoryArgument,
+) -> Ring: ...
+def ZqFP(
+    q: _QInput,
+    prec: Integer | int | None = None,
+    *args: FactoryArgument,
+    **kwds: FactoryArgument,
+) -> Ring: ...
+def ZpLC(
+    p: Integer,
+    prec: Integer | int | None = None,
+    *args: FactoryArgument,
+    **kwds: FactoryArgument,
+) -> Ring: ...
+def ZpLF(
+    p: Integer,
+    prec: Integer | int | None = None,
+    *args: FactoryArgument,
+    **kwds: FactoryArgument,
+) -> Ring: ...
+def ZpER(
+    p: Integer,
+    prec: Integer | int | None = None,
+    halt: int | None = None,
+    secure: bool = False,
+    *args: FactoryArgument,
+    **kwds: FactoryArgument,
+) -> Ring: ...
 def split(poly: Polynomial, prec: int) -> list[Polynomial]: ...
 def truncate_to_prec(poly: Polynomial, R: Parent, absprec: int) -> Polynomial: ...
 def krasner_check(poly: Polynomial, prec: int) -> bool: ...

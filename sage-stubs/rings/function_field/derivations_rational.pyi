@@ -1,9 +1,12 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from sage.categories.morphism import Morphism
+from sage.rings.function_field.derivations import FunctionFieldDerivation
+from sage.rings.function_field.element import FunctionFieldElement
+from sage.rings.function_field.function_field import FunctionField
+from sage.schemes.elliptic_curves.ell_modular_symbols import zero
+from sage.structure.parent import ElementConstructorInput
 
-class _SageObject: ...
-
-class FunctionFieldDerivation_rational:
-    def __init__(self, parent: builtins.object, u: builtins.object = ...) -> None: ...
+class FunctionFieldDerivation_rational(FunctionFieldDerivation):
+    def __init__(self, parent: FunctionField, u: FunctionField = ...) -> None: ...
+    def _call_(
+        self, x: FunctionFieldElement | ElementConstructorInput
+    ) -> FunctionFieldElement | Morphism | zero: ...

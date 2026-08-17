@@ -1,35 +1,72 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from sage.rings.function_field.divisor import FunctionFieldDivisor
+from sage.rings.integer import Integer
+from sage.rings.number_field.number_field_element import NumberFieldElement
+from sage.structure.parent import ElementConstructorInput
+from sage.structure.sage_object import SageObject
 
-class _SageObject: ...
+ZZx: NumberFieldElement
 
-ZZx: _SageObject
-def hermite_constant(n: builtins.object) -> _SageObject: ...
+def hermite_constant(n: int | Integer) -> NumberFieldElement: ...
+def eval_seq_as_poly(
+    f: ElementConstructorInput,
+    n: int | Integer,
+    x: NumberFieldElement | ElementConstructorInput,
+) -> NumberFieldElement: ...
+def newton(
+    f: ElementConstructorInput,
+    df: ElementConstructorInput,
+    n: int | Integer,
+    x0: ElementConstructorInput,
+    eps: ElementConstructorInput,
+) -> NumberFieldElement: ...
+def lagrange_degree_3(
+    n: int | Integer,
+    an1: ElementConstructorInput,
+    an2: ElementConstructorInput,
+    an3: ElementConstructorInput,
+) -> NumberFieldElement: ...
 
-def eval_seq_as_poly(f: builtins.object, n: builtins.object, x: builtins.object) -> _SageObject: ...
+primessq_py: NumberFieldElement
 
-def newton(f: builtins.object, df: builtins.object, n: builtins.object, x0: builtins.object, eps: builtins.object) -> _SageObject: ...
+def int_has_small_square_divisor(
+    d: ElementConstructorInput,
+) -> FunctionFieldDivisor: ...
+def eval_seq_as_poly_int(
+    f: ElementConstructorInput,
+    n: int | Integer,
+    x: NumberFieldElement | ElementConstructorInput,
+) -> NumberFieldElement: ...
 
-def lagrange_degree_3(n: builtins.object, an1: builtins.object, an2: builtins.object, an3: builtins.object) -> _SageObject: ...
+eps_abs: NumberFieldElement
+phi: NumberFieldElement
+sqrt2: NumberFieldElement
 
-primessq_py: _SageObject
-def int_has_small_square_divisor(d: builtins.object) -> _SageObject: ...
+def easy_is_irreducible(
+    a: NumberFieldElement | ElementConstructorInput, n: int | Integer
+) -> NumberFieldElement: ...
+def easy_is_irreducible_py(f: ElementConstructorInput) -> NumberFieldElement: ...
 
-def eval_seq_as_poly_int(f: builtins.object, n: builtins.object, x: builtins.object) -> _SageObject: ...
+eps_global: NumberFieldElement
 
-eps_abs: _SageObject
-phi: _SageObject
-sqrt2: _SageObject
-def easy_is_irreducible(a: builtins.object, n: builtins.object) -> _SageObject: ...
-
-def easy_is_irreducible_py(f: builtins.object) -> _SageObject: ...
-
-eps_global: _SageObject
-class tr_data:
-    def __init__(self, n: builtins.object, B: builtins.object, a: builtins.object = ...) -> None: ...
-    def __dealloc__(self) -> _SageObject: ...
-    def increment(self, verbose: builtins.object = ..., haltk: builtins.object = ..., phc: builtins.object = ...) -> _SageObject: ...
-    def incr(self, f_out: builtins.object, verbose: builtins.object, haltk: builtins.object, phc: builtins.object) -> _SageObject: ...
-    def printa(self) -> _SageObject: ...
+class tr_data(SageObject):
+    def __init__(
+        self,
+        n: int | Integer,
+        B: NumberFieldElement | ElementConstructorInput,
+        a: NumberFieldElement | ElementConstructorInput = ...,
+    ) -> None: ...
+    def __dealloc__(self) -> NumberFieldElement: ...
+    def increment(
+        self,
+        verbose: ElementConstructorInput = ...,
+        haltk: ElementConstructorInput = ...,
+        phc: ElementConstructorInput = ...,
+    ) -> NumberFieldElement: ...
+    def incr(
+        self,
+        f_out: ElementConstructorInput,
+        verbose: ElementConstructorInput,
+        haltk: ElementConstructorInput,
+        phc: ElementConstructorInput,
+    ) -> NumberFieldElement: ...
+    def printa(self) -> NumberFieldElement: ...

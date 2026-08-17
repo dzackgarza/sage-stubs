@@ -1,8 +1,10 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from sage.rings.integer import Integer
+from sage.rings.padics.padic_generic_element import pAdicGenericElement
+from sage.rings.rational import Rational
+from sage.rings.real_mpfr import RealNumber
+from sage.structure.parent import ElementConstructorInput
 
-class _SageObject: ...
-
-def raise_error(error: builtins.object, permissive: builtins.object = ...) -> _SageObject: ...
+def raise_error(
+    error: int | Integer | Rational | RealNumber,
+    permissive: ElementConstructorInput = ...,
+) -> pAdicGenericElement: ...

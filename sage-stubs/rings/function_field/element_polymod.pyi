@@ -1,9 +1,8 @@
 from typing import Self
 
-from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.structure.element import Element
-from sage.structure.parent import Parent
 from sage.rings.function_field.element import FunctionFieldElement
+from sage.rings.polynomial.polynomial_element import Polynomial
+from sage.structure.parent import Parent
 
 class FunctionFieldElement_polymod(FunctionFieldElement):
     def __init__(self, parent: Parent, x: Polynomial, reduce: bool = True) -> None: ...

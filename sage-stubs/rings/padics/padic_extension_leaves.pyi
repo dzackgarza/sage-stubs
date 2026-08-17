@@ -1,37 +1,159 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from sage.rings.padics.eisenstein_extension_generic import EisensteinExtensionGeneric
+from sage.rings.padics.padic_generic_element import pAdicGenericElement
+from sage.rings.padics.unramified_extension_generic import UnramifiedExtensionGeneric
+from sage.rings.ring import Ring
 
-class _SageObject: ...
+class pAdicCappedAbsoluteRingGeneric: ...
+class pAdicCappedRelativeFieldGeneric: ...
+class pAdicCappedRelativeRingGeneric: ...
+class pAdicFixedModRingGeneric: ...
+class pAdicFloatingPointFieldGeneric: ...
+class pAdicFloatingPointRingGeneric: ...
 
-class UnramifiedExtensionRingCappedRelative:
-    def __init__(self, exact_modulus: builtins.object, poly: builtins.object, prec: builtins.int, print_mode: builtins.object, shift_seed: builtins.object, names: builtins.object, implementation: builtins.str = ...) -> None: ...
+from sage.rings.integer import Integer
+from sage.rings.padics.padic_generic import pAdicGeneric
+from sage.rings.polynomial.multi_polynomial import MPolynomial
+from sage.rings.polynomial.polynomial_element import Polynomial
 
-class UnramifiedExtensionFieldCappedRelative:
-    def __init__(self, exact_modulus: builtins.object, poly: builtins.object, prec: builtins.int, print_mode: builtins.object, shift_seed: builtins.object, names: builtins.object, implementation: builtins.str = ...) -> None: ...
+class UnramifiedExtensionRingCappedRelative(
+    UnramifiedExtensionGeneric, pAdicCappedRelativeRingGeneric
+):
+    def __init__(
+        self,
+        exact_modulus: int | Integer,
+        poly: Polynomial | MPolynomial,
+        prec: int | Integer,
+        print_mode: int | Integer,
+        shift_seed: int | Integer,
+        names: str | tuple[str, ...],
+        implementation: str = ...,
+    ) -> None: ...
 
-class UnramifiedExtensionRingCappedAbsolute:
-    def __init__(self, exact_modulus: builtins.object, poly: builtins.object, prec: builtins.int, print_mode: builtins.object, shift_seed: builtins.object, names: builtins.object, implementation: builtins.str = ...) -> None: ...
+class UnramifiedExtensionFieldCappedRelative(
+    UnramifiedExtensionGeneric, pAdicCappedRelativeFieldGeneric
+):
+    def __init__(
+        self,
+        exact_modulus: Polynomial | MPolynomial,
+        poly: Polynomial | MPolynomial,
+        prec: int | Integer,
+        print_mode: Polynomial | MPolynomial,
+        shift_seed: Polynomial | MPolynomial,
+        names: str | tuple[str, ...],
+        implementation: str = ...,
+    ) -> None: ...
+    def _coerce_map_from_(self, R: Ring) -> pAdicGenericElement: ...
 
-class UnramifiedExtensionRingFixedMod:
-    def __init__(self, exact_modulus: builtins.object, poly: builtins.object, prec: builtins.int, print_mode: builtins.object, shift_seed: builtins.object, names: builtins.object, implementation: builtins.str = ...) -> None: ...
+class UnramifiedExtensionRingCappedAbsolute(
+    UnramifiedExtensionGeneric, pAdicCappedAbsoluteRingGeneric
+):
+    def __init__(
+        self,
+        exact_modulus: int | Integer,
+        poly: Polynomial | MPolynomial,
+        prec: int | Integer,
+        print_mode: int | Integer,
+        shift_seed: int | Integer,
+        names: str | tuple[str, ...],
+        implementation: str = ...,
+    ) -> None: ...
 
-class UnramifiedExtensionRingFloatingPoint:
-    def __init__(self, exact_modulus: builtins.object, poly: builtins.object, prec: builtins.int, print_mode: builtins.object, shift_seed: builtins.object, names: builtins.object, implementation: builtins.str = ...) -> None: ...
+class UnramifiedExtensionRingFixedMod(
+    UnramifiedExtensionGeneric, pAdicFixedModRingGeneric
+):
+    def __init__(
+        self,
+        exact_modulus: int | Integer,
+        poly: Polynomial | MPolynomial,
+        prec: int | Integer,
+        print_mode: int | Integer,
+        shift_seed: int | Integer,
+        names: str | tuple[str, ...],
+        implementation: str = ...,
+    ) -> None: ...
 
-class UnramifiedExtensionFieldFloatingPoint:
-    def __init__(self, exact_modulus: builtins.object, poly: builtins.object, prec: builtins.int, print_mode: builtins.object, shift_seed: builtins.object, names: builtins.object, implementation: builtins.str = ...) -> None: ...
+class UnramifiedExtensionRingFloatingPoint(
+    UnramifiedExtensionGeneric, pAdicFloatingPointRingGeneric
+):
+    def __init__(
+        self,
+        exact_modulus: int | Integer,
+        poly: Polynomial | MPolynomial,
+        prec: int | Integer,
+        print_mode: int | Integer,
+        shift_seed: int | Integer,
+        names: str | tuple[str, ...],
+        implementation: str = ...,
+    ) -> None: ...
 
-class EisensteinExtensionRingCappedRelative:
-    def __init__(self, exact_modulus: builtins.object, poly: builtins.object, prec: builtins.int, print_mode: builtins.object, shift_seed: builtins.object, names: builtins.object, implementation: builtins.str = ...) -> None: ...
+class UnramifiedExtensionFieldFloatingPoint(
+    UnramifiedExtensionGeneric, pAdicFloatingPointFieldGeneric
+):
+    def __init__(
+        self,
+        exact_modulus: Polynomial | MPolynomial,
+        poly: Polynomial | MPolynomial,
+        prec: int | Integer,
+        print_mode: Polynomial | MPolynomial,
+        shift_seed: Polynomial | MPolynomial,
+        names: str | tuple[str, ...],
+        implementation: str = ...,
+    ) -> None: ...
+    def _coerce_map_from_(self, R: Ring) -> pAdicGenericElement: ...
 
-class EisensteinExtensionFieldCappedRelative:
-    def __init__(self, exact_modulus: builtins.object, poly: builtins.object, prec: builtins.int, print_mode: builtins.object, shift_seed: builtins.object, names: builtins.object, implementation: builtins.str = ...) -> None: ...
+class EisensteinExtensionRingCappedRelative(
+    EisensteinExtensionGeneric, pAdicCappedRelativeRingGeneric
+):
+    def __init__(
+        self,
+        exact_modulus: int | Integer,
+        poly: Polynomial | MPolynomial,
+        prec: int | Integer,
+        print_mode: int | Integer,
+        shift_seed: int | Integer,
+        names: str | tuple[str, ...],
+        implementation: str = ...,
+    ) -> None: ...
 
-class EisensteinExtensionRingCappedAbsolute:
-    def __init__(self, exact_modulus: builtins.object, poly: builtins.object, prec: builtins.int, print_mode: builtins.object, shift_seed: builtins.object, names: builtins.object, implementation: builtins.str) -> None: ...
+class EisensteinExtensionFieldCappedRelative(
+    EisensteinExtensionGeneric, pAdicCappedRelativeFieldGeneric
+):
+    def __init__(
+        self,
+        exact_modulus: Polynomial | MPolynomial,
+        poly: Polynomial | MPolynomial,
+        prec: int | Integer,
+        print_mode: Polynomial | MPolynomial,
+        shift_seed: Polynomial | MPolynomial,
+        names: str | tuple[str, ...],
+        implementation: str = ...,
+    ) -> None: ...
 
-class EisensteinExtensionRingFixedMod:
-    def __init__(self, exact_modulus: builtins.object, poly: builtins.object, prec: builtins.int, print_mode: builtins.object, shift_seed: builtins.object, names: builtins.object, implementation: builtins.str = ...) -> None: ...
-    def fraction_field(self) -> _SageObject: ...
+class EisensteinExtensionRingCappedAbsolute(
+    EisensteinExtensionGeneric, pAdicCappedAbsoluteRingGeneric
+):
+    def __init__(
+        self,
+        exact_modulus: int | Integer,
+        poly: Polynomial | MPolynomial,
+        prec: int | Integer,
+        print_mode: int | Integer,
+        shift_seed: int | Integer,
+        names: str | tuple[str, ...],
+        implementation: str,
+    ) -> None: ...
+
+class EisensteinExtensionRingFixedMod(
+    EisensteinExtensionGeneric, pAdicFixedModRingGeneric
+):
+    def __init__(
+        self,
+        exact_modulus: int | Integer,
+        poly: Polynomial | MPolynomial,
+        prec: int | Integer,
+        print_mode: int | Integer,
+        shift_seed: int | Integer,
+        names: str | tuple[str, ...],
+        implementation: str = ...,
+    ) -> None: ...
+    def fraction_field(self) -> pAdicGeneric: ...

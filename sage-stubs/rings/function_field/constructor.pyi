@@ -1,17 +1,32 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from sage.rings.function_field.element import FunctionFieldElement
+from sage.rings.function_field.function_field import FunctionField
+from sage.rings.polynomial.multi_polynomial import MPolynomial
+from sage.rings.polynomial.polynomial_element import Polynomial
+from sage.structure.factory import UniqueFactory
+from sage.structure.parent import ElementConstructorInput
 
-class _SageObject: ...
+class FunctionFieldFactory(UniqueFactory):
+    def create_key(
+        self, F: FunctionField, names: str | tuple[str, ...]
+    ) -> tuple[ElementConstructorInput, ...]: ...
+    def create_object(
+        self,
+        version: int | tuple[int, ...],
+        key: tuple[ElementConstructorInput, ...],
+        **extra_args: ElementConstructorInput,
+    ) -> FunctionFieldFactory: ...
 
-class FunctionFieldFactory:
-    def create_key(self, F: builtins.object, names: builtins.object) -> _SageObject: ...
-    def create_object(self, version: builtins.object, key: builtins.object, **extra_args: builtins.object) -> _SageObject: ...
+FunctionField: FunctionFieldElement
 
-FunctionField: _SageObject
-class FunctionFieldExtensionFactory:
-    def create_key(self, polynomial: builtins.object, names: builtins.object) -> _SageObject: ...
-    def create_object(self, version: builtins.object, key: builtins.object, **extra_args: builtins.object) -> _SageObject: ...
+class FunctionFieldExtensionFactory(UniqueFactory):
+    def create_key(
+        self, polynomial: Polynomial | MPolynomial, names: str | tuple[str, ...]
+    ) -> tuple[ElementConstructorInput, ...]: ...
+    def create_object(
+        self,
+        version: int | tuple[int, ...],
+        key: tuple[ElementConstructorInput, ...],
+        **extra_args: ElementConstructorInput,
+    ) -> FunctionFieldExtensionFactory: ...
 
-FunctionFieldExtension: _SageObject
+FunctionFieldExtension: FunctionFieldElement

@@ -4,10 +4,20 @@ from sage.rings.integer import Integer
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.structure.element import Element
 from sage.structure.factory import FactoryArgument
+from sage.structure.parent import ElementConstructorInput
 from sage.structure.sage_object import SageObject
 
 class PowComputer_class(SageObject):
-    def __init__(self, prime: Integer, cache_limit: int, prec_cap: int, ram_prec_cap: int, in_field: bool, poly: Polynomial | None = None, shift_seed: Element | None = None) -> None: ...
+    def __init__(
+        self,
+        prime: Integer,
+        cache_limit: int,
+        prec_cap: int,
+        ram_prec_cap: int,
+        in_field: bool,
+        poly: Polynomial | None = None,
+        shift_seed: Element | None = None,
+    ) -> None: ...
     def __richcmp__(self, other: PowComputer_class, op: int) -> bool: ...
     def pow_Integer_Integer(self, n: int) -> Integer: ...
     def _pow_mpz_t_tmp_demo(self, m: int, n: int) -> list[Integer]: ...
@@ -22,5 +32,24 @@ class PowComputer_class(SageObject):
     def __call__(self, n: int) -> Integer: ...
 
 class PowComputer_base(PowComputer_class):
-    def __init__(self, prime: Integer, cache_limit: int, prec_cap: int, ram_prec_cap: int, in_field: bool, poly: Polynomial | None = None, shift_seed: Element | None = None) -> None: ...
-    def __reduce__(self) -> tuple[Callable[..., PowComputer_class], tuple[FactoryArgument, ...]]: ...
+    def __init__(
+        self,
+        prime: Integer,
+        cache_limit: int,
+        prec_cap: int,
+        ram_prec_cap: int,
+        in_field: bool,
+        poly: Polynomial | None = None,
+        shift_seed: Element | None = None,
+    ) -> None: ...
+    def __reduce__(
+        self,
+    ) -> tuple[Callable[..., PowComputer_class], tuple[FactoryArgument, ...]]: ...
+
+def PowComputer(
+    m: int | Integer,
+    cache_limit: ElementConstructorInput,
+    prec_cap: ElementConstructorInput,
+    in_field: ElementConstructorInput = ...,
+    prec_type: ElementConstructorInput | None = ...,
+) -> PowComputer_class: ...

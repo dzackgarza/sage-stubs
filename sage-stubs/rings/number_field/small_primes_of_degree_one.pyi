@@ -1,12 +1,17 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from collections.abc import Iterator
 
-class _SageObject: ...
+from sage.rings.integer import Integer
+from sage.rings.number_field.number_field import NumberField_generic
+from sage.rings.number_field.number_field_element import NumberFieldElement
+from sage.structure.sage_object import SageObject
 
-class Small_primes_of_degree_one_iter:
-    def __init__(self, field: builtins.object, num_integer_primes: builtins.int = ..., max_iterations: builtins.int = ...) -> None: ...
-    def __iter__(self) -> _Iterator[_SageObject]: ...
-    def __next__(self) -> _SageObject: ...
-    next: _SageObject
+class Small_primes_of_degree_one_iter(SageObject):
+    def __init__(
+        self,
+        field: NumberField_generic,
+        num_integer_primes: int | Integer = ...,
+        max_iterations: int | Integer = ...,
+    ) -> None: ...
+    def __iter__(self) -> Iterator[NumberFieldElement]: ...
+    def __next__(self) -> NumberFieldElement: ...
+    next: NumberFieldElement

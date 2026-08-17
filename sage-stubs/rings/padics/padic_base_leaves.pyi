@@ -1,39 +1,137 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from sage.categories.category import Category
+from sage.rings.integer import Integer
+from sage.rings.padics.generic_nodes import (
+    pAdicCappedAbsoluteRingGeneric,
+    pAdicCappedRelativeFieldGeneric,
+    pAdicCappedRelativeRingGeneric,
+    pAdicFieldBaseGeneric,
+    pAdicFixedModRingGeneric,
+    pAdicFloatingPointFieldGeneric,
+    pAdicFloatingPointRingGeneric,
+    pAdicLatticeGeneric,
+    pAdicRelaxedGeneric,
+    pAdicRingBaseGeneric,
+)
+from sage.rings.padics.padic_generic_element import pAdicGenericElement
+from sage.rings.ring import Ring
+from sage.structure.parent import ElementConstructorInput
 
-class _SageObject: ...
+class pAdicRingCappedRelative(pAdicRingBaseGeneric, pAdicCappedRelativeRingGeneric):
+    def __init__(
+        self,
+        p: int | Integer,
+        prec: int | Integer,
+        print_mode: Ring,
+        names: str | tuple[str, ...],
+        category: Category = ...,
+    ) -> None: ...
+    def _coerce_map_from_(self, R: Ring) -> bool: ...
 
-class pAdicRingCappedRelative:
-    def __init__(self, p: builtins.int, prec: builtins.int, print_mode: builtins.object, names: builtins.object, category: builtins.object = ...) -> None: ...
+class pAdicRingCappedAbsolute(pAdicRingBaseGeneric, pAdicCappedAbsoluteRingGeneric):
+    def __init__(
+        self,
+        p: int | Integer,
+        prec: int | Integer,
+        print_mode: Ring,
+        names: str | tuple[str, ...],
+        category: Category = ...,
+    ) -> None: ...
+    def _coerce_map_from_(self, R: Ring) -> bool: ...
+    def _magma_init_(self, magma: ElementConstructorInput) -> str: ...
 
-class pAdicRingCappedAbsolute:
-    def __init__(self, p: builtins.int, prec: builtins.int, print_mode: builtins.object, names: builtins.object, category: builtins.object = ...) -> None: ...
+class pAdicRingFloatingPoint(pAdicRingBaseGeneric, pAdicFloatingPointRingGeneric):
+    def __init__(
+        self,
+        p: int | Integer,
+        prec: int | Integer,
+        print_mode: Ring,
+        names: str | tuple[str, ...],
+        category: Category = ...,
+    ) -> None: ...
+    def _coerce_map_from_(self, R: Ring) -> bool: ...
 
-class pAdicRingFloatingPoint:
-    def __init__(self, p: builtins.int, prec: builtins.int, print_mode: builtins.object, names: builtins.object, category: builtins.object = ...) -> None: ...
+class pAdicRingFixedMod(pAdicRingBaseGeneric, pAdicFixedModRingGeneric):
+    def __init__(
+        self,
+        p: int | Integer,
+        prec: int | Integer,
+        print_mode: Ring,
+        names: str | tuple[str, ...],
+        category: Category = ...,
+    ) -> None: ...
+    def _coerce_map_from_(self, R: Ring) -> bool: ...
+    def _magma_init_(self, magma: ElementConstructorInput) -> str: ...
 
-class pAdicRingFixedMod:
-    def __init__(self, p: builtins.int, prec: builtins.int, print_mode: builtins.object, names: builtins.object, category: builtins.object = ...) -> None: ...
+class pAdicFieldCappedRelative(pAdicFieldBaseGeneric, pAdicCappedRelativeFieldGeneric):
+    def __init__(
+        self,
+        p: int | Integer,
+        prec: int | Integer,
+        print_mode: Ring,
+        names: str | tuple[str, ...],
+        category: Category = ...,
+    ) -> None: ...
+    def random_element(self, algorithm: str = ...) -> pAdicGenericElement: ...
+    def _coerce_map_from_(self, R: Ring) -> bool: ...
+    def _magma_init_(self, magma: ElementConstructorInput) -> str: ...
 
-class pAdicFieldCappedRelative:
-    def __init__(self, p: builtins.int, prec: builtins.int, print_mode: builtins.object, names: builtins.object, category: builtins.object = ...) -> None: ...
-    def random_element(self, algorithm: builtins.str = ...) -> _SageObject: ...
+class pAdicFieldFloatingPoint(pAdicFieldBaseGeneric, pAdicFloatingPointFieldGeneric):
+    def __init__(
+        self,
+        p: int | Integer,
+        prec: int | Integer,
+        print_mode: Ring,
+        names: str | tuple[str, ...],
+        category: Category = ...,
+    ) -> None: ...
+    def _coerce_map_from_(self, R: Ring) -> bool: ...
 
-class pAdicFieldFloatingPoint:
-    def __init__(self, p: builtins.int, prec: builtins.int, print_mode: builtins.object, names: builtins.object, category: builtins.object = ...) -> None: ...
+class pAdicRingLattice(pAdicLatticeGeneric, pAdicRingBaseGeneric):
+    def __init__(
+        self,
+        p: int | Integer,
+        prec: int | Integer,
+        subtype: ElementConstructorInput,
+        print_mode: ElementConstructorInput,
+        names: str | tuple[str, ...],
+        label: ElementConstructorInput = ...,
+        category: Category = ...,
+    ) -> None: ...
+    def random_element(self, prec: int | Integer = ...) -> pAdicGenericElement: ...
+    def _coerce_map_from_(self, R: Ring) -> bool: ...
 
-class pAdicRingLattice:
-    def __init__(self, p: builtins.int, prec: builtins.int, subtype: builtins.object, print_mode: builtins.object, names: builtins.object, label: builtins.str = ..., category: builtins.object = ...) -> None: ...
-    def random_element(self, prec: builtins.int = ...) -> _SageObject: ...
+class pAdicFieldLattice(pAdicLatticeGeneric, pAdicFieldBaseGeneric):
+    def __init__(
+        self,
+        p: int | Integer,
+        prec: int | Integer,
+        subtype: ElementConstructorInput,
+        print_mode: ElementConstructorInput,
+        names: str | tuple[str, ...],
+        label: ElementConstructorInput = ...,
+        category: Category = ...,
+    ) -> None: ...
+    def random_element(
+        self, prec: int | Integer = ..., integral: bool = ...
+    ) -> pAdicGenericElement: ...
+    def _coerce_map_from_(self, R: Ring) -> bool: ...
 
-class pAdicFieldLattice:
-    def __init__(self, p: builtins.int, prec: builtins.int, subtype: builtins.object, print_mode: builtins.object, names: builtins.object, label: builtins.str = ..., category: builtins.object = ...) -> None: ...
-    def random_element(self, prec: builtins.int = ..., integral: builtins.bool = ...) -> _SageObject: ...
+class pAdicRingRelaxed(pAdicRelaxedGeneric, pAdicRingBaseGeneric):
+    def __init__(
+        self,
+        p: int | Integer,
+        prec: int | Integer,
+        print_mode: ElementConstructorInput,
+        names: str | tuple[str, ...],
+        category: Category = ...,
+    ) -> None: ...
 
-class pAdicRingRelaxed:
-    def __init__(self, p: builtins.int, prec: builtins.int, print_mode: builtins.object, names: builtins.object, category: builtins.object = ...) -> None: ...
-
-class pAdicFieldRelaxed:
-    def __init__(self, p: builtins.int, prec: builtins.int, print_mode: builtins.object, names: builtins.object, category: builtins.object = ...) -> None: ...
+class pAdicFieldRelaxed(pAdicRelaxedGeneric, pAdicFieldBaseGeneric):
+    def __init__(
+        self,
+        p: int | Integer,
+        prec: int | Integer,
+        print_mode: ElementConstructorInput,
+        names: str | tuple[str, ...],
+        category: Category = ...,
+    ) -> None: ...

@@ -1,8 +1,7 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from sage.rings.integer import Integer
+from sage.rings.number_field.number_field_element import NumberFieldElement
+from sage.structure.parent import ElementConstructorInput
 
-class _SageObject: ...
-
-def coefficients_to_power_sums(n: builtins.int, m: builtins.int, a: builtins.object) -> _SageObject: ...
+def coefficients_to_power_sums(
+    n: int | Integer, m: int | Integer, a: NumberFieldElement | ElementConstructorInput
+) -> NumberFieldElement: ...

@@ -1,22 +1,48 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from sage.rings.integer import Integer
+from sage.rings.padics.padic_generic_element import pAdicGenericElement
+from sage.structure.parent import ElementConstructorInput
 
-class _SageObject: ...
-
-def get_ordp(x: builtins.object, prime_pow: builtins.object) -> _SageObject: ...
-
-def get_preccap(x: builtins.object, prime_pow: builtins.object) -> _SageObject: ...
-
-def comb_prec(iprec: builtins.object, prec: builtins.object) -> _SageObject: ...
-
-def cconv_mpq_t_shared(out: builtins.object, x: builtins.object, prec: builtins.object, absolute: builtins.object, prime_pow: builtins.object) -> _SageObject: ...
-
-def cconv_mpq_t_out_shared(out: builtins.object, x: builtins.object, valshift: builtins.object, prec: builtins.object, prime_pow: builtins.object) -> _SageObject: ...
-
-def cconv_shared(out: builtins.object, x: builtins.object, prec: builtins.object, valshift: builtins.object, prime_pow: builtins.object) -> _SageObject: ...
-
-def cconv_mpz_t_shared(out: builtins.object, x: builtins.object, prec: builtins.object, absolute: builtins.object, prime_pow: builtins.object) -> _SageObject: ...
-
-def cconv_mpz_t_out_shared(out: builtins.object, x: builtins.object, valshift: builtins.object, prec: builtins.object, prime_pow: builtins.object) -> _SageObject: ...
+def get_ordp(
+    x: pAdicGenericElement | ElementConstructorInput, prime_pow: ElementConstructorInput
+) -> pAdicGenericElement: ...
+def get_preccap(
+    x: pAdicGenericElement | ElementConstructorInput, prime_pow: ElementConstructorInput
+) -> pAdicGenericElement: ...
+def comb_prec(
+    iprec: ElementConstructorInput, prec: int | Integer
+) -> pAdicGenericElement: ...
+def cconv_mpq_t_shared(
+    out: ElementConstructorInput,
+    x: pAdicGenericElement | ElementConstructorInput,
+    prec: int | Integer,
+    absolute: ElementConstructorInput,
+    prime_pow: ElementConstructorInput,
+) -> pAdicGenericElement: ...
+def cconv_mpq_t_out_shared(
+    out: ElementConstructorInput,
+    x: pAdicGenericElement | ElementConstructorInput,
+    valshift: ElementConstructorInput,
+    prec: int | Integer,
+    prime_pow: ElementConstructorInput,
+) -> pAdicGenericElement: ...
+def cconv_shared(
+    out: ElementConstructorInput,
+    x: pAdicGenericElement | ElementConstructorInput,
+    prec: int | Integer,
+    valshift: ElementConstructorInput,
+    prime_pow: ElementConstructorInput,
+) -> pAdicGenericElement: ...
+def cconv_mpz_t_shared(
+    out: ElementConstructorInput,
+    x: pAdicGenericElement | ElementConstructorInput,
+    prec: int | Integer,
+    absolute: ElementConstructorInput,
+    prime_pow: ElementConstructorInput,
+) -> pAdicGenericElement: ...
+def cconv_mpz_t_out_shared(
+    out: ElementConstructorInput,
+    x: pAdicGenericElement | ElementConstructorInput,
+    valshift: ElementConstructorInput,
+    prec: int | Integer,
+    prime_pow: ElementConstructorInput,
+) -> pAdicGenericElement: ...

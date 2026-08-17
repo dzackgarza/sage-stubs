@@ -1,15 +1,21 @@
-
-
-from sage.rings.integer import Integer
-from sage.rings.padics.padic_generic import pAdicGeneric
-
+from sage.calculus.predefined import L, S
+from sage.categories.map import Map
+from sage.categories.morphism import Morphism
+from sage.categories.pushout import Functor
 from sage.modules.free_module import FreeModule_generic
+from sage.rings.integer import Integer
 from sage.rings.number_field.number_field import NumberField_generic
 from sage.rings.number_field.order import Order
 from sage.rings.padics.local_generic import LocalGeneric
+from sage.rings.padics.padic_generic import pAdicGeneric
+from sage.rings.padics.padic_generic_element import pAdicGenericElement
+from sage.rings.polynomial.multi_polynomial import MPolynomial
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
+from sage.rings.ring import Ring
 from sage.structure.element import Element
+from sage.structure.parent import ElementConstructorInput, Parent
+
 class pAdicExtensionGeneric(pAdicGeneric):
     def _extension_type(self) -> str: ...
     def _repr_(self, do_latex: bool = ...) -> str: ...
@@ -34,9 +40,46 @@ class pAdicExtensionGeneric(pAdicGeneric):
     def __eq__(self, other: object) -> bool: ...
     def __ne__(self, other: object) -> bool: ...
     def __hash__(self) -> int: ...
+    def __init__(
+        self,
+        poly: Polynomial | MPolynomial,
+        prec: int | Integer | None,
+        print_mode: ElementConstructorInput,
+        names: str | tuple[str, ...] | None,
+        element_class: ElementConstructorInput,
+    ) -> None: ...
+    def _coerce_map_from_(self, R: Ring) -> bool | Morphism: ...
+    def construction(
+        self, forbid_frac_field: Polynomial | MPolynomial = ...
+    ) -> tuple[Functor, Parent] | None: ...
 
-
-class pAdicModuleIsomorphism:
+class pAdicModuleIsomorphism(Map):
     def _repr_type(self) -> str: ...
     def is_injective(self) -> bool: ...
     def is_surjective(self) -> bool: ...
+    def _richcmp_(
+        self,
+        other: pAdicGenericElement | ElementConstructorInput,
+        op: ElementConstructorInput,
+    ) -> pAdicGenericElement: ...
+
+class MapFreeModuleToOneStep(pAdicModuleIsomorphism):
+    def _call_(
+        self, x: pAdicGenericElement | ElementConstructorInput
+    ) -> pAdicGenericElement: ...
+
+class MapOneStepToFreeModule(pAdicModuleIsomorphism):
+    def _call_(
+        self, x: pAdicGenericElement | ElementConstructorInput
+    ) -> pAdicGenericElement: ...
+
+class MapFreeModuleToTwoStep(pAdicModuleIsomorphism):
+    def _call_(self, x: pAdicGenericElement | ElementConstructorInput) -> L: ...
+
+class MapTwoStepToFreeModule(pAdicModuleIsomorphism):
+    def _call_(
+        self, x: pAdicGenericElement | ElementConstructorInput
+    ) -> pAdicGenericElement: ...
+
+class DefPolyConversion(Morphism):
+    def _call_(self, x: pAdicGenericElement | ElementConstructorInput) -> S: ...

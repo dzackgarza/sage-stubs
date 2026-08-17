@@ -1,12 +1,10 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from sage.rings.semirings.tropical_semiring import TropicalSemiringElement
+from sage.sets.non_negative_integers import NonNegativeIntegers
 
-class _SageObject: ...
-
-class NonNegativeIntegerSemiring:
+class NonNegativeIntegerSemiring(NonNegativeIntegers):
     def __init__(self) -> None: ...
-    def additive_semigroup_generators(self) -> _SageObject: ...
+    def additive_semigroup_generators(self) -> TropicalSemiringElement: ...
+    def _repr_(self) -> str: ...
+    def _latex_(self) -> str: ...
 
-NN: _SageObject
+NN: NonNegativeIntegerSemiring

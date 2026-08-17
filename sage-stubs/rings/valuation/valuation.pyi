@@ -22,9 +22,28 @@ class NegativeInfiniteDiscretePseudoValuation(InfiniteDiscretePseudoValuation):
 
 class DiscreteValuation(DiscretePseudoValuation):
     def is_discrete_valuation(self) -> bool: ...
-    def mac_lane_approximants(self, G: Polynomial, assume_squarefree: bool = ..., require_final_EF: bool = ..., required_precision: int | Integer | InfinityElement = ..., require_incomparability: bool = ..., require_maximal_degree: bool = ..., algorithm: str = ...) -> list[DiscreteValuation]: ...
-    def mac_lane_approximant(self, G: Polynomial, valuation: DiscreteValuation, approximants: list[DiscreteValuation] | None = None) -> DiscreteValuation: ...
-    def montes_factorization(self, G: Polynomial, assume_squarefree: bool = ..., required_precision: int | Integer | InfinityElement | None = None) -> Factorization: ...
+    def mac_lane_approximants(
+        self,
+        G: Polynomial,
+        assume_squarefree: bool = ...,
+        require_final_EF: bool = ...,
+        required_precision: int | Integer | InfinityElement = ...,
+        require_incomparability: bool = ...,
+        require_maximal_degree: bool = ...,
+        algorithm: str = ...,
+    ) -> list[DiscreteValuation]: ...
+    def mac_lane_approximant(
+        self,
+        G: Polynomial,
+        valuation: DiscreteValuation,
+        approximants: list[DiscreteValuation] | None = None,
+    ) -> DiscreteValuation: ...
+    def montes_factorization(
+        self,
+        G: Polynomial,
+        assume_squarefree: bool = ...,
+        required_precision: int | Integer | InfinityElement | None = None,
+    ) -> Factorization: ...
     def _ge_(self, other: DiscretePseudoValuation) -> bool: ...
 
 class MacLaneApproximantNode:
@@ -35,6 +54,14 @@ class MacLaneApproximantNode:
     coefficients: list[RingElement] | None
     valuations: list[RingElement | Integer | InfinityElement] | None
     forced_leaf: bool
-    def __init__(self, valuation: DiscreteValuation, parent: MacLaneApproximantNode | None, ef: bool, principal_part_bound: int | None, coefficients: list[RingElement] | None, valuations: list[RingElement | Integer | InfinityElement] | None) -> None: ...
+    def __init__(
+        self,
+        valuation: DiscreteValuation,
+        parent: MacLaneApproximantNode | None,
+        ef: bool,
+        principal_part_bound: int | None,
+        coefficients: list[RingElement] | None,
+        valuations: list[RingElement | Integer | InfinityElement] | None,
+    ) -> None: ...
     def __eq__(self, other: object) -> bool: ...
     def __ne__(self, other: object) -> bool: ...

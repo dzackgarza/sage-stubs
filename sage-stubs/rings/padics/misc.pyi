@@ -1,18 +1,25 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from sage.rings.integer import Integer
+from sage.rings.padics.padic_generic import pAdicGeneric
+from sage.rings.padics.padic_generic_element import pAdicGenericElement
+from sage.structure.parent import ElementConstructorInput
 
-class _SageObject: ...
+python_min: pAdicGenericElement
+python_max: pAdicGenericElement
 
-python_min: _SageObject
-python_max: _SageObject
-def gauss_sum(a: builtins.object, p: builtins.int, f: builtins.object, prec: builtins.int = ..., factored: builtins.bool = ..., algorithm: builtins.str = ..., parent: builtins.object = ...) -> _SageObject: ...
-
-def min(*L: builtins.object) -> _SageObject: ...
-
-def max(*L: builtins.object) -> _SageObject: ...
-
-def precprint(prec_type: builtins.object, prec_cap: builtins.object, p: builtins.int) -> _SageObject: ...
-
-def trim_zeros(L: builtins.object) -> _SageObject: ...
+def gauss_sum(
+    a: pAdicGenericElement | ElementConstructorInput,
+    p: int | Integer,
+    f: int | Integer,
+    prec: int | Integer = ...,
+    factored: int | Integer = ...,
+    algorithm: str = ...,
+    parent: pAdicGeneric = ...,
+) -> pAdicGenericElement: ...
+def min(*L: ElementConstructorInput) -> pAdicGenericElement: ...
+def max(*L: ElementConstructorInput) -> pAdicGenericElement: ...
+def precprint(
+    prec_type: ElementConstructorInput,
+    prec_cap: ElementConstructorInput,
+    p: int | Integer,
+) -> pAdicGenericElement: ...
+def trim_zeros(L: ElementConstructorInput) -> pAdicGenericElement: ...

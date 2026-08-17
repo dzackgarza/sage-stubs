@@ -1,16 +1,27 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from sage.rings.number_field.number_field_element import NumberFieldElement
+from sage.rings.polynomial.multi_polynomial import MPolynomial
+from sage.rings.polynomial.polynomial_element import Polynomial
+from sage.structure.parent import ElementConstructorInput
+from sage.structure.sage_object import SageObject
 
-class _SageObject: ...
+class SplittingFieldAbort(Exception):
+    def __init__(
+        self, div: ElementConstructorInput, mult: ElementConstructorInput
+    ) -> None: ...
 
-class SplittingFieldAbort:
-    def __init__(self, div: builtins.object, mult: builtins.object) -> None: ...
+class SplittingData(SageObject):
+    def __init__(
+        self, _pol: ElementConstructorInput, _dm: ElementConstructorInput
+    ) -> None: ...
+    def key(self) -> NumberFieldElement: ...
+    def poldegree(self) -> NumberFieldElement: ...
 
-class SplittingData:
-    def __init__(self, _pol: builtins.object, _dm: builtins.object) -> None: ...
-    def key(self) -> _SageObject: ...
-    def poldegree(self) -> _SageObject: ...
-
-def splitting_field(poly: builtins.object, name: builtins.str, map: builtins.bool = ..., degree_multiple: builtins.object = ..., abort_degree: builtins.object = ..., simplify: builtins.bool = ..., simplify_all: builtins.bool = ...) -> _SageObject: ...
+def splitting_field(
+    poly: Polynomial | MPolynomial,
+    name: str,
+    map: bool = ...,
+    degree_multiple: Polynomial | MPolynomial = ...,
+    abort_degree: Polynomial | MPolynomial = ...,
+    simplify: Polynomial | MPolynomial = ...,
+    simplify_all: Polynomial | MPolynomial = ...,
+) -> NumberFieldElement: ...

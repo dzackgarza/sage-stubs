@@ -1,9 +1,10 @@
-from sage.rings.function_field.element import FunctionFieldElement
-from sage.structure.parent import Parent
+from typing import Self
+
 from sage.libs.pari.gen import gen
+from sage.rings.function_field.element import FunctionFieldElement
 from sage.structure.element import Element
 from sage.structure.factorization import Factorization
-from typing import Self
+from sage.structure.parent import Parent
 
 type RationalFunctionFieldElementList = list[FunctionFieldElement]
 
@@ -29,4 +30,4 @@ class FunctionFieldElement_rational(FunctionFieldElement):
     def is_square(self) -> bool: ...
     def is_nth_power(self, n: int) -> bool: ...
     def nth_root(self, n: int) -> FunctionFieldElement: ...
-import builtins
+

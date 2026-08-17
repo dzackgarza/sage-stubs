@@ -1,31 +1,115 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from sage.categories.morphism import Morphism
+from sage.rings.integer import Integer
+from sage.rings.padics.eisenstein_extension_generic import EisensteinExtensionGeneric
+from sage.rings.padics.generic_nodes import (
+    pAdicCappedAbsoluteRingGeneric,
+    pAdicCappedRelativeFieldGeneric,
+    pAdicCappedRelativeRingGeneric,
+    pAdicFixedModRingGeneric,
+    pAdicFloatingPointFieldGeneric,
+    pAdicFloatingPointRingGeneric,
+)
+from sage.rings.padics.padic_generic_element import pAdicGenericElement
+from sage.rings.ring import Ring
+from sage.structure.parent import ElementConstructorInput
 
-class _SageObject: ...
+class pAdicRelativeBaseringInjection(Morphism):
+    def __init__(
+        self, R: Ring, S: pAdicGenericElement | ElementConstructorInput
+    ) -> None: ...
+    def section(self) -> Morphism: ...
+    def _call_(
+        self, x: pAdicGenericElement | ElementConstructorInput
+    ) -> pAdicGenericElement: ...
 
-class pAdicRelativeBaseringInjection:
-    def __init__(self, R: builtins.int, S: builtins.object) -> None: ...
-    def section(self) -> _SageObject: ...
+class pAdicRelativeBaseringSection(Morphism):
+    def __init__(
+        self, S: pAdicGenericElement | ElementConstructorInput, R: Ring
+    ) -> None: ...
+    def _call_(
+        self, x: pAdicGenericElement | ElementConstructorInput
+    ) -> pAdicGenericElement: ...
 
-class pAdicRelativeBaseringSection:
-    def __init__(self, S: builtins.object, R: builtins.int) -> None: ...
+class RelativeRamifiedExtensionRingFixedMod(
+    EisensteinExtensionGeneric, pAdicFixedModRingGeneric
+):
+    def __init__(
+        self,
+        exact_modulus: ElementConstructorInput,
+        approx_modulus: ElementConstructorInput,
+        prec: int | Integer,
+        print_mode: ElementConstructorInput,
+        shift_seed: ElementConstructorInput,
+        names: str | tuple[str, ...],
+        implementation: str,
+    ) -> None: ...
 
-class RelativeRamifiedExtensionRingFixedMod:
-    def __init__(self, exact_modulus: builtins.object, approx_modulus: builtins.object, prec: builtins.int, print_mode: builtins.object, shift_seed: builtins.object, names: builtins.object, implementation: builtins.str) -> None: ...
+class RelativeRamifiedExtensionRingCappedAbsolute(
+    EisensteinExtensionGeneric, pAdicCappedAbsoluteRingGeneric
+):
+    def __init__(
+        self,
+        exact_modulus: ElementConstructorInput,
+        approx_modulus: ElementConstructorInput,
+        prec: int | Integer,
+        print_mode: ElementConstructorInput,
+        shift_seed: ElementConstructorInput,
+        names: str | tuple[str, ...],
+        implementation: str,
+    ) -> None: ...
 
-class RelativeRamifiedExtensionRingCappedAbsolute:
-    def __init__(self, exact_modulus: builtins.object, approx_modulus: builtins.object, prec: builtins.int, print_mode: builtins.object, shift_seed: builtins.object, names: builtins.object, implementation: builtins.str) -> None: ...
+class RelativeRamifiedExtensionRingCappedRelative(
+    EisensteinExtensionGeneric, pAdicCappedRelativeRingGeneric
+):
+    def __init__(
+        self,
+        exact_modulus: ElementConstructorInput,
+        approx_modulus: ElementConstructorInput,
+        prec: int | Integer,
+        print_mode: ElementConstructorInput,
+        shift_seed: ElementConstructorInput,
+        names: str | tuple[str, ...],
+        implementation: str,
+    ) -> None: ...
 
-class RelativeRamifiedExtensionRingCappedRelative:
-    def __init__(self, exact_modulus: builtins.object, approx_modulus: builtins.object, prec: builtins.int, print_mode: builtins.object, shift_seed: builtins.object, names: builtins.object, implementation: builtins.str) -> None: ...
+class RelativeRamifiedExtensionFieldCappedRelative(
+    EisensteinExtensionGeneric, pAdicCappedRelativeFieldGeneric
+):
+    def __init__(
+        self,
+        exact_modulus: ElementConstructorInput,
+        approx_modulus: ElementConstructorInput,
+        prec: int | Integer,
+        print_mode: ElementConstructorInput,
+        shift_seed: ElementConstructorInput,
+        names: str | tuple[str, ...],
+        implementation: str,
+    ) -> None: ...
 
-class RelativeRamifiedExtensionFieldCappedRelative:
-    def __init__(self, exact_modulus: builtins.object, approx_modulus: builtins.object, prec: builtins.int, print_mode: builtins.object, shift_seed: builtins.object, names: builtins.object, implementation: builtins.str) -> None: ...
+class RelativeRamifiedExtensionRingFloatingPoint(
+    EisensteinExtensionGeneric, pAdicFloatingPointRingGeneric
+):
+    def __init__(
+        self,
+        exact_modulus: ElementConstructorInput,
+        approx_modulus: ElementConstructorInput,
+        prec: int | Integer,
+        print_mode: ElementConstructorInput,
+        shift_seed: ElementConstructorInput,
+        names: str | tuple[str, ...],
+        implementation: str,
+    ) -> None: ...
 
-class RelativeRamifiedExtensionRingFloatingPoint:
-    def __init__(self, exact_modulus: builtins.object, approx_modulus: builtins.object, prec: builtins.int, print_mode: builtins.object, shift_seed: builtins.object, names: builtins.object, implementation: builtins.str) -> None: ...
-
-class RelativeRamifiedExtensionFieldFloatingPoint:
-    def __init__(self, exact_modulus: builtins.object, approx_modulus: builtins.object, prec: builtins.int, print_mode: builtins.object, shift_seed: builtins.object, names: builtins.object, implementation: builtins.str) -> None: ...
+class RelativeRamifiedExtensionFieldFloatingPoint(
+    EisensteinExtensionGeneric, pAdicFloatingPointFieldGeneric
+):
+    def __init__(
+        self,
+        exact_modulus: ElementConstructorInput,
+        approx_modulus: ElementConstructorInput,
+        prec: int | Integer,
+        print_mode: ElementConstructorInput,
+        shift_seed: ElementConstructorInput,
+        names: str | tuple[str, ...],
+        implementation: str,
+    ) -> None: ...

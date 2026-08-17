@@ -1,9 +1,13 @@
+from sage.categories.category import Category
+from sage.plot.graphics import Graphics
+from sage.rings.function_field.place import FunctionFieldPlace
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import IntegerRing_class
+from sage.rings.number_field.number_field_ideal import NumberFieldIdeal
 from sage.rings.padics.padic_generic import pAdicGeneric
 from sage.rings.rational_field import RationalField
-from sage.rings.integer_ring import IntegerRing_class
-from sage.rings.integer import Integer
 from sage.structure.element import Element
-from sage.plot.graphics import Graphics
+from sage.structure.parent import ElementConstructorInput
 
 class pAdicBaseGeneric(pAdicGeneric):
     def exact_field(self) -> RationalField: ...
@@ -22,3 +26,13 @@ class pAdicBaseGeneric(pAdicGeneric):
     def zeta(self, n: int | None = ...) -> Element: ...
     def zeta_order(self) -> Integer: ...
     def plot(self, *args: object, **kwds: object) -> Graphics: ...
+    def __init__(
+        self,
+        p: int | Integer | FunctionFieldPlace | NumberFieldIdeal,
+        prec: int | Integer | None,
+        print_mode: ElementConstructorInput,
+        names: str | tuple[str, ...] | None,
+        element_class: ElementConstructorInput,
+        category: Category | None = ...,
+    ) -> None: ...
+    def _repr_(self, do_latex: ElementConstructorInput = ...) -> str: ...
