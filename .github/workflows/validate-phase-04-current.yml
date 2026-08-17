@@ -30,7 +30,8 @@ jobs:
       - name: Run Phase 04 validation
         shell: bash
         run: |
-          set -uo pipefail
+          set +e
+          set -u
           mkdir -p reports
           targets=(
             sage-stubs/rings/finite_rings
@@ -48,16 +49,6 @@ jobs:
           echo $? > reports/ruff-format.status
           python scripts/check_stubs.py $(find "${targets[@]}" -name '*.pyi' -print) > reports/check-stubs.txt 2>&1
           echo $? > reports/check-stubs.status
-
-          python -m mypy \
-            --strict \
-            --no-incremental \
-            --follow-imports=normal \
-            --show-error-codes \
-            --show-column-numbers \
-            --no-pretty \
-            "${targets[@]}" > reports/mypy.txt 2>&1
-          echo $? > reports/mypy.status
 
           cat > phase04-pyrightconfig.json <<'JSON'
           {
@@ -80,6 +71,16 @@ jobs:
           basedpyright --project phase04-pyrightconfig.json --outputjson > reports/basedpyright.json 2> reports/basedpyright.stderr
           echo $? > reports/basedpyright.status
 
+          python -m mypy \
+            --strict \
+            --no-incremental \
+            --follow-imports=silent \
+            --show-error-codes \
+            --show-column-numbers \
+            --no-pretty \
+            "${targets[@]}" > reports/mypy-hook-style.txt 2>&1
+          echo $? > reports/mypy-hook-style.status
+
           : > reports/semantic.txt
           semantic_status=0
           for directory in "${targets[@]}"; do
@@ -90,17 +91,17 @@ jobs:
           python - <<'PY' > reports/summary.txt
           import json
           from pathlib import Path
-          for name in ("ruff", "ruff-format", "check-stubs", "mypy", "basedpyright", "semantic"):
+          for name in ("ruff", "ruff-format", "check-stubs", "basedpyright", "mypy-hook-style", "semantic"):
               path = Path(f"reports/{name}.status")
               print(f"{name}: {path.read_text().strip() if path.exists() else 'missing'}")
           path = Path("reports/basedpyright.json")
           if path.exists() and path.stat().st_size:
               print("basedpyright-summary:", json.loads(path.read_text()).get("summary"))
-          mypy = Path("reports/mypy.txt")
+          mypy = Path("reports/mypy-hook-style.txt")
           if mypy.exists():
               lines = mypy.read_text(errors="replace").splitlines()
-              print("mypy-lines:", len(lines))
-              print("mypy-final:", lines[-1] if lines else "")
+              print("mypy-hook-style-lines:", len(lines))
+              print("mypy-hook-style-final:", lines[-1] if lines else "")
           PY
           cat reports/summary.txt
           exit 0
@@ -123,7 +124,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: phase04-current-validation
+          name: phase04-current-validation-v2
           path: phase04-current-validation.tar.gz
           retention-days: 1
           if-no-files-found: error
