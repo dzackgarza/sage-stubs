@@ -1,59 +1,66 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from collections.abc import Callable
+from typing import Literal
 
-class _SageObject: ...
+from sage.symbolic.function import BuiltinFunction, FunctionArgument, FunctionResult
 
-class Function_Bessel_J:
+
+type BesselType = Literal["I", "J", "K", "Y"]
+type BesselFunction = Function_Bessel_I | Function_Bessel_J | Function_Bessel_K | Function_Bessel_Y
+
+
+class Function_Bessel_J(BuiltinFunction):
+    def __init__(self) -> None: ...
+class Function_Bessel_Y(BuiltinFunction):
+    def __init__(self) -> None: ...
+class Function_Bessel_I(BuiltinFunction):
+    def __init__(self) -> None: ...
+class Function_Bessel_K(BuiltinFunction):
     def __init__(self) -> None: ...
 
-bessel_J: _SageObject
-class Function_Bessel_Y:
+
+bessel_J: Function_Bessel_J
+bessel_Y: Function_Bessel_Y
+bessel_I: Function_Bessel_I
+bessel_K: Function_Bessel_K
+bessel_type_dict: dict[BesselType, BesselFunction]
+
+
+def Bessel(
+    order: FunctionArgument | None = None,
+    typ: BesselType = "J",
+) -> BesselFunction | Callable[[FunctionArgument], FunctionResult]: ...
+
+
+class Function_Struve_H(BuiltinFunction):
+    def __init__(self) -> None: ...
+class Function_Struve_L(BuiltinFunction):
+    def __init__(self) -> None: ...
+class Function_Hankel1(BuiltinFunction):
+    def __init__(self) -> None: ...
+class Function_Hankel2(BuiltinFunction):
+    def __init__(self) -> None: ...
+class SphericalBesselJ(BuiltinFunction):
+    def __init__(self) -> None: ...
+class SphericalBesselY(BuiltinFunction):
+    def __init__(self) -> None: ...
+class SphericalHankel1(BuiltinFunction):
+    def __init__(self) -> None: ...
+class SphericalHankel2(BuiltinFunction):
     def __init__(self) -> None: ...
 
-bessel_Y: _SageObject
-class Function_Bessel_I:
-    def __init__(self) -> None: ...
 
-bessel_I: _SageObject
-class Function_Bessel_K:
-    def __init__(self) -> None: ...
+struve_H: Function_Struve_H
+struve_L: Function_Struve_L
+hankel1: Function_Hankel1
+hankel2: Function_Hankel2
+spherical_bessel_J: SphericalBesselJ
+spherical_bessel_Y: SphericalBesselY
+spherical_hankel1: SphericalHankel1
+spherical_hankel2: SphericalHankel2
 
-bessel_K: _SageObject
-bessel_type_dict: _SageObject
-def Bessel(*args: builtins.object, **kwds: builtins.object) -> _SageObject: ...
 
-class Function_Struve_H:
-    def __init__(self) -> None: ...
-
-struve_H: _SageObject
-class Function_Struve_L:
-    def __init__(self) -> None: ...
-
-struve_L: _SageObject
-class Function_Hankel1:
-    def __init__(self) -> None: ...
-
-hankel1: _SageObject
-class Function_Hankel2:
-    def __init__(self) -> None: ...
-
-hankel2: _SageObject
-class SphericalBesselJ:
-    def __init__(self) -> None: ...
-
-spherical_bessel_J: _SageObject
-class SphericalBesselY:
-    def __init__(self) -> None: ...
-
-spherical_bessel_Y: _SageObject
-class SphericalHankel1:
-    def __init__(self) -> None: ...
-
-spherical_hankel1: _SageObject
-class SphericalHankel2:
-    def __init__(self) -> None: ...
-
-spherical_hankel2: _SageObject
-def spherical_bessel_f(F: builtins.object, n: builtins.int, z: builtins.object) -> _SageObject: ...
+def spherical_bessel_f(
+    F: BuiltinFunction,
+    n: int,
+    z: FunctionArgument,
+) -> FunctionResult: ...

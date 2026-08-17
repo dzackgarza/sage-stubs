@@ -1,16 +1,37 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from sage.symbolic.expression import Expression, SymbolicInput
 
-class _SageObject: ...
 
-def maxima_integrator(expression: builtins.object, v: builtins.object, a: builtins.object = ..., b: builtins.object = ...) -> _SageObject: ...
+type IntegrationBound = SymbolicInput | None
 
-def sympy_integrator(expression: builtins.object, v: builtins.object, a: builtins.object = ..., b: builtins.object = ...) -> _SageObject: ...
 
-def mma_free_integrator(expression: builtins.object, v: builtins.object, a: builtins.object = ..., b: builtins.object = ...) -> _SageObject: ...
-
-def fricas_integrator(expression: builtins.object, v: builtins.object, a: builtins.object = ..., b: builtins.object = ..., noPole: builtins.bool = ...) -> _SageObject: ...
-
-def libgiac_integrator(expression: builtins.object, v: builtins.object, a: builtins.object = ..., b: builtins.object = ...) -> _SageObject: ...
+def maxima_integrator(
+    expression: Expression,
+    v: Expression,
+    a: IntegrationBound = None,
+    b: IntegrationBound = None,
+) -> Expression: ...
+def sympy_integrator(
+    expression: Expression,
+    v: Expression,
+    a: IntegrationBound = None,
+    b: IntegrationBound = None,
+) -> Expression: ...
+def mma_free_integrator(
+    expression: Expression,
+    v: Expression,
+    a: IntegrationBound = None,
+    b: IntegrationBound = None,
+) -> Expression: ...
+def fricas_integrator(
+    expression: Expression,
+    v: Expression,
+    a: IntegrationBound = None,
+    b: IntegrationBound = None,
+    noPole: bool = True,
+) -> Expression: ...
+def libgiac_integrator(
+    expression: Expression,
+    v: Expression,
+    a: IntegrationBound = None,
+    b: IntegrationBound = None,
+) -> Expression: ...

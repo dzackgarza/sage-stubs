@@ -75,7 +75,7 @@ first-level subtree.
 | 13 | [Schemes & dynamics](phases/phase-13-schemes-dynamics.md) | 4 | 04, 12 | ~170 | ⬜ Not Started |
 | 14 | [Modular forms & Hecke modules](phases/phase-14-modular.md) | 4 | 04, 05 | ~130 | ⬜ Not Started |
 | 15 | [Topology, manifolds, graphs, homology](phases/phase-15-topology-manifolds-graphs.md) | 3 | 05 | ~195 | ⬜ Not Started |
-| 16 | [Symbolic, calculus, functions](phases/phase-16-symbolic.md) | 3 | 02 | ~65 | ⬜ Not Started |
+| 16 | [Symbolic, calculus, functions](phases/phase-16-symbolic.md) | 3 | 02 | 56 + 6 support | ✅ Complete |
 | 17 | [Applied domains](phases/phase-17-applied-domains.md) | 3 | 02, 05 | ~155 | ⬜ Not Started |
 | 18 | [Infrastructure: numerical, plot, interfaces, dev](phases/phase-18-infrastructure.md) | 5 | 02 | ~330 | ⬜ Not Started |
 
@@ -143,17 +143,16 @@ See [feature.md](feature.md#measuring-progress) for the full workflow.
 
 ## Current work frontier
 
+> **Completed first-level subtree:** Phase 16 (symbolic, calculus, and
+> functions) is complete: 56 in-scope Sage modules, six Cython-fragment support
+> stubs, five package initializers, and two documented harness exemptions.
+>
 > **Active first-level phases:** Phase 04 (number-theoretic rings) and Phase 06
-> (associative and non-Lie algebras).
+> (associative and non-Lie algebras). Phase 05 (linear algebra) remains an
+> unstarted dependency frontier for Phases 06–08, 12, 14, 15, and 17.
 >
-> **Phase 06 correction:** the merged finite-dimensional, affine
-> nilTemperley–Lieb, Iwahori–Hecke/nil-Coxeter, associated-graded/cellular,
-> Askey–Wilson, down–up, and finite graded-commutative batches are commit leaves
-> within Phase 06 tasks. Their historical `Phase 12`–`Phase 18` labels do not
-> denote plan phases and do not complete Phase 06.
->
-> **Next algebra work:** continue the incomplete Phase 06 task rows in
-> [phase-06-algebras-core.md](phases/phase-06-algebras-core.md), committing
-> source-grounded batches without assigning new phase numbers.
+> **Next valid work:** continue a named task under Phase 04 or Phase 06, or
+> start Phase 05. Commits remain leaves beneath those task cards and must not
+> invent new phase numbers.
 
 Update the frontier whenever a first-level phase or task status changes.

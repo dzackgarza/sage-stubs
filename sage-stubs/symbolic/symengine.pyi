@@ -1,7 +1,7 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from symengine.lib.symengine_wrapper import Basic
 
-class _SageObject: ...
+from sage.symbolic.expression import Expression
 
+
+def symengine_to_sage(ex: Basic) -> Expression: ...
+def sage_to_symengine(ex: Expression) -> Basic: ...

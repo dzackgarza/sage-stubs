@@ -1,49 +1,69 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from typing import Literal
 
-class _SageObject: ...
+from sage.rings.rational import Rational
+from sage.symbolic.function import BuiltinFunction, FunctionArgument, FunctionKeyword, FunctionResult
 
-HALF: _SageObject
-class Jacobi:
-    def __init__(self, kind: builtins.object) -> None: ...
 
-jacobi_nd: _SageObject
-jacobi_ns: _SageObject
-jacobi_nc: _SageObject
-jacobi_dn: _SageObject
-jacobi_ds: _SageObject
-jacobi_dc: _SageObject
-jacobi_sn: _SageObject
-jacobi_sd: _SageObject
-jacobi_sc: _SageObject
-jacobi_cn: _SageObject
-jacobi_cd: _SageObject
-jacobi_cs: _SageObject
-class InverseJacobi:
-    def __init__(self, kind: builtins.object) -> None: ...
+type JacobiKind = Literal["nd", "ns", "nc", "dn", "ds", "dc", "sn", "sd", "sc", "cn", "cd", "cs"]
 
-inverse_jacobi_nd: _SageObject
-inverse_jacobi_ns: _SageObject
-inverse_jacobi_nc: _SageObject
-inverse_jacobi_dn: _SageObject
-inverse_jacobi_ds: _SageObject
-inverse_jacobi_dc: _SageObject
-inverse_jacobi_sn: _SageObject
-inverse_jacobi_sd: _SageObject
-inverse_jacobi_sc: _SageObject
-inverse_jacobi_cn: _SageObject
-inverse_jacobi_cd: _SageObject
-inverse_jacobi_cs: _SageObject
-def jacobi(kind: builtins.object, z: builtins.object, m: builtins.int, **kwargs: builtins.object) -> _SageObject: ...
+HALF: Rational
 
-def inverse_jacobi(kind: builtins.object, x: builtins.object, m: builtins.int, **kwargs: builtins.object) -> _SageObject: ...
 
-class JacobiAmplitude:
+class Jacobi(BuiltinFunction):
+    def __init__(self, kind: JacobiKind) -> None: ...
+
+
+jacobi_nd: Jacobi
+jacobi_ns: Jacobi
+jacobi_nc: Jacobi
+jacobi_dn: Jacobi
+jacobi_ds: Jacobi
+jacobi_dc: Jacobi
+jacobi_sn: Jacobi
+jacobi_sd: Jacobi
+jacobi_sc: Jacobi
+jacobi_cn: Jacobi
+jacobi_cd: Jacobi
+jacobi_cs: Jacobi
+
+
+class InverseJacobi(BuiltinFunction):
+    def __init__(self, kind: JacobiKind) -> None: ...
+
+
+inverse_jacobi_nd: InverseJacobi
+inverse_jacobi_ns: InverseJacobi
+inverse_jacobi_nc: InverseJacobi
+inverse_jacobi_dn: InverseJacobi
+inverse_jacobi_ds: InverseJacobi
+inverse_jacobi_dc: InverseJacobi
+inverse_jacobi_sn: InverseJacobi
+inverse_jacobi_sd: InverseJacobi
+inverse_jacobi_sc: InverseJacobi
+inverse_jacobi_cn: InverseJacobi
+inverse_jacobi_cd: InverseJacobi
+inverse_jacobi_cs: InverseJacobi
+
+
+def jacobi(
+    kind: JacobiKind,
+    z: FunctionArgument,
+    m: FunctionArgument,
+    **kwargs: FunctionKeyword,
+) -> FunctionResult: ...
+def inverse_jacobi(
+    kind: JacobiKind,
+    x: FunctionArgument,
+    m: FunctionArgument,
+    **kwargs: FunctionKeyword,
+) -> FunctionResult: ...
+
+
+class JacobiAmplitude(BuiltinFunction):
     def __init__(self) -> None: ...
 
-jacobi_am: _SageObject
-def inverse_jacobi_f(kind: builtins.object, x: builtins.object, m: builtins.int) -> _SageObject: ...
 
-def jacobi_am_f(x: builtins.object, m: builtins.int) -> _SageObject: ...
+jacobi_am: JacobiAmplitude
+
+def inverse_jacobi_f(kind: JacobiKind, x: float, m: float) -> float | complex: ...
+def jacobi_am_f(x: float, m: float) -> float | complex: ...

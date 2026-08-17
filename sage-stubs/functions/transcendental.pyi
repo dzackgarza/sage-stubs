@@ -1,33 +1,35 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from sage.rings.power_series_ring_element import PowerSeries
+from sage.rings.real_mpfr import RealField_class, RealNumber
+from sage.symbolic.function import BuiltinFunction, FunctionArgument, FunctionKeyword, FunctionResult, GinacFunction
 
-class _SageObject: ...
 
-class Function_zeta:
+class Function_zeta(GinacFunction):
     def __init__(self) -> None: ...
-
-zeta: _SageObject
-class Function_stieltjes:
+class Function_stieltjes(GinacFunction):
     def __init__(self) -> None: ...
-
-stieltjes: _SageObject
-class Function_HurwitzZeta:
+class Function_HurwitzZeta(BuiltinFunction):
     def __init__(self) -> None: ...
-
-hurwitz_zeta_func: _SageObject
-def hurwitz_zeta(s: builtins.object, x: builtins.object, **kwargs: builtins.object) -> _SageObject: ...
-
-class Function_zetaderiv:
+class Function_zetaderiv(GinacFunction):
     def __init__(self) -> None: ...
-
-zetaderiv: _SageObject
-def zeta_symmetric(s: builtins.object) -> _SageObject: ...
-
-class DickmanRho:
+class DickmanRho(BuiltinFunction):
     def __init__(self) -> None: ...
-    def power_series(self, n: builtins.int, abs_prec: builtins.object) -> _SageObject: ...
-    def approximate(self, x: builtins.object, parent: builtins.object = ...) -> _SageObject: ...
+    def power_series(self, n: int, abs_prec: int) -> PowerSeries: ...
+    def approximate(
+        self,
+        x: FunctionArgument,
+        parent: RealField_class | None = None,
+    ) -> RealNumber: ...
 
-dickman_rho: _SageObject
+
+zeta: Function_zeta
+stieltjes: Function_stieltjes
+hurwitz_zeta_func: Function_HurwitzZeta
+zetaderiv: Function_zetaderiv
+dickman_rho: DickmanRho
+
+def hurwitz_zeta(
+    s: FunctionArgument,
+    x: FunctionArgument,
+    **kwargs: FunctionKeyword,
+) -> FunctionResult: ...
+def zeta_symmetric(s: FunctionArgument) -> FunctionResult: ...

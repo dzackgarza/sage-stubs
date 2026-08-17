@@ -1,21 +1,57 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from typing import Protocol, Self, TypeVar
 
-class _SageObject: ...
+from sage.symbolic.expression import Expression, SymbolicInput
 
-def simplify(f: builtins.object, algorithm: builtins.str = ..., **kwds: builtins.object) -> _SageObject: ...
 
-def derivative(f: builtins.object, *args: builtins.object, **kwds: builtins.object) -> _SageObject: ...
+class Simplifiable(Protocol):
+    def simplify(self, *args: SymbolicInput, **kwds: SymbolicInput) -> Self: ...
 
-diff: _SageObject
-def integral(f: builtins.object, *args: builtins.object, **kwds: builtins.object) -> _SageObject: ...
 
-integrate: _SageObject
-def limit(f: builtins.object, dir: builtins.object = ..., taylor: builtins.bool = ..., **argv: builtins.object) -> _SageObject: ...
+class Differentiable(Protocol):
+    def derivative(self, *args: SymbolicInput, **kwds: SymbolicInput) -> Self: ...
 
-lim: _SageObject
-def taylor(f: builtins.object, *args: builtins.object) -> _SageObject: ...
 
-def expand(x: builtins.object, *args: builtins.object, **kwds: builtins.object) -> _SageObject: ...
+class Integrable(Protocol):
+    def integral(self, *args: SymbolicInput, **kwds: SymbolicInput) -> Self: ...
+
+
+class Expandable(Protocol):
+    def expand(self, *args: SymbolicInput, **kwds: SymbolicInput) -> Self: ...
+
+
+_SimplifiableT = TypeVar("_SimplifiableT", bound=Simplifiable)
+_DifferentiableT = TypeVar("_DifferentiableT", bound=Differentiable)
+_IntegrableT = TypeVar("_IntegrableT", bound=Integrable)
+_ExpandableT = TypeVar("_ExpandableT", bound=Expandable)
+
+
+def simplify(
+    f: _SimplifiableT,
+    algorithm: str = "maxima",
+    **kwds: SymbolicInput,
+) -> _SimplifiableT: ...
+def derivative(
+    f: _DifferentiableT | SymbolicInput,
+    *args: SymbolicInput,
+    **kwds: SymbolicInput,
+) -> _DifferentiableT | Expression: ...
+diff = derivative
+def integral(
+    f: _IntegrableT | SymbolicInput,
+    *args: SymbolicInput,
+    **kwds: SymbolicInput,
+) -> _IntegrableT | Expression: ...
+integrate = integral
+def limit(
+    f: SymbolicInput,
+    dir: str | None = None,
+    taylor: bool = False,
+    **argv: SymbolicInput,
+) -> Expression: ...
+lim = limit
+def taylor(f: SymbolicInput, *args: SymbolicInput) -> Expression: ...
+def expand(
+    x: _ExpandableT | SymbolicInput,
+    *args: SymbolicInput,
+    **kwds: SymbolicInput,
+) -> _ExpandableT | Expression: ...

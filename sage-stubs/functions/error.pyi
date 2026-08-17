@@ -1,31 +1,26 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from sage.symbolic.function import BuiltinFunction
 
-class _SageObject: ...
-
-class Function_erf:
+class Function_erf(BuiltinFunction):
     def __init__(self) -> None: ...
 
-erf: _SageObject
-class Function_erfi:
+class Function_erfi(BuiltinFunction):
     def __init__(self) -> None: ...
 
-erfi: _SageObject
-class Function_erfc:
+class Function_erfc(BuiltinFunction):
     def __init__(self) -> None: ...
 
-erfc: _SageObject
-class Function_erfinv:
+class Function_erfinv(BuiltinFunction):
     def __init__(self) -> None: ...
 
-erfinv: _SageObject
-class Function_Fresnel_sin:
+class Function_Fresnel_sin(BuiltinFunction):
     def __init__(self) -> None: ...
 
-fresnel_sin: _SageObject
-class Function_Fresnel_cos:
+class Function_Fresnel_cos(BuiltinFunction):
     def __init__(self) -> None: ...
 
-fresnel_cos: _SageObject
+erf: Function_erf
+erfi: Function_erfi
+erfc: Function_erfc
+erfinv: Function_erfinv
+fresnel_sin: Function_Fresnel_sin
+fresnel_cos: Function_Fresnel_cos

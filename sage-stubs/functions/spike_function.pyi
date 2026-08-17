@@ -1,16 +1,47 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from collections.abc import Iterable
 
-class _SageObject: ...
+from sage.modules.free_module_element import FreeModuleElement
+from sage.plot.graphics import Graphics
+from sage.rings.real_double import RealDoubleElement
+from sage.structure.sage_object import SageObject
 
-class SpikeFunction:
-    def __init__(self, v: builtins.object, eps: builtins.float = ...) -> None: ...
-    def __call__(self, x: builtins.object) -> _SageObject: ...
-    def plot_fft_abs(self, samples: builtins.object = ..., xmin: builtins.object = ..., xmax: builtins.object = ..., **kwds: builtins.object) -> _SageObject: ...
-    def plot_fft_arg(self, samples: builtins.object = ..., xmin: builtins.object = ..., xmax: builtins.object = ..., **kwds: builtins.object) -> _SageObject: ...
-    def vector(self, samples: builtins.object = ..., xmin: builtins.object = ..., xmax: builtins.object = ...) -> _SageObject: ...
-    def plot(self, xmin: builtins.object = ..., xmax: builtins.object = ..., **kwds: builtins.object) -> _SageObject: ...
 
-spike_function: _SageObject
+type Spike = tuple[float, float]
+
+
+class SpikeFunction(SageObject):
+    support: list[float]
+    height: list[float]
+    eps: float
+    def __init__(self, v: Iterable[Spike], eps: float = 1e-7) -> None: ...
+    def __repr__(self) -> str: ...
+    def __call__(self, x: float) -> float: ...
+    def plot_fft_abs(
+        self,
+        samples: int = 2**12,
+        xmin: float | None = None,
+        xmax: float | None = None,
+        **kwds: float | int | str | bool,
+    ) -> Graphics: ...
+    def plot_fft_arg(
+        self,
+        samples: int = 2**12,
+        xmin: float | None = None,
+        xmax: float | None = None,
+        **kwds: float | int | str | bool,
+    ) -> Graphics: ...
+    def vector(
+        self,
+        samples: int = 2**16,
+        xmin: float | None = None,
+        xmax: float | None = None,
+    ) -> FreeModuleElement[RealDoubleElement]: ...
+    def plot(
+        self,
+        xmin: float | None = None,
+        xmax: float | None = None,
+        **kwds: float | int | str | bool,
+    ) -> Graphics: ...
+
+
+spike_function: type[SpikeFunction]

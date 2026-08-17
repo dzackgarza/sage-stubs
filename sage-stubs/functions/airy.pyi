@@ -1,34 +1,39 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from sage.symbolic.function import BuiltinFunction, FunctionArgument, FunctionKeyword, FunctionResult
 
-class _SageObject: ...
-
-class FunctionAiryAiGeneral:
+class FunctionAiryAiGeneral(BuiltinFunction):
     def __init__(self) -> None: ...
 
-class FunctionAiryAiSimple:
+class FunctionAiryAiSimple(BuiltinFunction):
     def __init__(self) -> None: ...
 
-class FunctionAiryAiPrime:
+class FunctionAiryAiPrime(BuiltinFunction):
     def __init__(self) -> None: ...
 
-airy_ai_general: _SageObject
-airy_ai_simple: _SageObject
-airy_ai_prime: _SageObject
-def airy_ai(alpha: builtins.object, x: builtins.object = ..., hold_derivative: builtins.bool = ..., **kwds: builtins.object) -> _SageObject: ...
-
-class FunctionAiryBiGeneral:
+class FunctionAiryBiGeneral(BuiltinFunction):
     def __init__(self) -> None: ...
 
-class FunctionAiryBiSimple:
+class FunctionAiryBiSimple(BuiltinFunction):
     def __init__(self) -> None: ...
 
-class FunctionAiryBiPrime:
+class FunctionAiryBiPrime(BuiltinFunction):
     def __init__(self) -> None: ...
 
-airy_bi_general: _SageObject
-airy_bi_simple: _SageObject
-airy_bi_prime: _SageObject
-def airy_bi(alpha: builtins.object, x: builtins.object = ..., hold_derivative: builtins.bool = ..., **kwds: builtins.object) -> _SageObject: ...
+airy_ai_general: FunctionAiryAiGeneral
+airy_ai_simple: FunctionAiryAiSimple
+airy_ai_prime: FunctionAiryAiPrime
+airy_bi_general: FunctionAiryBiGeneral
+airy_bi_simple: FunctionAiryBiSimple
+airy_bi_prime: FunctionAiryBiPrime
+
+def airy_ai(
+    alpha: FunctionArgument,
+    x: FunctionArgument | None = None,
+    hold_derivative: bool = True,
+    **kwds: FunctionKeyword,
+) -> FunctionResult: ...
+def airy_bi(
+    alpha: FunctionArgument,
+    x: FunctionArgument | None = None,
+    hold_derivative: bool = True,
+    **kwds: FunctionKeyword,
+) -> FunctionResult: ...

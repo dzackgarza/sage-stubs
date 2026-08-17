@@ -1,16 +1,26 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from sage.plot.graphics import Graphics
+from sage.rings.integer import Integer
+from sage.symbolic.function import BuiltinFunction, FunctionArgument, FunctionKeyword, FunctionResult
 
-class _SageObject: ...
 
-class PrimePi:
+class PrimePi(BuiltinFunction):
     def __init__(self) -> None: ...
-    def __call__(self, *args: builtins.object, coerce: builtins.object = ..., hold: builtins.object = ...) -> _SageObject: ...
-    def plot(self, xmin: builtins.object = ..., xmax: builtins.object = ..., vertical_lines: builtins.object = ..., **kwds: builtins.object) -> _SageObject: ...
+    def __call__(
+        self,
+        *args: FunctionArgument,
+        coerce: bool = True,
+        hold: bool = False,
+    ) -> FunctionResult: ...
+    def plot(
+        self,
+        xmin: float = 0,
+        xmax: float = 100,
+        vertical_lines: bool = True,
+        **kwds: FunctionKeyword,
+    ) -> Graphics: ...
 
-prime_pi: _SageObject
-def legendre_phi(x: builtins.object, a: builtins.object) -> _SageObject: ...
 
-partial_sieve_function: _SageObject
+prime_pi: PrimePi
+
+def legendre_phi(x: int | Integer, a: int | Integer) -> Integer: ...
+partial_sieve_function = legendre_phi

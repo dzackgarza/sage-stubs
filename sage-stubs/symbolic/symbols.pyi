@@ -1,9 +1,16 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from collections.abc import Mapping
 
-class _SageObject: ...
+from sage.symbolic.expression import Expression
+from sage.symbolic.function import Function
 
-symbol_table: _SageObject
-def register_symbol(obj: builtins.object, conversions: builtins.object, nargs: builtins.object = ...) -> _SageObject: ...
+
+type SymbolConversions = Mapping[str, str]
+type SymbolTable = dict[str, dict[str, Expression | Function]]
+
+symbol_table: SymbolTable
+
+def register_symbol(
+    obj: Expression | Function,
+    conversions: SymbolConversions,
+    nargs: int | None = None,
+) -> None: ...

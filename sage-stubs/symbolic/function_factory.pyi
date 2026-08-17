@@ -1,13 +1,9 @@
 from collections.abc import Callable
-from sage.symbolic.function import (
-    ConversionTable,
-    FunctionCallable,
-    SymbolicFunction,
-)
+from sage.symbolic.function import ConversionTable, FunctionCallable, SymbolicFunction
 
-type FunctionOption = (
-    int | str | bool | ConversionTable | FunctionCallable | None
-)
+
+type FunctionOption = int | str | bool | ConversionTable | FunctionCallable | None
+
 
 def function_factory(
     name: str,
@@ -28,6 +24,7 @@ def function_factory(
     print_latex_func: Callable[..., str] | None = None,
 ) -> SymbolicFunction: ...
 
+
 def unpickle_function(
     name: str,
     nargs: int,
@@ -37,6 +34,5 @@ def unpickle_function(
     pickled_funcs: list[bytes | None],
 ) -> SymbolicFunction: ...
 
-def function(
-    s: str, **kwds: FunctionOption
-) -> SymbolicFunction | list[SymbolicFunction]: ...
+
+def function(s: str, **kwds: FunctionOption) -> SymbolicFunction | tuple[SymbolicFunction, ...]: ...

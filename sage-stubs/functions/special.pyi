@@ -1,39 +1,35 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from sage.rings.complex_mpfr import ComplexNumber
+from sage.symbolic.function import BuiltinFunction, FunctionArgument, FunctionResult
 
-class _SageObject: ...
 
-class SphericalHarmonic:
+class SphericalHarmonic(BuiltinFunction):
     def __init__(self) -> None: ...
 
-spherical_harmonic: _SageObject
-def elliptic_j(z: builtins.object, prec: builtins.int = ...) -> _SageObject: ...
 
-class EllipticE:
+spherical_harmonic: SphericalHarmonic
+
+def elliptic_j(z: FunctionArgument, prec: int = 53) -> ComplexNumber: ...
+
+
+class EllipticE(BuiltinFunction):
+    def __init__(self) -> None: ...
+class EllipticEC(BuiltinFunction):
+    def __init__(self) -> None: ...
+class EllipticEU(BuiltinFunction):
+    def __init__(self) -> None: ...
+class EllipticF(BuiltinFunction):
+    def __init__(self) -> None: ...
+class EllipticKC(BuiltinFunction):
+    def __init__(self) -> None: ...
+class EllipticPi(BuiltinFunction):
     def __init__(self) -> None: ...
 
-elliptic_e: _SageObject
-class EllipticEC:
-    def __init__(self) -> None: ...
 
-elliptic_ec: _SageObject
-class EllipticEU:
-    def __init__(self) -> None: ...
+elliptic_e: EllipticE
+elliptic_ec: EllipticEC
+elliptic_eu: EllipticEU
+elliptic_f: EllipticF
+elliptic_kc: EllipticKC
+elliptic_pi: EllipticPi
 
-def elliptic_eu_f(u: builtins.object, m: builtins.int) -> _SageObject: ...
-
-elliptic_eu: _SageObject
-class EllipticF:
-    def __init__(self) -> None: ...
-
-elliptic_f: _SageObject
-class EllipticKC:
-    def __init__(self) -> None: ...
-
-elliptic_kc: _SageObject
-class EllipticPi:
-    def __init__(self) -> None: ...
-
-elliptic_pi: _SageObject
+def elliptic_eu_f(u: FunctionArgument, m: FunctionArgument) -> FunctionResult: ...

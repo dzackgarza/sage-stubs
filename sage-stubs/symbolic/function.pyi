@@ -1,20 +1,28 @@
 from collections.abc import Callable
-
-from sage.symbolic.expression import Expression
+from sage.ext.fast_callable import ExpressionTreeBuilder, FastCallableFloatWrapper
 from sage.structure.element import Element
+from sage.structure.sage_object import SageCoercionAtom, SageObject
+from sage.symbolic.expression import Expression
 
-type FunctionArgument = Expression | Element | int | float | complex
+
+type FunctionArgument = Expression | Element | SageCoercionAtom | int | float | complex
 type FunctionResult = Expression | Element | int | float | complex
+type FunctionKeyword = FunctionArgument | bool | str | None
 type FunctionCallable = Callable[..., FunctionResult]
 type ConversionTable = dict[str, str]
 type SymbolicFunctionState = tuple[
     int, str, int, str | None, ConversionTable | None, bool, list[bytes | None]
 ]
 
-class Function:
+
+class Function(SageObject):
     def __init__(
-        self, name: str, nargs: int, latex_name: str | None = None,
-        conversions: ConversionTable | None = None, evalf_params_first: bool = True,
+        self,
+        name: str,
+        nargs: int,
+        latex_name: str | None = None,
+        conversions: ConversionTable | None = None,
+        evalf_params_first: bool = True,
         alt_name: str | None = None,
     ) -> None: ...
     def _evalf_try_(self, *args: FunctionArgument) -> FunctionResult | None: ...
@@ -35,27 +43,30 @@ class Function:
     @property
     def _sympy_(self) -> FunctionCallable: ...
     def _maxima_init_(self, I: Element | None = None) -> str: ...
-    def _fast_callable_(self, expression_tree_builder: Element) -> Element: ...
+    def _fast_callable_(
+        self, expression_tree_builder: ExpressionTreeBuilder
+    ) -> FastCallableFloatWrapper: ...
     def _eval_numpy_(self, *args: FunctionArgument) -> FunctionResult: ...
     def _eval_mpmath_(self, *args: FunctionArgument) -> FunctionResult: ...
 
-class GinacFunction(Function):
-    def __init__(
-        self, name: str, nargs: int = 1, latex_name: str | None = None,
-        conversions: ConversionTable | None = None, ginac_name: str | None = None,
-        evalf_params_first: bool = True, preserved_arg: int | None = None,
-        alt_name: str | None = None,
-    ) -> None: ...
 
 class BuiltinFunction(Function):
     def __init__(
-        self, name: str, nargs: int = 1, latex_name: str | None = None,
-        conversions: ConversionTable | None = None, evalf_params_first: bool = True,
-        alt_name: str | None = None, preserved_arg: int | None = None,
+        self,
+        name: str,
+        nargs: int = 1,
+        latex_name: str | None = None,
+        conversions: ConversionTable | None = None,
+        evalf_params_first: bool = True,
+        alt_name: str | None = None,
+        preserved_arg: int | None = None,
     ) -> None: ...
     def _method_arguments(self, arg: FunctionArgument) -> list[FunctionArgument]: ...
     def __call__(
-        self, *args: FunctionArgument, coerce: bool = True, hold: bool = False,
+        self,
+        *args: FunctionArgument,
+        coerce: bool = True,
+        hold: bool = False,
         dont_call_method_on_arg: bool = False,
     ) -> FunctionResult: ...
     def _is_registered(self) -> bool: ...
@@ -63,16 +74,36 @@ class BuiltinFunction(Function):
     def __reduce__(self) -> tuple[type[BuiltinFunction], tuple[()]]: ...
     def __setstate__(self, state: list[int]) -> None: ...
 
+
+class GinacFunction(BuiltinFunction):
+    def __init__(
+        self,
+        name: str,
+        nargs: int = 1,
+        latex_name: str | None = None,
+        conversions: ConversionTable | None = None,
+        ginac_name: str | None = None,
+        evalf_params_first: bool = True,
+        preserved_arg: int | None = None,
+        alt_name: str | None = None,
+    ) -> None: ...
+
+
 class SymbolicFunction(Function):
     def __init__(
-        self, name: str, nargs: int = 0, latex_name: str | None = None,
-        conversions: ConversionTable | None = None, evalf_params_first: bool = True,
+        self,
+        name: str,
+        nargs: int = 0,
+        latex_name: str | None = None,
+        conversions: ConversionTable | None = None,
+        evalf_params_first: bool = True,
     ) -> None: ...
     def _is_registered(self) -> bool: ...
     def _hash_(self) -> int: ...
     def __hash__(self) -> int: ...
     def __getstate__(self) -> SymbolicFunctionState: ...
     def __setstate__(self, state: SymbolicFunctionState) -> None: ...
+
 
 def pickle_wrapper(f: FunctionCallable | None) -> bytes | None: ...
 def unpickle_wrapper(p: bytes | None) -> FunctionCallable | None: ...

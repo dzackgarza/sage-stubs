@@ -92,9 +92,17 @@ with no public top-level definitions after source review.
 - `data_structures/bitset_base` — Cython/.pxd implementation; no Python module file
 - `data_structures/pairing_heap` — Cython/.pxd implementation; no Python module file
 
+## `symbolic/`
+
+- `symbolic/benchmark` — performance benchmark harness; no supported consumer API
+
+## `calculus/`
+
+- `calculus/wester` — Wester symbolic-calculus regression/doctest harness; no supported consumer API
+
 ## In-scope missing (not exempt)
 
-Count: **151** modules still need `.pyi` stubs in Phase 01 scope.
+This historical Phase-01 snapshot is retained for provenance; use `just coverage -- --missing` for the current global list.
 
 - `categories/algebra_ideals`
 - `categories/algebra_modules`

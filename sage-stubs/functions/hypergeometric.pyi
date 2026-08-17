@@ -1,36 +1,105 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from collections.abc import Iterator, Sequence
 
-class _SageObject: ...
+from sage.rings.integer import Integer
+from sage.symbolic.expression import Expression
+from sage.symbolic.function import BuiltinFunction, FunctionArgument, FunctionKeyword, FunctionResult
 
-def rational_param_as_tuple(x: builtins.object) -> _SageObject: ...
 
-class Hypergeometric:
+type HypergeometricParameter = FunctionArgument
+type HypergeometricParameters = Sequence[HypergeometricParameter]
+type RationalParameter = HypergeometricParameter | tuple[int, int]
+
+
+def rational_param_as_tuple(x: HypergeometricParameter) -> RationalParameter: ...
+
+
+class Hypergeometric(BuiltinFunction):
     def __init__(self) -> None: ...
-    def __call__(self, a: builtins.object, b: builtins.object, z: builtins.object, **kwargs: builtins.object) -> _SageObject: ...
+    def __call__(
+        self,
+        a: HypergeometricParameters,
+        b: HypergeometricParameters,
+        z: FunctionArgument,
+        **kwargs: FunctionKeyword,
+    ) -> FunctionResult: ...
+
     class EvaluationMethods:
-        def sorted_parameters(self, a: builtins.object, b: builtins.object, z: builtins.object) -> _SageObject: ...
-        def eliminate_parameters(self, a: builtins.object, b: builtins.object, z: builtins.object) -> _SageObject: ...
-        def is_termwise_finite(self, a: builtins.object, b: builtins.object, z: builtins.object) -> builtins.bool: ...
-        def is_terminating(self, a: builtins.object, b: builtins.object, z: builtins.object) -> builtins.bool: ...
-        def is_absolutely_convergent(self, a: builtins.object, b: builtins.object, z: builtins.object) -> builtins.bool: ...
-        def terms(self, a: builtins.object, b: builtins.object, z: builtins.object, n: builtins.int = ...) -> _SageObject: ...
-        def deflated(self, a: builtins.object, b: builtins.object, z: builtins.object) -> _SageObject: ...
+        def sorted_parameters(
+            self,
+            a: tuple[Expression, ...],
+            b: tuple[Expression, ...],
+            z: Expression,
+        ) -> Expression: ...
+        def eliminate_parameters(
+            self,
+            a: tuple[Expression, ...],
+            b: tuple[Expression, ...],
+            z: Expression,
+        ) -> Expression: ...
+        def is_termwise_finite(
+            self,
+            a: tuple[Expression, ...],
+            b: tuple[Expression, ...],
+            z: Expression,
+        ) -> bool: ...
+        def is_terminating(
+            self,
+            a: tuple[Expression, ...],
+            b: tuple[Expression, ...],
+            z: Expression,
+        ) -> bool: ...
+        def is_absolutely_convergent(
+            self,
+            a: tuple[Expression, ...],
+            b: tuple[Expression, ...],
+            z: Expression,
+        ) -> bool: ...
+        def terms(
+            self,
+            a: tuple[Expression, ...],
+            b: tuple[Expression, ...],
+            z: Expression,
+            n: int | Integer | None = None,
+        ) -> Iterator[Expression]: ...
+        def deflated(
+            self,
+            a: tuple[Expression, ...],
+            b: tuple[Expression, ...],
+            z: Expression,
+        ) -> Expression: ...
 
-hypergeometric: _SageObject
-def closed_form(hyp: builtins.object) -> _SageObject: ...
 
-class Hypergeometric_M:
+hypergeometric: Hypergeometric
+
+
+def closed_form(hyp: Expression) -> Expression: ...
+
+
+class Hypergeometric_M(BuiltinFunction):
     def __init__(self) -> None: ...
-    class EvaluationMethods:
-        def generalized(self, a: builtins.object, b: builtins.object, z: builtins.object) -> _SageObject: ...
 
-hypergeometric_M: _SageObject
-class Hypergeometric_U:
+    class EvaluationMethods:
+        def generalized(
+            self,
+            a: Expression,
+            b: Expression,
+            z: Expression,
+        ) -> Expression: ...
+
+
+hypergeometric_M: Hypergeometric_M
+
+
+class Hypergeometric_U(BuiltinFunction):
     def __init__(self) -> None: ...
-    class EvaluationMethods:
-        def generalized(self, a: builtins.object, b: builtins.object, z: builtins.object) -> _SageObject: ...
 
-hypergeometric_U: _SageObject
+    class EvaluationMethods:
+        def generalized(
+            self,
+            a: Expression,
+            b: Expression,
+            z: Expression,
+        ) -> Expression: ...
+
+
+hypergeometric_U: Hypergeometric_U

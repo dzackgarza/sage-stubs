@@ -1,10 +1,13 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from sage.matrix.matrix0 import Matrix
+from sage.structure.element import Element
+from sage.symbolic.expression import Expression
 
-class _SageObject: ...
 
-def wronskian(*args: builtins.object) -> _SageObject: ...
+type CalculusFunction = Expression | Element
 
-def jacobian(functions: builtins.object, variables: builtins.object) -> _SageObject: ...
+
+def wronskian(*args: CalculusFunction) -> CalculusFunction: ...
+def jacobian(
+    functions: CalculusFunction | tuple[CalculusFunction, ...] | list[CalculusFunction],
+    variables: Expression | tuple[Expression, ...] | list[Expression],
+) -> Matrix: ...

@@ -1,19 +1,28 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from collections.abc import Callable, Sequence
 
-class _SageObject: ...
+from sage.symbolic.function import BuiltinFunction, FunctionArgument, FunctionKeyword, FunctionResult
 
-class MinMax_base:
-    def eval_helper(self, this_f: builtins.object, builtin_f: builtins.object, initial_val: builtins.object, args: builtins.object) -> _SageObject: ...
-    def __call__(self, *args: builtins.object, **kwds: builtins.object) -> _SageObject: ...
 
-class MaxSymbolic:
+class MinMax_base(BuiltinFunction):
+    def eval_helper(
+        self,
+        this_f: Callable[..., FunctionResult],
+        builtin_f: Callable[[Sequence[FunctionArgument]], FunctionArgument],
+        initial_val: FunctionArgument,
+        args: Sequence[FunctionArgument],
+    ) -> FunctionResult: ...
+    def __call__(
+        self,
+        *args: FunctionArgument,
+        **kwds: FunctionKeyword,
+    ) -> FunctionResult: ...
+
+
+class MaxSymbolic(MinMax_base):
+    def __init__(self) -> None: ...
+class MinSymbolic(MinMax_base):
     def __init__(self) -> None: ...
 
-max_symbolic: _SageObject
-class MinSymbolic:
-    def __init__(self) -> None: ...
 
-min_symbolic: _SageObject
+max_symbolic: MaxSymbolic
+min_symbolic: MinSymbolic

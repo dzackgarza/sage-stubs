@@ -1,27 +1,70 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from collections.abc import Callable, Sequence
+from os import PathLike
 
-class _SageObject: ...
+from sage.calculus.interpolation import Spline
 
-class PyFunctionWrapper:
-    def set_yn(self, x: builtins.object) -> _SageObject: ...
+
+type ODEState = Sequence[float]
+type ODEParameters = Sequence[float]
+type ODEFunction = (
+    Callable[[float, ODEState], Sequence[float]]
+    | Callable[[float, ODEState, ODEParameters], Sequence[float]]
+)
+type ODEJacobian = (
+    Callable[[float, ODEState], Sequence[Sequence[float]]]
+    | Callable[[float, ODEState, ODEParameters], Sequence[Sequence[float]]]
+)
+type ODESolutionPoint = tuple[float, list[float]]
+type PlotOption = bool | int | float | str | tuple[float, float, float] | None
+
 
 class ode_system:
-    def c_j(self, t: builtins.object, y: builtins.object, dfdy: builtins.object, dfdt: builtins.object) -> _SageObject: ...
-    def c_f(self, t: builtins.object, y: builtins.object, dydt: builtins.object) -> _SageObject: ...
+    def __init__(self) -> None: ...
 
-def c_jac_compiled(t: builtins.object, y: builtins.object, dfdy: builtins.object, dfdt: builtins.object, params: builtins.object) -> _SageObject: ...
-
-def c_f_compiled(t: builtins.object, y: builtins.object, dydt: builtins.object, params: builtins.object) -> _SageObject: ...
-
-def c_jac(t: builtins.object, y: builtins.object, dfdy: builtins.object, dfdt: builtins.object, params: builtins.object) -> _SageObject: ...
-
-def c_f(t: builtins.object, y: builtins.object, dydt: builtins.object, params: builtins.object) -> _SageObject: ...
 
 class ode_solver:
-    def __setattr__(self, name: builtins.object, value: builtins.object) -> None: ...
-    def interpolate_solution(self, i: builtins.object = ...) -> _SageObject: ...
-    def plot_solution(self, i: builtins.object = ..., filename: builtins.object = ..., interpolate: builtins.object = ..., **kwds: builtins.object) -> _SageObject: ...
-    def ode_solve(self, t_span: builtins.object = ..., y_0: builtins.object = ..., num_points: builtins.object = ..., params: builtins.object = ...) -> _SageObject: ...
+    function: ODEFunction | ode_system | None
+    jacobian: ODEJacobian | None
+    h: float
+    error_abs: float
+    error_rel: float
+    a: float | bool
+    a_dydt: float | bool
+    scale_abs: Sequence[float] | bool
+    algorithm: str
+    y_0: list[float] | None
+    t_span: list[float] | None
+    params: list[float]
+    solution: list[ODESolutionPoint]
+
+    def __init__(
+        self,
+        function: ODEFunction | ode_system | None = None,
+        jacobian: ODEJacobian | None = None,
+        h: float = 1e-2,
+        error_abs: float = 1e-10,
+        error_rel: float = 1e-10,
+        a: float | bool = False,
+        a_dydt: float | bool = False,
+        scale_abs: Sequence[float] | bool = False,
+        algorithm: str = "rkf45",
+        y_0: Sequence[float] | None = None,
+        t_span: Sequence[float] | None = None,
+        params: Sequence[float] | None = None,
+    ) -> None: ...
+    def __setattr__(self, name: str, value: object) -> None: ...
+    def interpolate_solution(self, i: int = 0) -> Spline: ...
+    def plot_solution(
+        self,
+        i: int = 0,
+        filename: str | PathLike[str] | None = None,
+        interpolate: bool = False,
+        **kwds: PlotOption,
+    ) -> None: ...
+    def ode_solve(
+        self,
+        t_span: Sequence[float] | bool = False,
+        y_0: Sequence[float] | bool = False,
+        num_points: int | bool = False,
+        params: Sequence[float] | None = None,
+    ) -> None: ...

@@ -1,61 +1,56 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from sage.symbolic.function import GinacFunction
 
-class _SageObject: ...
-
-class Function_sinh:
+class Function_sinh(GinacFunction):
     def __init__(self) -> None: ...
 
-sinh: _SageObject
-class Function_cosh:
+class Function_cosh(GinacFunction):
     def __init__(self) -> None: ...
 
-cosh: _SageObject
-class Function_tanh:
+class Function_tanh(GinacFunction):
     def __init__(self) -> None: ...
 
-tanh: _SageObject
-class Function_coth:
+class Function_coth(GinacFunction):
     def __init__(self) -> None: ...
 
-coth: _SageObject
-class Function_sech:
+class Function_sech(GinacFunction):
     def __init__(self) -> None: ...
 
-sech: _SageObject
-class Function_csch:
+class Function_csch(GinacFunction):
     def __init__(self) -> None: ...
 
-csch: _SageObject
-class Function_arcsinh:
+class Function_arcsinh(GinacFunction):
     def __init__(self) -> None: ...
 
-arcsinh: _SageObject
-asinh: _SageObject
-class Function_arccosh:
+class Function_arccosh(GinacFunction):
     def __init__(self) -> None: ...
 
-arccosh: _SageObject
-acosh: _SageObject
-class Function_arctanh:
+class Function_arctanh(GinacFunction):
     def __init__(self) -> None: ...
 
-arctanh: _SageObject
-atanh: _SageObject
-class Function_arccoth:
+class Function_arccoth(GinacFunction):
     def __init__(self) -> None: ...
 
-arccoth: _SageObject
-acoth: _SageObject
-class Function_arcsech:
+class Function_arcsech(GinacFunction):
     def __init__(self) -> None: ...
 
-arcsech: _SageObject
-asech: _SageObject
-class Function_arccsch:
+class Function_arccsch(GinacFunction):
     def __init__(self) -> None: ...
 
-arccsch: _SageObject
-acsch: _SageObject
+sinh: Function_sinh
+cosh: Function_cosh
+tanh: Function_tanh
+coth: Function_coth
+sech: Function_sech
+csch: Function_csch
+arcsinh: Function_arcsinh
+asinh: Function_arcsinh
+arccosh: Function_arccosh
+acosh: Function_arccosh
+arctanh: Function_arctanh
+atanh: Function_arctanh
+arccoth: Function_arccoth
+acoth: Function_arccoth
+arcsech: Function_arcsech
+asech: Function_arcsech
+arccsch: Function_arccsch
+acsch: Function_arccsch

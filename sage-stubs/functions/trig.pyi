@@ -1,66 +1,61 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from sage.symbolic.function import GinacFunction
 
-class _SageObject: ...
-
-class Function_sin:
+class Function_sin(GinacFunction):
     def __init__(self) -> None: ...
 
-sin: _SageObject
-class Function_cos:
+class Function_cos(GinacFunction):
     def __init__(self) -> None: ...
 
-cos: _SageObject
-class Function_tan:
+class Function_tan(GinacFunction):
     def __init__(self) -> None: ...
 
-tan: _SageObject
-class Function_cot:
+class Function_cot(GinacFunction):
     def __init__(self) -> None: ...
 
-cot: _SageObject
-class Function_sec:
+class Function_sec(GinacFunction):
     def __init__(self) -> None: ...
 
-sec: _SageObject
-class Function_csc:
+class Function_csc(GinacFunction):
     def __init__(self) -> None: ...
 
-csc: _SageObject
-class Function_arcsin:
+class Function_arcsin(GinacFunction):
     def __init__(self) -> None: ...
 
-arcsin: _SageObject
-asin: _SageObject
-class Function_arccos:
+class Function_arccos(GinacFunction):
     def __init__(self) -> None: ...
 
-arccos: _SageObject
-acos: _SageObject
-class Function_arctan:
+class Function_arctan(GinacFunction):
     def __init__(self) -> None: ...
 
-arctan: _SageObject
-atan: _SageObject
-class Function_arccot:
+class Function_arccot(GinacFunction):
     def __init__(self) -> None: ...
 
-arccot: _SageObject
-acot: _SageObject
-class Function_arccsc:
+class Function_arccsc(GinacFunction):
     def __init__(self) -> None: ...
 
-arccsc: _SageObject
-acsc: _SageObject
-class Function_arcsec:
+class Function_arcsec(GinacFunction):
     def __init__(self) -> None: ...
 
-arcsec: _SageObject
-asec: _SageObject
-class Function_arctan2:
+class Function_arctan2(GinacFunction):
     def __init__(self) -> None: ...
 
-arctan2: _SageObject
-atan2: _SageObject
+sin: Function_sin
+cos: Function_cos
+tan: Function_tan
+cot: Function_cot
+sec: Function_sec
+csc: Function_csc
+arcsin: Function_arcsin
+asin: Function_arcsin
+arccos: Function_arccos
+acos: Function_arccos
+arctan: Function_arctan
+atan: Function_arctan
+arccot: Function_arccot
+acot: Function_arccot
+arccsc: Function_arccsc
+acsc: Function_arccsc
+arcsec: Function_arcsec
+asec: Function_arcsec
+arctan2: Function_arctan2
+atan2: Function_arctan2

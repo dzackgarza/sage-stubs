@@ -1,40 +1,176 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from collections.abc import Callable, Iterable, Sequence
+from sage.ext.fast_callable import Expression as FastExpression
+from sage.ext.fast_callable import ExpressionTreeBuilder
+from sage.sets.real_set import RealSet
+from sage.structure.element import Element
+from sage.symbolic.expression import Expression, SymbolicInput
+from sage.symbolic.function import BuiltinFunction, FunctionKeyword
+from sympy.functions.elementary.piecewise import Piecewise as SympyPiecewise
 
-class _SageObject: ...
 
-class PiecewiseFunction:
+type PieceExpression = Expression | Callable[[Expression], SymbolicInput]
+type Piece = tuple[RealSet, PieceExpression]
+type PieceParameters = Sequence[Expression]
+
+
+class PiecewiseFunction(BuiltinFunction):
     def __init__(self) -> None: ...
-    def __call__(self, function_pieces: builtins.object, **kwds: builtins.object) -> _SageObject: ...
+    def __call__(
+        self,
+        function_pieces: Iterable[Piece],
+        **kwds: FunctionKeyword,
+    ) -> Expression: ...
     @staticmethod
-    def in_operands(ex: builtins.object) -> _SageObject: ...
+    def in_operands(ex: Expression) -> bool: ...
     @staticmethod
-    def simplify(ex: builtins.object) -> _SageObject: ...
-    class EvaluationMethods:
-        def __pow__(self, parameters: builtins.object, variable: builtins.object, n: builtins.int) -> Self: ...
-        def expression_at(self, parameters: builtins.object, variable: builtins.object, point: builtins.object) -> _SageObject: ...
-        which_function: _SageObject
-        def domains(self, parameters: builtins.object, variable: builtins.object) -> _SageObject: ...
-        def domain(self, parameters: builtins.object, variable: builtins.object) -> _SageObject: ...
-        def __len__(self, parameters: builtins.object, variable: builtins.object) -> builtins.int: ...
-        def expressions(self, parameters: builtins.object, variable: builtins.object) -> _SageObject: ...
-        def items(self, parameters: builtins.object, variable: builtins.object) -> _SageObject: ...
-        def __call__(self, parameters: builtins.object, variable: builtins.object, value: builtins.object = ..., **kwds: builtins.object) -> _SageObject: ...
-        def restriction(self, parameters: builtins.object, variable: builtins.object, restricted_domain: builtins.object) -> _SageObject: ...
-        def extension(self, parameters: builtins.object, variable: builtins.object, extension: builtins.object, extension_domain: builtins.object = ...) -> _SageObject: ...
-        def unextend_zero(self, parameters: builtins.object, variable: builtins.object) -> _SageObject: ...
-        def pieces(self, parameters: builtins.object, variable: builtins.object) -> _SageObject: ...
-        def end_points(self, parameters: builtins.object, variable: builtins.object) -> builtins.list[_SageObject]: ...
-        def piecewise_add(self, parameters: builtins.object, variable: builtins.object, other: builtins.object) -> _SageObject: ...
-        def integral(self, parameters: builtins.object, variable: builtins.object, x: builtins.object = ..., a: builtins.object = ..., b: builtins.object = ..., definite: builtins.bool = ..., **kwds: builtins.object) -> _SageObject: ...
-        def critical_points(self, parameters: builtins.object, variable: builtins.object) -> _SageObject: ...
-        def convolution(self, parameters: builtins.object, variable: builtins.object, other: builtins.object) -> _SageObject: ...
-        def trapezoid(self, parameters: builtins.object, variable: builtins.object, N: builtins.int) -> _SageObject: ...
-        def laplace(self, parameters: builtins.object, variable: builtins.object, x: builtins.str = ..., s: builtins.str = ...) -> _SageObject: ...
-        def fourier_series_cosine_coefficient(self, parameters: builtins.object, variable: builtins.object, n: builtins.int, L: builtins.object = ...) -> _SageObject: ...
-        def fourier_series_sine_coefficient(self, parameters: builtins.object, variable: builtins.object, n: builtins.int, L: builtins.object = ...) -> _SageObject: ...
-        def fourier_series_partial_sum(self, parameters: builtins.object, variable: builtins.object, N: builtins.int, L: builtins.object = ...) -> _SageObject: ...
+    def simplify(ex: Expression) -> Expression: ...
 
-piecewise: _SageObject
+    class EvaluationMethods:
+        def __pow__(
+            self,
+            parameters: PieceParameters,
+            variable: Expression,
+            n: SymbolicInput,
+        ) -> Expression: ...
+        def expression_at(
+            self,
+            parameters: PieceParameters,
+            variable: Expression,
+            point: SymbolicInput,
+        ) -> Expression: ...
+        def domains(
+            self,
+            parameters: PieceParameters,
+            variable: Expression,
+        ) -> list[RealSet]: ...
+        def domain(
+            self,
+            parameters: PieceParameters,
+            variable: Expression,
+        ) -> RealSet: ...
+        def __len__(self, parameters: PieceParameters, variable: Expression) -> int: ...
+        def expressions(
+            self,
+            parameters: PieceParameters,
+            variable: Expression,
+        ) -> list[Expression]: ...
+        def items(
+            self,
+            parameters: PieceParameters,
+            variable: Expression,
+        ) -> list[tuple[RealSet, Expression]]: ...
+        def __call__(
+            self,
+            parameters: PieceParameters,
+            variable: Expression,
+            value: SymbolicInput | None = None,
+            **kwds: FunctionKeyword,
+        ) -> Expression: ...
+        def _fast_callable_(
+            self,
+            parameters: PieceParameters,
+            variable: Expression,
+            etb: ExpressionTreeBuilder,
+        ) -> FastExpression: ...
+        def restriction(
+            self,
+            parameters: PieceParameters,
+            variable: Expression,
+            restricted_domain: RealSet,
+        ) -> Expression: ...
+        def extension(
+            self,
+            parameters: PieceParameters,
+            variable: Expression,
+            extension: PieceExpression,
+            extension_domain: RealSet | None = None,
+        ) -> Expression: ...
+        def unextend_zero(
+            self,
+            parameters: PieceParameters,
+            variable: Expression,
+        ) -> Expression: ...
+        def pieces(
+            self,
+            parameters: PieceParameters,
+            variable: Expression,
+        ) -> list[Expression]: ...
+        def end_points(
+            self,
+            parameters: PieceParameters,
+            variable: Expression,
+        ) -> list[Element]: ...
+        def piecewise_add(
+            self,
+            parameters: PieceParameters,
+            variable: Expression,
+            other: Expression,
+        ) -> Expression: ...
+        def integral(
+            self,
+            parameters: PieceParameters,
+            variable: Expression,
+            x: Expression | None = None,
+            a: SymbolicInput | None = None,
+            b: SymbolicInput | None = None,
+            definite: bool = False,
+            **kwds: FunctionKeyword,
+        ) -> Expression: ...
+        def critical_points(
+            self,
+            parameters: PieceParameters,
+            variable: Expression,
+        ) -> list[Expression]: ...
+        def convolution(
+            self,
+            parameters: PieceParameters,
+            variable: Expression,
+            other: Expression,
+        ) -> Expression: ...
+        def trapezoid(
+            self,
+            parameters: PieceParameters,
+            variable: Expression,
+            N: int,
+        ) -> Expression: ...
+        def laplace(
+            self,
+            parameters: PieceParameters,
+            variable: Expression,
+            x: Expression | str = "x",
+            s: Expression | str = "t",
+        ) -> Expression: ...
+        def fourier_series_cosine_coefficient(
+            self,
+            parameters: PieceParameters,
+            variable: Expression,
+            n: int,
+            L: SymbolicInput | None = None,
+        ) -> Expression: ...
+        def fourier_series_sine_coefficient(
+            self,
+            parameters: PieceParameters,
+            variable: Expression,
+            n: int,
+            L: SymbolicInput | None = None,
+        ) -> Expression: ...
+        def fourier_series_partial_sum(
+            self,
+            parameters: PieceParameters,
+            variable: Expression,
+            N: int,
+            L: SymbolicInput | None = None,
+        ) -> Expression: ...
+        def _sympy_(
+            self,
+            parameters: PieceParameters,
+            variable: Expression,
+        ) -> SympyPiecewise: ...
+        def _giac_init_(
+            self,
+            parameters: PieceParameters,
+            variable: Expression,
+        ) -> str: ...
+
+
+piecewise: PiecewiseFunction

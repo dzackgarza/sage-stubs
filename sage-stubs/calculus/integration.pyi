@@ -1,18 +1,33 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from collections.abc import Callable, Sequence
+from typing import Literal
 
-class _SageObject: ...
+from sage.rings.infinity import MinusInfinity, PlusInfinity
+from sage.symbolic.expression import Expression, SymbolicInput
 
-class PyFunctionWrapper:
-    ...
 
-class compiled_integrand:
-    def c_f(self, t: builtins.object) -> _SageObject: ...
+type RealBound = int | float | SymbolicInput | PlusInfinity | MinusInfinity
+type Integrand = Expression | Callable[..., float] | int | float
+type IntegrationParameters = Sequence[SymbolicInput]
+type QuadratureAlgorithm = Literal["qag", "qags", "qng"]
+type MonteCarloAlgorithm = Literal["plain", "miser", "vegas"]
 
-def c_f(t: builtins.object, params: builtins.object) -> _SageObject: ...
 
-def c_monte_carlo_f(t: builtins.object, dim: builtins.object, params: builtins.object) -> _SageObject: ...
-
-def c_monte_carlo_ff(x: builtins.object, dim: builtins.object, params: builtins.object) -> _SageObject: ...
+def numerical_integral(
+    func: Integrand,
+    a: RealBound | Sequence[RealBound],
+    b: RealBound | None = None,
+    algorithm: QuadratureAlgorithm = "qag",
+    max_points: int = 87,
+    params: IntegrationParameters | None = None,
+    eps_abs: float = 1e-6,
+    eps_rel: float = 1e-6,
+    rule: int = 6,
+) -> tuple[float, float]: ...
+def monte_carlo_integral(
+    func: Integrand,
+    xl: Sequence[float],
+    xu: Sequence[float],
+    calls: int,
+    algorithm: MonteCarloAlgorithm = "plain",
+    params: IntegrationParameters | None = None,
+) -> tuple[float, float]: ...

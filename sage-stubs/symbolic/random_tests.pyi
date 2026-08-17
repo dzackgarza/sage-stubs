@@ -1,28 +1,86 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from collections.abc import Callable, Sequence
 
-class _SageObject: ...
+from sage.structure.element import Element
+from sage.symbolic.expression import Expression, SymbolicInput
+from sage.symbolic.function import Function
 
-fast_binary: _SageObject
-fast_unary: _SageObject
-fast_nodes: _SageObject
-full_binary: _SageObject
-full_unary: _SageObject
-full_functions: _SageObject
-full_nullary: _SageObject
-full_internal: _SageObject
-def normalize_prob_list(pl: builtins.object, extra: builtins.tuple[_SageObject, ...] = ...) -> _SageObject: ...
 
-def choose_from_prob_list(lst: builtins.object) -> _SageObject: ...
+type ProbabilityWeight = int | float
+type ProbabilityMetadata = int | str
+type RandomExpressionOperator = Callable[..., SymbolicInput]
+type RandomExpressionValue = Expression | Element | int | float | complex
+type ProbabilityEntry[T] = tuple[
+    ProbabilityWeight,
+    T,
+    *tuple[ProbabilityMetadata, ...],
+]
+type NormalizedProbabilityEntry[T] = tuple[
+    float,
+    T,
+    *tuple[ProbabilityMetadata, ...],
+]
+type ProbabilityList[T] = list[ProbabilityEntry[T]]
+type NormalizedProbabilityList[T] = list[NormalizedProbabilityEntry[T]]
+type UnaryOperatorChoice = ProbabilityEntry[Callable[[SymbolicInput], SymbolicInput]]
+type BinaryOperatorChoice = ProbabilityEntry[
+    Callable[[SymbolicInput, SymbolicInput], SymbolicInput]
+]
+type FunctionChoice = tuple[ProbabilityWeight, Function, int]
+type OperatorChoice = tuple[ProbabilityWeight, RandomExpressionOperator, int]
+type LeafChoice = ProbabilityEntry[RandomExpressionValue]
+type NestedOperatorChoice = ProbabilityEntry[
+    Sequence[OperatorChoice | FunctionChoice | UnaryOperatorChoice | BinaryOperatorChoice]
+]
+type InternalProbabilityList = list[
+    OperatorChoice | NestedOperatorChoice | FunctionChoice
+]
 
-def random_integer_vector(n: builtins.int, length: builtins.int) -> _SageObject: ...
 
-def random_expr_helper(n_nodes: builtins.object, internal: builtins.object, leaves: builtins.object, verbose: builtins.object) -> _SageObject: ...
+fast_binary: list[BinaryOperatorChoice]
+fast_unary: list[UnaryOperatorChoice]
+fast_nodes: InternalProbabilityList
+full_binary: list[BinaryOperatorChoice]
+full_unary: list[UnaryOperatorChoice]
+full_functions: list[FunctionChoice]
+full_nullary: ProbabilityList[RandomExpressionValue]
+full_internal: InternalProbabilityList
 
-def random_expr(size: builtins.int, nvars: builtins.int = ..., ncoeffs: builtins.object = ..., var_frac: builtins.float = ..., internal: builtins.object = ..., nullary: builtins.object = ..., nullary_frac: builtins.float = ..., coeff_generator: builtins.object = ..., verbose: builtins.bool = ...) -> _SageObject: ...
 
-def assert_strict_weak_order(a: builtins.object, b: builtins.object, c: builtins.object, cmp_func: builtins.object) -> _SageObject: ...
+def normalize_prob_list[T](
+    pl: Sequence[ProbabilityEntry[T] | ProbabilityEntry[Sequence[ProbabilityEntry[T]]]],
+    extra: tuple[ProbabilityMetadata, ...] = (),
+) -> NormalizedProbabilityList[T]: ...
 
-def check_symbolic_expression_order(repetitions: builtins.int = ...) -> _SageObject: ...
+def choose_from_prob_list[T](
+    lst: Sequence[NormalizedProbabilityEntry[T] | ProbabilityEntry[T]],
+) -> NormalizedProbabilityEntry[T] | ProbabilityEntry[T]: ...
+
+def random_integer_vector(n: int, length: int) -> list[int]: ...
+
+def random_expr_helper(
+    n_nodes: int,
+    internal: Sequence[OperatorChoice],
+    leaves: Sequence[ProbabilityEntry[RandomExpressionValue]],
+    verbose: bool,
+) -> SymbolicInput: ...
+
+def random_expr(
+    size: int,
+    nvars: int = 1,
+    ncoeffs: int | None = None,
+    var_frac: float = 0.5,
+    internal: InternalProbabilityList = full_internal,
+    nullary: ProbabilityList[RandomExpressionValue] = full_nullary,
+    nullary_frac: float = 0.2,
+    coeff_generator: Callable[[], RandomExpressionValue] = ...,
+    verbose: bool = False,
+) -> SymbolicInput: ...
+
+def assert_strict_weak_order[T](
+    a: T,
+    b: T,
+    c: T,
+    cmp_func: Callable[[T, T], bool],
+) -> None: ...
+
+def check_symbolic_expression_order(repetitions: int = 1000) -> None: ...

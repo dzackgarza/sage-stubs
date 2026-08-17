@@ -1,12 +1,28 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from collections.abc import Callable, Sequence
 
-class _SageObject: ...
+from sage.symbolic.expression import Expression, SymbolicDomain
+from sage.symbolic.function import FunctionCallable, SymbolicFunction
 
-def var(*args: builtins.object, **kwds: builtins.object) -> _SageObject: ...
 
-def function(s: builtins.object, **kwds: builtins.object) -> _SageObject: ...
+type VariableName = str | Sequence[str]
+type VariableKeyword = str | SymbolicDomain | None
+type SymbolicFunctionKeyword = (
+    int
+    | str
+    | bool
+    | dict[str, str]
+    | FunctionCallable
+    | Callable[..., str]
+    | None
+)
 
-def clear_vars() -> _SageObject: ...
+
+def var(
+    *args: VariableName | Expression,
+    **kwds: VariableKeyword,
+) -> Expression | tuple[Expression, ...]: ...
+def function(
+    s: VariableName,
+    **kwds: SymbolicFunctionKeyword,
+) -> SymbolicFunction | tuple[SymbolicFunction, ...]: ...
+def clear_vars() -> None: ...

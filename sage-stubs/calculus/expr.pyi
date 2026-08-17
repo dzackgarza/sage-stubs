@@ -1,8 +1,25 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from collections.abc import Callable, Sequence
+from typing import overload
 
-class _SageObject: ...
+from sage.structure.element import Matrix, Vector
+from sage.symbolic.expression import Expression, SymbolicInput
 
-def symbolic_expression(x: builtins.object) -> _SageObject: ...
+
+type SymbolicScalarFactory = Callable[..., SymbolicInput]
+type SymbolicExpressionInput = (
+    SymbolicInput
+    | Sequence[SymbolicInput]
+    | Matrix
+    | Vector
+    | SymbolicScalarFactory
+)
+
+
+@overload
+def symbolic_expression(x: Matrix) -> Matrix: ...
+@overload
+def symbolic_expression(x: Vector | Sequence[SymbolicInput]) -> Vector: ...
+@overload
+def symbolic_expression(x: SymbolicScalarFactory) -> Expression | Vector: ...
+@overload
+def symbolic_expression(x: SymbolicInput) -> Expression: ...

@@ -1,18 +1,67 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from sage.rings.integer import Integer
+from sage.rings.rational import Rational
+from sage.rings.real_mpfr import RealNumber
+from sage.structure.element import RingElement
 
-class _SageObject: ...
 
-def wigner_3j(j_1: builtins.object, j_2: builtins.object, j_3: builtins.object, m_1: builtins.object, m_2: builtins.object, m_3: builtins.object, prec: builtins.int = ...) -> _SageObject: ...
+type AngularMomentum = int | Integer | Rational
+type WignerValue = Integer | Rational | RealNumber | RingElement
 
-def clebsch_gordan(j_1: builtins.object, j_2: builtins.object, j_3: builtins.object, m_1: builtins.object, m_2: builtins.object, m_3: builtins.object, prec: builtins.int = ...) -> _SageObject: ...
 
-def racah(aa: builtins.object, bb: builtins.object, cc: builtins.object, dd: builtins.object, ee: builtins.object, ff: builtins.object, prec: builtins.int = ...) -> _SageObject: ...
-
-def wigner_6j(j_1: builtins.object, j_2: builtins.object, j_3: builtins.object, j_4: builtins.object, j_5: builtins.object, j_6: builtins.object, prec: builtins.int = ...) -> _SageObject: ...
-
-def wigner_9j(j_1: builtins.object, j_2: builtins.object, j_3: builtins.object, j_4: builtins.object, j_5: builtins.object, j_6: builtins.object, j_7: builtins.object, j_8: builtins.object, j_9: builtins.object, prec: builtins.int = ...) -> _SageObject: ...
-
-def gaunt(l_1: builtins.object, l_2: builtins.object, l_3: builtins.object, m_1: builtins.object, m_2: builtins.object, m_3: builtins.object, prec: builtins.int = ...) -> _SageObject: ...
+def wigner_3j(
+    j_1: AngularMomentum,
+    j_2: AngularMomentum,
+    j_3: AngularMomentum,
+    m_1: AngularMomentum,
+    m_2: AngularMomentum,
+    m_3: AngularMomentum,
+    prec: int | None = None,
+) -> WignerValue: ...
+def clebsch_gordan(
+    j_1: AngularMomentum,
+    j_2: AngularMomentum,
+    j_3: AngularMomentum,
+    m_1: AngularMomentum,
+    m_2: AngularMomentum,
+    m_3: AngularMomentum,
+    prec: int | None = None,
+) -> WignerValue: ...
+def racah(
+    aa: AngularMomentum,
+    bb: AngularMomentum,
+    cc: AngularMomentum,
+    dd: AngularMomentum,
+    ee: AngularMomentum,
+    ff: AngularMomentum,
+    prec: int | None = None,
+) -> WignerValue: ...
+def wigner_6j(
+    j_1: AngularMomentum,
+    j_2: AngularMomentum,
+    j_3: AngularMomentum,
+    j_4: AngularMomentum,
+    j_5: AngularMomentum,
+    j_6: AngularMomentum,
+    prec: int | None = None,
+) -> WignerValue: ...
+def wigner_9j(
+    j_1: AngularMomentum,
+    j_2: AngularMomentum,
+    j_3: AngularMomentum,
+    j_4: AngularMomentum,
+    j_5: AngularMomentum,
+    j_6: AngularMomentum,
+    j_7: AngularMomentum,
+    j_8: AngularMomentum,
+    j_9: AngularMomentum,
+    prec: int | None = None,
+) -> WignerValue: ...
+def gaunt(
+    l_1: AngularMomentum,
+    l_2: AngularMomentum,
+    l_3: AngularMomentum,
+    m_1: AngularMomentum,
+    m_2: AngularMomentum,
+    m_3: AngularMomentum,
+    prec: int | None = None,
+) -> WignerValue: ...

@@ -1,46 +1,40 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from sage.symbolic.function import BuiltinFunction, FunctionArgument, FunctionKeyword, FunctionResult, GinacFunction
 
-class _SageObject: ...
 
-class Function_exp:
+class Function_exp(GinacFunction):
+    def __init__(self) -> None: ...
+class Function_log1(GinacFunction):
+    def __init__(self) -> None: ...
+class Function_log2(GinacFunction):
+    def __init__(self) -> None: ...
+class Function_polylog(GinacFunction):
+    def __init__(self) -> None: ...
+class Function_dilog(GinacFunction):
+    def __init__(self) -> None: ...
+class Function_lambert_w(BuiltinFunction):
+    def __init__(self) -> None: ...
+    def __call__(self, *args: FunctionArgument, **kwds: FunctionKeyword) -> FunctionResult: ...
+class Function_exp_polar(BuiltinFunction):
+    def __init__(self) -> None: ...
+class Function_harmonic_number_generalized(BuiltinFunction):
+    def __init__(self) -> None: ...
+    def __call__(
+        self,
+        z: FunctionArgument,
+        m: FunctionArgument = 1,
+        **kwds: FunctionKeyword,
+    ) -> FunctionResult: ...
+class Function_harmonic_number(BuiltinFunction):
     def __init__(self) -> None: ...
 
-exp: _SageObject
-class Function_log1:
-    def __init__(self) -> None: ...
 
-ln: _SageObject
-function_log: _SageObject
-class Function_log2:
-    def __init__(self) -> None: ...
-
-logb: _SageObject
-class Function_polylog:
-    def __init__(self) -> None: ...
-
-polylog: _SageObject
-class Function_dilog:
-    def __init__(self) -> None: ...
-
-dilog: _SageObject
-class Function_lambert_w:
-    def __init__(self) -> None: ...
-    def __call__(self, *args: builtins.object, **kwds: builtins.object) -> _SageObject: ...
-
-lambert_w: _SageObject
-class Function_exp_polar:
-    def __init__(self) -> None: ...
-
-exp_polar: _SageObject
-class Function_harmonic_number_generalized:
-    def __init__(self) -> None: ...
-    def __call__(self, z: builtins.object, m: builtins.int = ..., **kwds: builtins.object) -> _SageObject: ...
-
-harmonic_number: _SageObject
-class Function_harmonic_number:
-    def __init__(self) -> None: ...
-
-harmonic_m1: _SageObject
+exp: Function_exp
+ln: Function_log1
+function_log: Function_log1
+logb: Function_log2
+polylog: Function_polylog
+dilog: Function_dilog
+lambert_w: Function_lambert_w
+exp_polar: Function_exp_polar
+harmonic_number: Function_harmonic_number_generalized
+harmonic_m1: Function_harmonic_number

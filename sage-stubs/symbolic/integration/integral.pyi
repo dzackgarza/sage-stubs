@@ -1,19 +1,40 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from collections.abc import Callable
+from typing import Literal
 
-class _SageObject: ...
+from sage.symbolic.expression import Expression, SymbolicInput
+from sage.symbolic.function import BuiltinFunction
 
-available_integrators: _SageObject
-class IndefiniteIntegral:
+
+type IntegrationAlgorithm = Literal["maxima", "sympy", "mathematica_free", "fricas", "giac", "libgiac"] | str
+type IntegrationBound = SymbolicInput | None
+type Integrator = Callable[[Expression, Expression, IntegrationBound, IntegrationBound], Expression]
+
+
+available_integrators: dict[IntegrationAlgorithm, Integrator]
+
+
+class IndefiniteIntegral(BuiltinFunction):
     def __init__(self) -> None: ...
 
-indefinite_integral: _SageObject
-class DefiniteIntegral:
+
+indefinite_integral: IndefiniteIntegral
+
+
+class DefiniteIntegral(BuiltinFunction):
     def __init__(self) -> None: ...
 
-definite_integral: _SageObject
-def integrate(expression: builtins.object, v: builtins.object = ..., a: builtins.object = ..., b: builtins.object = ..., algorithm: builtins.str = ..., hold: builtins.bool = ...) -> _SageObject: ...
 
-integral: _SageObject
+definite_integral: DefiniteIntegral
+
+
+def integrate(
+    expression: SymbolicInput,
+    v: Expression | None = None,
+    a: IntegrationBound = None,
+    b: IntegrationBound = None,
+    algorithm: IntegrationAlgorithm | None = None,
+    hold: bool = False,
+) -> Expression: ...
+
+
+integral: DefiniteIntegral | IndefiniteIntegral

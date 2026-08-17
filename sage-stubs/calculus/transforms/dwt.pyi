@@ -1,19 +1,44 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from typing import Literal
 
-class _SageObject: ...
+from sage.libs.gsl.array import GSLDoubleArray
+from sage.plot.graphics import Graphics
 
-def WaveletTransform(n: builtins.object, wavelet_type: builtins.object, wavelet_k: builtins.object) -> _SageObject: ...
 
-DWT: _SageObject
-class DiscreteWaveletTransform:
-    def __cinit__(self, n: builtins.object, stride: builtins.object, wavelet_type: builtins.object, wavelet_k: builtins.object) -> _SageObject: ...
-    def __init__(self, n: builtins.object, stride: builtins.object, wavelet_type: builtins.object, wavelet_k: builtins.object) -> None: ...
-    def __dealloc__(self) -> _SageObject: ...
-    def forward_transform(self) -> _SageObject: ...
-    def backward_transform(self) -> _SageObject: ...
-    def plot(self, xmin: builtins.object = ..., xmax: builtins.object = ..., **args: builtins.object) -> _SageObject: ...
+type WaveletType = Literal[
+    "daubechies",
+    "daubechies_centered",
+    "haar",
+    "haar_centered",
+    "bspline",
+    "bspline_centered",
+]
+type PlotOption = bool | int | float | str | tuple[float, float, float] | None
 
-def is2pow(n: builtins.object) -> _SageObject: ...
+
+def WaveletTransform(
+    n: int,
+    wavelet_type: WaveletType,
+    wavelet_k: int,
+) -> DiscreteWaveletTransform: ...
+DWT = WaveletTransform
+
+
+class DiscreteWaveletTransform(GSLDoubleArray):
+    def __init__(
+        self,
+        n: int,
+        stride: int,
+        wavelet_type: WaveletType,
+        wavelet_k: int,
+    ) -> None: ...
+    def forward_transform(self) -> None: ...
+    def backward_transform(self) -> None: ...
+    def plot(
+        self,
+        xmin: int | None = None,
+        xmax: int | None = None,
+        **args: PlotOption,
+    ) -> Graphics: ...
+
+
+def is2pow(n: int) -> bool: ...
