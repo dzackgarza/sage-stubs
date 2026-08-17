@@ -1,0 +1,36 @@
+name: Export stub analyzer toolchain
+
+on:
+  push:
+    branches: [phase-toolchain-export]
+    paths:
+      - .github/workflows/export-stub-toolchain.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install analyzers into a relocatable target
+        run: |
+          set -euo pipefail
+          python -m pip install --upgrade pip
+          python -m pip install --target toolchain ruff mypy basedpyright
+          python - <<'PY'
+          import basedpyright, mypy, ruff
+          print('toolchain imports verified')
+          PY
+          tar -czf stub-analyzer-toolchain.tar.gz toolchain
+      - uses: actions/upload-artifact@v4
+        with:
+          name: stub-analyzer-toolchain
+          path: stub-analyzer-toolchain.tar.gz
+          retention-days: 1
+          if-no-files-found: error
