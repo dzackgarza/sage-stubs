@@ -1,0 +1,81 @@
+name: Assert phase program or select blocker
+
+on:
+  push:
+    branches: [phase-post-loop]
+    paths:
+      - .github/workflows/assert-phase-program.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  assert-or-select:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Inspect current main and persist result
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          git switch -C phase-program-result origin/main
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          import re
+
+          entries = []
+          for path in sorted(Path('.agents/phases').glob('phase-*.md')):
+              text = path.read_text()
+              number_match = re.search(r'phase-(\d+)', path.name)
+              status_match = re.search(r'^\*\*Status:\*\*\s*(.+)$', text, re.MULTILINE)
+              title_match = re.search(r'^#\s+(.+)$', text, re.MULTILINE)
+              if not number_match or not status_match:
+                  continue
+              entries.append({
+                  'number': int(number_match.group(1)),
+                  'file': str(path),
+                  'title': title_match.group(1).strip() if title_match else path.stem,
+                  'status': status_match.group(1).strip(),
+                  'complete': '✅ Complete' in status_match.group(1),
+              })
+          entries.sort(key=lambda entry: entry['number'])
+          unfinished = [entry for entry in entries if not entry['complete']]
+          Path('.agents/phase-program-status.json').write_text(
+              json.dumps({'unfinished': unfinished, 'all': entries}, indent=2) + '\n'
+          )
+          if unfinished:
+              active = unfinished[0]
+              Path('.agents/active-phase.json').write_text(
+                  json.dumps({'next': active, 'unfinished': unfinished, 'all': entries}, indent=2) + '\n'
+              )
+              Path('.agents/active-phase.md').write_text(Path(active['file']).read_text())
+              Path('/tmp/has-blocker').write_text('1')
+          else:
+              lines = ['# Implementation phase program complete', '']
+              lines.extend(
+                  f"- Phase {entry['number']:02d}: {entry['title']} — {entry['status']}"
+                  for entry in entries
+              )
+              Path('.agents/phase-program-complete.md').write_text('\n'.join(lines) + '\n')
+          PY
+
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add .agents/phase-program-status.json .agents/active-phase.json .agents/active-phase.md .agents/phase-program-complete.md 2>/dev/null || true
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+
+          if [[ -f /tmp/has-blocker ]]; then
+            git commit -m 'chore: select first blocking implementation phase'
+            git push --force origin HEAD:phase-next-work
+          else
+            git commit -m 'chore: record completed implementation phase program'
+            git push origin HEAD:main
+          fi
