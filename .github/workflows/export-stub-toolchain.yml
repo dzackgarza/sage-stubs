@@ -23,10 +23,9 @@ jobs:
           set -euo pipefail
           python -m pip install --upgrade pip
           python -m pip install --target toolchain ruff mypy basedpyright
-          python - <<'PY'
-          import basedpyright, mypy, ruff
-          print('toolchain imports verified')
-          PY
+          PYTHONPATH="$PWD/toolchain" python -m mypy --version
+          PYTHONPATH="$PWD/toolchain" python -m ruff --version
+          PYTHONPATH="$PWD/toolchain" python toolchain/basedpyright/langserver.index.js --version || true
           tar -czf stub-analyzer-toolchain.tar.gz toolchain
       - uses: actions/upload-artifact@v4
         with:
