@@ -642,7 +642,7 @@ Rules:
 | 617 | `sage-stubs/crypto/public_key/blum_goldwasser.pyi` | 14 | ⬜ |
 | 618 | `sage-stubs/combinat/regular_sequence_bounded.pyi` | 14 | ⬜ |
 | 619 | `sage-stubs/combinat/posets/bubble_shuffle.pyi` | 14 | ⬜ |
-| 620 | `sage-stubs/combinat/integer_vector_weighted.pyi` | 14 | ⬜ |
+| 620 | `sage-stubs/combinat/integer_vector_weighted.pyi` | 14 | ✅ |
 | 621 | `sage-stubs/combinat/designs/steiner_quadruple_systems.pyi` | 14 | ⬜ |
 | 622 | `sage-stubs/combinat/debruijn_sequence.pyi` | 14 | ⬜ |
 | 623 | `sage-stubs/combinat/crystals/direct_sum.pyi` | 14 | ⬜ |

@@ -1,4 +1,3 @@
-from __future__ import annotations
 
 from collections.abc import Iterable, Iterator, Sequence
 from typing import overload
@@ -6,7 +5,6 @@ from typing import overload
 from sage.combinat.integer_vector import IntegerVector
 from sage.rings.infinity import PlusInfinity
 from sage.rings.integer import Integer
-from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 
@@ -54,9 +52,7 @@ class WeightedIntegerVectors(
     def random_element(self) -> IntegerVector: ...
     def list(self) -> list[IntegerVector]: ...
 
-class WeightedIntegerVectors_all(
-    DisjointUnionEnumeratedSets,
-):
+class WeightedIntegerVectors_all(Parent, UniqueRepresentation):
     def __init__(self, weight: tuple[Weight, ...]) -> None: ...
     def _repr_(self) -> str: ...
     def __contains__(self, x: object) -> bool: ...
