@@ -40,7 +40,7 @@ Rules:
 | 15 | `sage-stubs/databases/findstat.pyi` | 108 | ✅ |
 | 16 | `sage-stubs/combinat/interval_posets.pyi` | 107 | ✅ |
 | 17 | `sage-stubs/matrix/benchmark.pyi` | 106 | ✅ |
-| 18 | `sage-stubs/topology/simplicial_set.pyi` | 102 | ⬜ |
+| 18 | `sage-stubs/topology/simplicial_set.pyi` | 102 | ✅ |
 | 19 | `sage-stubs/numerical/interactive_simplex_method.pyi` | 101 | ⬜ |
 | 20 | `sage-stubs/libs/ntl/ntl_mat_ZZ.pyi` | 100 | ⬜ |
 | 21 | `sage-stubs/schemes/hyperelliptic_curves/monsky_washnitzer.pyi` | 98 | ⬜ |
@@ -1101,7 +1101,7 @@ Rules:
 | 1076 | `sage-stubs/libs/eclib/constructor.pyi` | 4 | ⬜ |
 | 1077 | `sage-stubs/interfaces/povray.pyi` | 4 | ⬜ |
 | 1078 | `sage-stubs/interfaces/gap_workspace.pyi` | 4 | ⬜ |
-| 1079 | `sage-stubs/homology/algebraic_topological_model.pyi` | 4 | ⬜ |
+| 1079 | `sage-stubs/homology/algebraic_topological_model.pyi` | 4 | ✅ |
 | 1080 | `sage-stubs/groups/kernel_subgroup.pyi` | 4 | ⬜ |
 | 1081 | `sage-stubs/functions/special.pyi` | 4 | ⬜ |
 | 1082 | `sage-stubs/features/databases.pyi` | 4 | ⬜ |
