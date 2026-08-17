@@ -17,7 +17,7 @@ jobs:
     steps:
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: "3.13"
       - name: Install analyzers into a relocatable target
         run: |
           set -euo pipefail
@@ -25,11 +25,11 @@ jobs:
           python -m pip install --target toolchain ruff mypy basedpyright
           PYTHONPATH="$PWD/toolchain" python -m mypy --version
           PYTHONPATH="$PWD/toolchain" python -m ruff --version
-          PYTHONPATH="$PWD/toolchain" python toolchain/basedpyright/langserver.index.js --version || true
-          tar -czf stub-analyzer-toolchain.tar.gz toolchain
+          PYTHONPATH="$PWD/toolchain" python -m basedpyright --version
+          tar -czf stub-analyzer-toolchain-py313.tar.gz toolchain
       - uses: actions/upload-artifact@v4
         with:
-          name: stub-analyzer-toolchain
-          path: stub-analyzer-toolchain.tar.gz
+          name: stub-analyzer-toolchain-py313
+          path: stub-analyzer-toolchain-py313.tar.gz
           retention-days: 1
           if-no-files-found: error
