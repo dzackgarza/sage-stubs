@@ -1,28 +1,108 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from collections.abc import Iterable, Iterator
+from typing import Literal, Self, overload
 
-class _SageObject: ...
+from sage.rings.integer import Integer
+from sage.sets.family import AbstractFamily
+from sage.structure.element import Element
+from sage.structure.unique_representation import UniqueRepresentation
+from sage.tensor.modules.finite_rank_free_module import FiniteRankFreeModule_abstract
+from sage.tensor.modules.free_module_alt_form import FreeModuleAltForm
+from sage.tensor.modules.free_module_automorphism import FreeModuleAutomorphism
+from sage.tensor.modules.free_module_element import FiniteRankFreeModuleElement
 
-class Basis_abstract:
-    def __init__(self, fmodule: builtins.object, symbol: builtins.object, latex_symbol: builtins.object, indices: builtins.object, latex_indices: builtins.object) -> None: ...
-    def keys(self) -> _SageObject: ...
-    def values(self) -> _SageObject: ...
-    def __iter__(self) -> _Iterator[_SageObject]: ...
-    def __len__(self) -> builtins.int: ...
-    def cardinality(self) -> _SageObject: ...
-    def __getitem__(self, index: builtins.object) -> _SageObject: ...
-    def free_module(self) -> _SageObject: ...
-    def set_name(self, symbol: builtins.object, latex_symbol: builtins.object = ..., indices: builtins.object = ..., latex_indices: builtins.object = ..., index_position: builtins.str = ...) -> _SageObject: ...
+type _Index = int | Integer
+type _Symbol = str | tuple[str, ...] | list[str]
+type _Indices = tuple[str, ...] | list[str] | None
+type _BasisElement = FiniteRankFreeModuleElement | FreeModuleAltForm
 
-class FreeModuleCoBasis:
-    def __init__(self, basis: builtins.object, symbol: builtins.object, latex_symbol: builtins.object = ..., indices: builtins.object = ..., latex_indices: builtins.object = ...) -> None: ...
+class Basis_abstract[BasisKey, BasisValue: Element](UniqueRepresentation, AbstractFamily):
+    def __init__(
+        self,
+        fmodule: FiniteRankFreeModule_abstract,
+        symbol: _Symbol,
+        latex_symbol: _Symbol | None,
+        indices: _Indices,
+        latex_indices: _Indices,
+    ) -> None: ...
+    def keys(self) -> Iterator[BasisKey]: ...
+    def values(self) -> Iterable[Element]: ...
+    def _element_constructor_(self, x: BasisValue) -> BasisValue: ...
+    def __iter__(self) -> Iterator[BasisValue]: ...
+    def __len__(self) -> int: ...
+    def cardinality(self) -> Integer: ...
+    def __getitem__(self, index: BasisKey) -> BasisValue: ...
+    def _latex_(self) -> str: ...
+    def free_module(self) -> FiniteRankFreeModule_abstract: ...
+    def set_name(
+        self,
+        symbol: _Symbol,
+        latex_symbol: _Symbol | None = ...,
+        indices: _Indices = ...,
+        latex_indices: _Indices = ...,
+        index_position: Literal["down", "up"] = ...,
+    ) -> None: ...
 
-class FreeModuleBasis:
+class FreeModuleCoBasis(Basis_abstract[_Index, FreeModuleAltForm]):
+    def __init__(
+        self,
+        basis: FreeModuleBasis,
+        symbol: _Symbol,
+        latex_symbol: _Symbol | None = ...,
+        indices: _Indices = ...,
+        latex_indices: _Indices = ...,
+    ) -> None: ...
+    def _repr_(self) -> str: ...
+
+class FreeModuleBasis(Basis_abstract[_Index, _BasisElement]):
+    _cobasis_class: type[FreeModuleCoBasis]
+
     @staticmethod
-    def __classcall_private__(cls: builtins.object, fmodule: builtins.object, symbol: builtins.object, latex_symbol: builtins.object = ..., indices: builtins.object = ..., latex_indices: builtins.object = ..., symbol_dual: builtins.object = ..., latex_symbol_dual: builtins.object = ...) -> _SageObject: ...
-    def __init__(self, fmodule: builtins.object, symbol: builtins.object, latex_symbol: builtins.object = ..., indices: builtins.object = ..., latex_indices: builtins.object = ..., symbol_dual: builtins.object = ..., latex_symbol_dual: builtins.object = ...) -> None: ...
-    def module(self) -> _SageObject: ...
-    def dual_basis(self) -> _SageObject: ...
-    def new_basis(self, change_of_basis: builtins.object, symbol: builtins.object, latex_symbol: builtins.object = ..., indices: builtins.object = ..., latex_indices: builtins.object = ..., symbol_dual: builtins.object = ..., latex_symbol_dual: builtins.object = ...) -> _SageObject: ...
+    def __classcall_private__(
+        cls: type[FreeModuleBasis],
+        fmodule: FiniteRankFreeModule_abstract,
+        symbol: _Symbol,
+        latex_symbol: _Symbol | None = ...,
+        indices: _Indices = ...,
+        latex_indices: _Indices = ...,
+        symbol_dual: _Symbol | None = ...,
+        latex_symbol_dual: _Symbol | None = ...,
+    ) -> FreeModuleBasis: ...
+    def __init__(
+        self,
+        fmodule: FiniteRankFreeModule_abstract,
+        symbol: _Symbol,
+        latex_symbol: _Symbol | None = ...,
+        indices: _Indices = ...,
+        latex_indices: _Indices = ...,
+        symbol_dual: _Symbol | None = ...,
+        latex_symbol_dual: _Symbol | None = ...,
+    ) -> None: ...
+    def _repr_(self) -> str: ...
+    @overload
+    def __getitem__(self, index: slice) -> tuple[FiniteRankFreeModuleElement, ...]: ...
+    @overload
+    def __getitem__(self, index: _Index) -> FiniteRankFreeModuleElement: ...
+    def _new_instance(
+        self,
+        symbol: _Symbol,
+        latex_symbol: _Symbol | None = ...,
+        indices: _Indices = ...,
+        latex_indices: _Indices = ...,
+        symbol_dual: _Symbol | None = ...,
+        latex_symbol_dual: _Symbol | None = ...,
+    ) -> Self: ...
+    def _init_from_family(
+        self, family: Iterable[FiniteRankFreeModuleElement]
+    ) -> None: ...
+    def module(self) -> FiniteRankFreeModule_abstract: ...
+    def dual_basis(self) -> FreeModuleCoBasis: ...
+    def new_basis(
+        self,
+        change_of_basis: FreeModuleAutomorphism,
+        symbol: _Symbol,
+        latex_symbol: _Symbol | None = ...,
+        indices: _Indices = ...,
+        latex_indices: _Indices = ...,
+        symbol_dual: _Symbol | None = ...,
+        latex_symbol_dual: _Symbol | None = ...,
+    ) -> Self: ...
