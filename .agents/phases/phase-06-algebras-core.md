@@ -47,7 +47,7 @@ completed phase.
 | Task | Subtree / group | Files | Depends | Status | Current record |
 |------|-----------------|-------|---------|--------|----------------|
 | T06.1 | **Clifford & exterior** — `clifford_algebra`, `clifford_algebra_element`, `exterior_algebra_groebner`. | 3 | — | ⬜ Not Started | Existing stubs still require a complete source audit. |
-| T06.2 | **Free algebras & quotients** — `free_algebra`, `free_algebra_element`, `free_algebra_quotient`, `free_algebra_quotient_element`, `free_zinbiel_algebra`, and `letterplace/`. | ~8 | — | ⬜ Not Started | No task-complete source-grounded batch recorded. |
+| T06.2 | **Free algebras & quotients** — `free_algebra`, `free_algebra_element`, `free_algebra_quotient`, `free_algebra_quotient_element`, `free_zinbiel_algebra`, and `letterplace/`. | ~8 | — | 🟡 Partial | The four free-associative-algebra and quotient stubs were rewritten; `free_zinbiel_algebra`, `letterplace/`, and task-wide reconciliation remain. |
 | T06.3 | **Group, Iwahori–Hecke, and Hecke algebras** — `group_algebra`, `iwahori_hecke_algebra`, `nil_coxeter_algebra`, `yokonuma_hecke_algebra`, and `hecke_algebras/`. | ~10 | — | 🟡 Partial | `iwahori_hecke_algebra` and `nil_coxeter_algebra` were rewritten; the remaining modules and package-wide relationships are outstanding. |
 | T06.4 | **Polynomial-like algebras** — `askey_wilson`, `q_commuting_polynomials`, `q_system`, `partition_shifting_algebras`, `splitting_algebra`, `cellular_basis`, `shuffle_algebra`. | ~7 | — | 🟡 Partial | `askey_wilson` and `cellular_basis` were rewritten; five listed modules remain. |
 | T06.5 | **Combinatorial algebras** — `affine_nil_temperley_lieb`, `blob_algebra`, `descent_algebra`, `diagram_algebras`, `partition_algebra`, `schur_algebra`, `symmetric_group_algebra`, `nil_coxeter_algebra`. | ~8 | — | 🟡 Partial | `affine_nil_temperley_lieb` and the shared `nil_coxeter_algebra` surface were rewritten; the rest remain. |
@@ -67,15 +67,16 @@ These are progress records, not phase identifiers:
 |--------------|------------------------------|--------------------------|
 | #11 | T06.11, plus shared Homset support | Finite-dimensional algebra, element, ideal, morphism, generic/ring homsets. |
 | #12 | T06.5, plus a root-system support edit | Affine nilTemperley–Lieb algebra and Weyl-basis operations. |
+| #13 | T06.2, plus free-monoid support | Free associative algebras, elements, quotients, quotient elements, free monoids, and free-monoid elements. |
 | #14 | T06.3 and T06.5, plus Phase 10 support | Iwahori–Hecke, nil-Coxeter, and Coxeter-type interfaces. |
 | #15 | T06.4 and T06.8 | Cellular bases and associated graded algebras. |
 | #16 | T06.4 | Universal Askey–Wilson algebra. |
 | #17 | T06.6 | Down–up algebra and Verma modules. |
 | #18 | T06.8, plus Phase 09 support | Finite graded-commutative algebra and weighted exponent vectors. |
 
-The supporting edits to Homsets, Coxeter types, Weyl groups, and weighted
-integer vectors must be reconciled with their owning first-level phases. Their
-presence in an algebra commit does not complete those phases.
+The supporting edits to Homsets, free monoids, Coxeter types, Weyl groups, and
+weighted integer vectors must be reconciled with their owning first-level
+phases. Their presence in an algebra commit does not complete those phases.
 
 ## Work ordering
 
