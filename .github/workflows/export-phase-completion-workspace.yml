@@ -1,0 +1,42 @@
+name: Export phase-completion workspace
+
+on:
+  push:
+    branches: [phase-completion-export]
+    paths:
+      - .github/workflows/export-phase-completion-workspace.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out repository and pinned Sage source
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          submodules: recursive
+
+      - name: Build source-and-stub workspace archive
+        run: |
+          set -euo pipefail
+          tar -czf phase-completion-workspace.tar.gz \
+            AGENTS.md \
+            pyproject.toml \
+            justfile \
+            scripts \
+            .agents \
+            sage-stubs \
+            sage-src/src/sage
+
+      - name: Upload workspace
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase-completion-workspace
+          path: phase-completion-workspace.tar.gz
+          retention-days: 1
+          if-no-files-found: error
