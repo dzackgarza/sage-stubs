@@ -1,0 +1,70 @@
+name: Discover next unfinished phase
+
+on:
+  push:
+    branches: [phase-next-discovery]
+    paths:
+      - .github/workflows/discover-next-phase.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Resolve next unfinished phase from current main
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          git switch -C phase-next-work origin/main
+          grep -q '^\*\*Status:\*\* ✅ Complete$' .agents/phases/phase-04-number-theory-rings.md
+
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          import re
+
+          entries = []
+          for path in sorted(Path('.agents/phases').glob('phase-*.md')):
+              text = path.read_text()
+              number_match = re.search(r'phase-(\d+)', path.name)
+              status_match = re.search(r'^\*\*Status:\*\*\s*(.+)$', text, re.MULTILINE)
+              title_match = re.search(r'^#\s+(.+)$', text, re.MULTILINE)
+              if not number_match or not status_match:
+                  continue
+              status = status_match.group(1).strip()
+              entries.append({
+                  'number': int(number_match.group(1)),
+                  'file': str(path),
+                  'title': title_match.group(1).strip() if title_match else path.stem,
+                  'status': status,
+                  'complete': '✅ Complete' in status,
+              })
+
+          unfinished = [entry for entry in entries if not entry['complete']]
+          data = {
+              'next': unfinished[0] if unfinished else None,
+              'unfinished': unfinished,
+              'all': entries,
+          }
+          target = Path('.agents/active-phase.json')
+          target.write_text(json.dumps(data, indent=2) + '\n')
+          if unfinished:
+              source = Path(unfinished[0]['file'])
+              Path('.agents/active-phase.md').write_text(source.read_text())
+          else:
+              Path('.agents/active-phase.md').write_text('# No unfinished phase\n')
+          PY
+
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add .agents/active-phase.json .agents/active-phase.md
+          git commit -m 'chore: select next unfinished implementation phase'
+          git push --force origin HEAD:phase-next-work
