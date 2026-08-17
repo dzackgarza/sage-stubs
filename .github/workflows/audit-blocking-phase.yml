@@ -1,0 +1,127 @@
+name: Audit first blocking phase
+
+on:
+  push:
+    branches: [phase-program-blocked]
+    paths:
+      - .github/workflows/audit-blocking-phase.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install analyzers
+        run: python -m pip install --upgrade pip ruff mypy basedpyright
+
+      - name: Audit current blocker against current main
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp .agents/active-phase.json /tmp/active-phase.json
+          cp .agents/active-phase.md /tmp/active-phase.md
+          git fetch origin main
+          git switch -C phase-blocker-audit origin/main
+          mkdir -p .agents/phase-blocker
+
+          python - <<'PY'
+          from __future__ import annotations
+          import json
+          import re
+          from pathlib import Path
+
+          repo=Path('.').resolve()
+          source_root=repo/'sage-src/src/sage'
+          stub_root=repo/'sage-stubs'
+          active=json.loads(Path('/tmp/active-phase.json').read_text())['next']
+          text=Path('/tmp/active-phase.md').read_text()
+          candidates=set()
+          def add(path: Path):
+              path=path.resolve()
+              if path.exists(): candidates.add(path)
+          for raw in re.findall(r'`([^`]+)`', text):
+              for token in re.split(r'\s*,\s*|\s+or\s+', raw.strip()):
+                  token=token.strip().strip('.,;:()[]')
+                  if not token or ' ' in token or token.startswith(('T','http')): continue
+                  if token.startswith('sage.'):
+                      rel=Path(*token.split('.')); base=repo/'sage-src/src'/rel
+                      add(base); add(base.with_suffix('.py')); add(base.with_suffix('.pyx'))
+                  elif token.startswith('sage/'):
+                      base=repo/'sage-src/src'/token
+                      add(base); add(base.with_suffix('.py')); add(base.with_suffix('.pyx'))
+                  elif token.startswith('sage-stubs/'):
+                      rel=Path(token).relative_to('sage-stubs')
+                      base=source_root/rel
+                      if base.suffix=='.pyi': base=base.with_suffix('')
+                      add(base); add(base.with_suffix('.py')); add(base.with_suffix('.pyx'))
+                  elif '/' in token:
+                      direct=source_root/token.rstrip('/')
+                      add(direct)
+                      if not direct.exists():
+                          for match in source_root.rglob(Path(token.rstrip('/')).name): add(match)
+                  elif token.endswith(('.py','.pyx','.pyi')):
+                      for ext in ('.py','.pyx'):
+                          for match in source_root.rglob(Path(token).with_suffix(ext).name): add(match)
+          roots=sorted((p for p in candidates if source_root in p.parents or p==source_root),key=lambda p:(len(p.parts),str(p)))
+          minimal=[]
+          for p in roots:
+              if not any(r==p or r in p.parents for r in minimal): minimal.append(p)
+          sources=set()
+          for root in minimal:
+              if root.is_file() and root.suffix in {'.py','.pyx'}: sources.add(root)
+              elif root.is_dir():
+                  sources.update(root.rglob('*.py')); sources.update(root.rglob('*.pyx'))
+          stubs=[]; missing=[]
+          for source in sorted(sources):
+              rel=source.relative_to(source_root); stub=stub_root/rel.with_suffix('.pyi')
+              if stub.exists(): stubs.append(str(stub.relative_to(repo)))
+              else:
+                  body=source.read_text(errors='ignore')
+                  names=re.findall(r'^(?:(?:cdef|cpdef)\s+[^\n(]*?\s+|class\s+|def\s+)([A-Za-z_]\w*)',body,re.M)
+                  if any(not n.startswith('_') for n in names): missing.append(str(stub.relative_to(repo)))
+          report={'active':active,'roots':[str(p.relative_to(repo)) for p in minimal], 'source_count':len(sources),'stubs':stubs,'missing':missing}
+          Path('.agents/phase-blocker/surface.json').write_text(json.dumps(report,indent=2)+'\n')
+          Path('/tmp/stubs.txt').write_text('\n'.join(stubs)+'\n')
+          Path('.agents/phase-blocker/plan.md').write_text(text)
+          PY
+
+          set +e
+          mapfile -t stubs < /tmp/stubs.txt
+          if [[ ${#stubs[@]} -eq 0 ]]; then echo 'No phase stubs resolved' > .agents/phase-blocker/ruff.txt; ruff_status=98; else ruff check "${stubs[@]}" > .agents/phase-blocker/ruff.txt 2>&1; ruff_status=$?; fi
+          if [[ ${#stubs[@]} -eq 0 ]]; then format_status=98; else ruff format --check "${stubs[@]}" > .agents/phase-blocker/format.txt 2>&1; format_status=$?; fi
+          if [[ ${#stubs[@]} -eq 0 ]]; then structural_status=98; else python scripts/check_stubs.py "${stubs[@]}" > .agents/phase-blocker/structural.txt 2>&1; structural_status=$?; fi
+          if [[ ${#stubs[@]} -eq 0 ]]; then mypy_status=98; else python -m mypy --strict --no-incremental --follow-imports=silent --show-error-codes "${stubs[@]}" > .agents/phase-blocker/mypy.txt 2>&1; mypy_status=$?; fi
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          stubs=Path('/tmp/stubs.txt').read_text().splitlines()
+          Path('/tmp/pyright.json').write_text(json.dumps({'include':stubs,'stubPath':'sage-stubs','pythonVersion':'3.12','typeCheckingMode':'strict','reportMissingTypeStubs':False,'reportMissingImports':'error'},indent=2)+'\n')
+          PY
+          if [[ ${#stubs[@]} -eq 0 ]]; then pyright_status=98; else basedpyright --project /tmp/pyright.json --outputjson > .agents/phase-blocker/pyright.json 2>&1; pyright_status=$?; fi
+          set -e
+          python - <<PY
+          import json
+          from pathlib import Path
+          surface=json.loads(Path('.agents/phase-blocker/surface.json').read_text())
+          statuses={'missing':len(surface['missing']),'ruff':$ruff_status,'format':$format_status,'structural':$structural_status,'mypy':$mypy_status,'pyright':$pyright_status}
+          Path('.agents/phase-blocker/status.json').write_text(json.dumps(statuses,indent=2)+'\n')
+          PY
+
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add .agents/phase-blocker
+          git commit -m 'chore: record first blocking phase diagnostics'
+          git push --force origin HEAD:phase-blocker-audit
