@@ -1,0 +1,132 @@
+name: Validate Phase 04 T04.17
+
+on:
+  push:
+    branches: [phase-04-t0417-validation]
+    paths:
+      - .agents/t0417.patch.bz2.b64
+      - .github/workflows/validate-t0417.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Apply candidate patch
+        run: |
+          set -euo pipefail
+          base64 -d .agents/t0417.patch.bz2.b64 | bzip2 -d > /tmp/t0417.patch
+          echo '8db856ff6a50ececfe20b253d1c3d23490b1c63e8cabbf8fbe7135061e6d85a5  /tmp/t0417.patch' | sha256sum -c -
+          git apply --check /tmp/t0417.patch
+          git apply /tmp/t0417.patch
+
+      - name: Install analyzers
+        run: python -m pip install --upgrade pip ruff basedpyright
+
+      - name: Validate T04.17
+        shell: bash
+        run: |
+          set +e
+          mkdir -p reports
+          targets=(
+            sage-stubs/rings/semirings
+            sage-stubs/rings/polynomial/polynomial_element.pyi
+            sage-stubs/rings/polynomial/polynomial_element_generic.pyi
+            sage-stubs/rings/noncommutative_ideals.pyi
+            sage-stubs/rings/species.pyi
+            sage-stubs/rings/cfinite_sequence.pyi
+            sage-stubs/rings/bernmm.pyi
+          )
+
+          ruff check "${targets[@]}" > reports/ruff.txt 2>&1
+          echo $? > reports/ruff.status
+          ruff format --check "${targets[@]}" > reports/ruff-format.txt 2>&1
+          echo $? > reports/ruff-format.status
+          python scripts/check_stubs.py $(find sage-stubs/rings/semirings -name '*.pyi' -print) \
+            sage-stubs/rings/polynomial/polynomial_element.pyi \
+            sage-stubs/rings/polynomial/polynomial_element_generic.pyi \
+            sage-stubs/rings/noncommutative_ideals.pyi \
+            sage-stubs/rings/species.pyi \
+            sage-stubs/rings/cfinite_sequence.pyi \
+            sage-stubs/rings/bernmm.pyi > reports/check-stubs.txt 2>&1
+          echo $? > reports/check-stubs.status
+          python scripts/audit_stub_quality.py \
+            --root sage-stubs/rings/semirings \
+            --max-console 1000 > reports/semantic.txt 2>&1
+          echo $? > reports/semantic.status
+
+          cat > t0417-pyrightconfig.json <<'JSON'
+          {
+            "include": [
+              "sage-stubs/rings/semirings",
+              "sage-stubs/rings/polynomial/polynomial_element.pyi",
+              "sage-stubs/rings/polynomial/polynomial_element_generic.pyi",
+              "sage-stubs/rings/noncommutative_ideals.pyi",
+              "sage-stubs/rings/species.pyi",
+              "sage-stubs/rings/cfinite_sequence.pyi",
+              "sage-stubs/rings/bernmm.pyi"
+            ],
+            "stubPath": "sage-stubs",
+            "pythonVersion": "3.12",
+            "typeCheckingMode": "strict",
+            "reportMissingTypeStubs": false,
+            "reportMissingImports": "error",
+            "reportPrivateUsage": "none"
+          }
+          JSON
+          basedpyright --project t0417-pyrightconfig.json --outputjson > reports/basedpyright.json 2> reports/basedpyright.stderr
+          echo $? > reports/basedpyright.status
+
+          python - <<'PY' > reports/summary.txt
+          import json
+          from pathlib import Path
+          for name in ("ruff", "ruff-format", "check-stubs", "semantic", "basedpyright"):
+              p = Path(f"reports/{name}.status")
+              print(f"{name}: {p.read_text().strip() if p.exists() else 'missing'}")
+          p = Path("reports/basedpyright.json")
+          if p.exists() and p.stat().st_size:
+              report = json.loads(p.read_text())
+              print("basedpyright-summary:", report.get("summary"))
+              for item in report.get("generalDiagnostics", [])[:300]:
+                  start = item.get("range", {}).get("start", {})
+                  print(
+                      f"{item.get('file')}:{start.get('line', 0)+1}:"
+                      f"{start.get('character', 0)+1}: "
+                      f"{item.get('severity')}: {item.get('message')}"
+                  )
+          PY
+          cat reports/summary.txt
+          exit 0
+
+      - name: Archive candidate and reports
+        if: always()
+        run: |
+          tar -czf t0417-validation.tar.gz \
+            reports \
+            sage-stubs/rings/semirings \
+            sage-stubs/rings/polynomial/polynomial_element.pyi \
+            sage-stubs/rings/polynomial/polynomial_element_generic.pyi \
+            sage-stubs/rings/noncommutative_ideals.pyi \
+            sage-stubs/rings/species.pyi \
+            sage-stubs/rings/cfinite_sequence.pyi \
+            sage-stubs/rings/bernmm.pyi
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: t0417-validation
+          path: t0417-validation.tar.gz
+          retention-days: 1
+          if-no-files-found: error
