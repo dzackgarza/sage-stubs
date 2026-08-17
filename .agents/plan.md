@@ -1,23 +1,60 @@
 # Plan: sage-stubs Full Parity Rollout
 
-Master tracking card for the [Full Stub Parity feature](feature.md). Eighteen
-phases, each delivered as a series of task commits. Phases are ordered by
-dependency tier — phases in the **same tier** can run **in parallel** once
-their tier-blocker dependency completes.
+Master tracking card for the [Full Stub Parity feature](feature.md).
 
-## How to read this card
+The plan is a tree. The eighteen entries in the phase table below are the
+**first-level children of the plan**. They are domain-scale bodies of work,
+not names for individual pull requests or small file batches.
 
-- **Status column:** `⬜ Not Started`, `🟡 In Progress`, `✅ Complete`,
-  `🔵 Blocked`, `⚪ N/A`.
-- **Depends on:** lists phase IDs that MUST be `✅ Complete` before this
-  phase can start. An empty cell means no blocker. Phases without a shared
-  dependency can be worked on simultaneously.
-- **Source files:** approximate count of in-scope `.py`/`.pyx` modules in
-  the phase, derived from the Phase-0 survey. Each phase card itself owns
-  the precise per-task file list.
-- The **At-a-glance next step** banner at the bottom of this file is the
-  single source of truth for "what to pick up next". Update it whenever a
-  phase status changes.
+## Planning hierarchy
+
+```text
+Full Stub Parity Plan
+├── Phase 01: Foundation completion
+│   ├── task/workstream
+│   │   ├── commit
+│   │   └── commit
+│   └── task/workstream
+│       └── commit
+├── Phase 02: Core rings & arithmetic
+│   └── ...
+└── Phase 18: Infrastructure
+    └── ...
+```
+
+The node types have fixed meanings:
+
+- **Plan** — the full Sage 10.7 parity objective.
+- **Phase** — a first-level, domain-scale component of the plan, normally
+  covering roughly 50–330 source modules and completed only when every task
+  and phase-wide acceptance criterion is complete.
+- **Task/workstream** — a coherent mathematical or package-level component
+  inside one phase, normally covering 5–30 files. A task may require several
+  commits.
+- **Commit** — a terminal leaf containing one reviewable source-grounded
+  increment. Commits do not become phases merely because they are delivered
+  through separate branches or pull requests.
+- **Pull request** — a delivery envelope around one or more adjacent commit
+  leaves; it is not an additional planning level.
+
+Every commit must belong to exactly one task. A necessary cross-phase
+foundation repair must be recorded in both affected task cards, but it does
+not complete either phase. Numeric labels `Phase NN` are reserved exclusively
+for the eighteen first-level nodes below.
+
+## Status semantics
+
+- `⬜ Not Started` — no accepted task work.
+- `🟡 In Progress` — at least one task has accepted or partial work, but the
+  phase acceptance criteria are not complete.
+- `✅ Complete` — every task and phase-wide gate is complete.
+- `🔵 Blocked` — no further valid work can proceed until the stated blocker is
+  resolved.
+- `⚪ N/A` — excluded by a documented scope decision.
+
+A phase cannot be declared complete from coverage, violation-count reduction,
+or the landing of a small batch. Completion is a statement about the entire
+first-level subtree.
 
 ## Phase tracking table
 
@@ -28,7 +65,7 @@ their tier-blocker dependency completes.
 | 03 | [Polynomial rings](phases/phase-03-polynomial-rings.md) | 1 | 01 | ~95 | ✅ Complete |
 | 04 | [Number-theoretic rings](phases/phase-04-number-theory-rings.md) | 1 | 01 | ~130 | 🟡 In Progress |
 | 05 | [Linear algebra: matrices & modules](phases/phase-05-linear-algebra.md) | 1 | 01 | ~120 | ⬜ Not Started |
-| 06 | [Algebras: associative & non-Lie](phases/phase-06-algebras-core.md) | 2 | 02, 05 | ~70 | ⬜ Not Started |
+| 06 | [Algebras: associative & non-Lie](phases/phase-06-algebras-core.md) | 2 | 02, 05 | ~70 | 🟡 In Progress |
 | 07 | [Lie algebras & quantum groups](phases/phase-07-lie-quantum.md) | 2 | 02, 05 | ~50 | ⬜ Not Started |
 | 08 | [Groups](phases/phase-08-groups.md) | 2 | 02, 05 | ~92 | ⬜ Not Started |
 | 09 | [Combinatorics: leaves & foundations](phases/phase-09-combinat-leaves.md) | 2 | 02 | ~135 | ⬜ Not Started |
@@ -42,14 +79,14 @@ their tier-blocker dependency completes.
 | 17 | [Applied domains](phases/phase-17-applied-domains.md) | 3 | 02, 05 | ~155 | ⬜ Not Started |
 | 18 | [Infrastructure: numerical, plot, interfaces, dev](phases/phase-18-infrastructure.md) | 5 | 02 | ~330 | ⬜ Not Started |
 
-**Totals.** ~2160 stub commits expected after Phase 0 deduplication / exempt
-listings; spread across ~140–160 tasks; ~18 phase cards. Phase 0 itself —
-the survey, exempt list, and initial CI wiring — is not a phase here, it's
-part of Phase 1 setup.
+At kickoff, approximately 2,160 in-scope source modules remained after
+exemptions and deduplication. They are grouped into roughly 140–160 tasks
+across these eighteen phases. This is a module count, **not a prediction of
+2,160 phases or 2,160 commits**.
 
-## Dependency graph (textual)
+## Dependency graph
 
-```
+```text
                  ┌─ 02 ─┐
                  │      ├─ 06, 07, 08 ──┐
         01 ─────┼─ 03 ─┤                │
@@ -64,77 +101,59 @@ part of Phase 1 setup.
                  └─ 18
 ```
 
-- Phase 01 unblocks **everything**.
-- Within Tier 1 (Phases 02–05), all four are independent of each other and
-  can run truly in parallel by separate contributors.
-- Tier 2 (Phases 06–09) needs at least Phase 02; Phases 06–08 also need
-  matrix/module surface from Phase 05.
-- Tier 3 (Phases 10–17) opens up as the relevant Tier 2 phase lands.
-- Tier 4 (Phases 13, 14) needs number-theoretic rings (04) and the
-  relevant geometric / linear-algebra dependency.
-- Tier 5 (Phase 18) is the infrastructure cleanup; it can technically run
-  any time after Phase 02 but it is intentionally last because consumers
-  of these modules are rare and the surface is huge.
+The graph constrains phase completion and interface stabilization. Partial
+source-grounded work may expose a dependency earlier, but that work must be
+recorded as partial and cannot be used to claim the dependent phase complete.
 
-## Parallelism guidance
+## Commit and task rules
 
-- **Within a phase:** every phase card lists tasks with an explicit
-  `Depends` column. Tasks with `Depends: —` can run in parallel from the
-  moment the phase starts.
-- **Across phases:** phases in the same tier whose dependencies are all
-  satisfied can run in parallel. Coordinate on the [Slack channel TBD] to
-  avoid two agents claiming the same phase card simultaneously.
-- **Commit scope rule.** Each task is a commit (or a small batch of tightly
-  related commits). Tasks are sized at **5–30 files** per AGENTS.md. Smaller
-  than 5 files = bundle with a neighbour. Larger than 30 = split along an
-  obvious subtree boundary.
+- Commits are leaf nodes. Name them for the mathematical interface changed,
+  not `Phase NN`.
+- A task is normally 5–30 files, but semantic coherence outranks file count.
+  A one-file commit is valid when the file is a substantial mathematical API;
+  it remains a commit inside a task, not a phase.
+- A pull request may contain one task or several adjacent commits from one
+  task. It must not invent a new phase number.
+- A task is `✅` only when all files named by the task are source-grounded and
+  its task-level checks pass.
+- A phase is `✅` only when all task rows are `✅`, its dependency contracts
+  are reconciled, and the phase-wide source-parity and quality gates pass.
 
-## Quality gate (every commit)
-
-Before pushing a task's commit:
+## Quality gate for every commit leaf
 
 ```bash
 just check
 ```
 
-which runs `ruff`, `scripts/check_stubs.py`, and `mypy --strict`. A green
-result is the only acceptable signal of done.
+This runs the repository's structural, semantic, lint, and strict typing
+checks. A green local leaf does not imply that its parent task or phase is
+complete.
 
 ## Measuring progress
 
 ```bash
-just coverage                                      # overall + per-subpackage
-just coverage -- --subpackage rings --missing      # missing files for a phase
-just coverage -- --threshold 0.95                  # CI gate
+just coverage
+just coverage -- --subpackage rings --missing
+just coverage -- --threshold 0.95
 ```
 
-See [feature.md](feature.md#measuring-progress) for full options. As a
-baseline reference (run before Phase 01 starts), overall coverage sits
-near **12.7 %** (349 / 2745 in-scope modules), heavily concentrated in
-`categories/` (60 %), `lfunctions/` (60 %), `structure/` (31 %), and
-`modular/` (21 %).
+Coverage and diagnostic counts locate weak or absent typing. They are evidence
+for task selection, not substitutes for mathematically meaningful signatures.
+See [feature.md](feature.md#measuring-progress) for the full workflow.
 
-## Bootstrap workflow (stubgen)
+## Current work frontier
 
-Each task with **more than ~10 net-new files** should start with a
-stubgen scaffold rather than writing every `.pyi` by hand:
+> **Active first-level phases:** Phase 04 (number-theoretic rings) and Phase 06
+> (associative and non-Lie algebras).
+>
+> **Phase 06 correction:** the merged finite-dimensional, affine
+> nilTemperley–Lieb, Iwahori–Hecke/nil-Coxeter, associated-graded/cellular,
+> Askey–Wilson, down–up, and finite graded-commutative batches are commit leaves
+> within Phase 06 tasks. Their historical `Phase 12`–`Phase 18` labels do not
+> denote plan phases and do not complete Phase 06.
+>
+> **Next algebra work:** continue the incomplete Phase 06 task rows in
+> [phase-06-algebras-core.md](phases/phase-06-algebras-core.md), committing
+> source-grounded batches without assigning new phase numbers.
 
-```bash
-just scaffold sage.<package>.<module>
-# Or for a whole subpackage:
-python3 -m mypy.stubgen -p sage.<package> -o /tmp/stubgen
-```
-
-Then refine every `Any` per AGENTS.md (see
-[feature.md](feature.md#tooling-auto-scaffolding-from-source)). A
-scaffolded stub that still contains `Any` will be rejected by
-`scripts/check_stubs.py`, so the manual cleanup step is enforced by CI.
-
-## At-a-glance next step
-
-> **NEXT PHASE:** Phase 04 🟡 In Progress (T04.1 ✅). Phase 05 (linear algebra) still unblocked and untouched.
-> **Pick up:** T04.2 (finite fields & rings, depends T04.1 — now satisfied), T04.4 (number field core), T04.7 (p-adic generic), T04.11 (function field core); or start phase 05.
-> **Status:** Phases 01-03 Complete; Phase 04 In Progress; Phase 05 ⬜ Not Started.
-
-Update this banner whenever a phase transitions between `Not Started`,
-`In Progress`, and `Complete`.
+Update the frontier whenever a first-level phase or task status changes.

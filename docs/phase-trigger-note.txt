@@ -1,0 +1,1 @@
+Foundational phase execution is source-asserted and serialized.

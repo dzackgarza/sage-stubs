@@ -1,0 +1,103 @@
+name: Apply foundational mathematical typing phases
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/apply-foundational-phases.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: foundational-typing-main
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - name: Check out repository and pinned Sage source
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+
+      - name: Install formatter
+        run: python -m pip install --upgrade ruff
+
+      - name: Phase 1 — categorical kernel
+        run: |
+          set -euo pipefail
+          python scripts/refine_category_kernel_v2.py
+          ruff format \
+            sage-stubs/structure/element.pyi \
+            sage-stubs/structure/parent.pyi \
+            sage-stubs/categories/map.pyi \
+            sage-stubs/categories/morphism.pyi \
+            sage-stubs/categories/homset.pyi \
+            typing_tests/category_kernel/homset.py
+          python scripts/check_category_kernel.py
+          git add \
+            sage-stubs/structure/element.pyi \
+            sage-stubs/structure/parent.pyi \
+            sage-stubs/categories/map.pyi \
+            sage-stubs/categories/morphism.pyi \
+            sage-stubs/categories/homset.pyi \
+            typing_tests/category_kernel/homset.py
+          git diff --cached --check
+          if ! git diff --cached --quiet; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git commit -m 'refactor(types): reconstruct category-parent-element kernel'
+          fi
+
+      - name: Phase 2 — ring parent and homomorphism tower
+        run: |
+          set -euo pipefail
+          python scripts/check_category_kernel.py
+          python scripts/refine_ring_kernel.py
+          ruff format \
+            sage-stubs/rings/ring.pyi \
+            sage-stubs/rings/commutative_ring.pyi \
+            sage-stubs/rings/integral_domain.pyi \
+            sage-stubs/rings/principal_ideal_domain.pyi \
+            sage-stubs/rings/field.pyi \
+            sage-stubs/rings/morphism.pyi \
+            sage-stubs/rings/homset.pyi \
+            typing_tests/ring_kernel/parents_and_homomorphisms.py
+          python scripts/check_ring_kernel.py
+          git add \
+            sage-stubs/rings/ring.pyi \
+            sage-stubs/rings/commutative_ring.pyi \
+            sage-stubs/rings/integral_domain.pyi \
+            sage-stubs/rings/principal_ideal_domain.pyi \
+            sage-stubs/rings/field.pyi \
+            sage-stubs/rings/morphism.pyi \
+            sage-stubs/rings/homset.pyi \
+            typing_tests/ring_kernel/parents_and_homomorphisms.py
+          git diff --cached --check
+          if ! git diff --cached --quiet; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git commit -m 'refactor(types): preserve coefficient types through ring tower'
+          fi
+
+      - name: Reconcile and push both phase commits
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          git rebase origin/main
+          if [[ "$(git rev-parse HEAD)" == "$(git rev-parse origin/main)" ]]; then
+            echo 'Both foundational phases are already present on main.'
+            exit 0
+          fi
+          git push origin HEAD:main

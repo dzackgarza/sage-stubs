@@ -1,117 +1,128 @@
 from collections.abc import Callable
-from typing import Generic, Literal, TypeVar, overload
+from typing import Generic, TypeVar, overload
 
-from sage.matrix.matrix2 import Matrix
+from sage.categories.category import Category
 from sage.categories.map import Map
 from sage.categories.morphism import Morphism, SetMorphism
-from sage.categories.category import Category
 from sage.categories.sets_cat import Sets
+from sage.rings.ring import Ring
 from sage.structure.element import Element
-from sage.structure.parent import ElementConstructorInput, Parent, ParentCallInput
+from sage.structure.parent import Parent, Set_generic
 
-_DomainElement = TypeVar("_DomainElement", default=Element, covariant=True)
-_CodomainElement = TypeVar("_CodomainElement", default=Element, covariant=True)
-_M = TypeVar("_M", bound=Element, default=Element, covariant=True)
-_HomDomainElement = TypeVar("_HomDomainElement")
-_HomCodomainElement = TypeVar("_HomCodomainElement")
-type HomsetCallInput = Morphism | Callable[..., Element] | ParentCallInput
+_DomainElement = TypeVar("_DomainElement", default=Element)
+_CodomainElement = TypeVar("_CodomainElement", default=Element)
+_MorphismType = TypeVar(
+    "_MorphismType",
+    bound=Map,
+    default=Map,
+    covariant=True,
+)
 
 @overload
 def Hom(
-    X: Parent[_HomDomainElement],
-    Y: Parent[_HomCodomainElement],
+    X: Parent[_DomainElement],
+    Y: Parent[_CodomainElement],
     category: Sets,
-    check: bool = ...,
+    check: bool = True,
 ) -> Homset[
-    SetMorphism[_HomDomainElement, _HomCodomainElement],
-    _HomDomainElement,
-    _HomCodomainElement,
+    SetMorphism[_DomainElement, _CodomainElement],
+    _DomainElement,
+    _CodomainElement,
 ]: ...
 @overload
 def Hom(
-    X: Parent[_HomDomainElement],
-    Y: Parent[_HomCodomainElement],
-    category: Category | None = ...,
-    check: bool = ...,
+    X: Parent[_DomainElement],
+    Y: Parent[_CodomainElement],
+    category: Category | None = None,
+    check: bool = True,
 ) -> Homset[
-    Map[_HomDomainElement, _HomCodomainElement],
-    _HomDomainElement,
-    _HomCodomainElement,
+    Map[_DomainElement, _CodomainElement],
+    _DomainElement,
+    _CodomainElement,
 ]: ...
 
-def hom(X: Parent, Y: Parent, f: HomsetCallInput) -> Morphism: ...
+def hom(
+    X: Parent[_DomainElement],
+    Y: Parent[_CodomainElement],
+    f: Map[_DomainElement, _CodomainElement]
+    | Callable[[_DomainElement], _CodomainElement],
+) -> Morphism[_DomainElement, _CodomainElement]: ...
 
-def End(X: Parent[_HomDomainElement], category: Category | None = None) -> Homset[Map[_HomDomainElement, _HomDomainElement], _HomDomainElement, _HomDomainElement]: ...
+def End(
+    X: Parent[_DomainElement],
+    category: Category | None = None,
+) -> Homset[Map[_DomainElement, _DomainElement], _DomainElement, _DomainElement]: ...
 
-def end(X: Parent, f: HomsetCallInput) -> Morphism: ...
+def end(
+    X: Parent[_DomainElement],
+    f: Map[_DomainElement, _DomainElement]
+    | Callable[[_DomainElement], _DomainElement],
+) -> Morphism[_DomainElement, _DomainElement]: ...
 
-class Homset(Parent[_M], Generic[_M, _DomainElement, _CodomainElement]):
+class Homset(
+    Set_generic,
+    Generic[_MorphismType, _DomainElement, _CodomainElement],
+):
+    element_class: type[_MorphismType]
+
     def __init__(
         self,
         X: Parent[_DomainElement],
         Y: Parent[_CodomainElement],
         category: Category | None = None,
-        base: Parent[ElementConstructorInput] | None = None,
+        base: Ring | None = None,
         check: bool = True,
     ) -> None: ...
-    def an_element(self) -> _M: ...
-    @overload
-    def __call__(self, x: HomsetCallInput = ..., check: bool | None = None) -> Morphism: ...
-    @overload
-    def __call__(
-        self,
-        *,
-        on_basis: Callable[..., Element],
-        codomain: Parent | None = None,
-        category: Category | None = None,
-        zero: Element | None = None,
-        position: int = 0,
-        triangular: Literal["upper", "lower"] | None = None,
-        unitriangular: bool = False,
-        base_map: Morphism | None = None,
-    ) -> Morphism: ...
-    @overload
-    def __call__(
-        self,
-        *,
-        function: Callable[..., Element],
-        codomain: Parent | None = None,
-        category: Category | None = None,
-        triangular: Literal["upper", "lower"] | None = None,
-        unitriangular: bool = False,
-        base_map: Morphism | None = None,
-    ) -> Morphism: ...
-    @overload
-    def __call__(
-        self,
-        *,
-        diagonal: Callable[..., Element],
-        codomain: Parent | None = None,
-        category: Category | None = None,
-        base_map: Morphism | None = None,
-    ) -> Morphism: ...
-    @overload
-    def __call__(
-        self,
-        *,
-        matrix: Matrix,
-        codomain: Parent | None = None,
-        category: Category | None = None,
-        side: Literal["left", "right"] = "left",
-        base_map: Morphism | None = None,
-    ) -> Morphism: ...
     def _repr_(self) -> str: ...
     def __hash__(self) -> int: ...
     def __bool__(self) -> bool: ...
     def homset_category(self) -> Category: ...
-    def domain(self) -> Parent[_DomainElement]: ...
-    def codomain(self) -> Parent[_CodomainElement]: ...
+    @overload
+    def __call__(
+        self,
+        x: _MorphismType,
+        check: bool | None = None,
+        **options: bool | int | str | None,
+    ) -> _MorphismType: ...
+    @overload
+    def __call__(
+        self,
+        x: Callable[[_DomainElement], _CodomainElement],
+        check: bool | None = None,
+        **options: bool | int | str | None,
+    ) -> SetMorphism[_DomainElement, _CodomainElement]: ...
+    def _element_constructor_(
+        self,
+        x: _MorphismType | Callable[[_DomainElement], _CodomainElement],
+        check: bool | None = None,
+        **options: bool | int | str | None,
+    ) -> _MorphismType | SetMorphism[_DomainElement, _CodomainElement]: ...
+    def an_element(self) -> _MorphismType: ...
     def __eq__(self, other: object) -> bool: ...
     def __ne__(self, other: object) -> bool: ...
     def __contains__(self, x: object) -> bool: ...
-    def natural_map(self) -> Morphism: ...
-    def identity(self) -> Morphism: ...
-    def one(self) -> Morphism: ...
+    def natural_map(self) -> Morphism[_DomainElement, _CodomainElement]: ...
+    def identity(self) -> Morphism[_DomainElement, _DomainElement]: ...
+    def one(self) -> Morphism[_DomainElement, _DomainElement]: ...
+    def domain(self) -> Parent[_DomainElement]: ...
+    def codomain(self) -> Parent[_CodomainElement]: ...
+    def reversed(
+        self,
+    ) -> Homset[
+        Map[_CodomainElement, _DomainElement],
+        _CodomainElement,
+        _DomainElement,
+    ]: ...
 
-class HomsetWithBase(Homset[_M, _DomainElement, _CodomainElement]):
-    ...
+class HomsetWithBase(
+    Homset[_MorphismType, _DomainElement, _CodomainElement],
+    Generic[_MorphismType, _DomainElement, _CodomainElement],
+):
+    def __init__(
+        self,
+        X: Parent[_DomainElement],
+        Y: Parent[_CodomainElement],
+        category: Category | None = None,
+        check: bool = True,
+        base: Ring | None = None,
+    ) -> None: ...
