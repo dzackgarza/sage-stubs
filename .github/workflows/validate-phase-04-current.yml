@@ -1,0 +1,129 @@
+name: Validate corrected Phase 04
+
+on:
+  push:
+    branches: [phase-04-validation]
+    paths:
+      - .github/workflows/validate-phase-04-current.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          submodules: recursive
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install analyzers
+        run: python -m pip install --upgrade pip ruff mypy basedpyright
+
+      - name: Run Phase 04 validation
+        shell: bash
+        run: |
+          set -uo pipefail
+          mkdir -p reports
+          targets=(
+            sage-stubs/rings/finite_rings
+            sage-stubs/rings/number_field
+            sage-stubs/rings/padics
+            sage-stubs/rings/function_field
+            sage-stubs/rings/valuation
+            sage-stubs/rings/asymptotic
+            sage-stubs/rings/semirings
+          )
+
+          ruff check "${targets[@]}" > reports/ruff.txt 2>&1
+          echo $? > reports/ruff.status
+          ruff format --check "${targets[@]}" > reports/ruff-format.txt 2>&1
+          echo $? > reports/ruff-format.status
+          python scripts/check_stubs.py $(find "${targets[@]}" -name '*.pyi' -print) > reports/check-stubs.txt 2>&1
+          echo $? > reports/check-stubs.status
+
+          python -m mypy \
+            --strict \
+            --no-incremental \
+            --follow-imports=normal \
+            --show-error-codes \
+            --show-column-numbers \
+            --no-pretty \
+            "${targets[@]}" > reports/mypy.txt 2>&1
+          echo $? > reports/mypy.status
+
+          cat > phase04-pyrightconfig.json <<'JSON'
+          {
+            "include": [
+              "sage-stubs/rings/finite_rings",
+              "sage-stubs/rings/number_field",
+              "sage-stubs/rings/padics",
+              "sage-stubs/rings/function_field",
+              "sage-stubs/rings/valuation",
+              "sage-stubs/rings/asymptotic",
+              "sage-stubs/rings/semirings"
+            ],
+            "stubPath": "sage-stubs",
+            "pythonVersion": "3.12",
+            "typeCheckingMode": "strict",
+            "reportMissingTypeStubs": false,
+            "reportMissingImports": "error"
+          }
+          JSON
+          basedpyright --project phase04-pyrightconfig.json --outputjson > reports/basedpyright.json 2> reports/basedpyright.stderr
+          echo $? > reports/basedpyright.status
+
+          : > reports/semantic.txt
+          semantic_status=0
+          for directory in "${targets[@]}"; do
+            python scripts/audit_stub_quality.py --root "$directory" --max-console 1000 >> reports/semantic.txt 2>&1 || semantic_status=$?
+          done
+          echo "$semantic_status" > reports/semantic.status
+
+          python - <<'PY' > reports/summary.txt
+          import json
+          from pathlib import Path
+          for name in ("ruff", "ruff-format", "check-stubs", "mypy", "basedpyright", "semantic"):
+              path = Path(f"reports/{name}.status")
+              print(f"{name}: {path.read_text().strip() if path.exists() else 'missing'}")
+          path = Path("reports/basedpyright.json")
+          if path.exists() and path.stat().st_size:
+              print("basedpyright-summary:", json.loads(path.read_text()).get("summary"))
+          mypy = Path("reports/mypy.txt")
+          if mypy.exists():
+              lines = mypy.read_text(errors="replace").splitlines()
+              print("mypy-lines:", len(lines))
+              print("mypy-final:", lines[-1] if lines else "")
+          PY
+          cat reports/summary.txt
+          exit 0
+
+      - name: Archive reports and checked workspace
+        if: always()
+        run: |
+          tar -czf phase04-current-validation.tar.gz \
+            reports \
+            pyproject.toml \
+            .agents/phases/phase-04-number-theory-rings.md \
+            sage-stubs/rings/finite_rings \
+            sage-stubs/rings/number_field \
+            sage-stubs/rings/padics \
+            sage-stubs/rings/function_field \
+            sage-stubs/rings/valuation \
+            sage-stubs/rings/asymptotic \
+            sage-stubs/rings/semirings
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: phase04-current-validation
+          path: phase04-current-validation.tar.gz
+          retention-days: 1
+          if-no-files-found: error
