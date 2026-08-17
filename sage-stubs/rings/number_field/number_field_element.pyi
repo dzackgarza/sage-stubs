@@ -28,7 +28,6 @@ from sage.structure.parent import ElementConstructorInput, Parent
 from sage.structure.sage_object import SageObject
 
 class NumberFieldElement(NumberFieldElement_base):
-
     def __bool__(self) -> bool: ...
     def __copy__(self) -> Self: ...
     def __deepcopy__(self, memo: ElementConstructorInput) -> Self: ...
@@ -39,7 +38,7 @@ class NumberFieldElement(NumberFieldElement_base):
     ) -> None: ...
     def __invert__(self) -> Self: ...
     def __pow__(
-        base: ElementConstructorInput,
+        self,
         exp: ElementConstructorInput,
         dummy: ElementConstructorInput,
     ) -> Self: ...
@@ -196,7 +195,7 @@ class NumberFieldElement(NumberFieldElement_base):
     ) -> Self: ...
     def _rational_(self) -> Rational: ...
     def _richcmp_(
-        left: NumberFieldElement | ElementConstructorInput,
+        self,
         right: NumberFieldElement | ElementConstructorInput,
         op: int,
     ) -> bool: ...
@@ -221,7 +220,6 @@ class NumberFieldElement_absolute(NumberFieldElement):
     def _magma_init_(self, magma: ElementConstructorInput) -> str: ...
 
 class CoordinateFunction(SageObject):
-
     def __call__(
         self, x: NumberFieldElement | ElementConstructorInput
     ) -> NumberFieldElement: ...
@@ -236,7 +234,6 @@ class CoordinateFunction(SageObject):
     def alpha(self) -> NumberFieldElement: ...
 
 class NumberFieldElement_relative(NumberFieldElement):
-
     def __getitem__(self, n: int | Integer) -> NumberFieldElement: ...
     def __init__(
         self, parent: Parent, f: Polynomial | MPolynomial | Map | Callable[..., Element]
@@ -257,7 +254,6 @@ class NumberFieldElement_relative(NumberFieldElement):
     ) -> Integer | Rational | PlusInfinity | MinusInfinity: ...
 
 class OrderElement_absolute(NumberFieldElement_absolute):
-
     def __init__(
         self,
         order: NumberFieldOrder | FunctionFieldOrder,
@@ -268,7 +264,6 @@ class OrderElement_absolute(NumberFieldElement_absolute):
     def inverse_mod(self, I: NumberFieldIdeal | FunctionFieldIdeal) -> Self: ...
 
 class OrderElement_relative(NumberFieldElement_relative):
-
     def __init__(
         self,
         order: NumberFieldOrder | FunctionFieldOrder,

@@ -2,14 +2,13 @@ from sage.categories.map import Map
 from sage.rings.function_field.derivations import FunctionFieldDerivation
 from sage.rings.function_field.element import FunctionFieldElement
 from sage.rings.function_field.function_field import FunctionField
-from sage.schemes.elliptic_curves.ell_modular_symbols import zero
 from sage.structure.parent import ElementConstructorInput
 
 class FunctionFieldDerivation_separable(FunctionFieldDerivation):
     def __init__(self, parent: FunctionField, d: ElementConstructorInput) -> None: ...
     def _call_(
         self, x: FunctionFieldElement | ElementConstructorInput
-    ) -> FunctionFieldElement | zero: ...
+    ) -> FunctionFieldElement: ...
 
 class FunctionFieldDerivation_inseparable(FunctionFieldDerivation):
     def __init__(
@@ -17,7 +16,7 @@ class FunctionFieldDerivation_inseparable(FunctionFieldDerivation):
     ) -> None: ...
     def _call_(
         self, x: FunctionFieldElement | ElementConstructorInput
-    ) -> FunctionFieldElement | zero: ...
+    ) -> FunctionFieldElement: ...
 
 class FunctionFieldHigherDerivation(Map):
     def __init__(self, field: FunctionField) -> None: ...

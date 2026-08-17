@@ -1,21 +1,23 @@
 from collections.abc import Callable, Iterator
+from typing import Self
 
 from sage.categories.morphism import Morphism
 from sage.rings.function_field.function_field import FunctionField
 from sage.rings.infinity import PlusInfinity
+from sage.rings.integer import Integer
 from sage.rings.morphism import RingHomomorphism, RingMap
 from sage.rings.number_field.number_field import NumberField_generic
 from sage.rings.padics.padic_generic import pAdicGeneric
 from sage.rings.padics.padic_generic_element import pAdicGenericElement
+from sage.rings.padics.pow_computer_flint import PowComputer_flint_unram
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.rational import Rational
 from sage.rings.ring import Field, Ring
 from sage.structure.element import RingElement
-from sage.structure.parent import Parent
+from sage.structure.parent import ElementConstructorInput, Parent
 from sage.structure.sage_object import SageObject
 
 class CAElement:
-
     def __copy__(self) -> Self: ...
     def __reduce__(
         self,
@@ -28,7 +30,7 @@ class CAElement:
     def _div_(self, right: CAElement | ElementConstructorInput) -> Self: ...
     def _quo_rem(self, _right: ElementConstructorInput) -> tuple[Self, Self]: ...
     def __pow__(
-        self: CAElement, _right: ElementConstructorInput, dummy: ElementConstructorInput
+        self, _right: ElementConstructorInput, dummy: ElementConstructorInput
     ) -> Self: ...
     def add_bigoh(self, absprec: int | Integer | None) -> Self: ...
     def is_zero(self, absprec: int | Integer | None = ...) -> bool: ...
@@ -42,17 +44,11 @@ class CAElement:
     def polynomial(self, var: str = ...) -> Polynomial: ...
     def precision_absolute(self) -> Integer | PlusInfinity: ...
     def precision_relative(self) -> Integer | PlusInfinity: ...
-    def unit_part(self: CAElement) -> Self: ...
+    def unit_part(self) -> Self: ...
     def val_unit(self) -> tuple[Integer | PlusInfinity, Self]: ...
     def __hash__(self) -> int: ...
 
 class expansion_mode: ...
-
-from typing import Self
-
-from sage.rings.integer import Integer
-from sage.rings.padics.pow_computer_flint import PowComputer_flint_unram
-from sage.structure.parent import ElementConstructorInput
 
 class PowComputer_(PowComputer_flint_unram):
     def __init__(
@@ -84,12 +80,8 @@ class pAdicTemplateElement(pAdicGenericElement):
         absprec: int | Integer | None = ...,
         relprec: int | Integer | None = ...,
     ) -> None: ...
-    def __lshift__(
-        self: pAdicTemplateElement, shift: ElementConstructorInput
-    ) -> Self: ...
-    def __rshift__(
-        self: pAdicTemplateElement, shift: ElementConstructorInput
-    ) -> Self: ...
+    def __lshift__(self, shift: ElementConstructorInput) -> Self: ...
+    def __rshift__(self, shift: ElementConstructorInput) -> Self: ...
     def lift_to_precision(self, absprec: int | Integer | None = ...) -> Self: ...
     def expansion(
         self,
@@ -180,9 +172,9 @@ class pAdicConvert_CA_frac_field(Morphism):
         kwds: ElementConstructorInput = ...,
     ) -> pAdicGenericElement: ...
 
-def unpickle_cae_v2(
-    cls,
+def unpickle_cae_v2[CAElementT: CAElement](
+    cls: type[CAElementT],
     parent: Parent,
     value: RingElement | int | Integer | Rational,
     absprec: int | Integer | None,
-) -> pAdicGenericElement: ...
+) -> CAElementT: ...

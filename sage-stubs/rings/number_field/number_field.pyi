@@ -1,12 +1,20 @@
+from collections.abc import Iterator, Sequence
+from typing import overload
+
 from sage.categories.category import Category
 from sage.categories.map import Map
+from sage.categories.morphism import Morphism
 from sage.data_structures.blas_dict import sum
+from sage.matrix.matrix2 import Matrix
 from sage.misc.fast_methods import WithEqualityById
 from sage.misc.functional import base_ring
 from sage.rings.abc import UniversalCyclotomicField
 from sage.rings.complex_mpfr import ComplexNumber
 from sage.rings.function_field.function_field import FunctionField
+from sage.rings.infinity import PlusInfinity
+from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
+from sage.rings.morphism import RingHomomorphism
 from sage.rings.number_field.number_field_element_quadratic import (
     Q_to_quadratic_field_element,
     Z_to_quadratic_field_element,
@@ -19,30 +27,17 @@ from sage.rings.number_field.number_field_morphisms import (
 )
 from sage.rings.number_field.number_field_rel import NumberField_relative
 from sage.rings.polynomial.multi_polynomial import MPolynomial
-from sage.rings.ring import Ring
-from sage.structure.category_object import normalize_names
-from sage.structure.element import parent
-from sage.structure.factory import UniqueFactory
-from sage.structure.parent import ElementConstructorInput
-from sage.structure.proof.proof import get_flag
-from sage.symbolic.expression_conversions import polynomial
-
-class NumberField_version2: ...
-
-from collections.abc import Iterator, Sequence
-from typing import overload
-
-from sage.categories.morphism import Morphism
-from sage.matrix.matrix2 import Matrix
-from sage.rings.infinity import PlusInfinity
-from sage.rings.integer import Integer
-from sage.rings.morphism import RingHomomorphism
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.rational import Rational
 from sage.rings.rational_field import RationalField
-from sage.structure.element import Element, RingElement
-from sage.structure.parent import Parent
+from sage.rings.ring import Ring
+from sage.structure.category_object import normalize_names
+from sage.structure.element import Element, RingElement, parent
+from sage.structure.factory import UniqueFactory
+from sage.structure.parent import ElementConstructorInput, Parent
+from sage.structure.proof.proof import get_flag
 from sage.structure.sage_object import SageCoercionAtom
+from sage.symbolic.expression_conversions import polynomial
 
 from ..abc import (
     Field,
@@ -60,13 +55,15 @@ from ..ring import Ring as RingBase
 from ..ring import _IdealArg, _IdealKwds
 from .class_group import ClassGroup
 from .galois_group import GaloisGroup_v2
-from .number_field_base import NumberField
+from .number_field_base import NumberField as NumberFieldBase
 from .number_field_element import NumberFieldElement
 from .number_field_ideal import NumberFieldIdeal
 from .order import Order
 from .order import Order as NumberFieldOrder
 from .structure import NumberFieldStructure
 from .unit_group import UnitGroup
+
+class NumberField_version2: ...
 
 type _EmbeddingInput = Element | Integer | int | Rational | float | complex
 type _NumberFieldElementInput = NumberFieldElement | SageCoercionAtom
@@ -85,7 +82,7 @@ def NumberFieldTower(
     structures: Sequence[NumberFieldStructure | None] | None = ...,
 ) -> NumberField_generic | RationalField: ...
 
-class NumberField_generic(WithEqualityById, NumberField):
+class NumberField_generic(WithEqualityById, NumberFieldBase):
     def construction(self) -> tuple[type, tuple[Polynomial | int | Integer, ...]]: ...
     def structure(self) -> tuple[Polynomial, RingHomomorphism, RingHomomorphism]: ...
     def completion(
@@ -463,7 +460,12 @@ class NumberField_cyclotomic(
     def _coerce_map_from_(
         self, K: NumberField_generic | FunctionField | Field
     ) -> (
-        NumberFieldElement | CyclotomicFieldEmbedding | NumberFieldEmbedding | Z_to_quadratic_field_element | Q_to_quadratic_field_element | None
+        NumberFieldElement
+        | CyclotomicFieldEmbedding
+        | NumberFieldEmbedding
+        | Z_to_quadratic_field_element
+        | Q_to_quadratic_field_element
+        | None
     ): ...
     def _element_constructor_(
         self, x: NumberFieldElement | ElementConstructorInput, check: bool = ...

@@ -1,6 +1,5 @@
 from typing import Self
 
-from sage.calculus.predefined import H
 from sage.categories.morphism import Morphism
 from sage.rings.function_field.ideal import FunctionFieldIdeal
 from sage.rings.integer import Integer
@@ -13,7 +12,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 class DrinfeldModuleMorphism(Morphism, UniqueRepresentation):
     @staticmethod
     def __classcall_private__(
-        cls: type[DrinfeldModuleMorphism],
+        class_: type[DrinfeldModuleMorphism],
         parent: Parent,
         x: Element | ElementConstructorInput,
     ) -> DrinfeldModuleMorphism: ...
@@ -40,4 +39,4 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation):
     def _repr_(self) -> str: ...
     def _composition_(
         self, other: Element | ElementConstructorInput, H: Polynomial | MPolynomial
-    ) -> H: ...
+    ) -> DrinfeldModuleMorphism: ...

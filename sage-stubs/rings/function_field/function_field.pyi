@@ -2,7 +2,6 @@ from collections.abc import Callable
 from typing import Literal
 
 from sage.categories.category import Category
-from sage.categories.homset import hom
 from sage.categories.map import Map
 from sage.categories.morphism import Morphism
 from sage.rings.function_field.divisor import DivisorGroup, FunctionFieldDivisor
@@ -63,9 +62,7 @@ class FunctionField(Field):
     def order_infinite(
         self, x: FunctionFieldElement | ElementConstructorInput, check: bool = ...
     ) -> FunctionFieldElement: ...
-    def _coerce_map_from_(
-        self, source: int | Integer
-    ) -> Morphism | FunctionFieldElement | hom: ...
+    def _coerce_map_from_(self, source: Parent) -> Morphism | None: ...
     def rational_function_field(self) -> RationalFunctionField: ...
     def valuation(
         self, prime: int | Integer | FunctionFieldPlace

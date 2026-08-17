@@ -1,4 +1,5 @@
 from sage.categories.homset import hom
+from sage.rings.number_field.number_field import NumberField_generic
 from sage.rings.number_field.number_field_element import NumberFieldElement
 from sage.structure.parent import ElementConstructorInput
 from sage.structure.unique_representation import UniqueRepresentation
@@ -6,8 +7,6 @@ from sage.structure.unique_representation import UniqueRepresentation
 class MapAbsoluteToRelativeNumberField: ...
 class MapRelativeToAbsoluteNumberField: ...
 class NameChangeMap: ...
-
-from sage.rings.number_field.number_field import NumberField_generic
 
 class NumberFieldStructure(UniqueRepresentation):
     def __init__(self, other: NumberField_generic) -> None: ...

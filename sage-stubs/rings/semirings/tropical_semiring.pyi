@@ -18,7 +18,7 @@ class TropicalSemiringElement(Element):
     def __neg__(self) -> Self: ...
     def __invert__(self) -> Self: ...
     def __pow__(
-        base: ElementConstructorInput,
+        self,
         exp: ElementConstructorInput,
         dummy: ElementConstructorInput,
     ) -> Self: ...
@@ -27,19 +27,19 @@ class TropicalSemiringElement(Element):
     def _latex_(self) -> str: ...
     def _repr_(self) -> str: ...
     def _add_(
-        left: TropicalSemiringElement | ElementConstructorInput,
+        self,
         right: TropicalSemiringElement | ElementConstructorInput,
     ) -> Self: ...
     def _div_(
-        left: TropicalSemiringElement | ElementConstructorInput,
+        self,
         right: TropicalSemiringElement | ElementConstructorInput,
     ) -> Self: ...
     def _mul_(
-        left: TropicalSemiringElement | ElementConstructorInput,
+        self,
         right: TropicalSemiringElement | ElementConstructorInput,
     ) -> Self: ...
     def _richcmp_(
-        left: TropicalSemiringElement | ElementConstructorInput,
+        self,
         right: TropicalSemiringElement | ElementConstructorInput,
         op: int,
     ) -> bool: ...
@@ -59,7 +59,6 @@ class TropicalSemiring(Parent, UniqueRepresentation):
     def _repr_(self) -> str: ...
 
 class TropicalToTropical(Map):
-
     def _call_(
         self, x: TropicalSemiringElement | ElementConstructorInput
     ) -> Element: ...

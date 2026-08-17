@@ -10,7 +10,6 @@ from sage.structure.unique_representation import (
 )
 
 class FunctionFieldOrder_base(CachedRepresentation, Parent):
-
     def __init__(
         self,
         field: FunctionField,
@@ -26,11 +25,9 @@ class FunctionFieldOrder_base(CachedRepresentation, Parent):
     def ideal_monoid(self) -> IdealMonoid: ...
 
 class FunctionFieldOrder(FunctionFieldOrder_base):
-
     def _repr_(self) -> str: ...
 
 class FunctionFieldOrderInfinite(FunctionFieldOrder_base):
-
     def _repr_(self) -> str: ...
 
 class FunctionFieldMaximalOrder(UniqueRepresentation, FunctionFieldOrder):

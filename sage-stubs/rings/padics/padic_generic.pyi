@@ -26,7 +26,6 @@ from sage.rings.rational import Rational
 from sage.rings.ring import Field, Ring
 from sage.structure.element import Element
 from sage.structure.parent import ElementConstructorInput, Parent
-from sage.structure.richcmp import richcmp
 
 class pAdicGeneric(LocalGeneric):
     def prime(self) -> Integer: ...
@@ -102,13 +101,13 @@ class ResidueReductionMap(Morphism):
     def section(self) -> Morphism: ...
     def _richcmp_(
         self, other: pAdicGenericElement | ElementConstructorInput, op: Ring
-    ) -> richcmp | pAdicGenericElement: ...
+    ) -> bool: ...
 
 class ResidueLiftingMap(Morphism):
     def _call_(self, x: pAdicGenericElement | ElementConstructorInput) -> R: ...
     def _richcmp_(
         self, other: pAdicGenericElement | ElementConstructorInput, op: Ring
-    ) -> richcmp | pAdicGenericElement: ...
+    ) -> bool: ...
 
 def local_print_mode(
     obj: ElementConstructorInput,

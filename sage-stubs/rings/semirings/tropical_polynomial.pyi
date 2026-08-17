@@ -23,7 +23,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
 class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
     @staticmethod
     def __classcall_private__(
-        cls: type[TropicalPolynomialSemiring],
+        class_: type[TropicalPolynomialSemiring],
         base_semiring: ElementConstructorInput,
         names: str | tuple[str, ...],
     ) -> TropicalPolynomialSemiring: ...

@@ -9,7 +9,6 @@ from sage.rings.number_field.order import Order as NumberFieldOrder
 from sage.rings.polynomial.multi_polynomial import MPolynomial
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.structure.parent import ElementConstructorInput
-from sage.structure.richcmp import richcmp
 
 def NumberFieldOrderIdeal(
     O: NumberFieldOrder, *args: ElementConstructorInput, **kwds: ElementConstructorInput
@@ -32,7 +31,7 @@ class NumberFieldOrderIdeal_generic(Ideal_generic):
         self,
         other: NumberFieldElement | ElementConstructorInput,
         op: ElementConstructorInput,
-    ) -> richcmp | NumberFieldElement: ...
+    ) -> bool: ...
 
 class NumberFieldOrderIdeal_quadratic(NumberFieldOrderIdeal_generic):
     def __init__(

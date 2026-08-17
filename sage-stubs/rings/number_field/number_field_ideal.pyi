@@ -38,7 +38,6 @@ from sage.structure.element import (
 )
 from sage.structure.factorization import Factorization
 from sage.structure.parent import ElementConstructorInput, Parent
-from sage.structure.richcmp import richcmp
 
 class NumberFieldIdeal(Ideal_generic):
     def norm(self) -> Integer: ...
@@ -61,7 +60,7 @@ class NumberFieldIdeal(Ideal_generic):
         self,
         other: NumberFieldElement | ElementConstructorInput,
         op: ElementConstructorInput,
-    ) -> richcmp | NumberFieldElement: ...
+    ) -> bool: ...
     def coordinates(self, x: NumberFieldElement | ElementConstructorInput) -> Self: ...
     def _repr_(self) -> str: ...
     def __pari__(self) -> Self: ...
@@ -108,7 +107,6 @@ class NumberFieldIdeal(Ideal_generic):
 class NumberFieldFractionalIdeal(
     MultiplicativeGroupElement, Ideal_fractional, NumberFieldIdeal
 ):
-
     def __init__(
         self,
         field: NumberField_generic,

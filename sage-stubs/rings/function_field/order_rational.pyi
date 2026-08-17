@@ -1,23 +1,19 @@
-from collections.abc import Callable
-
-from sage.calculus.predefined import F
-from sage.categories.map import Map
-from sage.rings.polynomial.multi_polynomial import MPolynomial
-from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.structure.element import Element
-
-class FunctionFieldMaximalOrder: ...
-class FunctionFieldMaximalOrderInfinite: ...
-
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
 
 from sage.categories.category import Category
+from sage.categories.map import Map
 from sage.rings.function_field.element import FunctionFieldElement
 from sage.rings.function_field.function_field import FunctionField
 from sage.rings.function_field.ideal import FunctionFieldIdeal
 from sage.rings.integer import Integer
+from sage.rings.polynomial.multi_polynomial import MPolynomial
+from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.sets.family import Family
+from sage.structure.element import Element
 from sage.structure.parent import ElementConstructorInput
+
+class FunctionFieldMaximalOrder: ...
+class FunctionFieldMaximalOrderInfinite: ...
 
 class FunctionFieldMaximalOrder_rational(FunctionFieldMaximalOrder):
     def __init__(self, field: FunctionField) -> None: ...
@@ -30,7 +26,7 @@ class FunctionFieldMaximalOrder_rational(FunctionFieldMaximalOrder):
     def ideal(self, *gens: ElementConstructorInput) -> FunctionFieldIdeal: ...
     def _element_constructor_(
         self, f: Polynomial | MPolynomial | Map | Callable[..., Element]
-    ) -> F: ...
+    ) -> FunctionFieldElement: ...
 
 class FunctionFieldMaximalOrderInfinite_rational(FunctionFieldMaximalOrderInfinite):
     def __init__(self, field: FunctionField, category: Category = ...) -> None: ...
@@ -39,4 +35,4 @@ class FunctionFieldMaximalOrderInfinite_rational(FunctionFieldMaximalOrderInfini
     def ideal(self, *gens: ElementConstructorInput) -> FunctionFieldIdeal: ...
     def _element_constructor_(
         self, f: Polynomial | MPolynomial | Map | Callable[..., Element]
-    ) -> F: ...
+    ) -> FunctionFieldElement: ...

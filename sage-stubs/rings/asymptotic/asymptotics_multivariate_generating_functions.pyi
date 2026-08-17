@@ -100,7 +100,7 @@ class FractionWithFactoredDenominator(RingElement):
 class FractionWithFactoredDenominatorRing(UniqueRepresentation, Parent):
     @staticmethod
     def __classcall_private__(
-        cls: type[FractionWithFactoredDenominatorRing],
+        class_: type[FractionWithFactoredDenominatorRing],
         denominator_ring: ElementConstructorInput,
         numerator_ring: ElementConstructorInput = ...,
         category: Category = ...,

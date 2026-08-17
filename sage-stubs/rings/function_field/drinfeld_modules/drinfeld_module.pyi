@@ -10,7 +10,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 class DrinfeldModule(Parent, UniqueRepresentation):
     @staticmethod
     def __classcall_private__(
-        cls: type[DrinfeldModule],
+        class_: type[DrinfeldModule],
         function_ring: Polynomial | MPolynomial,
         gen: Polynomial | MPolynomial,
         A_field: ElementConstructorInput = ...,

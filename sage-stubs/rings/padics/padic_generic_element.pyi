@@ -19,7 +19,6 @@ from sage.rings.valuation.valuation import DiscretePseudoValuation
 from sage.structure.parent import ElementConstructorInput, Parent
 
 class pAdicGenericElement(LocalGenericElement):
-
     def __floordiv__(
         self, right: pAdicGenericElement | ElementConstructorInput
     ) -> Self: ...
@@ -137,7 +136,7 @@ class pAdicGenericElement(LocalGenericElement):
     ) -> Self: ...
     def _rational_(self) -> Rational: ...
     def _richcmp_(
-        left: pAdicGenericElement | ElementConstructorInput,
+        self,
         right: pAdicGenericElement | ElementConstructorInput,
         op: int,
     ) -> bool: ...

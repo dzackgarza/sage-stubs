@@ -10,7 +10,6 @@ from sage.rings.polynomial.multi_polynomial import MPolynomial
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.ring import Ring
 from sage.structure.parent import ElementConstructorInput
-from sage.structure.richcmp import richcmp
 
 class FunctionFieldIdeal_polymod(FunctionFieldIdeal):
     def __init__(
@@ -42,7 +41,7 @@ class FunctionFieldIdeal_polymod(FunctionFieldIdeal):
         self,
         other: FunctionFieldIdeal_polymod | ElementConstructorInput,
         op: ElementConstructorInput,
-    ) -> richcmp: ...
+    ) -> bool: ...
 
 class FunctionFieldIdeal_global(FunctionFieldIdeal_polymod):
     def __init__(
@@ -72,4 +71,4 @@ class FunctionFieldIdealInfinite_polymod(FunctionFieldIdealInfinite):
         self,
         other: FunctionFieldIdealInfinite_polymod | ElementConstructorInput,
         op: Polynomial | MPolynomial,
-    ) -> richcmp: ...
+    ) -> bool: ...

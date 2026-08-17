@@ -23,7 +23,6 @@ from sage.sets.set import Set
 from sage.structure.parent import ElementConstructorInput
 
 class GaloisGroupElement(PermutationGroupElement):
-
     def as_hom(self) -> hom: ...
     def __call__(self, x: NumberFieldElement | ElementConstructorInput) -> Self: ...
     def ramification_degree(

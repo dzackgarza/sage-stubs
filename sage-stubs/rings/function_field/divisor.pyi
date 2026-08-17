@@ -7,7 +7,6 @@ from sage.rings.integer import Integer
 from sage.rings.ring import Ring
 from sage.structure.element import Element, ModuleElement
 from sage.structure.parent import ElementConstructorInput, Parent
-from sage.structure.richcmp import richcmp
 from sage.structure.unique_representation import UniqueRepresentation
 
 def divisor(field: FunctionField, data: FunctionField) -> FunctionFieldDivisor: ...
@@ -43,7 +42,7 @@ class FunctionFieldDivisor(ModuleElement):
         self,
         other: FunctionFieldDivisor | ElementConstructorInput,
         op: ElementConstructorInput,
-    ) -> richcmp: ...
+    ) -> bool: ...
 
 class DivisorGroup(UniqueRepresentation, Parent):
     def __init__(self, field: FunctionField) -> None: ...

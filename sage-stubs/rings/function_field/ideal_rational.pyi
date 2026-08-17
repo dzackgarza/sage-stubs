@@ -7,7 +7,6 @@ from sage.rings.function_field.ideal import (
 from sage.rings.integer import Integer
 from sage.rings.ring import Ring
 from sage.structure.parent import ElementConstructorInput
-from sage.structure.richcmp import richcmp
 
 class FunctionFieldIdeal_rational(FunctionFieldIdeal):
     def __init__(self, ring: Ring, gen: ElementConstructorInput) -> None: ...
@@ -27,7 +26,7 @@ class FunctionFieldIdeal_rational(FunctionFieldIdeal):
         self,
         other: FunctionFieldIdeal_rational | ElementConstructorInput,
         op: ElementConstructorInput,
-    ) -> richcmp: ...
+    ) -> bool: ...
 
 class FunctionFieldIdealInfinite_rational(FunctionFieldIdealInfinite):
     def __init__(self, ring: Ring, gen: ElementConstructorInput) -> None: ...
@@ -45,4 +44,4 @@ class FunctionFieldIdealInfinite_rational(FunctionFieldIdealInfinite):
         self,
         other: FunctionFieldIdealInfinite_rational | ElementConstructorInput,
         op: ElementConstructorInput,
-    ) -> richcmp: ...
+    ) -> bool: ...

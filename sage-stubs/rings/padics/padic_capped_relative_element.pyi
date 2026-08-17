@@ -1,19 +1,23 @@
 from collections.abc import Callable, Iterator
+from typing import Self
 
 from sage.categories.morphism import Morphism
 from sage.rings.function_field.function_field import FunctionField
 from sage.rings.function_field.place import FunctionFieldPlace
 from sage.rings.infinity import PlusInfinity
+from sage.rings.integer import Integer
 from sage.rings.morphism import RingHomomorphism, RingMap
 from sage.rings.number_field.number_field import NumberField_generic
 from sage.rings.number_field.number_field_ideal import NumberFieldIdeal
+from sage.rings.padics.padic_generic import pAdicGeneric
+from sage.rings.padics.padic_generic_element import pAdicGenericElement
+from sage.rings.padics.pow_computer import PowComputer_base
 from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.rings.ring import Field
-from sage.structure.parent import Parent
+from sage.rings.ring import Field, Ring
+from sage.structure.parent import ElementConstructorInput, Parent
 from sage.structure.sage_object import SageObject
 
 class CRElement:
-
     def __copy__(self) -> Self: ...
     def __reduce__(
         self,
@@ -25,7 +29,7 @@ class CRElement:
     def _mul_(self, _right: ElementConstructorInput) -> Self: ...
     def _div_(self, _right: ElementConstructorInput) -> Self: ...
     def __pow__(
-        self: CRElement, _right: ElementConstructorInput, dummy: ElementConstructorInput
+        self, _right: ElementConstructorInput, dummy: ElementConstructorInput
     ) -> Self: ...
     def _quo_rem(self, _right: ElementConstructorInput) -> tuple[Self, Self]: ...
     def add_bigoh(self, absprec: int | Integer | None) -> Self: ...
@@ -47,15 +51,6 @@ class CRElement:
     def __hash__(self) -> int: ...
 
 class expansion_mode: ...
-
-from typing import Self
-
-from sage.rings.integer import Integer
-from sage.rings.padics.padic_generic import pAdicGeneric
-from sage.rings.padics.padic_generic_element import pAdicGenericElement
-from sage.rings.padics.pow_computer import PowComputer_base
-from sage.rings.ring import Ring
-from sage.structure.parent import ElementConstructorInput
 
 class PowComputer_(PowComputer_base):
     def __init__(
@@ -108,12 +103,8 @@ class pAdicTemplateElement(pAdicGenericElement):
         absprec: int | Integer | None = ...,
         relprec: int | Integer | None = ...,
     ) -> None: ...
-    def __lshift__(
-        self: pAdicTemplateElement, shift: ElementConstructorInput
-    ) -> Self: ...
-    def __rshift__(
-        self: pAdicTemplateElement, shift: ElementConstructorInput
-    ) -> Self: ...
+    def __lshift__(self, shift: ElementConstructorInput) -> Self: ...
+    def __rshift__(self, shift: ElementConstructorInput) -> Self: ...
     def lift_to_precision(self, absprec: int | Integer | None = ...) -> Self: ...
     def expansion(
         self,
@@ -222,10 +213,10 @@ class pAdicConvert_CR_frac_field(Morphism):
         kwds: ElementConstructorInput = ...,
     ) -> pAdicGenericElement: ...
 
-def unpickle_cre_v2(
-    cls,
+def unpickle_cre_v2[CRElementT: CRElement](
+    cls: type[CRElementT],
     parent: Parent,
     unit: ElementConstructorInput,
     ordp: ElementConstructorInput,
     relprec: int | Integer | None,
-) -> pAdicGenericElement: ...
+) -> CRElementT: ...

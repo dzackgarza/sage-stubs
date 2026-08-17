@@ -61,7 +61,7 @@ class pAdicModuleIsomorphism(Map):
         self,
         other: pAdicGenericElement | ElementConstructorInput,
         op: ElementConstructorInput,
-    ) -> pAdicGenericElement: ...
+    ) -> bool: ...
 
 class MapFreeModuleToOneStep(pAdicModuleIsomorphism):
     def _call_(

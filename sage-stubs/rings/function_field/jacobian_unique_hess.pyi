@@ -1,7 +1,6 @@
 from collections.abc import Iterator
 from typing import Self
 
-from sage.plot.point import point
 from sage.rings.function_field.divisor import FunctionFieldDivisor
 from sage.rings.function_field.element import FunctionFieldElement
 from sage.rings.function_field.function_field import FunctionField
@@ -12,7 +11,6 @@ from sage.rings.function_field.jacobian_base import (
     JacobianPoint_base,
     JacobianPoint_finite_field_base,
 )
-from sage.schemes.elliptic_curves.ell_modular_symbols import zero
 from sage.structure.parent import ElementConstructorInput
 from sage.structure.unique_representation import UniqueRepresentation
 
@@ -38,15 +36,15 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
         function_field: ElementConstructorInput,
         base_div: ElementConstructorInput,
     ) -> None: ...
-    def point(self, divisor: FunctionFieldDivisor) -> FunctionFieldElement: ...
-    def zero(self) -> FunctionFieldElement: ...
+    def point(self, divisor: FunctionFieldDivisor) -> JacobianPoint: ...
+    def zero(self) -> JacobianPoint: ...
     def _element_constructor_(
         self, x: FunctionFieldElement | ElementConstructorInput
-    ) -> zero | point: ...
+    ) -> JacobianPoint: ...
     def _repr_(self) -> str: ...
 
 class JacobianGroup_finite_field(JacobianGroup, JacobianGroup_finite_field_base):
-    def __iter__(self) -> Iterator[FunctionFieldElement]: ...
+    def __iter__(self) -> Iterator[JacobianPoint_finite_field]: ...
 
 class Jacobian(Jacobian_base, UniqueRepresentation):
     def __init__(

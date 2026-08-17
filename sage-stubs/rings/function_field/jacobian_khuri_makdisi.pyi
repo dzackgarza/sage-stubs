@@ -3,7 +3,6 @@ from typing import Self
 
 from sage.categories.map import Map
 from sage.matrix.matrix0 import Matrix
-from sage.plot.point import point
 from sage.rings.function_field.divisor import FunctionFieldDivisor
 from sage.rings.function_field.element import FunctionFieldElement
 from sage.rings.function_field.function_field import FunctionField
@@ -15,9 +14,7 @@ from sage.rings.function_field.jacobian_base import (
     JacobianPoint_finite_field_base,
 )
 from sage.rings.integer import Integer
-from sage.schemes.elliptic_curves.ell_modular_symbols import zero
 from sage.structure.parent import ElementConstructorInput
-from sage.structure.richcmp import richcmp
 from sage.structure.unique_representation import UniqueRepresentation
 
 class JacobianPoint(JacobianPoint_base):
@@ -33,7 +30,7 @@ class JacobianPoint(JacobianPoint_base):
         self,
         other: FunctionFieldElement | ElementConstructorInput,
         op: ElementConstructorInput,
-    ) -> bool | richcmp: ...
+    ) -> bool: ...
 
 class JacobianPoint_finite_field(JacobianPoint, JacobianPoint_finite_field_base): ...
 
@@ -54,12 +51,12 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
         function_field: ElementConstructorInput,
         base_div: ElementConstructorInput,
     ) -> None: ...
-    def point(self, divisor: FunctionFieldDivisor) -> FunctionFieldElement: ...
-    def zero(self) -> FunctionFieldElement: ...
+    def point(self, divisor: FunctionFieldDivisor) -> JacobianPoint: ...
+    def zero(self) -> JacobianPoint: ...
     def _repr_(self) -> str: ...
     def _element_constructor_(
         self, x: FunctionFieldElement | ElementConstructorInput
-    ) -> zero | point | FunctionFieldElement: ...
+    ) -> JacobianPoint: ...
 
 class JacobianGroup_finite_field(JacobianGroup, JacobianGroup_finite_field_base):
     def __init__(
@@ -68,7 +65,7 @@ class JacobianGroup_finite_field(JacobianGroup, JacobianGroup_finite_field_base)
         function_field: ElementConstructorInput,
         base_div: ElementConstructorInput,
     ) -> None: ...
-    def __iter__(self) -> Iterator[FunctionFieldElement]: ...
+    def __iter__(self) -> Iterator[JacobianPoint_finite_field]: ...
 
 class Jacobian(UniqueRepresentation, Jacobian_base):
     def __init__(

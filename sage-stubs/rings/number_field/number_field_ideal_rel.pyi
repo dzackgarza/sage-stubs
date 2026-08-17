@@ -17,15 +17,13 @@ from sage.rings.number_field.number_field_ideal import (
 from sage.rings.rational import Rational
 from sage.structure.factorization import Factorization
 from sage.structure.parent import ElementConstructorInput
-from sage.structure.richcmp import richcmp
 
 class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
-
     def _richcmp_(
         self,
         other: NumberFieldElement | ElementConstructorInput,
         op: ElementConstructorInput,
-    ) -> richcmp | NumberFieldElement: ...
+    ) -> bool: ...
     def pari_rhnf(self) -> Self: ...
     def absolute_ideal(
         self, names: str | tuple[str, ...] | None = ...

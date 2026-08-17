@@ -9,7 +9,6 @@ from sage.rings.ring import Ring
 from sage.structure.element import Element
 from sage.structure.factorization import Factorization
 from sage.structure.parent import ElementConstructorInput, Parent
-from sage.structure.richcmp import richcmp
 from sage.structure.unique_representation import UniqueRepresentation
 
 class FunctionFieldIdeal(Element):
@@ -41,7 +40,7 @@ class FunctionFieldIdeal_module(FunctionFieldIdeal, Ideal_generic):
         self,
         other: FunctionFieldIdeal_module | ElementConstructorInput,
         op: ElementConstructorInput,
-    ) -> richcmp: ...
+    ) -> bool: ...
 
 class FunctionFieldIdealInfinite(FunctionFieldIdeal): ...
 

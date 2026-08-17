@@ -1,6 +1,5 @@
 from collections.abc import Callable
 
-from sage.calculus.predefined import f
 from sage.categories.map import Map
 from sage.categories.morphism import Morphism, SetMorphism
 from sage.interfaces.r import R
@@ -14,7 +13,6 @@ from sage.rings.polynomial.multi_polynomial import MPolynomial
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.structure.element import Element, RingElement
 from sage.structure.parent import ElementConstructorInput, Parent
-from sage.structure.richcmp import richcmp
 
 class FunctionFieldVectorSpaceIsomorphism(Morphism):
     def is_injective(self) -> bool: ...
@@ -25,7 +23,7 @@ class FunctionFieldVectorSpaceIsomorphism(Morphism):
         self,
         other: FunctionFieldElement | ElementConstructorInput,
         op: ElementConstructorInput,
-    ) -> richcmp | FunctionFieldElement: ...
+    ) -> bool: ...
 
 class MapVectorSpaceToFunctionField(FunctionFieldVectorSpaceIsomorphism):
     def __init__(self, V: ElementConstructorInput, K: FunctionField) -> None: ...
@@ -52,7 +50,7 @@ class FunctionFieldMorphism_polymod(FunctionFieldMorphism):
         im_gen: ElementConstructorInput,
         base_morphism: Map | Morphism,
     ) -> None: ...
-    def _call_(self, x: FunctionFieldElement | ElementConstructorInput) -> f: ...
+    def _call_(self, x: FunctionFieldElement | ElementConstructorInput) -> Element: ...
 
 class FunctionFieldMorphism_rational(FunctionFieldMorphism):
     def __init__(
@@ -98,13 +96,10 @@ class FunctionFieldCompletion(Map):
     ) -> FunctionFieldElement: ...
 
 class FunctionFieldRingMorphism(SetMorphism):
-
     def _repr_(self) -> str: ...
 
 class FunctionFieldLinearMap(SetMorphism):
-
     def _repr_(self) -> str: ...
 
 class FunctionFieldLinearMapSection(SetMorphism):
-
     def _repr_(self) -> str: ...

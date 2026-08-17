@@ -1,12 +1,9 @@
-from sage.rings.asymptotic.misc import WithLocals
-
-class ValueError: ...
-
 from typing import Self
 
 from sage.categories.category import Category
 from sage.categories.pushout import Functor
 from sage.rings.asymptotic.asymptotic_ring import AsymptoticRing
+from sage.rings.asymptotic.misc import WithLocals
 from sage.rings.integer import Integer
 from sage.rings.rational import Rational
 from sage.rings.ring import Ring
@@ -15,6 +12,7 @@ from sage.structure.factory import UniqueFactory
 from sage.structure.parent import ElementConstructorInput, Parent
 from sage.structure.unique_representation import UniqueRepresentation
 
+class ValueError: ...
 class ZeroCoefficientError(ValueError): ...
 
 def absorption(
@@ -49,7 +47,7 @@ class GenericTerm(MultiplicativeGroupElement):
 class GenericTermMonoid(UniqueRepresentation, Parent, WithLocals):
     @staticmethod
     def __classcall__(
-        cls: type[GenericTermMonoid],
+        class_: type[GenericTermMonoid],
         term_monoid_factory: ElementConstructorInput,
         growth_group: ElementConstructorInput,
         coefficient_ring: ElementConstructorInput,
@@ -86,7 +84,7 @@ class GenericTermMonoid(UniqueRepresentation, Parent, WithLocals):
     def _element_constructor_(
         self, data: int | Integer, **kwds: ElementConstructorInput
     ) -> GenericTerm | int | Integer: ...
-    def _an_element_(self) -> Self: ...
+    def _an_element_(self) -> GenericTerm: ...
 
 class OTerm(GenericTerm):
     def __invert__(self) -> Self: ...
@@ -99,7 +97,6 @@ class OTerm(GenericTerm):
     def _latex_(self) -> str: ...
 
 class OTermMonoid(GenericTermMonoid):
-
     def _coerce_map_from_(self, S: Ring | Parent) -> GenericTerm | bool: ...
     def _repr_(self) -> str: ...
 
@@ -116,7 +113,7 @@ class TermWithCoefficient(GenericTerm):
 class TermWithCoefficientMonoid(GenericTermMonoid):
     def some_elements(self) -> list[GenericTerm]: ...
     def _repr_(self) -> str: ...
-    def _an_element_(self) -> Self: ...
+    def _an_element_(self) -> GenericTerm: ...
 
 class ExactTerm(TermWithCoefficient):
     def __invert__(self) -> Self: ...
@@ -131,7 +128,6 @@ class ExactTerm(TermWithCoefficient):
     def _latex_(self) -> str: ...
 
 class ExactTermMonoid(TermWithCoefficientMonoid):
-
     def _repr_(self) -> str: ...
 
 class BTerm(TermWithCoefficient):
@@ -151,7 +147,7 @@ class BTermMonoid(TermWithCoefficientMonoid):
     def some_elements(self) -> list[GenericTerm]: ...
     def _repr_(self) -> str: ...
     def _coerce_map_from_(self, S: Ring | Parent) -> GenericTerm | bool: ...
-    def _an_element_(self) -> Self: ...
+    def _an_element_(self) -> GenericTerm: ...
 
 class TermMonoidFactory(UniqueRepresentation, UniqueFactory):
     def __init__(

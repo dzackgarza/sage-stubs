@@ -15,10 +15,15 @@ from sage.rings.function_field.ideal import FunctionFieldIdeal
 from sage.rings.function_field.order import FunctionFieldOrder
 from sage.rings.function_field.place import FunctionFieldPlace
 from sage.rings.infinity import MinusInfinity, PlusInfinity
+from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.number_field.class_group import ClassGroup
 from sage.rings.number_field.number_field import NumberField_generic
-from sage.rings.number_field.number_field_element import OrderElement_relative
+from sage.rings.number_field.number_field_base import NumberField
+from sage.rings.number_field.number_field_element import (
+    NumberFieldElement,
+    OrderElement_relative,
+)
 from sage.rings.number_field.number_field_ideal import NumberFieldIdeal
 from sage.rings.number_field.order import Order as NumberFieldOrder
 from sage.rings.polynomial.multi_polynomial import MPolynomial
@@ -29,15 +34,10 @@ from sage.rings.ring import Field, Ring
 from sage.sets.family import Family
 from sage.structure.element import Element, Vector
 from sage.structure.factory import UniqueFactory
-from sage.structure.parent import ElementConstructorInput
+from sage.structure.parent import ElementConstructorInput, Parent
 from sage.symbolic.units import one
 
 class AbsoluteOrder: ...
-
-from sage.rings.integer import Integer
-from sage.rings.number_field.number_field_base import NumberField
-from sage.rings.number_field.number_field_element import NumberFieldElement
-from sage.structure.parent import Parent
 
 class Order(Order, Parent):
     def ring_generators(self) -> list[NumberFieldElement]: ...
@@ -191,11 +191,11 @@ class Order_absolute(Order):
         self, x: NumberFieldElement | ElementConstructorInput
     ) -> NumberFieldElement: ...
     def __add__(
-        left: NumberFieldElement | ElementConstructorInput,
+        self,
         right: NumberFieldElement | ElementConstructorInput,
     ) -> AbsoluteOrder | NumberFieldElement | ElementConstructorInput: ...
     def __and__(
-        left: NumberFieldElement | ElementConstructorInput,
+        self,
         right: NumberFieldElement | ElementConstructorInput,
     ) -> AbsoluteOrder | NumberFieldElement | ElementConstructorInput: ...
     def discriminant(self) -> Integer | Rational | NumberFieldElement: ...
@@ -230,11 +230,11 @@ class Order_relative(Order):
     ) -> NumberFieldElement: ...
     def basis(self) -> Family[Element]: ...
     def __add__(
-        left: NumberFieldElement | ElementConstructorInput,
+        self,
         right: NumberFieldElement | ElementConstructorInput,
     ) -> RelativeOrder | NumberFieldElement | ElementConstructorInput: ...
     def __and__(
-        left: NumberFieldElement | ElementConstructorInput,
+        self,
         right: NumberFieldElement | ElementConstructorInput,
     ) -> RelativeOrder | NumberFieldElement | ElementConstructorInput: ...
     def is_maximal(

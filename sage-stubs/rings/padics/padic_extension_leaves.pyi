@@ -1,6 +1,10 @@
+from sage.rings.integer import Integer
 from sage.rings.padics.eisenstein_extension_generic import EisensteinExtensionGeneric
+from sage.rings.padics.padic_generic import pAdicGeneric
 from sage.rings.padics.padic_generic_element import pAdicGenericElement
 from sage.rings.padics.unramified_extension_generic import UnramifiedExtensionGeneric
+from sage.rings.polynomial.multi_polynomial import MPolynomial
+from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.ring import Ring
 
 class pAdicCappedAbsoluteRingGeneric: ...
@@ -9,11 +13,6 @@ class pAdicCappedRelativeRingGeneric: ...
 class pAdicFixedModRingGeneric: ...
 class pAdicFloatingPointFieldGeneric: ...
 class pAdicFloatingPointRingGeneric: ...
-
-from sage.rings.integer import Integer
-from sage.rings.padics.padic_generic import pAdicGeneric
-from sage.rings.polynomial.multi_polynomial import MPolynomial
-from sage.rings.polynomial.polynomial_element import Polynomial
 
 class UnramifiedExtensionRingCappedRelative(
     UnramifiedExtensionGeneric, pAdicCappedRelativeRingGeneric

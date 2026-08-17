@@ -9,7 +9,6 @@ from sage.rings.rational import Rational
 from sage.rings.valuation.valuation import DiscretePseudoValuation
 from sage.structure.element import RingElement
 from sage.structure.parent import ElementConstructorInput
-from sage.structure.richcmp import richcmp
 
 def unpickle_le(
     parent: pAdicGeneric,
@@ -75,7 +74,7 @@ class pAdicLatticeElement(pAdicGenericElement):
         self,
         other: pAdicLatticeElement | ElementConstructorInput,
         op: ElementConstructorInput,
-    ) -> richcmp | Self: ...
+    ) -> bool: ...
 
 class pAdicLatticeCapElement(pAdicLatticeElement): ...
 class pAdicLatticeFloatElement(pAdicLatticeElement): ...

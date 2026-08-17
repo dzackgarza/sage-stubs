@@ -10,7 +10,6 @@ from sage.rings.ring import Ring
 from sage.structure.factory import UniqueFactory
 from sage.structure.parent import ElementConstructorInput, Parent
 from sage.structure.sage_object import SageObject
-from sage.symbolic.units import one
 
 class CartesianProductFactory(UniqueFactory):
     def create_key_and_extra_args(
@@ -61,7 +60,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
 
     def _element_constructor_(
         self, data: ElementConstructorInput
-    ) -> GenericGrowthElement | one | ElementConstructorInput: ...
+    ) -> GenericProduct.Element: ...
     def _coerce_map_from_(self, S: Ring | Parent) -> bool: ...
 
 class UnivariateProduct(GenericProduct):

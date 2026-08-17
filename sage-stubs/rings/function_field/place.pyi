@@ -5,7 +5,6 @@ from sage.rings.function_field.function_field import FunctionField
 from sage.rings.integer import Integer
 from sage.structure.element import Element
 from sage.structure.parent import ElementConstructorInput, Parent
-from sage.structure.richcmp import richcmp
 from sage.structure.unique_representation import UniqueRepresentation
 
 class FunctionFieldPlace(Element):
@@ -25,7 +24,7 @@ class FunctionFieldPlace(Element):
         self,
         other: FunctionFieldPlace | ElementConstructorInput,
         op: ElementConstructorInput,
-    ) -> richcmp: ...
+    ) -> bool: ...
 
 class PlaceSet(UniqueRepresentation, Parent):
     def __init__(self, field: FunctionField) -> None: ...

@@ -1,4 +1,5 @@
 from collections.abc import Callable
+from types import TracebackType
 from typing import Self
 
 from sage.rings.integer import Integer
@@ -70,10 +71,10 @@ class pAdicPrinter_class(SageObject):
     def dict(self) -> dict[Element, pAdicGenericElement]: ...
     def __exit__(
         self,
-        type: ElementConstructorInput,
-        value: RingElement | int | Integer | Rational,
-        traceback: ElementConstructorInput,
-    ) -> pAdicGenericElement: ...
+        type: type[BaseException] | None,
+        value: BaseException | None,
+        traceback: TracebackType | None,
+    ) -> None: ...
     def base_p_list(
         self,
         value: RingElement | int | Integer | Rational,
@@ -88,9 +89,7 @@ class pAdicPrinter_class(SageObject):
         ram_name: str = ...,
     ) -> pAdicGenericElement: ...
     def _repr_(self) -> str: ...
-    def richcmp_modes(
-        self: pAdicPrinter_class, other: pAdicPrinter_class, op: int
-    ) -> bool: ...
+    def richcmp_modes(self, other: pAdicPrinter_class, op: int) -> bool: ...
     def _alphabet(self) -> pAdicGenericElement: ...
     def _base_p_list(
         self,

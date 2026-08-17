@@ -17,8 +17,9 @@ def fast_char_p_power(
 ) -> pAdicGenericElement: ...
 
 class WittVectorRing(Parent, UniqueRepresentation):
+    @staticmethod
     def __classcall_private__(
-        cls: type[WittVectorRing],
+        class_: type[WittVectorRing],
         coefficient_ring: ElementConstructorInput,
         prec: int | Integer = ...,
         p: int | Integer = ...,

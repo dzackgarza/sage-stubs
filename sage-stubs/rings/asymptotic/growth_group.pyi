@@ -1,13 +1,9 @@
-from sage.rings.asymptotic.misc import WithLocals
-from sage.symbolic.units import one
-
-class ValueError: ...
-
 from typing import Self
 
 from sage.categories.category import Category
 from sage.categories.pushout import ConstructionFunctor, Functor
 from sage.rings.asymptotic.asymptotic_ring import AsymptoticRing
+from sage.rings.asymptotic.misc import WithLocals
 from sage.rings.integer import Integer
 from sage.rings.rational import Rational
 from sage.rings.ring import Ring
@@ -19,6 +15,8 @@ from sage.structure.unique_representation import (
     CachedRepresentation,
     UniqueRepresentation,
 )
+
+class ValueError: ...
 
 class Variable(CachedRepresentation, SageObject):
     def __init__(
@@ -83,7 +81,7 @@ class GenericGrowthElement(MultiplicativeGroupElement):
 class GenericGrowthGroup(UniqueRepresentation, Parent, WithLocals):
     @staticmethod
     def __classcall__(
-        cls: type[GenericGrowthGroup],
+        class_: type[GenericGrowthGroup],
         base: ElementConstructorInput,
         var: ElementConstructorInput = ...,
         category: Category = ...,
@@ -115,10 +113,10 @@ class GenericGrowthGroup(UniqueRepresentation, Parent, WithLocals):
     def extended_by_non_growth_group(self) -> GenericGrowthGroup: ...
     def non_growth_group(self) -> GenericGrowthGroup: ...
     def _repr_(self, condense: Ring = ...) -> str: ...
-    def _an_element_(self) -> Self: ...
+    def _an_element_(self) -> GenericGrowthElement: ...
     def _element_constructor_(
         self, data: Ring, raw_element: Ring | None = ...
-    ) -> GenericGrowthElement | Ring | one: ...
+    ) -> GenericGrowthElement: ...
     def _coerce_map_from_(self, S: Ring | Parent) -> bool: ...
 
 class AbstractGrowthGroupFunctor(ConstructionFunctor):
