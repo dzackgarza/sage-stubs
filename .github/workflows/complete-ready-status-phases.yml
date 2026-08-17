@@ -1,0 +1,72 @@
+name: Complete phases with all task rows done
+
+on:
+  push:
+    branches: [phase-ready-status-loop]
+    paths:
+      - .github/workflows/complete-ready-status-phases.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  complete-ready:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Commit and push each ready phase immediately
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          git switch -C complete-ready-status-phases origin/main
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          import subprocess
+
+          def number(path: Path) -> int:
+              match = re.search(r'phase-(\d+)', path.name)
+              if not match:
+                  raise ValueError(path)
+              return int(match.group(1))
+
+          for plan in sorted(Path('.agents/phases').glob('phase-*.md'), key=number):
+              text = plan.read_text()
+              status = re.search(r'^\*\*Status:\*\*\s*(.+)$', text, re.MULTILINE)
+              if status and '✅ Complete' in status.group(1):
+                  continue
+
+              task_rows = re.findall(
+                  r'^\| (T\d+\.\d+) \|.*?\|\s*([^|]+?)\s*\|',
+                  text,
+                  re.MULTILINE,
+              )
+              if not task_rows:
+                  break
+              if any('✅ Done' not in row_status for _, row_status in task_rows):
+                  break
+
+              updated = re.sub(
+                  r'^(\*\*Status:\*\*)\s*.*$',
+                  r'\1 ✅ Complete',
+                  text,
+                  count=1,
+                  flags=re.MULTILINE,
+              )
+              plan.write_text(updated)
+              phase = number(plan)
+              subprocess.run(['git', 'add', str(plan)], check=True)
+              subprocess.run(
+                  ['git', 'commit', '-m', f'chore: mark Phase {phase:02d} complete'],
+                  check=True,
+              )
+              subprocess.run(['git', 'push', 'origin', 'HEAD:main'], check=True)
+          PY
