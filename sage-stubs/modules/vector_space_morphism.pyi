@@ -1,33 +1,59 @@
-from typing import Generic, Self, TypeVar
+from collections.abc import Callable, Sequence
+from typing import Generic, Literal, TypeVar, overload
 
-from sage.matrix.matrix import Matrix
-from sage.modules.free_module import FreeModule_submodule, VectorSpace
+from sage.matrix.matrix0 import Matrix
+from sage.modules.free_module import VectorSpace
 from sage.modules.free_module_element import FreeModuleElement
 from sage.modules.free_module_morphism import FreeModuleMorphism
-from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.structure.element import FieldElement
+from sage.structure.element import ElementConstructorInput, FieldElement, RingElement
 
 _Scalar = TypeVar("_Scalar", bound=FieldElement, default=FieldElement)
+_RingScalar = TypeVar("_RingScalar", bound=RingElement)
 
+type MatrixSide = Literal["left", "right"]
+type LinearTransformationRule[_Scalar: FieldElement] = (
+    Matrix[_Scalar]
+    | Sequence[
+        FreeModuleElement[_Scalar]
+        | Sequence[ElementConstructorInput]
+    ]
+    | Callable[
+        [FreeModuleElement[_Scalar]],
+        FreeModuleElement[_Scalar]
+        | Sequence[ElementConstructorInput],
+    ]
+)
+
+@overload
+def linear_transformation(
+    arg0: Matrix[_RingScalar],
+    arg1: None = ...,
+    arg2: None = ...,
+    side: MatrixSide = ...,
+) -> VectorSpaceMorphism[FieldElement]: ...
+@overload
+def linear_transformation(
+    arg0: VectorSpace[_Scalar],
+    arg1: VectorSpace[_Scalar],
+    arg2: LinearTransformationRule[_Scalar],
+    side: MatrixSide = ...,
+) -> VectorSpaceMorphism[_Scalar]: ...
 
 class VectorSpaceMorphism(
     FreeModuleMorphism[_Scalar],
     Generic[_Scalar],
 ):
+    def __init__(
+        self,
+        homspace: VectorSpaceHomspace[_Scalar],
+        A: Matrix[_Scalar],
+        side: MatrixSide = ...,
+    ) -> None: ...
+    def parent(self) -> VectorSpaceHomspace[_Scalar]: ...
     def domain(self) -> VectorSpace[_Scalar]: ...
     def codomain(self) -> VectorSpace[_Scalar]: ...
-    def matrix(self, side: str | None = ...) -> Matrix[_Scalar]: ...
-    def kernel(self) -> FreeModule_submodule[_Scalar]: ...
-    def image(self) -> FreeModule_submodule[_Scalar]: ...
-    range = image
-    def rank(self) -> int: ...
-    def nullity(self) -> int: ...
-    def characteristic_polynomial(self, var: str = ...) -> Polynomial: ...
-    charpoly = characteristic_polynomial
-    def minimal_polynomial(self, var: str = ...) -> Polynomial: ...
-    minpoly = minimal_polynomial
-    def eigenvalues(self) -> list[_Scalar]: ...
-    def eigenvectors(self) -> list[tuple[_Scalar, list[FreeModuleElement[_Scalar]], int]]: ...
-    def is_diagonalizable(self) -> bool: ...
-    def inverse(self) -> Self: ...
-    __invert__ = inverse
+    def is_invertible(self) -> bool: ...
+    def _latex_(self) -> str: ...
+    def _repr_(self) -> str: ...
+
+from sage.modules.vector_space_homspace import VectorSpaceHomspace
