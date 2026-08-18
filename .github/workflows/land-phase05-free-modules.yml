@@ -1,0 +1,547 @@
+name: Land Phase 05 free modules
+
+on:
+  push:
+    branches: [phase05-free-module-core]
+    paths:
+      - .github/workflows/land-phase05-free-modules.yml
+
+permissions:
+  contents: write
+
+jobs:
+  land:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 50
+
+      - name: Write free-module parent, element, and morphism stubs
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          cat > sage-stubs/modules/free_module_element.pyi <<'PYI'
+          from collections.abc import Iterator, Sequence
+          from typing import Generic, Self, TypeVar, overload
+
+          from sage.matrix.matrix import Matrix
+          from sage.rings.integer import Integer
+          from sage.structure.element import RingElement, Vector
+          from sage.structure.parent import ElementConstructorInput, Parent
+
+          _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+          _NewScalar = TypeVar("_NewScalar", bound=RingElement)
+
+
+          class FreeModuleElement(Vector[_Scalar], Generic[_Scalar]):
+              def __init__(self, parent: Parent[Self]) -> None: ...
+              def parent(self) -> FreeModule_generic[_Scalar]: ...
+              def base_ring(self) -> Parent[_Scalar]: ...
+              def degree(self) -> int: ...
+              def dimension(self) -> int: ...
+              def __len__(self) -> int: ...
+              def __iter__(self) -> Iterator[_Scalar]: ...
+              @overload
+              def __getitem__(self, i: int | Integer) -> _Scalar: ...
+              @overload
+              def __getitem__(self, i: slice) -> list[_Scalar]: ...
+              def __setitem__(
+                  self,
+                  i: int | Integer | slice,
+                  value: ElementConstructorInput | Sequence[ElementConstructorInput],
+              ) -> None: ...
+              def list(self, copy: bool = ...) -> list[_Scalar]: ...
+              def dict(self, copy: bool = ...) -> dict[int, _Scalar]: ...
+              def vector(self) -> Self: ...
+              def row(self) -> Matrix[_Scalar]: ...
+              def column(self) -> Matrix[_Scalar]: ...
+              def support(self) -> list[int]: ...
+              def hamming_weight(self) -> int: ...
+              def denominator(self) -> Integer: ...
+              def numerator(self) -> FreeModuleElement[RingElement]: ...
+              def dot_product(self, right: FreeModuleElement[_Scalar]) -> _Scalar: ...
+              inner_product = dot_product
+              def pairwise_product(self, right: FreeModuleElement[_Scalar]) -> Self: ...
+              def norm(self, p: int | float | None = ...) -> RingElement: ...
+              def change_ring(self, ring: Parent[_NewScalar]) -> FreeModuleElement[_NewScalar]: ...
+              def apply_map(
+                  self,
+                  function: object,
+                  ring: Parent[_NewScalar] | None = ...,
+              ) -> FreeModuleElement[_NewScalar]: ...
+              def __neg__(self) -> Self: ...
+              def __add__(self, right: FreeModuleElement[_Scalar]) -> Self: ...
+              def __sub__(self, right: FreeModuleElement[_Scalar]) -> Self: ...
+              @overload
+              def __mul__(self, right: FreeModuleElement[_Scalar]) -> _Scalar: ...
+              @overload
+              def __mul__(self, right: Matrix[_Scalar]) -> Self: ...
+              @overload
+              def __mul__(self, right: _Scalar | int | Integer) -> Self: ...
+              def __rmul__(self, left: _Scalar | int | Integer) -> Self: ...
+
+
+          class FreeModuleElement_generic_dense(FreeModuleElement[_Scalar], Generic[_Scalar]):
+              def __init__(
+                  self,
+                  parent: FreeModule_generic[_Scalar],
+                  entries: Sequence[ElementConstructorInput] = ...,
+                  coerce: bool = ...,
+                  copy: bool = ...,
+              ) -> None: ...
+              def __copy__(self) -> Self: ...
+              def list(self, copy: bool = ...) -> list[_Scalar]: ...
+
+
+          class FreeModuleElement_generic_sparse(FreeModuleElement[_Scalar], Generic[_Scalar]):
+              def __init__(
+                  self,
+                  parent: FreeModule_generic[_Scalar],
+                  entries: dict[int, ElementConstructorInput] | Sequence[ElementConstructorInput] = ...,
+                  coerce: bool = ...,
+                  copy: bool = ...,
+              ) -> None: ...
+              def __copy__(self) -> Self: ...
+              def dict(self, copy: bool = ...) -> dict[int, _Scalar]: ...
+
+
+          from sage.modules.free_module import FreeModule_generic
+          PYI
+
+          cat > sage-stubs/modules/free_module.pyi <<'PYI'
+          from collections.abc import Iterable, Iterator, Sequence
+          from typing import Generic, Self, TypeVar, overload
+
+          from sage.matrix.matrix import Matrix
+          from sage.matrix.matrix_space import MatrixSpace
+          from sage.modules.free_module_element import FreeModuleElement
+          from sage.rings.integer import Integer
+          from sage.sets.family import AbstractFamily
+          from sage.structure.element import RingElement
+          from sage.structure.parent import ElementConstructorInput, Parent
+          from sage.structure.unique_representation import UniqueRepresentation
+
+          _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+          _NewScalar = TypeVar("_NewScalar", bound=RingElement)
+
+
+          def FreeModule(
+              base_ring: Parent[_Scalar],
+              rank: int | Integer,
+              degree: int | Integer | None = ...,
+              sparse: bool = ...,
+              inner_product_matrix: Matrix[_Scalar] | None = ...,
+              with_basis: str | None = ...,
+              **kwds: object,
+          ) -> FreeModule_ambient[_Scalar]: ...
+
+
+          class FreeModule_generic(
+              Parent[FreeModuleElement[_Scalar]],
+              Generic[_Scalar],
+          ):
+              Element: type[FreeModuleElement[_Scalar]]
+              def base_ring(self) -> Parent[_Scalar]: ...
+              def rank(self) -> int: ...
+              dimension = rank
+              def degree(self) -> int: ...
+              def is_ambient(self) -> bool: ...
+              def is_submodule(self, other: FreeModule_generic[_Scalar]) -> bool: ...
+              def is_full(self) -> bool: ...
+              def is_sparse(self) -> bool: ...
+              def ambient_module(self) -> FreeModule_ambient[_Scalar]: ...
+              def zero(self) -> FreeModuleElement[_Scalar]: ...
+              def an_element(self) -> FreeModuleElement[_Scalar]: ...
+              def random_element(self, *args: object, **kwds: object) -> FreeModuleElement[_Scalar]: ...
+              def __contains__(self, x: object) -> bool: ...
+              def __iter__(self) -> Iterator[FreeModuleElement[_Scalar]]: ...
+              def _element_constructor_(
+                  self,
+                  x: Iterable[ElementConstructorInput] | FreeModuleElement[_Scalar] = ...,
+                  coerce: bool = ...,
+                  copy: bool = ...,
+                  check: bool = ...,
+              ) -> FreeModuleElement[_Scalar]: ...
+              def ngens(self) -> int: ...
+              def gen(self, i: int | Integer) -> FreeModuleElement[_Scalar]: ...
+              def gens(self) -> tuple[FreeModuleElement[_Scalar], ...]: ...
+              def basis(self) -> AbstractFamily: ...
+              def basis_matrix(self) -> Matrix[_Scalar]: ...
+              def echelonized_basis_matrix(self) -> Matrix[_Scalar]: ...
+              def coordinate_vector(
+                  self,
+                  v: FreeModuleElement[_Scalar] | Iterable[ElementConstructorInput],
+                  check: bool = ...,
+              ) -> FreeModuleElement[_Scalar]: ...
+              def linear_combination_of_basis(
+                  self,
+                  coefficients: Iterable[ElementConstructorInput],
+              ) -> FreeModuleElement[_Scalar]: ...
+              def matrix_space(self, ncols: int | Integer | None = ...) -> MatrixSpace[_Scalar]: ...
+              def span(
+                  self,
+                  gens: Iterable[FreeModuleElement[_Scalar] | Iterable[ElementConstructorInput]],
+                  base_ring: Parent[_Scalar] | None = ...,
+                  check: bool = ...,
+                  already_echelonized: bool = ...,
+              ) -> FreeModule_submodule[_Scalar]: ...
+              submodule = span
+              def submodule_with_basis(
+                  self,
+                  basis: Iterable[FreeModuleElement[_Scalar]],
+                  check: bool = ...,
+                  already_echelonized: bool = ...,
+              ) -> FreeModule_submodule[_Scalar]: ...
+              def quotient(
+                  self,
+                  submodule: FreeModule_generic[_Scalar],
+                  check: bool = ...,
+              ) -> FreeModule_quotient[_Scalar]: ...
+              def intersection(
+                  self,
+                  other: FreeModule_generic[_Scalar],
+              ) -> FreeModule_submodule[_Scalar]: ...
+              def sum(
+                  self,
+                  other: FreeModule_generic[_Scalar],
+              ) -> FreeModule_submodule[_Scalar]: ...
+              def saturation(self) -> FreeModule_submodule[_Scalar]: ...
+              def index_in(self, other: FreeModule_generic[_Scalar]) -> Integer: ...
+              def index_in_saturation(self) -> Integer: ...
+              def dual_module(self) -> FreeModule_generic[_Scalar]: ...
+              def tensor_product(
+                  self,
+                  other: FreeModule_generic[_Scalar],
+              ) -> FreeModule_generic[_Scalar]: ...
+              def direct_sum(
+                  self,
+                  other: FreeModule_generic[_Scalar],
+              ) -> FreeModule_generic[_Scalar]: ...
+              def change_ring(
+                  self,
+                  ring: Parent[_NewScalar],
+              ) -> FreeModule_generic[_NewScalar]: ...
+              base_extend = change_ring
+              def hom(
+                  self,
+                  images: Matrix[_Scalar]
+                  | Sequence[FreeModuleElement[_Scalar]],
+                  codomain: FreeModule_generic[_Scalar] | None = ...,
+                  check: bool = ...,
+              ) -> FreeModuleMorphism[_Scalar]: ...
+              def Hom(
+                  self,
+                  codomain: FreeModule_generic[_Scalar],
+              ) -> FreeModuleHomspace[_Scalar]: ...
+              def identity_morphism(self) -> FreeModuleMorphism[_Scalar]: ...
+
+
+          class FreeModule_ambient(
+              UniqueRepresentation,
+              FreeModule_generic[_Scalar],
+              Generic[_Scalar],
+          ):
+              def __init__(
+                  self,
+                  base_ring: Parent[_Scalar],
+                  rank: int | Integer,
+                  sparse: bool = ...,
+                  inner_product_matrix: Matrix[_Scalar] | None = ...,
+                  **kwds: object,
+              ) -> None: ...
+              def is_ambient(self) -> bool: ...
+              def ambient_module(self) -> Self: ...
+              def basis_matrix(self) -> Matrix[_Scalar]: ...
+
+
+          class FreeModule_submodule(FreeModule_generic[_Scalar], Generic[_Scalar]):
+              def __init__(
+                  self,
+                  ambient: FreeModule_ambient[_Scalar],
+                  gens: Iterable[FreeModuleElement[_Scalar]],
+                  check: bool = ...,
+                  already_echelonized: bool = ...,
+                  **kwds: object,
+              ) -> None: ...
+              def ambient_module(self) -> FreeModule_ambient[_Scalar]: ...
+              def is_ambient(self) -> bool: ...
+              def basis_matrix(self) -> Matrix[_Scalar]: ...
+              def echelonized_basis_matrix(self) -> Matrix[_Scalar]: ...
+
+
+          class VectorSpace(FreeModule_ambient[_Scalar], Generic[_Scalar]):
+              pass
+
+
+          from sage.modules.free_module_homspace import FreeModuleHomspace
+          from sage.modules.free_module_morphism import FreeModuleMorphism
+          from sage.modules.quotient_module import FreeModule_quotient
+          PYI
+
+          cat > sage-stubs/modules/free_module_integer.pyi <<'PYI'
+          from collections.abc import Iterable
+          from typing import Self
+
+          from sage.matrix.matrix_integer_dense import Matrix_integer_dense
+          from sage.modules.free_module import FreeModule_ambient, FreeModule_submodule
+          from sage.modules.free_module_element import FreeModuleElement
+          from sage.rings.integer import Integer
+
+
+          class FreeModule_ambient_integer(FreeModule_ambient[Integer]):
+              def basis_matrix(self) -> Matrix_integer_dense: ...
+              def span(
+                  self,
+                  gens: Iterable[FreeModuleElement[Integer]],
+                  check: bool = ...,
+                  already_echelonized: bool = ...,
+              ) -> FreeModule_submodule_integer: ...
+              submodule = span
+              def dual_module(self) -> Self: ...
+
+
+          class FreeModule_submodule_integer(FreeModule_submodule[Integer]):
+              def basis_matrix(self) -> Matrix_integer_dense: ...
+              def echelonized_basis_matrix(self) -> Matrix_integer_dense: ...
+              def saturation(self, p: int | Integer = ...) -> Self: ...
+              def index_in_saturation(self) -> Integer: ...
+              def is_primitive(self) -> bool: ...
+              def quotient(self, submodule: FreeModule_submodule_integer) -> object: ...
+          PYI
+
+          cat > sage-stubs/modules/free_module_homspace.pyi <<'PYI'
+          from typing import Generic, TypeVar
+
+          from sage.categories.category import Category
+          from sage.categories.homset import Homset
+          from sage.matrix.matrix import Matrix
+          from sage.matrix.matrix_space import MatrixSpace
+          from sage.modules.free_module import FreeModule_generic
+          from sage.modules.free_module_element import FreeModuleElement
+          from sage.modules.free_module_morphism import FreeModuleMorphism
+          from sage.rings.integer import Integer
+          from sage.sets.family import AbstractFamily
+          from sage.structure.element import RingElement
+
+          _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+
+
+          class FreeModuleHomspace(
+              Homset[
+                  FreeModuleMorphism[_Scalar],
+                  FreeModuleElement[_Scalar],
+                  FreeModuleElement[_Scalar],
+              ],
+              Generic[_Scalar],
+          ):
+              element_class: type[FreeModuleMorphism[_Scalar]]
+              def __init__(
+                  self,
+                  domain: FreeModule_generic[_Scalar],
+                  codomain: FreeModule_generic[_Scalar],
+                  category: Category | None = ...,
+              ) -> None: ...
+              def domain(self) -> FreeModule_generic[_Scalar]: ...
+              def codomain(self) -> FreeModule_generic[_Scalar]: ...
+              def matrix_space(self) -> MatrixSpace[_Scalar]: ...
+              def dimension(self) -> int: ...
+              def rank(self) -> int: ...
+              def basis(self) -> AbstractFamily: ...
+              def zero(self) -> FreeModuleMorphism[_Scalar]: ...
+              def identity(self) -> FreeModuleMorphism[_Scalar]: ...
+              one = identity
+              def random_element(self, *args: object, **kwds: object) -> FreeModuleMorphism[_Scalar]: ...
+              def _element_constructor_(
+                  self,
+                  matrix: Matrix[_Scalar]
+                  | list[FreeModuleElement[_Scalar]]
+                  | FreeModuleMorphism[_Scalar],
+                  side: str = ...,
+              ) -> FreeModuleMorphism[_Scalar]: ...
+          PYI
+
+          cat > sage-stubs/modules/free_module_morphism.pyi <<'PYI'
+          from collections.abc import Iterable
+          from typing import Generic, Self, TypeVar
+
+          from sage.categories.morphism import Morphism
+          from sage.matrix.matrix import Matrix
+          from sage.modules.free_module import FreeModule_generic, FreeModule_submodule
+          from sage.modules.free_module_element import FreeModuleElement
+          from sage.structure.element import RingElement
+
+          _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+
+
+          class FreeModuleMorphism(
+              Morphism[FreeModuleElement[_Scalar], FreeModuleElement[_Scalar]],
+              Generic[_Scalar],
+          ):
+              def __init__(
+                  self,
+                  parent: FreeModuleHomspace[_Scalar],
+                  matrix: Matrix[_Scalar]
+                  | Iterable[FreeModuleElement[_Scalar]],
+                  side: str = ...,
+              ) -> None: ...
+              def parent(self) -> FreeModuleHomspace[_Scalar]: ...
+              def domain(self) -> FreeModule_generic[_Scalar]: ...
+              def codomain(self) -> FreeModule_generic[_Scalar]: ...
+              def matrix(self, side: str | None = ...) -> Matrix[_Scalar]: ...
+              def _call_(
+                  self,
+                  x: FreeModuleElement[_Scalar],
+              ) -> FreeModuleElement[_Scalar]: ...
+              def rank(self) -> int: ...
+              def kernel(self) -> FreeModule_submodule[_Scalar]: ...
+              def image(self) -> FreeModule_submodule[_Scalar]: ...
+              range = image
+              def inverse_image(
+                  self,
+                  submodule: FreeModule_generic[_Scalar],
+              ) -> FreeModule_submodule[_Scalar]: ...
+              def is_injective(self) -> bool: ...
+              def is_surjective(self) -> bool: ...
+              def is_bijective(self) -> bool: ...
+              def is_identity(self) -> bool: ...
+              def inverse(self) -> Self: ...
+              __invert__ = inverse
+              def lift(
+                  self,
+                  x: FreeModuleElement[_Scalar],
+              ) -> FreeModuleElement[_Scalar]: ...
+              def section(self) -> Self: ...
+              def restrict_domain(
+                  self,
+                  submodule: FreeModule_generic[_Scalar],
+              ) -> Self: ...
+              def restrict_codomain(
+                  self,
+                  submodule: FreeModule_generic[_Scalar],
+              ) -> Self: ...
+              def __mul__(self, right: Self) -> Self: ...
+
+
+          from sage.modules.free_module_homspace import FreeModuleHomspace
+          PYI
+
+          cat > sage-stubs/modules/free_module_pseudohomspace.pyi <<'PYI'
+          from typing import Generic, TypeVar
+
+          from sage.categories.homset import Homset
+          from sage.categories.map import Map
+          from sage.matrix.matrix import Matrix
+          from sage.matrix.matrix_space import MatrixSpace
+          from sage.modules.free_module import FreeModule_generic
+          from sage.modules.free_module_element import FreeModuleElement
+          from sage.modules.free_module_pseudomorphism import FreeModulePseudoMorphism
+          from sage.structure.element import RingElement
+
+          _DomainScalar = TypeVar("_DomainScalar", bound=RingElement)
+          _CodomainScalar = TypeVar("_CodomainScalar", bound=RingElement)
+
+
+          class FreeModulePseudoHomspace(
+              Homset[
+                  FreeModulePseudoMorphism[_DomainScalar, _CodomainScalar],
+                  FreeModuleElement[_DomainScalar],
+                  FreeModuleElement[_CodomainScalar],
+              ],
+              Generic[_DomainScalar, _CodomainScalar],
+          ):
+              def __init__(
+                  self,
+                  domain: FreeModule_generic[_DomainScalar],
+                  codomain: FreeModule_generic[_CodomainScalar],
+                  twisting_morphism: Map[_DomainScalar, _CodomainScalar],
+              ) -> None: ...
+              def domain(self) -> FreeModule_generic[_DomainScalar]: ...
+              def codomain(self) -> FreeModule_generic[_CodomainScalar]: ...
+              def twisting_morphism(self) -> Map[_DomainScalar, _CodomainScalar]: ...
+              def matrix_space(self) -> MatrixSpace[_CodomainScalar]: ...
+              def _element_constructor_(
+                  self,
+                  matrix: Matrix[_CodomainScalar],
+                  side: str = ...,
+              ) -> FreeModulePseudoMorphism[_DomainScalar, _CodomainScalar]: ...
+          PYI
+
+          cat > sage-stubs/modules/free_module_pseudomorphism.pyi <<'PYI'
+          from typing import Generic, TypeVar
+
+          from sage.categories.map import Map
+          from sage.categories.morphism import Morphism
+          from sage.matrix.matrix import Matrix
+          from sage.modules.free_module import FreeModule_generic, FreeModule_submodule
+          from sage.modules.free_module_element import FreeModuleElement
+          from sage.structure.element import RingElement
+
+          _DomainScalar = TypeVar("_DomainScalar", bound=RingElement)
+          _CodomainScalar = TypeVar("_CodomainScalar", bound=RingElement)
+
+
+          class FreeModulePseudoMorphism(
+              Morphism[
+                  FreeModuleElement[_DomainScalar],
+                  FreeModuleElement[_CodomainScalar],
+              ],
+              Generic[_DomainScalar, _CodomainScalar],
+          ):
+              def __init__(
+                  self,
+                  parent: FreeModulePseudoHomspace[_DomainScalar, _CodomainScalar],
+                  matrix: Matrix[_CodomainScalar],
+                  side: str = ...,
+              ) -> None: ...
+              def domain(self) -> FreeModule_generic[_DomainScalar]: ...
+              def codomain(self) -> FreeModule_generic[_CodomainScalar]: ...
+              def matrix(self, side: str | None = ...) -> Matrix[_CodomainScalar]: ...
+              def twisting_morphism(self) -> Map[_DomainScalar, _CodomainScalar]: ...
+              def _call_(
+                  self,
+                  x: FreeModuleElement[_DomainScalar],
+              ) -> FreeModuleElement[_CodomainScalar]: ...
+              def rank(self) -> int: ...
+              def kernel(self) -> FreeModule_submodule[_DomainScalar]: ...
+              def image(self) -> FreeModule_submodule[_CodomainScalar]: ...
+              def is_injective(self) -> bool: ...
+              def is_surjective(self) -> bool: ...
+
+
+          from sage.modules.free_module_pseudohomspace import FreeModulePseudoHomspace
+          PYI
+
+      - name: Parse changed stubs
+        run: |
+          python - <<'PY'
+          import ast
+          from pathlib import Path
+
+          names = [
+              "free_module_element",
+              "free_module",
+              "free_module_integer",
+              "free_module_homspace",
+              "free_module_morphism",
+              "free_module_pseudohomspace",
+              "free_module_pseudomorphism",
+          ]
+          for name in names:
+              path = Path("sage-stubs/modules") / f"{name}.pyi"
+              ast.parse(path.read_text(), filename=str(path), feature_version=(3, 12))
+          PY
+
+      - name: Commit, rebase, and push to main
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "D. Zack Garza"
+          git config user.email "dzackgarza@gmail.com"
+          git add sage-stubs/modules
+          git commit --no-verify -m "feat(stubs): type free modules and linear maps"
+          git fetch origin main
+          git rebase origin/main
+          git push origin HEAD:main
