@@ -1,82 +1,71 @@
+from collections.abc import Iterable, Iterator, Mapping
 from typing import Self
 
 from sage.categories.category import Category
 from sage.combinat.posets.cartesian_product import CartesianProductPoset
-from sage.rings.asymptotic.asymptotic_ring import AsymptoticRing
 from sage.rings.asymptotic.growth_group import GenericGrowthElement, GenericGrowthGroup
+from sage.rings.asymptotic.misc import LocalValue
 from sage.rings.integer import Integer
 from sage.rings.rational import Rational
-from sage.rings.ring import Ring
+from sage.structure.element import RingElement
 from sage.structure.factory import UniqueFactory
 from sage.structure.parent import ElementConstructorInput, Parent
-from sage.structure.sage_object import SageObject
 
 class CartesianProductFactory(UniqueFactory):
     def create_key_and_extra_args(
         self,
-        growth_groups: ElementConstructorInput,
-        category: Category,
+        growth_groups: Iterable[GenericGrowthGroup],
+        category: Category | tuple[Category, ...],
         **kwds: ElementConstructorInput,
-    ) -> AsymptoticRing: ...
+    ) -> tuple[
+        tuple[tuple[GenericGrowthGroup, ...], Category],
+        dict[str, ElementConstructorInput],
+    ]: ...
     def create_object(
         self,
         version: int | tuple[int, ...],
-        args: ElementConstructorInput,
+        args: tuple[tuple[GenericGrowthGroup, ...], Category],
         **kwds: ElementConstructorInput,
-    ) -> CartesianProductFactory: ...
+    ) -> GenericGrowthGroup: ...
 
-CartesianProductGrowthGroups: GenericGrowthElement
+CartesianProductGrowthGroups: CartesianProductFactory
 
 class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
-    def __init__(
-        self,
-        sets: ElementConstructorInput,
-        category: Category,
-        **kwds: ElementConstructorInput,
-    ) -> None: ...
-    def some_elements(self) -> list[GenericGrowthElement]: ...
-    def cartesian_injection(
-        self, factor: Ring, element: GenericGrowthElement | ElementConstructorInput
-    ) -> GenericGrowthElement: ...
-    def gens_monomial(self) -> tuple[GenericGrowthElement, ...]: ...
-    def variable_names(self) -> tuple[str, ...]: ...
-
-    class Element(SageObject):
-        is_lt_one: bool
-
+    class Element(CartesianProductPoset.Element):
+        def parent(self) -> GenericProduct: ...
+        def _repr_(self, latex: bool = ...) -> str: ...
+        def _latex_(self) -> str: ...
         def __pow__(self, exponent: int | Integer | Rational) -> Self: ...
-        def factors(
+        def factors(self) -> tuple[GenericGrowthElement, ...]: ...
+        def is_lt_one(self) -> bool: ...
+        def log(self, base: ElementConstructorInput | None = ...) -> GenericGrowthElement: ...
+        def log_factor(
             self,
-        ) -> tuple[GenericGrowthElement, ...] | list[GenericGrowthElement]: ...
-        log: Self
-        log_factor: Self
-        rpow: Self
-
-        def exp(self) -> Self: ...
+            base: ElementConstructorInput | None = ...,
+            locals: Mapping[str, LocalValue] | None = ...,
+        ) -> tuple[tuple[GenericGrowthElement, RingElement], ...]: ...
+        def rpow(self, base: ElementConstructorInput) -> GenericGrowthElement: ...
+        def exp(self) -> GenericGrowthElement: ...
         def __invert__(self) -> Self: ...
         def variable_names(self) -> tuple[str, ...]: ...
 
-    CartesianProduct: GenericGrowthElement
-
-    def _element_constructor_(
-        self, data: ElementConstructorInput
-    ) -> GenericProduct.Element: ...
-    def _coerce_map_from_(self, S: Ring | Parent) -> bool: ...
-
-class UnivariateProduct(GenericProduct):
+    Element: type[Element]
     def __init__(
         self,
-        sets: ElementConstructorInput,
+        sets: Iterable[GenericGrowthGroup],
         category: Category,
-        **kwargs: ElementConstructorInput,
+        **kwds: ElementConstructorInput,
     ) -> None: ...
-    CartesianProduct: GenericGrowthElement
-
-class MultivariateProduct(GenericProduct):
-    def __init__(
+    def some_elements(self) -> Iterator[Element]: ...
+    def _element_constructor_(self, data: ElementConstructorInput) -> Element: ...
+    def cartesian_injection(
         self,
-        sets: ElementConstructorInput,
-        category: Category,
-        **kwargs: ElementConstructorInput,
-    ) -> None: ...
-    CartesianProduct: GenericGrowthElement
+        factor: GenericGrowthGroup,
+        element: ElementConstructorInput,
+    ) -> Element: ...
+    def _coerce_map_from_(self, S: Parent) -> bool | None: ...
+    def gens_monomial(self) -> tuple[Element, ...]: ...
+    def variable_names(self) -> tuple[str, ...]: ...
+
+class UnivariateProduct(GenericProduct): ...
+class MultivariateProduct(GenericProduct): ...
