@@ -1,126 +1,168 @@
-from collections.abc import Iterator, Sequence
-from typing import Self, TypeVar
-from sage.matrix.matrix0 import Matrix
+from collections.abc import Sequence
+from typing import Literal, Self, overload
+
+from sage.matrix.matrix_dense import Matrix_dense
 from sage.modules.free_module import FreeModule_generic
 from sage.modules.free_module_element import FreeModuleElement
-from sage.modules.free_module_homspace import FreeModuleHomspace
+from sage.rings.fraction_field_element import FractionFieldElement
+from sage.rings.ideal import Ideal_generic
 from sage.rings.integer import Integer
 from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.rings.rational import Rational
-from sage.rings.real_double import RealDoubleElement
-from sage.rings.complex_double import ComplexDoubleElement
-from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
-from sage.rings.ring import Ring
-from sage.structure.element import RingElement
-from sage.structure.parent import ElementConstructorInput
-from sage.structure.sage_object import SageObject
-from sage.symbolic.expression import Expression
+from sage.structure.parent import ElementConstructorInput, Parent
 
-_Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
 
-from sage.matrix.matrix import Matrix_dense
-from sage.matrix.matrix_rational_dense import Matrix_rational_dense
-from sage.rings.ideal import Ideal_generic
-
-class Matrix_integer_dense(Matrix_dense):
+class Matrix_integer_dense(Matrix_dense[Integer]):
     def __init__(
         self,
-        parent: ElementConstructorInput,
-        entries: FreeModuleElement[Integer] | Sequence[Integer] = None,
-        copy: bool | None = None,
-        coerce: bool = True,
+        parent: Parent[Self],
+        entries: Sequence[int | Integer] | ElementConstructorInput = ...,
+        copy: bool = ...,
+        coerce: bool = ...,
     ) -> None: ...
-    def __copy__(self) -> Matrix_integer_dense: ...
-    def __bool__(self) -> bool: ...
-    def is_one(self) -> bool: ...
-    def __pow__(
-        self, n: int, dummy: ElementConstructorInput = None
-    ) -> Matrix_integer_dense: ...
-    def __neg__(self) -> Matrix_integer_dense: ...
-    def is_primitive(self) -> bool: ...
-    def charpoly(self, var: str = "x", algorithm: str | None = None) -> Polynomial: ...
-    def minpoly(self, var: str = "x", algorithm: str | None = None) -> Polynomial: ...
+    def __copy__(self) -> Self: ...
+    def list(self) -> list[Integer]: ...
+    def row(self, i: int, from_list: bool = ...) -> FreeModuleElement[Integer]: ...
+    def column(self, j: int, from_list: bool = ...) -> FreeModuleElement[Integer]: ...
+    def transpose(self) -> Self: ...
+    def antitranspose(self) -> Self: ...
+    def trace(self) -> Integer: ...
+    def determinant(
+        self,
+        algorithm: str = ...,
+        proof: bool | None = ...,
+        stabilize: int = ...,
+    ) -> Integer: ...
+    det = determinant
+    def rank(self, algorithm: str = ...) -> int: ...
     def height(self) -> Integer: ...
-    def symplectic_form(self) -> Matrix_integer_dense: ...
-    def echelon_form(
+    def content(self) -> Integer: ...
+    gcd = content
+    def characteristic_polynomial(
         self,
-        algorithm: str = "default",
-        proof: bool | None = None,
-        include_zero_rows: bool = True,
-        **kwds: ElementConstructorInput,
-    ) -> Matrix_integer_dense: ...
-    def saturation(
-        self, p: int = 0, proof: bool | None = None, max_dets: int = 5
-    ) -> Matrix_integer_dense: ...
-    def index_in_saturation(self, proof: bool | None = None) -> Integer: ...
-    def pivots(self) -> tuple[int, ...]: ...
-    def elementary_divisors(self, algorithm: str = "pari") -> list[Integer]: ...
+        var: str = ...,
+        algorithm: str | None = ...,
+    ) -> Polynomial: ...
+    charpoly = characteristic_polynomial
+    def minimal_polynomial(
+        self,
+        var: str = ...,
+        algorithm: str | None = ...,
+    ) -> Polynomial: ...
+    minpoly = minimal_polynomial
+    def elementary_divisors(self, algorithm: str = ...) -> list[Integer]: ...
+
+    @overload
+    def hermite_form(
+        self,
+        algorithm: str = ...,
+        proof: bool | None = ...,
+        include_zero_rows: bool = ...,
+        transformation: Literal[False] = ...,
+        **kwds: object,
+    ) -> Self: ...
+    @overload
+    def hermite_form(
+        self,
+        algorithm: str,
+        proof: bool | None,
+        include_zero_rows: bool,
+        transformation: Literal[True],
+        **kwds: object,
+    ) -> tuple[Self, Self]: ...
+
+    @overload
     def smith_form(
-        self, transformation: bool = True, integral: bool | None = None
-    ) -> (
-        tuple[Matrix_integer_dense, Matrix_integer_dense, Matrix_integer_dense]
-        | Matrix_integer_dense
-    ): ...
-    def frobenius_form(self, flag: int = 0, var: str = "x") -> Matrix_integer_dense: ...
-    def BKZ(
         self,
-        delta: float | None = None,
-        algorithm: str = "fpLLL",
-        fp: str | None = None,
-        block_size: int = 10,
-        prune: int = 0,
-        use_givens: bool = False,
-        proof: bool | None = None,
-    ) -> Matrix_integer_dense: ...
+        transformation: Literal[False] = ...,
+        integral: bool | None = ...,
+    ) -> Self: ...
+    @overload
+    def smith_form(
+        self,
+        transformation: Literal[True],
+        integral: bool | None = ...,
+    ) -> tuple[Self, Self, Self]: ...
+
+    def saturation(
+        self,
+        p: int | Integer = ...,
+        proof: bool | None = ...,
+        max_dets: int = ...,
+    ) -> Self: ...
+    def index_in_saturation(self, proof: bool | None = ...) -> Integer: ...
+    def is_primitive(self) -> bool: ...
+    def symplectic_form(self) -> Self: ...
+
+    @overload
     def LLL(
         self,
-        delta: float | None = None,
-        eta: float | None = None,
-        algorithm: str = "fpLLL:wrapper",
-        fp: str | None = None,
-        prec: int = 0,
-        early_red: bool = False,
-        use_givens: bool = False,
-        use_siegel: bool = False,
-        transformation: bool = False,
-        **kwds: ElementConstructorInput,
-    ) -> Matrix_integer_dense | tuple[Matrix_integer_dense, Matrix_integer_dense]: ...
+        delta: float | None = ...,
+        eta: float | None = ...,
+        algorithm: str = ...,
+        fp: str | None = ...,
+        prec: int = ...,
+        early_red: bool = ...,
+        use_givens: bool = ...,
+        use_siegel: bool = ...,
+        transformation: Literal[False] = ...,
+        **kwds: object,
+    ) -> Self: ...
+    @overload
+    def LLL(
+        self,
+        delta: float | None,
+        eta: float | None,
+        algorithm: str,
+        fp: str | None,
+        prec: int,
+        early_red: bool,
+        use_givens: bool,
+        use_siegel: bool,
+        transformation: Literal[True],
+        **kwds: object,
+    ) -> tuple[Self, Self]: ...
+    def BKZ(
+        self,
+        delta: float | None = ...,
+        algorithm: str = ...,
+        fp: str | None = ...,
+        block_size: int = ...,
+        prune: int = ...,
+        use_givens: bool = ...,
+        proof: bool | None = ...,
+    ) -> Self: ...
     def is_LLL_reduced(
         self,
-        delta: float | None = None,
-        eta: float | None = None,
-        algorithm: str = "fpLLL",
+        delta: float | None = ...,
+        eta: float | None = ...,
+        algorithm: str = ...,
     ) -> bool: ...
-    def prod_of_row_sums(self, cols: int | tuple[int, ...]) -> Integer: ...
-    def rational_reconstruction(self, N: Integer) -> Matrix_rational_dense: ...
+
+    def rational_reconstruction(
+        self,
+        modulus: int | Integer,
+    ) -> Matrix_rational_dense: ...
+    def inverse(self) -> Matrix_rational_dense: ...
+    __invert__ = inverse
+    def inverse_of_unit(self) -> Self: ...
+    def decomposition(self, **kwds: object) -> list[FreeModule_generic[Integer]]: ...
     def randomize(
         self,
-        density: float = 1,
-        x: int | None = None,
-        y: int | None = None,
-        distribution: str | None = None,
-        **kwds: ElementConstructorInput,
+        density: float = ...,
+        x: int | None = ...,
+        y: int | None = ...,
+        distribution: str | None = ...,
+        **kwds: object,
     ) -> None: ...
-    def rank(self, algorithm: str = "modp") -> Integer: ...
-    def determinant(
-        self, algorithm: str = "default", proof: bool | None = None, stabilize: int = 2
-    ) -> Integer: ...
-    def __invert__(self) -> Matrix_rational_dense: ...
-    def inverse_of_unit(self) -> Matrix_integer_dense: ...
-    def decomposition(
-        self, **kwds: ElementConstructorInput
-    ) -> list[FreeModule_generic]: ...
-    def row(self, i: int, from_list: bool = False) -> FreeModuleElement[Integer]: ...
-    def column(self, i: int, from_list: bool = False) -> FreeModuleElement[Integer]: ...
-    def augment(
-        self, right: Matrix_dense, subdivide: bool = False
-    ) -> Matrix_integer_dense: ...
-    def insert_row(self, index: int, row: int | Integer) -> Matrix_integer_dense: ...
-    def gcd(self) -> Integer: ...
-    def transpose(self) -> Matrix_integer_dense: ...
-    def antitranspose(self) -> Matrix_integer_dense: ...
     def p_minimal_polynomials(
-        self, p: int, s_max: int | None = None
-    ) -> list[Polynomial]: ...
-    def null_ideal(self, b: int = 0) -> Ideal_generic: ...
-    def integer_valued_polynomials_generators(self) -> list[Polynomial]: ...
+        self,
+        p: int | Integer,
+        s_max: int | Integer | None = ...,
+    ) -> dict[int, Polynomial]: ...
+    def null_ideal(self, b: int | Integer = ...) -> Ideal_generic: ...
+    def integer_valued_polynomials_generators(
+        self,
+    ) -> tuple[Polynomial, list[Polynomial | FractionFieldElement]]: ...
+
+
+from sage.matrix.matrix_rational_dense import Matrix_rational_dense

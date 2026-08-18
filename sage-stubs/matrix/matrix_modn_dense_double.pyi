@@ -1,45 +1,32 @@
-from collections.abc import Iterator, Sequence
-from typing import Self, TypeVar
-from sage.matrix.matrix0 import Matrix
-from sage.modules.free_module import FreeModule_generic
+from collections.abc import Sequence
+from typing import Self
+
+from sage.matrix.matrix_dense import Matrix_dense
 from sage.modules.free_module_element import FreeModuleElement
-from sage.modules.free_module_homspace import FreeModuleHomspace
-from sage.rings.integer import Integer
-from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.rings.rational import Rational
-from sage.rings.real_double import RealDoubleElement
-from sage.rings.complex_double import ComplexDoubleElement
 from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
-from sage.rings.ring import Ring
-from sage.structure.element import RingElement
-from sage.structure.parent import ElementConstructorInput
-from sage.structure.sage_object import SageObject
-from sage.symbolic.expression import Expression
+from sage.rings.polynomial.polynomial_element import Polynomial
+from sage.structure.parent import ElementConstructorInput, Parent
 
-_Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
 
-import builtins
-
-class _SageObject: ...
-
-MAX_MODULUS: _SageObject
-
-class Matrix_modn_dense_double:
-    def __cinit__(self) -> Matrix_modn_dense_double: ...
-    def set_unsafe_int(
-        self, i: builtins.object, j: builtins.object, value: builtins.object
-    ) -> Matrix_modn_dense_double: ...
-    def set_unsafe(
-        self, i: builtins.object, j: builtins.object, x: builtins.object
-    ) -> Matrix_modn_dense_double: ...
-    def get_unsafe(
-        self, i: builtins.object, j: builtins.object
-    ) -> Matrix_modn_dense_double: ...
-    def copy_from_unsafe(
+class Matrix_modn_dense_double(Matrix_dense[IntegerMod_abstract]):
+    def __init__(
         self,
-        iDst: builtins.object,
-        jDst: builtins.object,
-        src: builtins.object,
-        iSrc: builtins.object,
-        jSrc: builtins.object,
-    ) -> Matrix_modn_dense_double: ...
+        parent: Parent[Self],
+        entries: Sequence[ElementConstructorInput] | ElementConstructorInput = ...,
+        copy: bool = ...,
+        coerce: bool = ...,
+    ) -> None: ...
+    def __copy__(self) -> Self: ...
+    def list(self) -> list[IntegerMod_abstract]: ...
+    def row(self, i: int, from_list: bool = ...) -> FreeModuleElement[IntegerMod_abstract]: ...
+    def column(self, j: int, from_list: bool = ...) -> FreeModuleElement[IntegerMod_abstract]: ...
+    def determinant(self, algorithm: str = ...) -> IntegerMod_abstract: ...
+    det = determinant
+    def rank(self, algorithm: str = ...) -> int: ...
+    def echelonize(self, algorithm: str = ..., **kwds: object) -> None: ...
+    def echelon_form(self, algorithm: str = ..., **kwds: object) -> Self: ...
+    def inverse(self) -> Self: ...
+    __invert__ = inverse
+    def characteristic_polynomial(self, var: str = ...) -> Polynomial: ...
+    charpoly = characteristic_polynomial
+    def transpose(self) -> Self: ...
