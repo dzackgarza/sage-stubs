@@ -1,39 +1,42 @@
-from collections.abc import Iterator, Sequence
-from typing import Self, TypeVar
-from sage.matrix.matrix0 import Matrix
-from sage.modules.free_module import FreeModule_generic
-from sage.modules.free_module_element import FreeModuleElement
-from sage.modules.free_module_homspace import FreeModuleHomspace
+from sage.categories.category import Category
+from sage.modules.fp_graded.free_module import FreeGradedModule
+from sage.modules.fp_graded.module import FPModule
+from sage.modules.fp_graded.steenrod.profile import SteenrodProfile
 from sage.rings.integer import Integer
-from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.rings.rational import Rational
-from sage.rings.real_double import RealDoubleElement
-from sage.rings.complex_double import ComplexDoubleElement
-from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
-from sage.rings.ring import Ring
 from sage.structure.element import RingElement
-from sage.structure.parent import ElementConstructorInput
-from sage.structure.sage_object import SageObject
-from sage.symbolic.expression import Expression
-
-_Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
-
-import builtins
-
-class _SageObject: ...
 
 class SteenrodModuleMixin:
-    def profile(self) -> SteenrodFPModule: ...
+    def profile(self) -> SteenrodProfile: ...
     def export_module_definition(
-        self, powers_of_two_only: builtins.bool = ...
-    ) -> SteenrodFPModule: ...
+        self,
+        powers_of_two_only: bool = ...,
+    ) -> str: ...
 
-class SteenrodFPModule:
+class SteenrodFPModule(FPModule[RingElement], SteenrodModuleMixin):
+    def _Hom_(
+        self,
+        other: SteenrodFPModule | SteenrodFreeModule,
+        category: Category | None = ...,
+    ) -> SteenrodFPModuleHomspace: ...
     def resolution(
         self,
-        k: builtins.int,
-        top_dim: builtins.object = ...,
-        verbose: builtins.bool = ...,
-    ) -> SteenrodFPModule: ...
+        k: int,
+        top_dim: int | Integer | None = ...,
+        verbose: bool = ...,
+    ) -> list[SteenrodFPModuleMorphism]: ...
 
-class SteenrodFreeModule: ...
+class SteenrodFreeModule(
+    FreeGradedModule[RingElement],
+    SteenrodModuleMixin,
+):
+    def _Hom_(
+        self,
+        Y: SteenrodFPModule | SteenrodFreeModule,
+        category: Category | None,
+    ) -> SteenrodFreeModuleHomspace: ...
+
+from sage.modules.fp_graded.steenrod.homspace import (
+    SteenrodFPModuleHomspace,
+    SteenrodFreeModuleHomspace,
+)
+from sage.modules.fp_graded.steenrod.morphism import SteenrodFPModuleMorphism
