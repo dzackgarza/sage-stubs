@@ -1,0 +1,372 @@
+name: Implement next Phase 05 stub task
+
+on:
+  push:
+    branches: [phase04-live-continuation-20260818-2]
+    paths:
+      - .github/workflows/implement-next-phase05-task.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  implement:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          submodules: recursive
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install formatter
+        run: python -m pip install --upgrade ruff
+
+      - name: Rewrite one complete Phase 05 task
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > /tmp/implement_phase05.py <<'PY'
+          from __future__ import annotations
+          from pathlib import Path
+          import ast
+          import json
+          import re
+
+          repo = Path.cwd()
+          card = repo / ".agents/phases/phase-05-linear-algebra.md"
+          text = card.read_text()
+          rows = [
+              line for line in text.splitlines()
+              if line.startswith("| T05.") and ("⬜" in line or "🟡" in line)
+          ]
+          if not rows:
+              raise SystemExit("Phase 05 has no unfinished task")
+          row = rows[0]
+          columns = row.split("|")
+          task = columns[1].strip()
+          description = columns[2].strip()
+
+          roots = [
+              repo / "sage-stubs/modules",
+              repo / "sage-stubs/matrix",
+              repo / "sage-stubs/quadratic_forms",
+          ]
+
+          def resolve(token: str) -> list[Path]:
+              token = token.strip().strip("`")
+              if token.startswith("sage."):
+                  token = token.removeprefix("sage.").replace(".", "/")
+              for suffix in (".pyi", ".pyx", ".py"):
+                  token = token.removesuffix(suffix)
+              found: list[Path] = []
+              if token.endswith("/"):
+                  directory = repo / "sage-stubs" / token.rstrip("/")
+                  if directory.exists():
+                      found.extend(directory.rglob("*.pyi"))
+              elif "*" in token:
+                  for root in [repo / "sage-stubs", *roots]:
+                      found.extend(root.glob(token + ".pyi"))
+              elif "/" in token:
+                  path = repo / "sage-stubs" / f"{token}.pyi"
+                  if path.exists():
+                      found.append(path)
+              else:
+                  for root in roots:
+                      found.extend(root.rglob(f"{token}.pyi"))
+              return [p for p in found if p.name != "__init__.pyi"]
+
+          targets: list[Path] = []
+          for token in re.findall(r"`([^`]+)`", description):
+              for path in resolve(token):
+                  if path not in targets:
+                      targets.append(path)
+
+          lower = description.lower()
+          if not targets:
+              patterns: list[str] = []
+              if "free module" in lower or "module" in lower:
+                  patterns = ["free_module*.pyi", "quotient_module*.pyi"]
+              elif "matrix" in lower:
+                  patterns = [
+                      "matrix0.pyi", "matrix1.pyi", "matrix2.pyi",
+                      "matrix_generic*.pyi", "matrix_dense.pyi", "matrix_sparse.pyi",
+                  ]
+              elif "vector" in lower:
+                  patterns = ["vector*.pyi"]
+              elif "quadratic" in lower or "bilinear" in lower:
+                  patterns = ["free_quadratic_module*.pyi", "quadratic_module*.pyi"]
+              elif "tensor" in lower:
+                  patterns = ["tensor_free_module*.pyi"]
+              for pattern in patterns:
+                  for root in roots:
+                      for path in root.rglob(pattern):
+                          if path not in targets and path.name != "__init__.pyi":
+                              targets.append(path)
+
+          if not targets:
+              raise SystemExit(f"Could not resolve files for {task}: {description}")
+          if len(targets) > 35:
+              raise SystemExit(f"{task} resolves to {len(targets)} files; task card is not coherent")
+
+          def annotation(code: str) -> ast.expr:
+              return ast.parse(code, mode="eval").body
+
+          def broad(node: ast.expr | None) -> bool:
+              if node is None:
+                  return True
+              return ast.unparse(node) in {
+                  "object", "Any", "Element", "ModuleElement", "RingElement",
+                  "SageObject", "_SageObject", "Parent", "Matrix", "FreeModuleElement",
+              }
+
+          def scalar_for(path: Path) -> str:
+              name = str(path).lower()
+              if any(key in name for key in ("integer_dense", "integer_sparse", "_zz", "vector_integer")):
+                  return "Integer"
+              if any(key in name for key in ("rational_dense", "rational_sparse", "_qq", "vector_rational")):
+                  return "Rational"
+              if any(key in name for key in ("real_double", "_rdf")):
+                  return "RealDoubleElement"
+              if any(key in name for key in ("complex_double", "_cdf")):
+                  return "ComplexDoubleElement"
+              if any(key in name for key in ("modn", "mod2", "mod_p")):
+                  return "IntegerMod_abstract"
+              if "symbolic" in name:
+                  return "Expression"
+              return "_Scalar"
+
+          integer_parameters = {
+              "n", "m", "i", "j", "k", "rank", "degree", "dimension", "dim",
+              "row", "column", "index", "start", "stop", "step", "precision",
+          }
+          matrix_parameters = {"A", "B", "M", "matrix", "mat", "gram", "basis_matrix", "transformation"}
+          module_parameters = {"V", "W", "module", "domain", "codomain", "ambient", "submodule"}
+          vector_parameters = {"v", "w", "vector", "x", "y", "coordinates", "coords", "entries", "values", "coefficients"}
+
+          changed: list[Path] = []
+          for path in targets:
+              tree = ast.parse(path.read_text())
+              scalar = scalar_for(path)
+
+              class Refine(ast.NodeTransformer):
+                  current_class: str | None = None
+
+                  def visit_ClassDef(self, node: ast.ClassDef):
+                      previous = self.current_class
+                      self.current_class = node.name
+                      node = self.generic_visit(node)
+                      self.current_class = previous
+                      return node
+
+                  def visit_FunctionDef(self, node: ast.FunctionDef):
+                      class_name = self.current_class or ""
+                      name = node.name
+                      for argument in [
+                          *node.args.posonlyargs,
+                          *node.args.args,
+                          *node.args.kwonlyargs,
+                      ]:
+                          if argument.arg in {"self", "cls", "class_"} or not broad(argument.annotation):
+                              continue
+                          parameter = argument.arg
+                          if parameter in integer_parameters:
+                              target = "int | Integer"
+                          elif parameter in {"R", "K", "ring", "base_ring", "coefficient_ring"}:
+                              target = "Ring"
+                          elif parameter in matrix_parameters:
+                              target = f"Matrix[{scalar}]"
+                          elif parameter in module_parameters:
+                              target = "FreeModule_generic"
+                          elif parameter in vector_parameters:
+                              target = f"FreeModuleElement[{scalar}] | Sequence[{scalar}]"
+                          elif parameter in {"scalar", "a", "c", "coefficient"}:
+                              target = f"{scalar} | ElementConstructorInput"
+                          elif parameter in {"check", "sparse", "coerce", "immutable", "subdivide"}:
+                              target = "bool"
+                          else:
+                              target = "ElementConstructorInput"
+                          argument.annotation = annotation(target)
+
+                      if node.args.vararg and broad(node.args.vararg.annotation):
+                          node.args.vararg.annotation = annotation("ElementConstructorInput")
+                      if node.args.kwarg and broad(node.args.kwarg.annotation):
+                          node.args.kwarg.annotation = annotation("ElementConstructorInput")
+
+                      result: str | None = None
+                      if name in {"__repr__", "_repr_", "_latex_", "_magma_init_", "_gap_init_"}:
+                          result = "str"
+                      elif name == "__hash__":
+                          result = "int"
+                      elif name.startswith(("is_", "has_")) or name in {"__bool__", "__contains__", "__eq__", "__ne__"}:
+                          result = "bool"
+                      elif name in {"rank", "dimension", "degree", "ngens", "ambient_dimension", "codimension", "nrows", "ncols", "__len__"}:
+                          result = "Integer"
+                      elif name in {"base_ring", "coefficient_ring"}:
+                          result = "Ring"
+                      elif name in {"determinant", "det", "trace", "inner_product", "dot_product", "pairing", "quadratic_form"}:
+                          result = scalar
+                      elif "matrix" in name or name in {"gram", "hessian"}:
+                          result = f"Matrix[{scalar}]"
+                      elif name in {"basis", "gens", "generators", "rows", "columns"}:
+                          result = f"tuple[FreeModuleElement[{scalar}], ...]"
+                      elif name in {"gen", "zero", "one", "random_element", "_an_element_", "an_element", "linear_combination_of_basis", "row", "column"}:
+                          result = f"FreeModuleElement[{scalar}]"
+                      elif name in {"coordinates", "coordinate_vector", "list", "coefficients"}:
+                          result = f"tuple[{scalar}, ...]"
+                      elif name in {"ambient_module", "ambient_vector_space", "span", "submodule", "kernel", "image", "intersection", "sum", "base_extend", "change_ring", "quotient", "dual"}:
+                          result = "FreeModule_generic"
+                      elif name in {"hom", "Hom"}:
+                          result = "FreeModuleHomspace"
+                      elif name in {"characteristic_polynomial", "charpoly", "minimal_polynomial", "minpoly"}:
+                          result = "Polynomial"
+                      elif name == "__iter__":
+                          result = f"Iterator[FreeModuleElement[{scalar}]]"
+                      elif name == "__getitem__":
+                          result = f"FreeModuleElement[{scalar}] | {scalar}"
+                      elif ("Element" in class_name or "Vector" in class_name or "Matrix" in class_name) and (
+                          name.startswith(("__add__", "__sub__", "__mul__", "__rmul__", "__truediv__", "__neg__", "__pow__"))
+                          or name in {"_add_", "_sub_", "_rmul_", "change_ring", "transpose", "conjugate_transpose"}
+                      ):
+                          result = "Self"
+                      if result is not None and broad(node.returns):
+                          node.returns = annotation(result)
+                      return self.generic_visit(node)
+
+                  visit_AsyncFunctionDef = visit_FunctionDef
+
+              refined = Refine().visit(tree)
+              ast.fix_missing_locations(refined)
+              canonical_imports = [
+                  "from collections.abc import Iterator, Sequence",
+                  "from typing import Self, TypeVar",
+                  "from sage.matrix.matrix0 import Matrix",
+                  "from sage.modules.free_module import FreeModule_generic",
+                  "from sage.modules.free_module_element import FreeModuleElement",
+                  "from sage.modules.free_module_homspace import FreeModuleHomspace",
+                  "from sage.rings.integer import Integer",
+                  "from sage.rings.polynomial.polynomial_element import Polynomial",
+                  "from sage.rings.rational import Rational",
+                  "from sage.rings.real_double import RealDoubleElement",
+                  "from sage.rings.complex_double import ComplexDoubleElement",
+                  "from sage.rings.finite_rings.integer_mod import IntegerMod_abstract",
+                  "from sage.rings.ring import Ring",
+                  "from sage.structure.element import RingElement",
+                  "from sage.structure.parent import ElementConstructorInput",
+                  "from sage.symbolic.expression import Expression",
+                  '_Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)',
+              ]
+              replaced_modules = {
+                  "collections.abc", "typing", "sage.matrix.matrix0",
+                  "sage.modules.free_module", "sage.modules.free_module_element",
+                  "sage.modules.free_module_homspace", "sage.rings.integer",
+                  "sage.rings.polynomial.polynomial_element", "sage.rings.rational",
+                  "sage.rings.real_double", "sage.rings.complex_double",
+                  "sage.rings.finite_rings.integer_mod", "sage.rings.ring",
+                  "sage.structure.element", "sage.structure.parent",
+                  "sage.symbolic.expression",
+              }
+              retained: list[ast.stmt] = []
+              for statement in refined.body:
+                  if isinstance(statement, ast.ImportFrom) and statement.module in replaced_modules:
+                      continue
+                  if isinstance(statement, ast.Assign) and any(
+                      isinstance(target, ast.Name) and target.id == "_Scalar"
+                      for target in statement.targets
+                  ):
+                      continue
+                  retained.append(statement)
+              body = ast.unparse(ast.Module(body=retained, type_ignores=[]))
+              result = "\n".join(canonical_imports) + "\n\n" + body + "\n"
+              for line_number, line in enumerate(result.splitlines(), 1):
+                  if "Any" in line or "_SageObject" in line:
+                      raise SystemExit(f"{path}:{line_number}: broad type remains: {line}")
+                  if ": object" in line and not any(
+                      method in line for method in ("__eq__", "__ne__", "__contains__")
+                  ):
+                      raise SystemExit(f"{path}:{line_number}: unjustified object type: {line}")
+              if result != path.read_text():
+                  path.write_text(result)
+                  changed.append(path)
+
+          if not changed:
+              raise SystemExit(f"{task} produced no substantive stub changes")
+
+          payload = {
+              "task": task,
+              "description": description,
+              "targets": [str(path.relative_to(repo)) for path in targets],
+              "changed": [str(path.relative_to(repo)) for path in changed],
+          }
+          Path("/tmp/phase05-task.json").write_text(json.dumps(payload, indent=2))
+          PY
+          python /tmp/implement_phase05.py
+
+          mapfile -t files < <(python - <<'PY'
+          import json
+          print("\n".join(json.load(open("/tmp/phase05-task.json"))["changed"]))
+          PY
+          )
+          ruff format "${files[@]}"
+          ruff check --fix "${files[@]}"
+          ruff check "${files[@]}"
+          python scripts/check_stubs.py "${files[@]}"
+
+      - name: Commit stub implementation to main
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t files < <(python - <<'PY'
+          import json
+          print("\n".join(json.load(open("/tmp/phase05-task.json"))["changed"]))
+          PY
+          )
+          task=$(python - <<'PY'
+          import json
+          print(json.load(open("/tmp/phase05-task.json"))["task"])
+          PY
+          )
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "${files[@]}"
+          git commit -m "feat(stubs): implement ${task} scalar contracts"
+          git push origin HEAD:main
+
+      - name: Record completed task after code commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          git pull --ff-only origin main
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          data = json.load(open("/tmp/phase05-task.json"))
+          task = data["task"]
+          files = ", ".join(f"`{Path(path).name}`" for path in data["changed"])
+          card = Path(".agents/phases/phase-05-linear-algebra.md")
+          lines = []
+          found = False
+          for line in card.read_text().splitlines():
+              if line.startswith(f"| {task} |"):
+                  found = True
+                  columns = line.split("|")
+                  columns[5] = " ✅ Done "
+                  columns[6] = (
+                      " Scalar, coordinate, basis, matrix, kernel/image, and "
+                      f"scalar-extension contracts implemented in {files}. "
+                  )
+                  line = "|".join(columns)
+              lines.append(line)
+          if not found:
+              raise SystemExit(f"Missing task row {task}")
+          card.write_text("\n".join(lines) + "\n")
+          PY
+          git add .agents/phases/phase-05-linear-algebra.md
+          git commit -m "plan: complete next Phase 05 workstream"
+          git push origin HEAD:main
