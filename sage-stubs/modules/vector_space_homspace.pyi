@@ -1,28 +1,32 @@
-from collections.abc import Iterator, Sequence
-from typing import Self, TypeVar
-from sage.matrix.matrix0 import Matrix
-from sage.modules.free_module import FreeModule_generic
+from typing import Generic, TypeVar
+
+from sage.matrix.matrix_space import MatrixSpace
+from sage.modules.free_module import VectorSpace
 from sage.modules.free_module_element import FreeModuleElement
 from sage.modules.free_module_homspace import FreeModuleHomspace
-from sage.rings.integer import Integer
-from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.rings.rational import Rational
-from sage.rings.real_double import RealDoubleElement
-from sage.rings.complex_double import ComplexDoubleElement
-from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
-from sage.rings.ring import Ring
-from sage.structure.element import RingElement
-from sage.structure.parent import ElementConstructorInput
-from sage.structure.sage_object import SageObject
-from sage.symbolic.expression import Expression
+from sage.modules.vector_space_morphism import VectorSpaceMorphism
+from sage.sets.family import AbstractFamily
+from sage.structure.element import FieldElement
 
-_Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+_Scalar = TypeVar("_Scalar", bound=FieldElement, default=FieldElement)
 
-import builtins
 
-class _SageObject: ...
-
-class VectorSpaceHomspace:
-    def __call__(
-        self, A: builtins.object, check: builtins.bool = ..., **kwds: builtins.object
-    ) -> FreeModule_generic: ...
+class VectorSpaceHomspace(
+    FreeModuleHomspace[_Scalar],
+    Generic[_Scalar],
+):
+    element_class: type[VectorSpaceMorphism[_Scalar]]
+    def domain(self) -> VectorSpace[_Scalar]: ...
+    def codomain(self) -> VectorSpace[_Scalar]: ...
+    def matrix_space(self) -> MatrixSpace[_Scalar]: ...
+    def dimension(self) -> int: ...
+    def basis(self) -> AbstractFamily: ...
+    def zero(self) -> VectorSpaceMorphism[_Scalar]: ...
+    def identity(self) -> VectorSpaceMorphism[_Scalar]: ...
+    one = identity
+    def _element_constructor_(
+        self,
+        matrix: object,
+        side: str = ...,
+    ) -> VectorSpaceMorphism[_Scalar]: ...
+    def natural_map(self) -> VectorSpaceMorphism[_Scalar]: ...

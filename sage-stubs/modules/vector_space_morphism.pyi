@@ -1,34 +1,33 @@
-from collections.abc import Iterator, Sequence
-from typing import Self, TypeVar
-from sage.matrix.matrix0 import Matrix
-from sage.modules.free_module import FreeModule_generic
-from sage.modules.free_module_element import FreeModuleElement
-from sage.modules.free_module_homspace import FreeModuleHomspace
-from sage.rings.integer import Integer
-from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.rings.rational import Rational
-from sage.rings.real_double import RealDoubleElement
-from sage.rings.complex_double import ComplexDoubleElement
-from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
-from sage.rings.ring import Ring
-from sage.structure.element import RingElement
-from sage.structure.parent import ElementConstructorInput
-from sage.structure.sage_object import SageObject
-from sage.symbolic.expression import Expression
-
-_Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+from typing import Generic, Self, TypeVar
 
 from sage.matrix.matrix import Matrix
+from sage.modules.free_module import FreeModule_submodule, VectorSpace
+from sage.modules.free_module_element import FreeModuleElement
+from sage.modules.free_module_morphism import FreeModuleMorphism
+from sage.rings.polynomial.polynomial_element import Polynomial
+from sage.structure.element import FieldElement
 
-class VectorSpaceMorphism:
-    def __init__(
-        self, homspace: ElementConstructorInput, A: Matrix[_Scalar], side: str = ...
-    ) -> None: ...
-    def is_invertible(self) -> bool: ...
+_Scalar = TypeVar("_Scalar", bound=FieldElement, default=FieldElement)
 
-def linear_transformation(
-    arg0: ElementConstructorInput,
-    arg1: ElementConstructorInput = ...,
-    arg2: ElementConstructorInput = ...,
-    side: str = ...,
-) -> VectorSpaceMorphism: ...
+
+class VectorSpaceMorphism(
+    FreeModuleMorphism[_Scalar],
+    Generic[_Scalar],
+):
+    def domain(self) -> VectorSpace[_Scalar]: ...
+    def codomain(self) -> VectorSpace[_Scalar]: ...
+    def matrix(self, side: str | None = ...) -> Matrix[_Scalar]: ...
+    def kernel(self) -> FreeModule_submodule[_Scalar]: ...
+    def image(self) -> FreeModule_submodule[_Scalar]: ...
+    range = image
+    def rank(self) -> int: ...
+    def nullity(self) -> int: ...
+    def characteristic_polynomial(self, var: str = ...) -> Polynomial: ...
+    charpoly = characteristic_polynomial
+    def minimal_polynomial(self, var: str = ...) -> Polynomial: ...
+    minpoly = minimal_polynomial
+    def eigenvalues(self) -> list[_Scalar]: ...
+    def eigenvectors(self) -> list[tuple[_Scalar, list[FreeModuleElement[_Scalar]], int]]: ...
+    def is_diagonalizable(self) -> bool: ...
+    def inverse(self) -> Self: ...
+    __invert__ = inverse

@@ -1,31 +1,43 @@
-from collections.abc import Iterator, Sequence
-from typing import Self, TypeVar
-from sage.matrix.matrix0 import Matrix
-from sage.modules.free_module import FreeModule_generic
+from collections.abc import Iterable
+from typing import Generic, TypeVar
+
 from sage.modules.free_module_element import FreeModuleElement
-from sage.modules.free_module_homspace import FreeModuleHomspace
-from sage.rings.integer import Integer
-from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.rings.rational import Rational
-from sage.rings.real_double import RealDoubleElement
-from sage.rings.complex_double import ComplexDoubleElement
-from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
-from sage.rings.ring import Ring
-from sage.structure.element import RingElement
-from sage.structure.parent import ElementConstructorInput
-from sage.structure.sage_object import SageObject
-from sage.symbolic.expression import Expression
+from sage.structure.element import ModuleElement, RingElement
+from sage.structure.parent import ElementConstructorInput, Parent
 
 _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+_Element = TypeVar("_Element", bound=ModuleElement, default=ModuleElement)
 
-from sage.categories.category import Category
 
-class Module(Parent):
+class Module(Parent[_Element], Generic[_Scalar, _Element]):
+    Element: type[_Element]
     def __init__(
         self,
-        base: Ring,
-        category: Category | None = None,
-        names: str | tuple[str, ...] | None = None,
+        base_ring: Parent[_Scalar],
+        category: object | None = ...,
     ) -> None: ...
-    def change_ring(self, R: Ring) -> Module: ...
-    def base_extend(self, R: Ring) -> Module: ...
+    def base_ring(self) -> Parent[_Scalar]: ...
+    def zero(self) -> _Element: ...
+    def an_element(self) -> _Element: ...
+    def _element_constructor_(
+        self,
+        x: ElementConstructorInput,
+    ) -> _Element: ...
+    def submodule(
+        self,
+        generators: Iterable[_Element],
+        **kwds: object,
+    ) -> Module[_Scalar, _Element]: ...
+    def quotient(
+        self,
+        submodule: Module[_Scalar, _Element],
+        **kwds: object,
+    ) -> Module[_Scalar, _Element]: ...
+    def tensor_product(
+        self,
+        other: Module[_Scalar, ModuleElement],
+    ) -> Module[_Scalar, ModuleElement]: ...
+    def direct_sum(
+        self,
+        other: Module[_Scalar, ModuleElement],
+    ) -> Module[_Scalar, ModuleElement]: ...

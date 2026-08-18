@@ -1,32 +1,74 @@
-from collections.abc import Iterator, Sequence
-from typing import Self, TypeVar
-from sage.matrix.matrix0 import Matrix
+from collections.abc import Sequence
+from typing import Generic, TypeVar
+
+from sage.categories.functor import ConstructionFunctor, Functor
 from sage.modules.free_module import FreeModule_generic
 from sage.modules.free_module_element import FreeModuleElement
-from sage.modules.free_module_homspace import FreeModuleHomspace
-from sage.rings.integer import Integer
-from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.rings.rational import Rational
-from sage.rings.real_double import RealDoubleElement
-from sage.rings.complex_double import ComplexDoubleElement
-from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
-from sage.rings.ring import Ring
+from sage.modules.quotient_module import FreeModule_quotient
 from sage.structure.element import RingElement
-from sage.structure.parent import ElementConstructorInput
-from sage.structure.sage_object import SageObject
-from sage.symbolic.expression import Expression
+from sage.structure.parent import Parent
 
 _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+_TargetScalar = TypeVar("_TargetScalar", bound=RingElement)
 
-import builtins
 
-class _SageObject: ...
+class ModuleFunctor(ConstructionFunctor, Generic[_Scalar]):
+    def rank(self) -> int: ...
+    def __call__(
+        self,
+        ring: Parent[_Scalar],
+    ) -> FreeModule_generic[_Scalar]: ...
 
-class QuotientModuleFunctor:
-    rank: _SageObject
 
-    def __init__(self, relations: builtins.object) -> None: ...
-    def relations(self) -> QuotientModuleFunctor: ...
-    def __eq__(self, other: builtins.object) -> builtins.bool: ...
-    def __ne__(self, other: builtins.object) -> builtins.bool: ...
-    def merge(self, other: builtins.object) -> QuotientModuleFunctor: ...
+class FreeModuleFunctor(ModuleFunctor[_Scalar], Generic[_Scalar]):
+    def __init__(
+        self,
+        rank: int,
+        sparse: bool = ...,
+        inner_product_matrix: object | None = ...,
+    ) -> None: ...
+    def rank(self) -> int: ...
+    def is_sparse(self) -> bool: ...
+    def __call__(
+        self,
+        ring: Parent[_Scalar],
+    ) -> FreeModule_generic[_Scalar]: ...
+
+
+class VectorFunctor(FreeModuleFunctor[_Scalar], Generic[_Scalar]):
+    pass
+
+
+class SubspaceFunctor(ConstructionFunctor, Generic[_Scalar]):
+    def __init__(
+        self,
+        generators: Sequence[FreeModuleElement[_Scalar]],
+        ambient_dimension: int,
+    ) -> None: ...
+    def __call__(
+        self,
+        ring: Parent[_Scalar],
+    ) -> FreeModule_generic[_Scalar]: ...
+
+
+class QuotientModuleFunctor(ConstructionFunctor, Generic[_Scalar]):
+    def __init__(
+        self,
+        relations: Sequence[FreeModuleElement[_Scalar]],
+        ambient_dimension: int,
+    ) -> None: ...
+    def __call__(
+        self,
+        ring: Parent[_Scalar],
+    ) -> FreeModule_quotient[_Scalar]: ...
+
+
+class BaseChangeFunctor(Functor, Generic[_Scalar, _TargetScalar]):
+    def __init__(
+        self,
+        target_ring: Parent[_TargetScalar],
+    ) -> None: ...
+    def __call__(
+        self,
+        module: FreeModule_generic[_Scalar],
+    ) -> FreeModule_generic[_TargetScalar]: ...
