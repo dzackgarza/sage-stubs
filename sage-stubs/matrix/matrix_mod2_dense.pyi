@@ -1,116 +1,144 @@
-from collections.abc import Iterator, Sequence
-from typing import Self, TypeVar
-from sage.matrix.matrix0 import Matrix
-from sage.modules.free_module import FreeModule_generic
-from sage.modules.free_module_element import FreeModuleElement
-from sage.modules.free_module_homspace import FreeModuleHomspace
-from sage.rings.integer import Integer
-from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.rings.rational import Rational
-from sage.rings.real_double import RealDoubleElement
-from sage.rings.complex_double import ComplexDoubleElement
+from collections.abc import Callable, Mapping, Sequence
+from os import PathLike
+from typing import Literal, Self, overload
+
+from sage.groups.perm_gps.permgroup_element import PermutationGroupElement
+from sage.matrix.matrix_dense import Matrix_dense
+from sage.matrix.matrix_space import MatrixSpace
+from sage.modules.vector_mod2_dense import Vector_mod2_dense
 from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
-from sage.rings.ring import Ring
-from sage.structure.element import RingElement
-from sage.structure.parent import ElementConstructorInput
-from sage.structure.sage_object import SageObject
-from sage.symbolic.expression import Expression
+from sage.rings.rational import Rational
+from sage.rings.real_mpfr import RealNumber
+from sage.structure.element import Element
+from sage.typeset.ascii_art import AsciiArt
+from sage.typeset.unicode_art import UnicodeArt
 
-_Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+type _GammaCertificate = tuple[int, int, int, int]
+type _EntryRepresentation = Mapping[IntegerMod_abstract, str] | Callable[[IntegerMod_abstract], str]
+type _MatrixEntries = (
+    Element
+    | Sequence[Element]
+    | Sequence[Sequence[Element]]
+    | None
+)
 
-import builtins
-
-class _SageObject: ...
-
-VectorSpace: _SageObject
-
-class Matrix_mod2_dense:
-    def __cinit__(self) -> Matrix_mod2_dense: ...
-    def __dealloc__(self) -> Matrix_mod2_dense: ...
+class Matrix_mod2_dense(Matrix_dense[IntegerMod_abstract]):
     def __init__(
         self,
-        parent: builtins.object,
-        entries: builtins.object = ...,
-        copy: builtins.object = ...,
-        coerce: builtins.object = ...,
+        parent: MatrixSpace,
+        entries: _MatrixEntries = ...,
+        copy: bool | None = ...,
+        coerce: bool = ...,
     ) -> None: ...
-    def set_unsafe_int(
-        self, i: builtins.object, j: builtins.object, value: builtins.object
-    ) -> Matrix_mod2_dense: ...
-    def set_unsafe(
-        self, i: builtins.object, j: builtins.object, value: builtins.object
-    ) -> Matrix_mod2_dense: ...
-    def get_unsafe(
-        self, i: builtins.object, j: builtins.object
-    ) -> Matrix_mod2_dense: ...
-    def copy_from_unsafe(
+    def str(
         self,
-        iDst: builtins.object,
-        jDst: builtins.object,
-        src: builtins.object,
-        iSrc: builtins.object,
-        jSrc: builtins.object,
+        rep_mapping: _EntryRepresentation | None = ...,
+        zero: str | None = ...,
+        plus_one: str | None = ...,
+        minus_one: str | None = ...,
+        *,
+        unicode: bool = ...,
+        shape: Literal["square", "round"] | None = ...,
+        character_art: bool = ...,
+        left_border: Sequence[object] | None = ...,
+        right_border: Sequence[object] | None = ...,
+        top_border: Sequence[object] | None = ...,
+        bottom_border: Sequence[object] | None = ...,
+    ) -> str | AsciiArt | UnicodeArt: ...
+    def row(self, i: int, from_list: bool = ...) -> Vector_mod2_dense: ...
+    @overload
+    def columns(self, copy: Literal[True] = ...) -> list[Vector_mod2_dense]: ...
+    @overload
+    def columns(self, copy: Literal[False]) -> tuple[Vector_mod2_dense, ...]: ...
+    def _add_(self, right: Matrix_mod2_dense) -> Matrix_mod2_dense: ...
+    def _sub_(self, right: Matrix_mod2_dense) -> Matrix_mod2_dense: ...
+    def _multiply_m4rm(
+        self,
+        right: Matrix_mod2_dense,
+        k: int,
     ) -> Matrix_mod2_dense: ...
-    def row(
-        self, i: builtins.object, from_list: builtins.object = ...
-    ) -> FreeModuleElement[Integer]: ...
-    def columns(
-        self, copy: builtins.object = ...
-    ) -> tuple[FreeModuleElement[Integer], ...]: ...
+    def _multiply_strassen(
+        self,
+        right: Matrix_mod2_dense,
+        cutoff: int,
+    ) -> Matrix_mod2_dense: ...
+    def _export_as_string(self) -> str: ...
     def __neg__(self) -> Self: ...
     def __invert__(self) -> Self: ...
     def __copy__(self) -> Self: ...
+    def _list(self) -> list[IntegerMod_abstract]: ...
     def echelonize(
         self,
-        algorithm: builtins.object = ...,
-        cutoff: builtins.object = ...,
-        reduced: builtins.object = ...,
-        **kwds: builtins.object,
-    ) -> Matrix_mod2_dense: ...
-    def randomize(
-        self, density: builtins.object = ..., nonzero: builtins.object = ...
-    ) -> Matrix_mod2_dense: ...
-    def rescale_row_c(
-        self,
-        row: builtins.object,
-        multiple: builtins.object,
-        start_col: builtins.object,
-    ) -> Matrix_mod2_dense: ...
-    def swap_rows_c(
-        self, row1: builtins.object, row2: builtins.object
-    ) -> Matrix_mod2_dense: ...
-    def swap_columns_c(
-        self, col1: builtins.object, col2: builtins.object
-    ) -> Matrix_mod2_dense: ...
-    def determinant(self) -> Integer: ...
+        algorithm: Literal["heuristic", "m4ri", "pluq", "classical"] = ...,
+        cutoff: int = ...,
+        reduced: bool = ...,
+        **kwds: int,
+    ) -> None | Self: ...
+    def _pivots(self) -> list[int]: ...
+    def randomize(self, density: float = ..., nonzero: bool = ...) -> None: ...
+    def determinant(self) -> IntegerMod_abstract: ...
     def transpose(self) -> Self: ...
     def augment(
-        self, right: builtins.object, subdivide: builtins.object = ...
+        self,
+        right: Matrix_mod2_dense,
+        subdivide: bool = ...,
     ) -> Matrix_mod2_dense: ...
-    def __reduce__(self) -> builtins.str | builtins.tuple[builtins.object, ...]: ...
-    def density(self, approx: builtins.object = ...) -> Matrix_mod2_dense: ...
-    def rank(self, algorithm: builtins.object = ...) -> Integer: ...
+    def submatrix(
+        self,
+        row: int = ...,
+        col: int = ...,
+        nrows: int = ...,
+        ncols: int = ...,
+    ) -> Matrix_mod2_dense: ...
+    def __reduce__(
+        self,
+    ) -> tuple[
+        Callable[..., Matrix_mod2_dense],
+        tuple[int, int, bytes | None, int, bool],
+    ]: ...
+    def density(self, approx: bool = ...) -> Rational | RealNumber: ...
+    def rank(self, algorithm: Literal["ple", "m4ri"] = ...) -> int: ...
+    def _solve_right_general(
+        self,
+        B: Matrix_mod2_dense,
+        check: bool = ...,
+    ) -> Matrix_mod2_dense: ...
+    def _right_kernel_matrix(
+        self,
+        **kwds: object,
+    ) -> tuple[Literal["computed-pluq"], Matrix_mod2_dense]: ...
     def doubly_lexical_ordering(
-        self, inplace: builtins.object = ...
-    ) -> Matrix_mod2_dense: ...
-    def is_Gamma_free(self, certificate: builtins.object = ...) -> builtins.bool: ...
+        self,
+        inplace: bool = ...,
+    ) -> tuple[PermutationGroupElement, PermutationGroupElement]: ...
+    @overload
+    def is_Gamma_free(self, certificate: Literal[False] = ...) -> bool: ...
+    @overload
+    def is_Gamma_free(
+        self,
+        certificate: Literal[True],
+    ) -> tuple[bool, _GammaCertificate | None]: ...
 
-def parity(a: builtins.object) -> ElementConstructorInput: ...
-def parity_mask(a: builtins.object) -> ElementConstructorInput: ...
+def parity(a: int) -> int: ...
 def unpickle_matrix_mod2_dense_v2(
-    r: builtins.object,
-    c: builtins.object,
-    data: builtins.object,
-    size: builtins.object,
-    immutable: builtins.object = ...,
-) -> Matrix[Integer]: ...
-def from_png(filename: builtins.object) -> ElementConstructorInput: ...
+    r: int,
+    c: int,
+    data: bytes | None,
+    size: int,
+    immutable: bool = ...,
+) -> Matrix_mod2_dense: ...
+def from_png(filename: str | PathLike[str]) -> Matrix_mod2_dense: ...
 def to_png(
-    A: builtins.object, filename: builtins.object
-) -> ElementConstructorInput: ...
+    A: Matrix_mod2_dense,
+    filename: str | PathLike[str],
+) -> None: ...
 def pluq(
-    A: builtins.object, algorithm: builtins.object = ..., param: builtins.object = ...
-) -> ElementConstructorInput: ...
+    A: Matrix_mod2_dense,
+    algorithm: Literal["standard", "mmpf", "naive"] = ...,
+    param: int = ...,
+) -> tuple[Matrix_mod2_dense, list[int], list[int]]: ...
 def ple(
-    A: builtins.object, algorithm: builtins.object = ..., param: builtins.object = ...
-) -> ElementConstructorInput: ...
+    A: Matrix_mod2_dense,
+    algorithm: Literal["standard", "russian", "naive"] = ...,
+    param: int = ...,
+) -> tuple[Matrix_mod2_dense, list[int], list[int]]: ...

@@ -1,54 +1,33 @@
-from collections.abc import Iterator, Sequence
+from types import ModuleType
 from typing import Self, TypeVar
-from sage.matrix.matrix0 import Matrix
-from sage.modules.free_module import FreeModule_generic
-from sage.modules.free_module_element import FreeModuleElement
-from sage.modules.free_module_homspace import FreeModuleHomspace
-from sage.rings.integer import Integer
-from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.rings.rational import Rational
-from sage.rings.real_double import RealDoubleElement
-from sage.rings.complex_double import ComplexDoubleElement
-from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
-from sage.rings.ring import Ring
-from sage.structure.element import RingElement
-from sage.structure.parent import ElementConstructorInput
-from sage.structure.sage_object import SageObject
-from sage.symbolic.expression import Expression
+
+import numpy as np
+from numpy.typing import DTypeLike, NDArray
+
+from sage.matrix.matrix_dense import Matrix_dense
+from sage.matrix.matrix_space import MatrixSpace
+from sage.structure.element import Element, RingElement
 
 _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
 
-import builtins
+numpy: ModuleType | None
+scipy: ModuleType | None
 
-class _SageObject: ...
-
-numpy: _SageObject
-scipy: _SageObject
-
-class Matrix_numpy_dense:
-    def __create_matrix__(self) -> Matrix[_Scalar]: ...
+class Matrix_numpy_dense(Matrix_dense[_Scalar]):
+    def __create_matrix__(self) -> None: ...
     def __init__(
         self,
-        parent: builtins.object,
-        entries: builtins.object = ...,
-        copy: builtins.object = ...,
-        coerce: builtins.object = ...,
+        parent: MatrixSpace,
+        entries: Element | list[Element] | tuple[Element, ...] | None = ...,
+        copy: bool | None = ...,
+        coerce: bool = ...,
     ) -> None: ...
-    def set_unsafe(
-        self, i: builtins.object, j: builtins.object, value: builtins.object
-    ) -> Matrix_numpy_dense: ...
-    def get_unsafe(
-        self, i: builtins.object, j: builtins.object
-    ) -> Matrix_numpy_dense: ...
-    def copy_from_unsafe(
-        self,
-        iDst: builtins.object,
-        jDst: builtins.object,
-        src: builtins.object,
-        iSrc: builtins.object,
-        jSrc: builtins.object,
-    ) -> Matrix_numpy_dense: ...
     def __copy__(self) -> Self: ...
     def transpose(self) -> Self: ...
-    def is_symmetric(self, tol: builtins.object = ...) -> builtins.bool: ...
-    def numpy(self, dtype: builtins.object = ...) -> Matrix_numpy_dense: ...
+    def is_symmetric(self, tol: float = ...) -> bool: ...
+    def _is_lower_triangular(self, tol: float) -> bool: ...
+    def numpy(self, dtype: DTypeLike | None = ...) -> NDArray[np.generic]: ...
+    def _replace_self_with_numpy(
+        self,
+        numpy_matrix: NDArray[np.generic],
+    ) -> None: ...
