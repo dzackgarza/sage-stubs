@@ -1,4 +1,4 @@
-name: Materialize T04.17 semiring stubs
+name: Validate T04.17 semiring stubs
 
 on:
   push:
@@ -10,51 +10,34 @@ permissions:
   contents: write
 
 jobs:
-  materialize:
+  validate:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
         with:
+          ref: t04-17-semirings-candidate
           fetch-depth: 0
 
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
-      - name: Decode source-grounded semiring patch
-        run: |
-          set -euo pipefail
-          cat > /tmp/t04-17.patch.b64 <<'PATCH'
-          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
-          PATCH
-          tr -d '[:space:]' < /tmp/t04-17.patch.b64 | base64 -d > /tmp/t04-17.patch.bz2
-          echo '11e010f434dd6594b840e60db0c522adf268cfe1f0a9289d7217b09ce5295039  /tmp/t04-17.patch.bz2' | sha256sum -c -
-          bzip2 -dc /tmp/t04-17.patch.bz2 > /tmp/t04-17.patch
-
-      - name: Apply patch to candidate branch
-        run: |
-          set -euo pipefail
-          git fetch origin t04-17-semirings-candidate
-          git switch -C t04-17-semirings-candidate origin/t04-17-semirings-candidate
-          test "$(git rev-parse HEAD)" = '863e972fd4c5c696d4fe0aa521d0a732c2421d0e'
-          git apply --check /tmp/t04-17.patch
-          git apply /tmp/t04-17.patch
-
       - name: Install analyzers
         run: python -m pip install --upgrade pip ruff mypy basedpyright
 
-      - name: Validate semiring task
+      - name: Validate and record diagnostics
+        shell: bash
         run: |
           set +e
-          mkdir -p reports
+          mkdir -p /tmp/reports .agents/validation
           target=sage-stubs/rings/semirings
-          ruff check "$target" > reports/ruff.txt 2>&1; echo $? > reports/ruff.status
-          ruff format --check "$target" > reports/ruff-format.txt 2>&1; echo $? > reports/ruff-format.status
-          python scripts/check_stubs.py $(find "$target" -name '*.pyi' -print) > reports/check-stubs.txt 2>&1; echo $? > reports/check-stubs.status
-          python scripts/audit_stub_quality.py --root "$target" --max-console 1000 > reports/semantic.txt 2>&1; echo $? > reports/semantic.status
-          MYPYPATH=sage-stubs python -m mypy --strict --no-incremental --follow-imports=silent --show-error-codes --no-pretty "$target" > reports/mypy.txt 2>&1; echo $? > reports/mypy.status
-          cat > semiring-pyrightconfig.json <<'JSON'
+          ruff check "$target" > /tmp/reports/ruff.txt 2>&1; echo $? > /tmp/reports/ruff.status
+          ruff format --check "$target" > /tmp/reports/ruff-format.txt 2>&1; echo $? > /tmp/reports/ruff-format.status
+          python scripts/check_stubs.py $(find "$target" -name '*.pyi' -print) > /tmp/reports/check-stubs.txt 2>&1; echo $? > /tmp/reports/check-stubs.status
+          python scripts/audit_stub_quality.py --root "$target" --max-console 1000 > /tmp/reports/semantic.txt 2>&1; echo $? > /tmp/reports/semantic.status
+          MYPYPATH=sage-stubs python -m mypy --strict --no-incremental --follow-imports=silent --show-error-codes --no-pretty "$target" > /tmp/reports/mypy.txt 2>&1; echo $? > /tmp/reports/mypy.status
+          cat > /tmp/semiring-pyrightconfig.json <<'JSON'
           {
             "include": ["sage-stubs/rings/semirings"],
             "stubPath": "sage-stubs",
@@ -64,33 +47,32 @@ jobs:
             "reportMissingImports": "error"
           }
           JSON
-          basedpyright --project semiring-pyrightconfig.json --outputjson > reports/basedpyright.json; echo $? > reports/basedpyright.status
+          basedpyright --project /tmp/semiring-pyrightconfig.json --outputjson > /tmp/reports/basedpyright.json; echo $? > /tmp/reports/basedpyright.status
           python - <<'PY'
           import json
           from pathlib import Path
-          for name in ('ruff','ruff-format','check-stubs','semantic','mypy','basedpyright'):
-              print(f"{name}: {Path(f'reports/{name}.status').read_text().strip()}")
-          report = json.loads(Path('reports/basedpyright.json').read_text())
-          print('basedpyright-summary:', report.get('summary'))
-          for item in report.get('generalDiagnostics', [])[:100]:
-              start = item.get('range', {}).get('start', {})
-              print(f"{item.get('file')}:{start.get('line',0)+1}:{start.get('character',0)+1}: {item.get('message')}")
-          PY
-          exit 0
 
-      - name: Commit candidate task
+          reports = Path('/tmp/reports')
+          result = {
+              name: int((reports / f'{name}.status').read_text().strip())
+              for name in ('ruff', 'ruff-format', 'check-stubs', 'semantic', 'mypy', 'basedpyright')
+          }
+          pyright = json.loads((reports / 'basedpyright.json').read_text())
+          result['basedpyright_summary'] = pyright.get('summary', {})
+          result['basedpyright_diagnostics'] = pyright.get('generalDiagnostics', [])[:200]
+          mypy_lines = (reports / 'mypy.txt').read_text(errors='replace').splitlines()
+          result['mypy_final'] = mypy_lines[-1] if mypy_lines else ''
+          result['mypy_diagnostics'] = mypy_lines[:300]
+          result['ruff_diagnostics'] = (reports / 'ruff.txt').read_text(errors='replace').splitlines()[:200]
+          result['semantic_diagnostics'] = (reports / 'semantic.txt').read_text(errors='replace').splitlines()[:200]
+          Path('.agents/validation/t04-17-semirings.json').write_text(json.dumps(result, indent=2, sort_keys=True) + '\n')
+          PY
+
+      - name: Push validation record
         run: |
           set -euo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add sage-stubs/rings/semirings
-          git commit -m 'feat(stubs): type tropical semirings and varieties'
+          git add .agents/validation/t04-17-semirings.json
+          git commit -m 'ci: record T04.17 semiring validation'
           git push origin HEAD:t04-17-semirings-candidate
-
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: t04-17-semirings-validation
-          path: reports
-          retention-days: 1
-          if-no-files-found: error
