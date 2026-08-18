@@ -1,0 +1,128 @@
+name: Complete T04.17 remaining ring-root modules
+
+on:
+  push:
+    branches: [t04-17-root-rings-completion]
+    paths:
+      - .github/workflows/complete-t04-17-root-rings.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: phase04-main-writes-v7
+  cancel-in-progress: false
+
+jobs:
+  complete:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validate remaining T04.17 surface
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          git switch -C main origin/main
+          python -m pip install --upgrade pip ruff
+          roots=(
+            sage-stubs/rings/noncommutative_ideals.pyi
+            sage-stubs/rings/species.pyi
+            sage-stubs/rings/cfinite_sequence.pyi
+          )
+          for stub in "${roots[@]}"; do
+            test -f "$stub"
+          done
+          ruff format sage-stubs/rings/semirings "${roots[@]}"
+          ruff check --fix sage-stubs/rings/semirings "${roots[@]}"
+          ruff check sage-stubs/rings/semirings "${roots[@]}"
+          ruff format --check sage-stubs/rings/semirings "${roots[@]}"
+          python scripts/check_stubs.py $(find sage-stubs/rings/semirings -name '*.pyi' -print) "${roots[@]}"
+          python scripts/audit_stub_quality.py --root sage-stubs/rings/semirings --max-console 1000
+          for stub in "${roots[@]}"; do
+            python scripts/audit_stub_quality.py --root "$stub" --max-console 1000
+          done
+          python - <<'PY'
+          import ast
+          from pathlib import Path
+
+          modules = ('noncommutative_ideals', 'species', 'cfinite_sequence')
+          source_root = Path('sage-src/src/sage/rings')
+          stub_root = Path('sage-stubs/rings')
+          failures: list[str] = []
+
+          def public_defs(tree: ast.Module) -> dict[str, ast.AST]:
+              return {
+                  node.name: node
+                  for node in tree.body
+                  if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef))
+                  and not node.name.startswith('_')
+              }
+
+          def public_methods(node: ast.ClassDef) -> set[str]:
+              return {
+                  child.name
+                  for child in node.body
+                  if isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef))
+                  and not child.name.startswith('_')
+              }
+
+          for module in modules:
+              stub = stub_root / f'{module}.pyi'
+              source = source_root / f'{module}.py'
+              if not source.exists():
+                  alternate = source_root / f'{module}.pyx'
+                  if alternate.exists():
+                      continue
+                  failures.append(f'missing pinned source: {module}')
+                  continue
+              source_nodes = public_defs(ast.parse(source.read_text()))
+              stub_nodes = public_defs(ast.parse(stub.read_text()))
+              missing_defs = sorted(source_nodes.keys() - stub_nodes.keys())
+              if missing_defs:
+                  failures.append(f'{module}: missing definitions {missing_defs}')
+              for name, source_node in source_nodes.items():
+                  stub_node = stub_nodes.get(name)
+                  if isinstance(source_node, ast.ClassDef) and isinstance(stub_node, ast.ClassDef):
+                      missing_methods = sorted(public_methods(source_node) - public_methods(stub_node))
+                      if missing_methods:
+                          failures.append(f'{module}.{name}: missing methods {missing_methods}')
+          if failures:
+              raise SystemExit('\n'.join(failures))
+          PY
+
+      - name: Mark T04.17 complete and push immediately
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+
+          phase = Path('.agents/phases/phase-04-number-theory-rings.md')
+          text = phase.read_text()
+          rows = [line for line in text.splitlines() if line.startswith('| T04.17 |')]
+          if len(rows) != 1:
+              raise SystemExit(f'expected one T04.17 row, found {len(rows)}')
+          old = rows[0]
+          complete = "| T04.17 | **Semirings & remaining** — `semirings/` subdir, plus anything else surveyed in Phase 1 audit that lives at `sage.rings/` root but wasn't covered in Phase 02 (e.g. `noncommutative_ideals`, `species`, `cfinite_sequence`). | ~6 | — | ✅ Done | Nonnegative-integer and tropical semiring parents/elements, tropical polynomials, matrices and varieties, together with noncommutative ideals, species, and C-finite sequences, are source-grounded against the pinned Sage source. |"
+          if old != complete:
+              phase.write_text(text.replace(old, complete))
+          PY
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add sage-stubs/rings/semirings sage-stubs/rings/noncommutative_ideals.pyi sage-stubs/rings/species.pyi sage-stubs/rings/cfinite_sequence.pyi .agents/phases/phase-04-number-theory-rings.md
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m 'plan: complete T04.17 semirings and remaining rings'
+          git push origin main
