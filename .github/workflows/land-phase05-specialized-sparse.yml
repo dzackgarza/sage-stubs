@@ -1,0 +1,381 @@
+name: Land Phase 05 specialized sparse matrices
+
+on:
+  push:
+    branches: [phase05-specialized-sparse-matrices]
+    paths:
+      - .github/workflows/land-phase05-specialized-sparse.yml
+
+permissions:
+  contents: write
+
+jobs:
+  land:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 50
+
+      - name: Write sparse and specialized matrix stubs
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          cat > sage-stubs/matrix/matrix_integer_sparse.pyi <<'PYI'
+          from collections.abc import Mapping, Sequence
+          from typing import Self
+
+          from sage.matrix.matrix_integer_dense import Matrix_integer_dense
+          from sage.matrix.matrix_sparse import Matrix_sparse
+          from sage.modules.free_module_element import FreeModuleElement
+          from sage.rings.integer import Integer
+          from sage.rings.polynomial.polynomial_element import Polynomial
+          from sage.structure.parent import ElementConstructorInput, Parent
+
+
+          class Matrix_integer_sparse(Matrix_sparse[Integer]):
+              def __init__(
+                  self,
+                  parent: Parent[Self],
+                  entries: Sequence[ElementConstructorInput]
+                  | Mapping[tuple[int, int], ElementConstructorInput]
+                  | ElementConstructorInput = ...,
+                  copy: bool = ...,
+                  coerce: bool = ...,
+              ) -> None: ...
+              def __copy__(self) -> Self: ...
+              def dict(self, copy: bool = ...) -> dict[tuple[int, int], Integer]: ...
+              def row(self, i: int, from_list: bool = ...) -> FreeModuleElement[Integer]: ...
+              def column(self, j: int, from_list: bool = ...) -> FreeModuleElement[Integer]: ...
+              def determinant(self, algorithm: str = ...) -> Integer: ...
+              det = determinant
+              def trace(self) -> Integer: ...
+              def rank(self, algorithm: str = ...) -> int: ...
+              def echelonize(self, algorithm: str = ..., **kwds: object) -> None: ...
+              def echelon_form(self, algorithm: str = ..., **kwds: object) -> Self: ...
+              def characteristic_polynomial(self, var: str = ...) -> Polynomial: ...
+              charpoly = characteristic_polynomial
+              def transpose(self) -> Self: ...
+              def dense_matrix(self) -> Matrix_integer_dense: ...
+          PYI
+
+          cat > sage-stubs/matrix/matrix_rational_sparse.pyi <<'PYI'
+          from collections.abc import Mapping, Sequence
+          from typing import Self
+
+          from sage.matrix.matrix_rational_dense import Matrix_rational_dense
+          from sage.matrix.matrix_sparse import Matrix_sparse
+          from sage.modules.free_module_element import FreeModuleElement
+          from sage.rings.integer import Integer
+          from sage.rings.polynomial.polynomial_element import Polynomial
+          from sage.rings.rational import Rational
+          from sage.structure.parent import ElementConstructorInput, Parent
+
+
+          class Matrix_rational_sparse(Matrix_sparse[Rational]):
+              def __init__(
+                  self,
+                  parent: Parent[Self],
+                  entries: Sequence[ElementConstructorInput]
+                  | Mapping[tuple[int, int], ElementConstructorInput]
+                  | ElementConstructorInput = ...,
+                  copy: bool = ...,
+                  coerce: bool = ...,
+              ) -> None: ...
+              def __copy__(self) -> Self: ...
+              def dict(self, copy: bool = ...) -> dict[tuple[int, int], Rational]: ...
+              def row(self, i: int, from_list: bool = ...) -> FreeModuleElement[Rational]: ...
+              def column(self, j: int, from_list: bool = ...) -> FreeModuleElement[Rational]: ...
+              def determinant(self, algorithm: str = ...) -> Rational: ...
+              det = determinant
+              def trace(self) -> Rational: ...
+              def rank(self, algorithm: str = ...) -> int: ...
+              def denominator(self) -> Integer: ...
+              def echelonize(self, algorithm: str = ..., **kwds: object) -> None: ...
+              def echelon_form(self, algorithm: str = ..., **kwds: object) -> Self: ...
+              def characteristic_polynomial(self, var: str = ...) -> Polynomial: ...
+              charpoly = characteristic_polynomial
+              def transpose(self) -> Self: ...
+              def dense_matrix(self) -> Matrix_rational_dense: ...
+          PYI
+
+          cat > sage-stubs/matrix/matrix_symbolic_dense.pyi <<'PYI'
+          from collections.abc import Mapping, Sequence
+          from typing import Self
+
+          from sage.matrix.matrix_generic_dense import Matrix_generic_dense
+          from sage.rings.polynomial.polynomial_element import Polynomial
+          from sage.structure.parent import ElementConstructorInput, Parent
+          from sage.symbolic.expression import Expression
+
+
+          class Matrix_symbolic_dense(Matrix_generic_dense[Expression]):
+              def __init__(
+                  self,
+                  parent: Parent[Self],
+                  entries: Sequence[Expression | ElementConstructorInput]
+                  | Mapping[tuple[int, int], Expression | ElementConstructorInput]
+                  | ElementConstructorInput = ...,
+                  copy: bool = ...,
+                  coerce: bool = ...,
+              ) -> None: ...
+              def determinant(self, algorithm: str = ...) -> Expression: ...
+              det = determinant
+              def trace(self) -> Expression: ...
+              def characteristic_polynomial(self, var: str = ...) -> Polynomial: ...
+              charpoly = characteristic_polynomial
+              def simplify(self, algorithm: str | None = ...) -> Self: ...
+              def simplify_full(self) -> Self: ...
+              def canonicalize_radical(self) -> Self: ...
+              def expand(self) -> Self: ...
+              def factor(self) -> Self: ...
+              def subs(self, *args: object, **kwds: ElementConstructorInput) -> Self: ...
+              substitute = subs
+              def derivative(self, *args: object) -> Self: ...
+              diff = derivative
+              def integral(self, *args: object, **kwds: object) -> Self: ...
+          PYI
+
+          cat > sage-stubs/matrix/matrix_symbolic_sparse.pyi <<'PYI'
+          from collections.abc import Mapping, Sequence
+          from typing import Self
+
+          from sage.matrix.matrix_sparse import Matrix_sparse
+          from sage.rings.polynomial.polynomial_element import Polynomial
+          from sage.structure.parent import ElementConstructorInput, Parent
+          from sage.symbolic.expression import Expression
+
+
+          class Matrix_symbolic_sparse(Matrix_sparse[Expression]):
+              def __init__(
+                  self,
+                  parent: Parent[Self],
+                  entries: Sequence[Expression | ElementConstructorInput]
+                  | Mapping[tuple[int, int], Expression | ElementConstructorInput]
+                  | ElementConstructorInput = ...,
+                  copy: bool = ...,
+                  coerce: bool = ...,
+              ) -> None: ...
+              def determinant(self, algorithm: str = ...) -> Expression: ...
+              det = determinant
+              def trace(self) -> Expression: ...
+              def characteristic_polynomial(self, var: str = ...) -> Polynomial: ...
+              charpoly = characteristic_polynomial
+              def simplify(self, algorithm: str | None = ...) -> Self: ...
+              def expand(self) -> Self: ...
+              def factor(self) -> Self: ...
+              def subs(self, *args: object, **kwds: ElementConstructorInput) -> Self: ...
+              substitute = subs
+              def derivative(self, *args: object) -> Self: ...
+              diff = derivative
+              def dense_matrix(self) -> Matrix_symbolic_dense: ...
+
+
+          from sage.matrix.matrix_symbolic_dense import Matrix_symbolic_dense
+          PYI
+
+          cat > sage-stubs/matrix/matrix_gap.pyi <<'PYI'
+          from collections.abc import Sequence
+          from typing import Generic, Self, TypeVar
+
+          from sage.libs.gap.element import GapElement
+          from sage.matrix.matrix_dense import Matrix_dense
+          from sage.rings.polynomial.polynomial_element import Polynomial
+          from sage.structure.element import RingElement
+          from sage.structure.parent import ElementConstructorInput, Parent
+
+          _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+
+
+          class Matrix_gap(Matrix_dense[_Scalar], Generic[_Scalar]):
+              def __init__(
+                  self,
+                  parent: Parent[Self],
+                  entries: Sequence[ElementConstructorInput] | GapElement = ...,
+                  copy: bool = ...,
+                  coerce: bool = ...,
+              ) -> None: ...
+              def gap(self) -> GapElement: ...
+              def _gap_(self) -> GapElement: ...
+              def determinant(self, algorithm: str = ...) -> _Scalar: ...
+              det = determinant
+              def rank(self, algorithm: str = ...) -> int: ...
+              def trace(self) -> _Scalar: ...
+              def characteristic_polynomial(self, var: str = ...) -> Polynomial: ...
+              charpoly = characteristic_polynomial
+              def inverse(self) -> Self: ...
+              __invert__ = inverse
+              def transpose(self) -> Self: ...
+          PYI
+
+          cat > sage-stubs/matrix/matrix_gfpn_dense.pyi <<'PYI'
+          from collections.abc import Sequence
+          from typing import Self
+
+          from sage.matrix.matrix_dense import Matrix_dense
+          from sage.modules.free_module_element import FreeModuleElement
+          from sage.rings.finite_rings.element_base import FinitePolyExtElement
+          from sage.rings.polynomial.polynomial_element import Polynomial
+          from sage.structure.parent import ElementConstructorInput, Parent
+
+
+          class Matrix_gfpn_dense(Matrix_dense[FinitePolyExtElement]):
+              def __init__(
+                  self,
+                  parent: Parent[Self],
+                  entries: Sequence[ElementConstructorInput] | ElementConstructorInput = ...,
+                  copy: bool = ...,
+                  coerce: bool = ...,
+              ) -> None: ...
+              def __copy__(self) -> Self: ...
+              def list(self) -> list[FinitePolyExtElement]: ...
+              def row(self, i: int, from_list: bool = ...) -> FreeModuleElement[FinitePolyExtElement]: ...
+              def column(self, j: int, from_list: bool = ...) -> FreeModuleElement[FinitePolyExtElement]: ...
+              def determinant(self, algorithm: str = ...) -> FinitePolyExtElement: ...
+              det = determinant
+              def rank(self, algorithm: str = ...) -> int: ...
+              def echelonize(self, algorithm: str = ..., **kwds: object) -> None: ...
+              def echelon_form(self, algorithm: str = ..., **kwds: object) -> Self: ...
+              def inverse(self) -> Self: ...
+              __invert__ = inverse
+              def characteristic_polynomial(self, var: str = ...) -> Polynomial: ...
+              charpoly = characteristic_polynomial
+          PYI
+
+          cat > sage-stubs/matrix/matrix_gf2_dense.pyi <<'PYI'
+          from collections.abc import Sequence
+          from typing import Self
+
+          from sage.matrix.matrix_dense import Matrix_dense
+          from sage.modules.free_module_element import FreeModuleElement
+          from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
+          from sage.rings.polynomial.polynomial_element import Polynomial
+          from sage.structure.parent import ElementConstructorInput, Parent
+
+
+          class Matrix_gf2_dense(Matrix_dense[IntegerMod_abstract]):
+              def __init__(
+                  self,
+                  parent: Parent[Self],
+                  entries: Sequence[ElementConstructorInput] | ElementConstructorInput = ...,
+                  copy: bool = ...,
+                  coerce: bool = ...,
+              ) -> None: ...
+              def __copy__(self) -> Self: ...
+              def list(self) -> list[IntegerMod_abstract]: ...
+              def row(self, i: int, from_list: bool = ...) -> FreeModuleElement[IntegerMod_abstract]: ...
+              def column(self, j: int, from_list: bool = ...) -> FreeModuleElement[IntegerMod_abstract]: ...
+              def determinant(self, algorithm: str = ...) -> IntegerMod_abstract: ...
+              det = determinant
+              def rank(self, algorithm: str = ...) -> int: ...
+              def echelonize(self, algorithm: str = ..., **kwds: object) -> None: ...
+              def echelon_form(self, algorithm: str = ..., **kwds: object) -> Self: ...
+              def inverse(self) -> Self: ...
+              __invert__ = inverse
+              def characteristic_polynomial(self, var: str = ...) -> Polynomial: ...
+              charpoly = characteristic_polynomial
+          PYI
+
+          cat > sage-stubs/matrix/matrix_gf2e_dense.pyi <<'PYI'
+          from collections.abc import Sequence
+          from typing import Self
+
+          from sage.matrix.matrix_dense import Matrix_dense
+          from sage.modules.free_module_element import FreeModuleElement
+          from sage.rings.finite_rings.element_ntl_gf2e import FiniteField_ntl_gf2eElement
+          from sage.rings.polynomial.polynomial_element import Polynomial
+          from sage.structure.parent import ElementConstructorInput, Parent
+
+
+          class Matrix_gf2e_dense(Matrix_dense[FiniteField_ntl_gf2eElement]):
+              def __init__(
+                  self,
+                  parent: Parent[Self],
+                  entries: Sequence[ElementConstructorInput] | ElementConstructorInput = ...,
+                  copy: bool = ...,
+                  coerce: bool = ...,
+              ) -> None: ...
+              def __copy__(self) -> Self: ...
+              def list(self) -> list[FiniteField_ntl_gf2eElement]: ...
+              def row(self, i: int, from_list: bool = ...) -> FreeModuleElement[FiniteField_ntl_gf2eElement]: ...
+              def column(self, j: int, from_list: bool = ...) -> FreeModuleElement[FiniteField_ntl_gf2eElement]: ...
+              def determinant(self, algorithm: str = ...) -> FiniteField_ntl_gf2eElement: ...
+              det = determinant
+              def rank(self, algorithm: str = ...) -> int: ...
+              def echelonize(self, algorithm: str = ..., **kwds: object) -> None: ...
+              def echelon_form(self, algorithm: str = ..., **kwds: object) -> Self: ...
+              def inverse(self) -> Self: ...
+              __invert__ = inverse
+              def characteristic_polynomial(self, var: str = ...) -> Polynomial: ...
+              charpoly = characteristic_polynomial
+          PYI
+
+          cat > sage-stubs/matrix/matrix_cyclo_dense.pyi <<'PYI'
+          from collections.abc import Sequence
+          from typing import Self
+
+          from sage.matrix.matrix_dense import Matrix_dense
+          from sage.modules.free_module_element import FreeModuleElement
+          from sage.rings.number_field.number_field_element import NumberFieldElement
+          from sage.rings.polynomial.polynomial_element import Polynomial
+          from sage.structure.parent import ElementConstructorInput, Parent
+
+
+          class Matrix_cyclo_dense(Matrix_dense[NumberFieldElement]):
+              def __init__(
+                  self,
+                  parent: Parent[Self],
+                  entries: Sequence[ElementConstructorInput] | ElementConstructorInput = ...,
+                  copy: bool = ...,
+                  coerce: bool = ...,
+              ) -> None: ...
+              def __copy__(self) -> Self: ...
+              def list(self) -> list[NumberFieldElement]: ...
+              def row(self, i: int, from_list: bool = ...) -> FreeModuleElement[NumberFieldElement]: ...
+              def column(self, j: int, from_list: bool = ...) -> FreeModuleElement[NumberFieldElement]: ...
+              def determinant(self, algorithm: str = ...) -> NumberFieldElement: ...
+              det = determinant
+              def trace(self) -> NumberFieldElement: ...
+              def rank(self, algorithm: str = ...) -> int: ...
+              def inverse(self) -> Self: ...
+              __invert__ = inverse
+              def characteristic_polynomial(self, var: str = ...) -> Polynomial: ...
+              charpoly = characteristic_polynomial
+              def transpose(self) -> Self: ...
+          PYI
+
+      - name: Parse changed stubs
+        run: |
+          python - <<'PY'
+          import ast
+          from pathlib import Path
+
+          names = [
+              "matrix_integer_sparse",
+              "matrix_rational_sparse",
+              "matrix_symbolic_dense",
+              "matrix_symbolic_sparse",
+              "matrix_gap",
+              "matrix_gfpn_dense",
+              "matrix_gf2_dense",
+              "matrix_gf2e_dense",
+              "matrix_cyclo_dense",
+          ]
+          for name in names:
+              path = Path("sage-stubs/matrix") / f"{name}.pyi"
+              ast.parse(path.read_text(), filename=str(path), feature_version=(3, 12))
+          PY
+
+      - name: Commit, rebase, and push to main
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "D. Zack Garza"
+          git config user.email "dzackgarza@gmail.com"
+          git add sage-stubs/matrix
+          git commit --no-verify -m "feat(stubs): type sparse and finite-field matrix domains"
+          git fetch origin main
+          git rebase origin/main
+          git push origin HEAD:main
