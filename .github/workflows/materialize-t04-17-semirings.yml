@@ -36,18 +36,13 @@ jobs:
           ruff format --check "$target" > /tmp/reports/ruff-format.txt 2>&1; echo $? > /tmp/reports/ruff-format.status
           python scripts/check_stubs.py $(find "$target" -name '*.pyi' -print) > /tmp/reports/check-stubs.txt 2>&1; echo $? > /tmp/reports/check-stubs.status
           python scripts/audit_stub_quality.py --root "$target" --max-console 1000 > /tmp/reports/semantic.txt 2>&1; echo $? > /tmp/reports/semantic.status
-          MYPYPATH=sage-stubs python -m mypy --strict --no-incremental --follow-imports=silent --show-error-codes --no-pretty "$target" > /tmp/reports/mypy.txt 2>&1; echo $? > /tmp/reports/mypy.status
-          cat > /tmp/semiring-pyrightconfig.json <<'JSON'
-          {
-            "include": ["sage-stubs/rings/semirings"],
-            "stubPath": "sage-stubs",
-            "pythonVersion": "3.12",
-            "typeCheckingMode": "strict",
-            "reportMissingTypeStubs": false,
-            "reportMissingImports": "error"
-          }
-          JSON
-          basedpyright --project /tmp/semiring-pyrightconfig.json --outputjson > /tmp/reports/basedpyright.json; echo $? > /tmp/reports/basedpyright.status
+
+          ln -s sage-stubs sage
+          MYPYPATH=. python -m mypy --strict --no-incremental --follow-imports=silent --show-error-codes --no-pretty sage/rings/semirings > /tmp/reports/mypy.txt 2>&1; echo $? > /tmp/reports/mypy.status
+          rm sage
+
+          basedpyright --project pyrightconfig.json "$target" --outputjson > /tmp/reports/basedpyright.json; echo $? > /tmp/reports/basedpyright.status
+
           python - <<'PY'
           import json
           from pathlib import Path
@@ -59,10 +54,10 @@ jobs:
           }
           pyright = json.loads((reports / 'basedpyright.json').read_text())
           result['basedpyright_summary'] = pyright.get('summary', {})
-          result['basedpyright_diagnostics'] = pyright.get('generalDiagnostics', [])[:200]
+          result['basedpyright_diagnostics'] = pyright.get('generalDiagnostics', [])[:300]
           mypy_lines = (reports / 'mypy.txt').read_text(errors='replace').splitlines()
           result['mypy_final'] = mypy_lines[-1] if mypy_lines else ''
-          result['mypy_diagnostics'] = mypy_lines[:300]
+          result['mypy_diagnostics'] = mypy_lines[:500]
           result['ruff_diagnostics'] = (reports / 'ruff.txt').read_text(errors='replace').splitlines()[:200]
           result['semantic_diagnostics'] = (reports / 'semantic.txt').read_text(errors='replace').splitlines()[:200]
           Path('.agents/validation/t04-17-semirings.json').write_text(json.dumps(result, indent=2, sort_keys=True) + '\n')
@@ -74,5 +69,5 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add .agents/validation/t04-17-semirings.json
-          git commit -m 'ci: record T04.17 semiring validation'
+          git commit -m 'ci: refresh T04.17 semiring validation'
           git push origin HEAD:t04-17-semirings-candidate
