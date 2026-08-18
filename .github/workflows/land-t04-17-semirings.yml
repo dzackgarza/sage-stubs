@@ -1,0 +1,68 @@
+name: Land T04.17 semiring subtree
+
+on:
+  push:
+    branches: [t04-17-semirings-validation]
+    paths:
+      - .github/workflows/land-t04-17-semirings.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  land:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install analyzers
+        run: python -m pip install --upgrade pip ruff mypy basedpyright
+
+      - name: Validate candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main t04-17-semirings-candidate
+          git switch -C t04-17-semirings-candidate origin/t04-17-semirings-candidate
+          target=sage-stubs/rings/semirings
+          ruff check "$target"
+          ruff format --check "$target"
+          python scripts/check_stubs.py $(find "$target" -name '*.pyi' -print)
+          python scripts/audit_stub_quality.py --root "$target" --max-console 1000
+          ln -s sage-stubs sage
+          MYPYPATH=. python -m mypy --strict --no-warn-unused-ignores --no-incremental --follow-imports=skip --show-error-codes --no-pretty sage/rings/semirings
+          rm sage
+          basedpyright --project pyrightconfig.json "$target"
+
+      - name: Squash task into main with planning update
+        shell: bash
+        run: |
+          set -euo pipefail
+          git switch -C main origin/main
+          git merge --squash origin/t04-17-semirings-candidate
+          git reset -- .agents/validation/t04-17-semirings.json 2>/dev/null || true
+          rm -f .agents/validation/t04-17-semirings.json
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('.agents/phases/phase-04-number-theory-rings.md')
+          text = path.read_text()
+          old = "| T04.17 | **Semirings & remaining** — `semirings/` subdir, plus anything else surveyed in Phase 1 audit that lives at `sage.rings/` root but wasn't covered in Phase 02 (e.g. `noncommutative_ideals`, `species`, `cfinite_sequence`). | ~6 | — | ⬜ | |"
+          new = "| T04.17 | **Semirings & remaining** — `semirings/` subdir, plus anything else surveyed in Phase 1 audit that lives at `sage.rings/` root but wasn't covered in Phase 02 (e.g. `noncommutative_ideals`, `species`, `cfinite_sequence`). | ~6 | — | 🟡 In Progress | Semiring subtree complete: nonnegative integers, tropical base semirings and coercions, tropical univariate and multivariate polynomial parents/elements, tropical matrices, and tropical varieties. Remaining ring-root modules still require source audit. |"
+          if old not in text:
+              raise SystemExit('T04.17 planning row did not match expected current state')
+          path.write_text(text.replace(old, new))
+          PY
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add sage-stubs/rings/semirings .agents/phases/phase-04-number-theory-rings.md
+          git commit -m 'feat(stubs): complete tropical semiring interfaces'
+          git push origin main
