@@ -1,0 +1,448 @@
+name: Land Phase 05 exact matrices
+
+on:
+  push:
+    branches: [phase05-exact-matrix-source-grounded]
+    paths:
+      - .github/workflows/land-phase05-exact-matrices.yml
+
+permissions:
+  contents: write
+
+jobs:
+  land:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 50
+
+      - name: Write exact and modular matrix stubs
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          cat > sage-stubs/matrix/matrix_integer_dense.pyi <<'PYI'
+          from collections.abc import Sequence
+          from typing import Literal, Self, overload
+
+          from sage.matrix.matrix_dense import Matrix_dense
+          from sage.modules.free_module import FreeModule_generic
+          from sage.modules.free_module_element import FreeModuleElement
+          from sage.rings.fraction_field_element import FractionFieldElement
+          from sage.rings.ideal import Ideal_generic
+          from sage.rings.integer import Integer
+          from sage.rings.polynomial.polynomial_element import Polynomial
+          from sage.structure.parent import ElementConstructorInput, Parent
+
+
+          class Matrix_integer_dense(Matrix_dense[Integer]):
+              def __init__(
+                  self,
+                  parent: Parent[Self],
+                  entries: Sequence[int | Integer] | ElementConstructorInput = ...,
+                  copy: bool = ...,
+                  coerce: bool = ...,
+              ) -> None: ...
+              def __copy__(self) -> Self: ...
+              def list(self) -> list[Integer]: ...
+              def row(self, i: int, from_list: bool = ...) -> FreeModuleElement[Integer]: ...
+              def column(self, j: int, from_list: bool = ...) -> FreeModuleElement[Integer]: ...
+              def transpose(self) -> Self: ...
+              def antitranspose(self) -> Self: ...
+              def trace(self) -> Integer: ...
+              def determinant(
+                  self,
+                  algorithm: str = ...,
+                  proof: bool | None = ...,
+                  stabilize: int = ...,
+              ) -> Integer: ...
+              det = determinant
+              def rank(self, algorithm: str = ...) -> int: ...
+              def height(self) -> Integer: ...
+              def content(self) -> Integer: ...
+              gcd = content
+              def characteristic_polynomial(
+                  self,
+                  var: str = ...,
+                  algorithm: str | None = ...,
+              ) -> Polynomial: ...
+              charpoly = characteristic_polynomial
+              def minimal_polynomial(
+                  self,
+                  var: str = ...,
+                  algorithm: str | None = ...,
+              ) -> Polynomial: ...
+              minpoly = minimal_polynomial
+              def elementary_divisors(self, algorithm: str = ...) -> list[Integer]: ...
+
+              @overload
+              def hermite_form(
+                  self,
+                  algorithm: str = ...,
+                  proof: bool | None = ...,
+                  include_zero_rows: bool = ...,
+                  transformation: Literal[False] = ...,
+                  **kwds: object,
+              ) -> Self: ...
+              @overload
+              def hermite_form(
+                  self,
+                  algorithm: str,
+                  proof: bool | None,
+                  include_zero_rows: bool,
+                  transformation: Literal[True],
+                  **kwds: object,
+              ) -> tuple[Self, Self]: ...
+
+              @overload
+              def smith_form(
+                  self,
+                  transformation: Literal[False] = ...,
+                  integral: bool | None = ...,
+              ) -> Self: ...
+              @overload
+              def smith_form(
+                  self,
+                  transformation: Literal[True],
+                  integral: bool | None = ...,
+              ) -> tuple[Self, Self, Self]: ...
+
+              def saturation(
+                  self,
+                  p: int | Integer = ...,
+                  proof: bool | None = ...,
+                  max_dets: int = ...,
+              ) -> Self: ...
+              def index_in_saturation(self, proof: bool | None = ...) -> Integer: ...
+              def is_primitive(self) -> bool: ...
+              def symplectic_form(self) -> Self: ...
+
+              @overload
+              def LLL(
+                  self,
+                  delta: float | None = ...,
+                  eta: float | None = ...,
+                  algorithm: str = ...,
+                  fp: str | None = ...,
+                  prec: int = ...,
+                  early_red: bool = ...,
+                  use_givens: bool = ...,
+                  use_siegel: bool = ...,
+                  transformation: Literal[False] = ...,
+                  **kwds: object,
+              ) -> Self: ...
+              @overload
+              def LLL(
+                  self,
+                  delta: float | None,
+                  eta: float | None,
+                  algorithm: str,
+                  fp: str | None,
+                  prec: int,
+                  early_red: bool,
+                  use_givens: bool,
+                  use_siegel: bool,
+                  transformation: Literal[True],
+                  **kwds: object,
+              ) -> tuple[Self, Self]: ...
+              def BKZ(
+                  self,
+                  delta: float | None = ...,
+                  algorithm: str = ...,
+                  fp: str | None = ...,
+                  block_size: int = ...,
+                  prune: int = ...,
+                  use_givens: bool = ...,
+                  proof: bool | None = ...,
+              ) -> Self: ...
+              def is_LLL_reduced(
+                  self,
+                  delta: float | None = ...,
+                  eta: float | None = ...,
+                  algorithm: str = ...,
+              ) -> bool: ...
+
+              def rational_reconstruction(
+                  self,
+                  modulus: int | Integer,
+              ) -> Matrix_rational_dense: ...
+              def inverse(self) -> Matrix_rational_dense: ...
+              __invert__ = inverse
+              def inverse_of_unit(self) -> Self: ...
+              def decomposition(self, **kwds: object) -> list[FreeModule_generic[Integer]]: ...
+              def randomize(
+                  self,
+                  density: float = ...,
+                  x: int | None = ...,
+                  y: int | None = ...,
+                  distribution: str | None = ...,
+                  **kwds: object,
+              ) -> None: ...
+              def p_minimal_polynomials(
+                  self,
+                  p: int | Integer,
+                  s_max: int | Integer | None = ...,
+              ) -> dict[int, Polynomial]: ...
+              def null_ideal(self, b: int | Integer = ...) -> Ideal_generic: ...
+              def integer_valued_polynomials_generators(
+                  self,
+              ) -> tuple[Polynomial, list[Polynomial | FractionFieldElement]]: ...
+
+
+          from sage.matrix.matrix_rational_dense import Matrix_rational_dense
+          PYI
+
+          cat > sage-stubs/matrix/matrix_integer_dense_hnf.pyi <<'PYI'
+          from typing import Literal, overload
+
+          from sage.matrix.matrix_integer_dense import Matrix_integer_dense
+          from sage.rings.integer import Integer
+
+
+          @overload
+          def hnf(
+              A: Matrix_integer_dense,
+              proof: bool | None = ...,
+              include_zero_rows: bool = ...,
+              transformation: Literal[False] = ...,
+          ) -> Matrix_integer_dense: ...
+          @overload
+          def hnf(
+              A: Matrix_integer_dense,
+              proof: bool | None,
+              include_zero_rows: bool,
+              transformation: Literal[True],
+          ) -> tuple[Matrix_integer_dense, Matrix_integer_dense]: ...
+
+
+          def hnf_mod(
+              A: Matrix_integer_dense,
+              modulus: int | Integer,
+          ) -> Matrix_integer_dense: ...
+
+
+          def hnf_padic(
+              A: Matrix_integer_dense,
+              prime: int | Integer,
+              precision: int | Integer,
+          ) -> Matrix_integer_dense: ...
+          PYI
+
+          cat > sage-stubs/matrix/matrix_integer_dense_saturation.pyi <<'PYI'
+          from sage.matrix.matrix_integer_dense import Matrix_integer_dense
+          from sage.rings.integer import Integer
+
+
+          def saturation(
+              A: Matrix_integer_dense,
+              p: int | Integer = ...,
+              proof: bool | None = ...,
+              max_dets: int = ...,
+          ) -> Matrix_integer_dense: ...
+
+
+          def index_in_saturation(
+              A: Matrix_integer_dense,
+              proof: bool | None = ...,
+          ) -> Integer: ...
+
+
+          def p_saturation(
+              A: Matrix_integer_dense,
+              p: int | Integer,
+              proof: bool | None = ...,
+          ) -> Matrix_integer_dense: ...
+          PYI
+
+          cat > sage-stubs/matrix/matrix_rational_dense.pyi <<'PYI'
+          from collections.abc import Sequence
+          from typing import Self
+
+          from sage.matrix.matrix_dense import Matrix_dense
+          from sage.matrix.matrix_integer_dense import Matrix_integer_dense
+          from sage.modules.free_module_element import FreeModuleElement
+          from sage.rings.integer import Integer
+          from sage.rings.polynomial.polynomial_element import Polynomial
+          from sage.rings.rational import Rational
+          from sage.structure.parent import ElementConstructorInput, Parent
+
+
+          class Matrix_rational_dense(Matrix_dense[Rational]):
+              def __init__(
+                  self,
+                  parent: Parent[Self],
+                  entries: Sequence[int | Integer | Rational] | ElementConstructorInput = ...,
+                  copy: bool = ...,
+                  coerce: bool = ...,
+              ) -> None: ...
+              def __copy__(self) -> Self: ...
+              def list(self) -> list[Rational]: ...
+              def row(self, i: int, from_list: bool = ...) -> FreeModuleElement[Rational]: ...
+              def column(self, j: int, from_list: bool = ...) -> FreeModuleElement[Rational]: ...
+              def transpose(self) -> Self: ...
+              def antitranspose(self) -> Self: ...
+              def determinant(self, algorithm: str = ...) -> Rational: ...
+              det = determinant
+              def rank(self, algorithm: str = ...) -> int: ...
+              def trace(self) -> Rational: ...
+              def denominator(self) -> Integer: ...
+              def height(self) -> Integer: ...
+              def characteristic_polynomial(
+                  self,
+                  var: str = ...,
+                  algorithm: str | None = ...,
+              ) -> Polynomial: ...
+              charpoly = characteristic_polynomial
+              def minimal_polynomial(
+                  self,
+                  var: str = ...,
+                  algorithm: str | None = ...,
+              ) -> Polynomial: ...
+              minpoly = minimal_polynomial
+              def echelon_form(self, algorithm: str = ..., **kwds: object) -> Self: ...
+              def inverse(self) -> Self: ...
+              __invert__ = inverse
+              def clear_denominators(self) -> Matrix_integer_dense: ...
+              def integer_matrix(self) -> tuple[Matrix_integer_dense, Integer]: ...
+              def rational_reconstruction(
+                  self,
+                  modulus: int | Integer,
+              ) -> Self: ...
+          PYI
+
+          cat > sage-stubs/matrix/matrix_modn_dense_float.pyi <<'PYI'
+          from collections.abc import Sequence
+          from typing import Self
+
+          from sage.matrix.matrix_dense import Matrix_dense
+          from sage.modules.free_module_element import FreeModuleElement
+          from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
+          from sage.rings.polynomial.polynomial_element import Polynomial
+          from sage.structure.parent import ElementConstructorInput, Parent
+
+
+          class Matrix_modn_dense_float(Matrix_dense[IntegerMod_abstract]):
+              def __init__(
+                  self,
+                  parent: Parent[Self],
+                  entries: Sequence[ElementConstructorInput] | ElementConstructorInput = ...,
+                  copy: bool = ...,
+                  coerce: bool = ...,
+              ) -> None: ...
+              def __copy__(self) -> Self: ...
+              def list(self) -> list[IntegerMod_abstract]: ...
+              def row(self, i: int, from_list: bool = ...) -> FreeModuleElement[IntegerMod_abstract]: ...
+              def column(self, j: int, from_list: bool = ...) -> FreeModuleElement[IntegerMod_abstract]: ...
+              def determinant(self, algorithm: str = ...) -> IntegerMod_abstract: ...
+              det = determinant
+              def rank(self, algorithm: str = ...) -> int: ...
+              def echelonize(self, algorithm: str = ..., **kwds: object) -> None: ...
+              def echelon_form(self, algorithm: str = ..., **kwds: object) -> Self: ...
+              def inverse(self) -> Self: ...
+              __invert__ = inverse
+              def characteristic_polynomial(self, var: str = ...) -> Polynomial: ...
+              charpoly = characteristic_polynomial
+              def transpose(self) -> Self: ...
+          PYI
+
+          cat > sage-stubs/matrix/matrix_modn_dense_double.pyi <<'PYI'
+          from collections.abc import Sequence
+          from typing import Self
+
+          from sage.matrix.matrix_dense import Matrix_dense
+          from sage.modules.free_module_element import FreeModuleElement
+          from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
+          from sage.rings.polynomial.polynomial_element import Polynomial
+          from sage.structure.parent import ElementConstructorInput, Parent
+
+
+          class Matrix_modn_dense_double(Matrix_dense[IntegerMod_abstract]):
+              def __init__(
+                  self,
+                  parent: Parent[Self],
+                  entries: Sequence[ElementConstructorInput] | ElementConstructorInput = ...,
+                  copy: bool = ...,
+                  coerce: bool = ...,
+              ) -> None: ...
+              def __copy__(self) -> Self: ...
+              def list(self) -> list[IntegerMod_abstract]: ...
+              def row(self, i: int, from_list: bool = ...) -> FreeModuleElement[IntegerMod_abstract]: ...
+              def column(self, j: int, from_list: bool = ...) -> FreeModuleElement[IntegerMod_abstract]: ...
+              def determinant(self, algorithm: str = ...) -> IntegerMod_abstract: ...
+              det = determinant
+              def rank(self, algorithm: str = ...) -> int: ...
+              def echelonize(self, algorithm: str = ..., **kwds: object) -> None: ...
+              def echelon_form(self, algorithm: str = ..., **kwds: object) -> Self: ...
+              def inverse(self) -> Self: ...
+              __invert__ = inverse
+              def characteristic_polynomial(self, var: str = ...) -> Polynomial: ...
+              charpoly = characteristic_polynomial
+              def transpose(self) -> Self: ...
+          PYI
+
+          cat > sage-stubs/matrix/matrix_modn_sparse.pyi <<'PYI'
+          from collections.abc import Mapping, Sequence
+          from typing import Self
+
+          from sage.matrix.matrix_sparse import Matrix_sparse
+          from sage.modules.free_module_element import FreeModuleElement
+          from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
+          from sage.rings.polynomial.polynomial_element import Polynomial
+          from sage.structure.parent import ElementConstructorInput, Parent
+
+
+          class Matrix_modn_sparse(Matrix_sparse[IntegerMod_abstract]):
+              def __init__(
+                  self,
+                  parent: Parent[Self],
+                  entries: Sequence[ElementConstructorInput]
+                  | Mapping[tuple[int, int], ElementConstructorInput]
+                  | ElementConstructorInput = ...,
+                  copy: bool = ...,
+                  coerce: bool = ...,
+              ) -> None: ...
+              def __copy__(self) -> Self: ...
+              def dict(self, copy: bool = ...) -> dict[tuple[int, int], IntegerMod_abstract]: ...
+              def row(self, i: int, from_list: bool = ...) -> FreeModuleElement[IntegerMod_abstract]: ...
+              def column(self, j: int, from_list: bool = ...) -> FreeModuleElement[IntegerMod_abstract]: ...
+              def determinant(self, algorithm: str = ...) -> IntegerMod_abstract: ...
+              det = determinant
+              def rank(self, algorithm: str = ...) -> int: ...
+              def echelonize(self, algorithm: str = ..., **kwds: object) -> None: ...
+              def echelon_form(self, algorithm: str = ..., **kwds: object) -> Self: ...
+              def characteristic_polynomial(self, var: str = ...) -> Polynomial: ...
+              charpoly = characteristic_polynomial
+              def transpose(self) -> Self: ...
+          PYI
+
+      - name: Parse changed stubs
+        run: |
+          python - <<'PY'
+          import ast
+          from pathlib import Path
+
+          for path in [
+              Path("sage-stubs/matrix/matrix_integer_dense.pyi"),
+              Path("sage-stubs/matrix/matrix_integer_dense_hnf.pyi"),
+              Path("sage-stubs/matrix/matrix_integer_dense_saturation.pyi"),
+              Path("sage-stubs/matrix/matrix_rational_dense.pyi"),
+              Path("sage-stubs/matrix/matrix_modn_dense_float.pyi"),
+              Path("sage-stubs/matrix/matrix_modn_dense_double.pyi"),
+              Path("sage-stubs/matrix/matrix_modn_sparse.pyi"),
+          ]:
+              ast.parse(path.read_text(), filename=str(path), feature_version=(3, 12))
+          PY
+
+      - name: Commit, rebase, and push to main
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "D. Zack Garza"
+          git config user.email "dzackgarza@gmail.com"
+          git add sage-stubs/matrix
+          git commit --no-verify -m "feat(stubs): type exact and modular matrix algorithms"
+          git fetch origin main
+          git rebase origin/main
+          git push origin HEAD:main
