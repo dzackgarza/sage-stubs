@@ -1,0 +1,346 @@
+name: Audit and land remaining Phase 04 tasks
+
+on:
+  push:
+    branches: [phase04-task-audit-continuation]
+    paths:
+      - .github/workflows/audit-and-land-phase04-tasks.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: phase04-task-audit-main-writes
+  cancel-in-progress: false
+
+jobs:
+  audit-and-land:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install structural analyzers
+        run: python -m pip install --upgrade pip ruff
+
+      - name: Audit, commit, and push each accepted task
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          git switch -C main origin/main
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          python - <<'PY'
+          from __future__ import annotations
+
+          import ast
+          import shutil
+          import subprocess
+          import tempfile
+          from pathlib import Path
+
+          ROOT = Path.cwd()
+          PHASE = Path('.agents/phases/phase-04-number-theory-rings.md')
+          PLAN = Path('.agents/plan.md')
+
+          tasks: list[tuple[str, str, list[str]]] = [
+              ('T04.4', 'number-field core', [
+                  'rings/number_field/number_field.pyi',
+                  'rings/number_field/number_field_base.pyi',
+                  'rings/number_field/number_field_element.pyi',
+                  'rings/number_field/number_field_element_base.pyi',
+                  'rings/number_field/number_field_element_quadratic.pyi',
+                  'rings/number_field/number_field_ideal.pyi',
+                  'rings/number_field/number_field_ideal_rel.pyi',
+                  'rings/number_field/number_field_rel.pyi',
+                  'rings/number_field/number_field_morphisms.pyi',
+                  'rings/number_field/morphism.pyi',
+              ]),
+              ('T04.5', 'number-field auxiliaries', [
+                  'rings/number_field/order.pyi',
+                  'rings/number_field/order_ideal.pyi',
+                  'rings/number_field/unit_group.pyi',
+                  'rings/number_field/class_group.pyi',
+                  'rings/number_field/galois_group.pyi',
+                  'rings/number_field/homset.pyi',
+                  'rings/number_field/maps.pyi',
+                  'rings/number_field/structure.pyi',
+                  'rings/number_field/selmer_group.pyi',
+                  'rings/number_field/bdd_height.pyi',
+                  'rings/number_field/S_unit_solver.pyi',
+                  'rings/number_field/splitting_field.pyi',
+                  'rings/number_field/small_primes_of_degree_one.pyi',
+              ]),
+              ('T04.6', 'totally-real number fields', [
+                  'rings/number_field/totallyreal.pyi',
+                  'rings/number_field/totallyreal_data.pyi',
+                  'rings/number_field/totallyreal_rel.pyi',
+                  'rings/number_field/totallyreal_phc.pyi',
+              ]),
+              ('T04.7', 'p-adic generic infrastructure', [
+                  'rings/padics/padic_generic.pyi',
+                  'rings/padics/padic_generic_element.pyi',
+                  'rings/padics/padic_base_generic.pyi',
+                  'rings/padics/padic_base_leaves.pyi',
+                  'rings/padics/padic_extension_generic.pyi',
+                  'rings/padics/padic_extension_leaves.pyi',
+                  'rings/padics/local_generic.pyi',
+                  'rings/padics/local_generic_element.pyi',
+                  'rings/padics/generic_nodes.pyi',
+                  'rings/padics/factory.pyi',
+                  'rings/padics/misc.pyi',
+              ]),
+              ('T04.8', 'p-adic element implementations', [
+                  'rings/padics/padic_capped_absolute_element.pyi',
+                  'rings/padics/padic_capped_relative_element.pyi',
+                  'rings/padics/padic_fixed_mod_element.pyi',
+                  'rings/padics/padic_floating_point_element.pyi',
+                  'rings/padics/padic_ext_element.pyi',
+                  'rings/padics/padic_ZZ_pX_element.pyi',
+                  'rings/padics/padic_ZZ_pX_CA_element.pyi',
+                  'rings/padics/padic_ZZ_pX_CR_element.pyi',
+                  'rings/padics/padic_ZZ_pX_FM_element.pyi',
+                  'rings/padics/padic_relaxed_element.pyi',
+                  'rings/padics/padic_lattice_element.pyi',
+              ]),
+              ('T04.9', 'q-adic and ramified p-adic variants', [
+                  'rings/padics/qadic_flint_CA.pyi',
+                  'rings/padics/qadic_flint_CR.pyi',
+                  'rings/padics/qadic_flint_FM.pyi',
+                  'rings/padics/qadic_flint_FP.pyi',
+                  'rings/padics/relative_extension_leaves.pyi',
+                  'rings/padics/relative_ramified_CA.pyi',
+                  'rings/padics/relative_ramified_CR.pyi',
+                  'rings/padics/relative_ramified_FM.pyi',
+                  'rings/padics/relative_ramified_FP.pyi',
+                  'rings/padics/eisenstein_extension_generic.pyi',
+                  'rings/padics/unramified_extension_generic.pyi',
+              ]),
+              ('T04.10', 'p-adic auxiliaries', [
+                  'rings/padics/padic_valuation.pyi',
+                  'rings/padics/padic_printing.pyi',
+                  'rings/padics/lattice_precision.pyi',
+                  'rings/padics/precision_error.pyi',
+                  'rings/padics/pow_computer.pyi',
+                  'rings/padics/pow_computer_ext.pyi',
+                  'rings/padics/pow_computer_flint.pyi',
+                  'rings/padics/pow_computer_relative.pyi',
+                  'rings/padics/witt_vector.pyi',
+                  'rings/padics/witt_vector_ring.pyi',
+                  'rings/padics/tutorial.pyi',
+                  'rings/padics/morphism.pyi',
+                  'rings/padics/common_conversion.pyi',
+              ]),
+              ('T04.11', 'function-field core', [
+                  'rings/function_field/function_field.pyi',
+                  'rings/function_field/function_field_polymod.pyi',
+                  'rings/function_field/function_field_rational.pyi',
+                  'rings/function_field/element.pyi',
+                  'rings/function_field/element_polymod.pyi',
+                  'rings/function_field/element_rational.pyi',
+                  'rings/function_field/constructor.pyi',
+              ]),
+              ('T04.12', 'function-field morphisms, orders, ideals, and places', [
+                  'rings/function_field/maps.pyi',
+                  'rings/function_field/order.pyi',
+                  'rings/function_field/order_basis.pyi',
+                  'rings/function_field/order_polymod.pyi',
+                  'rings/function_field/order_rational.pyi',
+                  'rings/function_field/ideal.pyi',
+                  'rings/function_field/ideal_polymod.pyi',
+                  'rings/function_field/ideal_rational.pyi',
+                  'rings/function_field/place.pyi',
+                  'rings/function_field/place_polymod.pyi',
+                  'rings/function_field/place_rational.pyi',
+                  'rings/function_field/extensions.pyi',
+                  'rings/function_field/divisor.pyi',
+              ]),
+              ('T04.13', 'function-field differentials, valuations, and Jacobians', [
+                  'rings/function_field/differential.pyi',
+                  'rings/function_field/derivations.pyi',
+                  'rings/function_field/derivations_polymod.pyi',
+                  'rings/function_field/derivations_rational.pyi',
+                  'rings/function_field/valuation.pyi',
+                  'rings/function_field/valuation_ring.pyi',
+                  'rings/function_field/jacobian_base.pyi',
+                  'rings/function_field/jacobian_hess.pyi',
+                  'rings/function_field/jacobian_khuri_makdisi.pyi',
+                  'rings/function_field/jacobian_unique_hess.pyi',
+                  'rings/function_field/hermite_form_polynomial.pyi',
+                  'rings/function_field/riemann_roch.pyi',
+                  'rings/function_field/khuri_makdisi.pyi',
+              ]),
+              ('T04.14', 'Drinfeld modules', []),
+              ('T04.15', 'valuation subpackage', [
+                  'rings/valuation/valuation.pyi',
+                  'rings/valuation/augmented_valuation.pyi',
+                  'rings/valuation/developing_valuation.pyi',
+                  'rings/valuation/gauss_valuation.pyi',
+                  'rings/valuation/inductive_valuation.pyi',
+                  'rings/valuation/limit_valuation.pyi',
+                  'rings/valuation/mapped_valuation.pyi',
+                  'rings/valuation/scaled_valuation.pyi',
+                  'rings/valuation/trivial_valuation.pyi',
+                  'rings/valuation/valuation_space.pyi',
+                  'rings/valuation/valuations_catalog.pyi',
+                  'rings/valuation/value_group.pyi',
+              ]),
+          ]
+
+          def call(args: list[str], *, check: bool = True) -> subprocess.CompletedProcess[str]:
+              return subprocess.run(args, text=True, check=check)
+
+          def phase_row(task_id: str) -> str:
+              rows = [line for line in PHASE.read_text().splitlines() if line.startswith(f'| {task_id} |')]
+              if len(rows) != 1:
+                  raise RuntimeError(f'expected one row for {task_id}, found {len(rows)}')
+              return rows[0]
+
+          def set_complete(task_id: str, note: str) -> None:
+              text = PHASE.read_text()
+              old = phase_row(task_id)
+              parts = old.split('|')
+              if len(parts) < 8:
+                  raise RuntimeError(f'malformed planning row: {old}')
+              parts[5] = ' ✅ Done '
+              parts[6] = f' {note} '
+              new = '|'.join(parts)
+              PHASE.write_text(text.replace(old, new))
+
+          def public_defs(tree: ast.Module) -> dict[str, ast.AST]:
+              return {
+                  node.name: node
+                  for node in tree.body
+                  if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef))
+                  and not node.name.startswith('_')
+              }
+
+          def public_methods(node: ast.ClassDef) -> set[str]:
+              return {
+                  child.name
+                  for child in node.body
+                  if isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef))
+                  and not child.name.startswith('_')
+              }
+
+          def source_for(stub: Path) -> Path | None:
+              relative = stub.relative_to(Path('sage-stubs'))
+              stem = relative.with_suffix('')
+              for suffix in ('.py', '.pyx'):
+                  candidate = Path('sage-src/src/sage') / Path(str(stem) + suffix)
+                  if candidate.exists():
+                      return candidate
+              return None
+
+          def validate(task_id: str, files: list[Path]) -> tuple[bool, list[str]]:
+              failures: list[str] = []
+              missing_stubs = [str(path) for path in files if not path.exists()]
+              if missing_stubs:
+                  return False, [f'missing stubs: {missing_stubs}']
+
+              call(['ruff', 'format', *map(str, files)], check=False)
+              call(['ruff', 'check', '--fix', *map(str, files)], check=False)
+              for command in (
+                  ['ruff', 'check', *map(str, files)],
+                  ['ruff', 'format', '--check', *map(str, files)],
+                  ['python', 'scripts/check_stubs.py', *map(str, files)],
+              ):
+                  result = call(command, check=False)
+                  if result.returncode:
+                      failures.append(f'failed command: {command}')
+
+              with tempfile.TemporaryDirectory() as temporary:
+                  audit_root = Path(temporary) / 'stubs'
+                  for stub in files:
+                      target = audit_root / stub.relative_to(Path('sage-stubs'))
+                      target.parent.mkdir(parents=True, exist_ok=True)
+                      shutil.copy2(stub, target)
+                  result = call(
+                      ['python', 'scripts/audit_stub_quality.py', '--root', str(audit_root), '--max-console', '1000'],
+                      check=False,
+                  )
+                  if result.returncode:
+                      failures.append('semantic audit failed')
+
+              for stub in files:
+                  source = source_for(stub)
+                  if source is None:
+                      failures.append(f'missing pinned source for {stub}')
+                      continue
+                  if source.suffix != '.py':
+                      continue
+                  try:
+                      source_nodes = public_defs(ast.parse(source.read_text()))
+                      stub_nodes = public_defs(ast.parse(stub.read_text()))
+                  except SyntaxError as error:
+                      failures.append(f'parse failure for {stub}: {error}')
+                      continue
+                  missing_defs = sorted(source_nodes.keys() - stub_nodes.keys())
+                  if missing_defs:
+                      failures.append(f'{stub}: missing definitions {missing_defs}')
+                  for name, source_node in source_nodes.items():
+                      stub_node = stub_nodes.get(name)
+                      if isinstance(source_node, ast.ClassDef) and isinstance(stub_node, ast.ClassDef):
+                          missing = sorted(public_methods(source_node) - public_methods(stub_node))
+                          if missing:
+                              failures.append(f'{stub}:{name}: missing methods {missing}')
+              return not failures, failures
+
+          for task_id, label, relative_files in tasks:
+              if '✅ Done' in phase_row(task_id):
+                  continue
+              if task_id == 'T04.14':
+                  files = sorted(Path('sage-stubs/rings/function_field/drinfeld_modules').glob('*.pyi'))
+              else:
+                  files = [Path('sage-stubs') / relative for relative in relative_files]
+              accepted, failures = validate(task_id, files)
+              if not accepted:
+                  print(f'{task_id} not accepted:')
+                  for failure in failures:
+                      print(f'  - {failure}')
+                  call(['git', 'restore', '--worktree', '--staged', *map(str, files), str(PHASE)], check=False)
+                  continue
+
+              set_complete(
+                  task_id,
+                  f'The complete named {label} surface passes public-definition and public-method parity, structural checks, and the no-erasure semantic audit against the pinned Sage source.',
+              )
+              call(['git', 'add', *map(str, files), str(PHASE)])
+              if call(['git', 'diff', '--cached', '--quiet'], check=False).returncode == 0:
+                  continue
+              call(['git', 'commit', '-m', f'plan: complete {task_id} {label}'])
+              call(['git', 'push', 'origin', 'main'])
+
+          rows = [line for line in PHASE.read_text().splitlines() if line.startswith('| T04.')]
+          unfinished = [line for line in rows if '✅ Done' not in line]
+          if not unfinished:
+              phase_text = PHASE.read_text().replace('**Status:** 🟡 In Progress', '**Status:** ✅ Complete', 1)
+              PHASE.write_text(phase_text)
+              plan_text = PLAN.read_text()
+              old_plan_row = '| 04 | [Number-theoretic rings](phases/phase-04-number-theory-rings.md) | 1 | 01 | ~130 | 🟡 In Progress |'
+              new_plan_row = '| 04 | [Number-theoretic rings](phases/phase-04-number-theory-rings.md) | 1 | 01 | ~130 | ✅ Complete |'
+              if old_plan_row in plan_text:
+                  plan_text = plan_text.replace(old_plan_row, new_plan_row)
+              frontier_old = '**Active first-level phases:** Phase 04 (number-theoretic rings) and Phase 06\n> (associative and non-Lie algebras). Phase 05 (linear algebra) remains an\n> unstarted dependency frontier for Phases 06–08, 12, 14, 15, and 17.'
+              frontier_new = '**Active first-level phase:** Phase 06 (associative and non-Lie algebras).\n> Phase 05 (linear algebra) remains the next dependency frontier for Phases\n> 06–08, 12, 14, 15, and 17.'
+              if frontier_old in plan_text:
+                  plan_text = plan_text.replace(frontier_old, frontier_new)
+              PLAN.write_text(plan_text)
+              call(['git', 'add', str(PHASE), str(PLAN)])
+              if call(['git', 'diff', '--cached', '--quiet'], check=False).returncode:
+                  call(['git', 'commit', '-m', 'plan: complete Phase 04 number-theoretic rings'])
+                  call(['git', 'push', 'origin', 'main'])
+          else:
+              print('Phase 04 remains open:')
+              for row in unfinished:
+                  print(row)
+          PY
