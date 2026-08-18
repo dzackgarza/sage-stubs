@@ -1,26 +1,37 @@
-from collections.abc import Iterable, Iterator
-from typing import Generic, TypeVar
-from sage.categories.modules import Modules
+from collections.abc import Iterator, Sequence
+from typing import Self, TypeVar
+from sage.matrix.matrix0 import Matrix
 from sage.modules.free_module import FreeModule_generic
+from sage.modules.free_module_element import FreeModuleElement
+from sage.modules.free_module_homspace import FreeModuleHomspace
+from sage.rings.integer import Integer
+from sage.rings.polynomial.polynomial_element import Polynomial
+from sage.rings.rational import Rational
+from sage.rings.real_double import RealDoubleElement
+from sage.rings.complex_double import ComplexDoubleElement
+from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
+from sage.rings.ring import Ring
+from sage.structure.element import RingElement
+from sage.structure.parent import ElementConstructorInput
+from sage.structure.sage_object import SageObject
+from sage.symbolic.expression import Expression
+
+_Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+
+from sage.categories.modules import Modules
 from sage.modules.fg_pid.fgp_element import FGP_Element
 from sage.modules.fg_pid.fgp_morphism import FGP_Morphism
 from sage.rings.ideal import Ideal_pid
-from sage.rings.integer import Integer
-from sage.structure.element import Element, RingElement
 from sage.rings.commutative_ring import CommutativeRing
-from sage.structure.parent import MembershipInput
-
-_Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
 
 class FGP_Module_class(Modules.ParentMethods[FGP_Element, _Scalar], Generic[_Scalar]):
     element_class: type[FGP_Element]
 
-    def __init__(self, V: FreeModule_generic, W: FreeModule_generic, check: bool = ...) -> None: ...
+    def __init__(
+        self, V: FreeModule_generic, W: FreeModule_generic, check: bool = ...
+    ) -> None: ...
     def _module_constructor(
-        self,
-        V: FreeModule_generic,
-        W: FreeModule_generic,
-        check: bool = ...,
+        self, V: FreeModule_generic, W: FreeModule_generic, check: bool = ...
     ) -> FGP_Module_class: ...
     def V(self) -> FreeModule_generic[_Scalar]: ...
     def W(self) -> FreeModule_generic[_Scalar]: ...
@@ -33,17 +44,18 @@ class FGP_Module_class(Modules.ParentMethods[FGP_Element, _Scalar], Generic[_Sca
     def cardinality(self) -> Integer: ...
     def is_finite(self) -> bool: ...
     def rank(self) -> int: ...
-    def linear_combination_of_smith_form_gens(self, coeffs: Iterable[Element]) -> FGP_Element: ...
+    def linear_combination_of_smith_form_gens(
+        self, coeffs: ElementConstructorInput
+    ) -> FGP_Element: ...
     def hom(
         self,
-        im_gens: Iterable[Element],
+        im_gens: ElementConstructorInput,
         codomain: FGP_Module_class[_Scalar] | FreeModule_generic[_Scalar] | None = ...,
         check: bool = ...,
     ) -> FGP_Morphism[_Scalar]: ...
     def annihilator(self) -> Ideal_pid[_Scalar]: ...
     def submodule(
-        self,
-        x: Iterable[Element] | FreeModule_generic[_Scalar],
+        self, x: FreeModuleElement[_Scalar] | Sequence[_Scalar]
     ) -> FGP_Module_class[_Scalar]: ...
     def is_submodule(self, A: FGP_Module_class[_Scalar]) -> bool: ...
     def __iter__(self) -> Iterator[FGP_Element]: ...
@@ -51,11 +63,9 @@ class FGP_Module_class(Modules.ParentMethods[FGP_Element, _Scalar], Generic[_Sca
     def optimized(self) -> tuple[FGP_Module_class, FGP_Morphism]: ...
     def __truediv__(self, other: FGP_Module_class) -> FGP_Module_class: ...
     def __add__(self, other: FGP_Module_class) -> FGP_Module_class: ...
-    def __mul__(self, other: Element) -> FGP_Module_class: ...
-    def __rmul__(self, other: Element) -> FGP_Module_class: ...
+    def __mul__(self, other: ElementConstructorInput) -> FGP_Module_class: ...
+    def __rmul__(self, other: ElementConstructorInput) -> FGP_Module_class: ...
 
 def FGP_Module(
-    V: FreeModule_generic,
-    W: FreeModule_generic,
-    check: bool = ...,
+    V: FreeModule_generic, W: FreeModule_generic, check: bool = ...
 ) -> FGP_Module_class: ...

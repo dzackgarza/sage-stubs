@@ -1,12 +1,31 @@
-# Generated from the pinned Sage 10.7 source tree.
+from collections.abc import Iterator, Sequence
+from typing import Self, TypeVar
+from sage.matrix.matrix0 import Matrix
+from sage.modules.free_module import FreeModule_generic
+from sage.modules.free_module_element import FreeModuleElement
+from sage.modules.free_module_homspace import FreeModuleHomspace
+from sage.rings.integer import Integer
+from sage.rings.polynomial.polynomial_element import Polynomial
+from sage.rings.rational import Rational
+from sage.rings.real_double import RealDoubleElement
+from sage.rings.complex_double import ComplexDoubleElement
+from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
+from sage.rings.ring import Ring
+from sage.structure.element import RingElement
+from sage.structure.parent import ElementConstructorInput
+from sage.structure.sage_object import SageObject
+from sage.symbolic.expression import Expression
+
+_Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+
 import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
 
 class _SageObject: ...
 
 class SubmoduleHelper:
-    def __classcall_private__(self, mat: builtins.object, saturate: builtins.bool = ...) -> _SageObject: ...
+    def __classcall_private__(
+        self, mat: builtins.object, saturate: builtins.bool = ...
+    ) -> ElementConstructorInput: ...
     def __hash__(self) -> builtins.int: ...
     def __eq__(self, other: builtins.object) -> builtins.bool: ...
 
@@ -18,6 +37,6 @@ class SubmoduleHelper_PID:
 
 class SubmoduleHelper_polynomial_ring:
     def __init__(self, mat: builtins.object, saturate: builtins.object) -> None: ...
-    def complement(self) -> _SageObject: ...
-    def coordinates(self) -> _SageObject: ...
+    def complement(self) -> ElementConstructorInput: ...
+    def coordinates(self) -> tuple[_Scalar, ...]: ...
     def is_saturated(self) -> builtins.bool: ...

@@ -1,18 +1,32 @@
-from typing import Literal, Self
+from collections.abc import Iterator, Sequence
+from typing import Self, TypeVar
+from sage.matrix.matrix0 import Matrix
+from sage.modules.free_module import FreeModule_generic
+from sage.modules.free_module_element import FreeModuleElement
+from sage.modules.free_module_homspace import FreeModuleHomspace
+from sage.rings.integer import Integer
+from sage.rings.polynomial.polynomial_element import Polynomial
+from sage.rings.rational import Rational
+from sage.rings.real_double import RealDoubleElement
+from sage.rings.complex_double import ComplexDoubleElement
+from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
+from sage.rings.ring import Ring
+from sage.structure.element import RingElement
+from sage.structure.parent import ElementConstructorInput
+from sage.structure.sage_object import SageObject
+from sage.symbolic.expression import Expression
+
+_Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
 
 from sage.categories.homset import Homset
 from sage.categories.morphism import Morphism
 from sage.matrix.matrix import Matrix
-from sage.structure.parent import Parent
-
 
 class MatrixMorphism_abstract(Morphism):
     def __init__(
-        self,
-        parent: Homset[Parent, Parent],
-        side: Literal["left", "right"] = "left",
+        self, parent: ElementConstructorInput, side: Literal["left", "right"] = "left"
     ) -> None: ...
-    def matrix(self) -> Matrix: ...
+    def matrix(self) -> Matrix[_Scalar]: ...
     def side(self) -> Literal["left", "right"]: ...
     def side_switch(self) -> Self: ...
     def inverse(self) -> Self: ...
@@ -24,17 +38,18 @@ class MatrixMorphism_abstract(Morphism):
     def is_identity(self) -> bool: ...
     def is_zero(self) -> bool: ...
     def is_equal_function(self, other: MatrixMorphism_abstract) -> bool: ...
-    def restrict_domain(self, sub: Parent) -> Self: ...
-    def restrict_codomain(self, sub: Parent) -> Self: ...
-    def restrict(self, sub: Parent) -> Self: ...
-
+    def restrict_domain(self, sub: ElementConstructorInput) -> Self: ...
+    def restrict_codomain(self, sub: ElementConstructorInput) -> Self: ...
+    def restrict(self, sub: ElementConstructorInput) -> Self: ...
 
 class MatrixMorphism(MatrixMorphism_abstract):
     def __init__(
         self,
-        parent: Homset[Parent, Parent],
-        A: Matrix | MatrixMorphism_abstract,
+        parent: ElementConstructorInput,
+        A: Matrix[_Scalar],
         copy_matrix: bool = True,
         side: Literal["left", "right"] = "left",
     ) -> None: ...
-    def matrix(self, side: Literal["left", "right"] | None = None) -> Matrix: ...
+    def matrix(
+        self, side: Literal["left", "right"] | None = None
+    ) -> Matrix[_Scalar]: ...
