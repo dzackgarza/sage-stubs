@@ -33,7 +33,8 @@ be audited and expanded, not rewritten.
 | T04.14 | **Function field: drinfeld_modules subpackage** — full subdir. | ~6 | T04.11 | ⬜ | |
 | T04.15 | **Valuation subpackage** — `valuation`, `augmented_valuation`, `developing_valuation`, `gauss_valuation`, `inductive_valuation`, `limit_valuation`, `mapped_valuation`, `scaled_valuation`, `trivial_valuation`, `valuation_space`, `valuations_catalog`, `value_group`. | ~12 | — | ⬜ | `valuation` has existing stub. |
 | T04.16 | **Asymptotic ring subpackage** — `asymptotic_ring`, `asymptotic_expansion_generators`, `asymptotics_multivariate_generating_functions`, `growth_group`, `growth_group_cartesian`, `term_monoid`, `misc`. | 7 | — | ⬜ | `asymptotic_ring` has existing stub. |
-| T04.17 | **Semirings & remaining** — `semirings/` subdir, plus anything else surveyed in Phase 1 audit that lives at `sage.rings/` root but wasn't covered in Phase 02 (e.g. `noncommutative_ideals`, `species`, `cfinite_sequence`). | ~6 | — | ⬜ | |
+| T04.17 | **Semirings** — full `sage.rings.semirings/` subpackage: nonnegative integers, tropical base semiring and coercions, tropical matrices, polynomial and multivariate-polynomial parents/elements, and tropical varieties. | 7 | — | ✅ Done | Source-grounded coefficient types, parent/element relations, coercion maps, matrix closures, polynomial constructors, Newton polytopes, dual subdivisions, and variety/plotting return types. |
+| T04.18 | **Remaining Phase 04 root-level ring modules** — `bernmm` and any root-level `sage.rings` modules assigned by the Phase 01 inventory but not owned by Phases 02–03, including `noncommutative_ideals`, `species`, and `cfinite_sequence` where in scope. | ~5 | 02, 03 | ⬜ | Reconcile ownership against the Phase 01 inventory before implementation. |
 
 ## Parallelism
 
