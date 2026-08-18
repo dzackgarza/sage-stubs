@@ -1,73 +1,125 @@
-from collections.abc import Iterator, Sequence
-from typing import Self, TypeVar
-from sage.matrix.matrix0 import Matrix
-from sage.modules.free_module import FreeModule_generic
-from sage.modules.free_module_element import FreeModuleElement
-from sage.modules.free_module_homspace import FreeModuleHomspace
-from sage.rings.integer import Integer
-from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.rings.rational import Rational
-from sage.rings.real_double import RealDoubleElement
-from sage.rings.complex_double import ComplexDoubleElement
-from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
-from sage.rings.ring import Ring
-from sage.structure.element import RingElement
-from sage.structure.parent import ElementConstructorInput
-from sage.structure.sage_object import SageObject
-from sage.symbolic.expression import Expression
+from collections.abc import Iterable, Sequence
+from typing import Generic, TypeVar
 
-_Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+from sage.modules.free_module import FreeModule_quotient
+from sage.modules.fp_graded.element import FPElement
+from sage.modules.fp_graded.free_element import FreeGradedModuleElement
+from sage.modules.fp_graded.free_module import (
+    FreeGradedModule,
+    GeneratorDegree,
+    GeneratorNames,
+)
+from sage.modules.module import Module
+from sage.rings.infinity import PlusInfinity
+from sage.structure.element import ElementConstructorInput, RingElement
+from sage.structure.indexed_generators import IndexedGenerators
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
 
-import builtins
+_AlgebraElement = TypeVar(
+    "_AlgebraElement",
+    bound=RingElement,
+    default=RingElement,
+)
+_NewAlgebraElement = TypeVar("_NewAlgebraElement", bound=RingElement)
 
-class _SageObject: ...
+type FPRelation = Sequence[ElementConstructorInput]
+type FPRelations = Sequence[FPRelation]
 
-class FPModule:
+class FPModule(
+    UniqueRepresentation,
+    IndexedGenerators[tuple[int, ...]],
+    Module,
+    Generic[_AlgebraElement],
+):
+    Element: type[FPElement[int, _AlgebraElement]]
+
     @staticmethod
     def __classcall__(
-        cls: builtins.object,
-        arg0: builtins.object,
-        generator_degrees: builtins.object = ...,
-        relations: ElementConstructorInput = ...,
-        names: builtins.object = ...,
-    ) -> FPModule: ...
-    def __init__(self, j: builtins.int, names: builtins.object) -> None: ...
-    Element: _SageObject
-
-    def defining_homomorphism(self) -> FPModule: ...
-    def change_ring(self, algebra: builtins.object) -> FPModule: ...
-    def monomial(self) -> FPModule: ...
-    def zero(self) -> FreeModuleElement[_Scalar]: ...
-    def connectivity(self) -> FPModule: ...
-    def is_trivial(self) -> builtins.bool: ...
-    def has_relations(self) -> builtins.bool: ...
-    def an_element(self, n: builtins.int = ...) -> FreeModuleElement[_Scalar]: ...
+        class_: type[FPModule[_AlgebraElement]],
+        arg0: Parent[_AlgebraElement]
+        | FreeGradedModule[_AlgebraElement]
+        | FreeGradedModuleMorphism[_AlgebraElement],
+        generator_degrees: Iterable[GeneratorDegree] | None = ...,
+        relations: FPRelations = ...,
+        names: GeneratorNames = ...,
+    ) -> FPModule[_AlgebraElement] | FreeGradedModule[_AlgebraElement]: ...
+    def __init__(
+        self,
+        j: FreeGradedModuleMorphism[_AlgebraElement],
+        names: tuple[str, ...] | None,
+    ) -> None: ...
+    def base_ring(self) -> Parent[_AlgebraElement]: ...
+    def defining_homomorphism(self) -> FreeGradedModuleMorphism[_AlgebraElement]: ...
+    def change_ring(
+        self,
+        algebra: Parent[_NewAlgebraElement],
+    ) -> FPModule[_NewAlgebraElement]: ...
+    def _element_constructor_(
+        self,
+        x: FPElement[int, _AlgebraElement]
+        | FreeGradedModuleElement[int, _AlgebraElement]
+        | Sequence[ElementConstructorInput]
+        | int,
+    ) -> FPElement[int, _AlgebraElement]: ...
+    def monomial(self, index: int) -> FPElement[int, _AlgebraElement]: ...
+    def zero(self) -> FPElement[int, _AlgebraElement]: ...
+    def _repr_(self) -> str: ...
+    def connectivity(self) -> GeneratorDegree | PlusInfinity: ...
+    def is_trivial(self) -> bool: ...
+    def has_relations(self) -> bool: ...
+    def an_element(
+        self,
+        n: GeneratorDegree | None = ...,
+    ) -> FPElement[int, _AlgebraElement]: ...
     def basis_elements(
-        self, n: builtins.int, verbose: builtins.bool = ...
-    ) -> FPModule: ...
+        self,
+        n: GeneratorDegree,
+        verbose: bool = ...,
+    ) -> tuple[FPElement[int, _AlgebraElement], ...]: ...
     def element_from_coordinates(
-        self, coordinates: builtins.object, n: builtins.int
-    ) -> FPModule: ...
+        self,
+        coordinates: Sequence[RingElement],
+        n: GeneratorDegree,
+    ) -> FPElement[int, _AlgebraElement]: ...
     def vector_presentation(
-        self, n: builtins.int, verbose: builtins.bool = ...
-    ) -> FPModule: ...
-    def generator_degrees(self) -> FPModule: ...
-    def generators(self) -> tuple[FreeModuleElement[_Scalar], ...]: ...
-    gens: _SageObject
-
-    def generator(self, index: builtins.object) -> FPModule: ...
-    gen: _SageObject
-
-    def relations(self) -> FPModule: ...
-    def relation(self, index: builtins.object) -> FPModule: ...
+        self,
+        n: GeneratorDegree,
+        verbose: bool = ...,
+    ) -> FreeModule_quotient[RingElement]: ...
+    __getitem__ = vector_presentation
+    def _Hom_(
+        self,
+        Y: FPModule[_AlgebraElement] | FreeGradedModule[_AlgebraElement],
+        category: object | None,
+    ) -> FPModuleHomspace[_AlgebraElement]: ...
+    def generator_degrees(self) -> tuple[GeneratorDegree, ...]: ...
+    def generators(self) -> tuple[FPElement[int, _AlgebraElement], ...]: ...
+    gens = generators
+    def generator(self, index: int | GeneratorDegree) -> FPElement[int, _AlgebraElement]: ...
+    gen = generator
+    def relations(self) -> tuple[FreeGradedModuleElement[int, _AlgebraElement], ...]: ...
+    def relation(
+        self,
+        index: int,
+    ) -> FreeGradedModuleElement[int, _AlgebraElement]: ...
     def minimal_presentation(
-        self, top_dim: builtins.object = ..., verbose: builtins.bool = ...
-    ) -> FPModule: ...
-    def suspension(self, t: builtins.object) -> FPModule: ...
-    def submodule_inclusion(self, spanning_elements: builtins.object) -> FPModule: ...
+        self,
+        top_dim: GeneratorDegree | None = ...,
+        verbose: bool = ...,
+    ) -> FPModuleMorphism[_AlgebraElement]: ...
+    def suspension(self, t: GeneratorDegree) -> FPModule[_AlgebraElement]: ...
+    def submodule_inclusion(
+        self,
+        spanning_elements: Iterable[FPElement[int, _AlgebraElement]],
+    ) -> FPModuleMorphism[_AlgebraElement]: ...
     def resolution(
         self,
-        k: builtins.int,
-        top_dim: builtins.object = ...,
-        verbose: builtins.bool = ...,
-    ) -> FPModule: ...
+        k: int,
+        top_dim: GeneratorDegree | None = ...,
+        verbose: bool = ...,
+    ) -> list[FPModuleMorphism[_AlgebraElement]]: ...
+
+from sage.modules.fp_graded.free_morphism import FreeGradedModuleMorphism
+from sage.modules.fp_graded.homspace import FPModuleHomspace
+from sage.modules.fp_graded.morphism import FPModuleMorphism

@@ -1,31 +1,27 @@
-from collections.abc import Iterator, Sequence
-from typing import Self, TypeVar
-from sage.matrix.matrix0 import Matrix
-from sage.modules.free_module import FreeModule_generic
+from collections.abc import Hashable, Iterable
+from typing import Generic, Self, TypeVar
+
 from sage.modules.free_module_element import FreeModuleElement
-from sage.modules.free_module_homspace import FreeModuleHomspace
+from sage.modules.with_basis.indexed_element import IndexedFreeModuleElement
 from sage.rings.integer import Integer
-from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.rings.rational import Rational
-from sage.rings.real_double import RealDoubleElement
-from sage.rings.complex_double import ComplexDoubleElement
-from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
-from sage.rings.ring import Ring
 from sage.structure.element import RingElement
-from sage.structure.parent import ElementConstructorInput
-from sage.structure.sage_object import SageObject
-from sage.symbolic.expression import Expression
 
-_Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+_Index = TypeVar("_Index", bound=Hashable, default=int)
+_AlgebraElement = TypeVar(
+    "_AlgebraElement",
+    bound=RingElement,
+    default=RingElement,
+)
 
-import builtins
-
-class _SageObject: ...
-
-class FreeGradedModuleElement:
+class FreeGradedModuleElement(
+    IndexedFreeModuleElement[_Index, _AlgebraElement],
+    Generic[_Index, _AlgebraElement],
+):
     def dense_coefficient_list(
-        self, order: builtins.object = ...
-    ) -> FreeModule_generic: ...
-    def degree(self) -> Integer: ...
-    def lift_to_free(self) -> FreeModule_generic: ...
-    def vector_presentation(self) -> FreeModule_generic: ...
+        self,
+        order: Iterable[_Index] | None = ...,
+    ) -> list[_AlgebraElement]: ...
+    def degree(self) -> int | Integer: ...
+    def lift_to_free(self) -> Self: ...
+    def _lmul_(self, a: _AlgebraElement) -> Self: ...
+    def vector_presentation(self) -> FreeModuleElement[RingElement] | None: ...

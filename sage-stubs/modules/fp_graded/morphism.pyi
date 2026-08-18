@@ -1,66 +1,118 @@
-from collections.abc import Iterator, Sequence
-from typing import Self, TypeVar
-from sage.matrix.matrix0 import Matrix
-from sage.modules.free_module import FreeModule_generic
-from sage.modules.free_module_element import FreeModuleElement
-from sage.modules.free_module_homspace import FreeModuleHomspace
+from collections.abc import Callable, Sequence
+from typing import Generic, Self, TypeVar
+
+from sage.categories.morphism import Morphism
+from sage.modules.free_module_morphism import FreeModuleMorphism
+from sage.modules.fp_graded.element import FPElement
+from sage.modules.fp_graded.free_element import FreeGradedModuleElement
 from sage.rings.integer import Integer
-from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.rings.rational import Rational
-from sage.rings.real_double import RealDoubleElement
-from sage.rings.complex_double import ComplexDoubleElement
-from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
-from sage.rings.ring import Ring
 from sage.structure.element import RingElement
-from sage.structure.parent import ElementConstructorInput
-from sage.structure.sage_object import SageObject
-from sage.symbolic.expression import Expression
+from sage.structure.parent import Parent
 
-_Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+_AlgebraElement = TypeVar(
+    "_AlgebraElement",
+    bound=RingElement,
+    default=RingElement,
+)
+_NewAlgebraElement = TypeVar("_NewAlgebraElement", bound=RingElement)
 
-import builtins
+type GradedModuleElement[_AlgebraElement: RingElement] = (
+    FPElement[int, _AlgebraElement]
+    | FreeGradedModuleElement[int, _AlgebraElement]
+)
+type GradedModule[_AlgebraElement: RingElement] = (
+    FPModule[_AlgebraElement]
+    | FreeGradedModule[_AlgebraElement]
+)
+type FPModuleMorphismValues[_AlgebraElement: RingElement] = (
+    Sequence[GradedModuleElement[_AlgebraElement]]
+    | Callable[
+        [GradedModuleElement[_AlgebraElement]],
+        GradedModuleElement[_AlgebraElement],
+    ]
+    | int
+)
 
-class _SageObject: ...
-
-class FPModuleMorphism:
+class FPModuleMorphism(
+    Morphism[
+        GradedModuleElement[_AlgebraElement],
+        GradedModuleElement[_AlgebraElement],
+    ],
+    Generic[_AlgebraElement],
+):
     def __init__(
         self,
-        parent: builtins.object,
-        values: builtins.object,
-        check: builtins.bool = ...,
+        parent: FPModuleHomspace[_AlgebraElement],
+        values: FPModuleMorphismValues[_AlgebraElement],
+        check: bool = ...,
     ) -> None: ...
-    def change_ring(self, algebra: builtins.object) -> FPModuleMorphism: ...
-    def degree(self) -> Integer: ...
-    def values(self) -> FPModuleMorphism: ...
-    def __add__(self, g: builtins.object) -> Self: ...
+    def domain(self) -> GradedModule[_AlgebraElement]: ...
+    def codomain(self) -> GradedModule[_AlgebraElement]: ...
+    def change_ring(
+        self,
+        algebra: Parent[_NewAlgebraElement],
+    ) -> FPModuleMorphism[_NewAlgebraElement]: ...
+    def degree(self) -> int | Integer: ...
+    def values(self) -> tuple[GradedModuleElement[_AlgebraElement], ...]: ...
+    def __add__(self, g: FPModuleMorphism[_AlgebraElement]) -> Self: ...
     def __neg__(self) -> Self: ...
-    def __sub__(self, g: builtins.object) -> Self: ...
-    def __mul__(self, g: builtins.object) -> Self: ...
-    def is_zero(self) -> builtins.bool: ...
-    def is_identity(self) -> builtins.bool: ...
-    def __call__(self, x: builtins.object) -> FPModuleMorphism: ...
-    def vector_presentation(self, n: builtins.int) -> FPModuleMorphism: ...
-    def solve(self, x: builtins.object) -> FPModuleMorphism: ...
+    def __sub__(self, g: FPModuleMorphism[_AlgebraElement]) -> Self: ...
+    def __mul__(
+        self,
+        g: FPModuleMorphism[_AlgebraElement],
+    ) -> FPModuleMorphism[_AlgebraElement]: ...
+    def is_zero(self) -> bool: ...
+    def is_identity(self) -> bool: ...
+    def __call__(
+        self,
+        x: GradedModuleElement[_AlgebraElement],
+    ) -> GradedModuleElement[_AlgebraElement]: ...
+    def vector_presentation(
+        self,
+        n: int,
+    ) -> FreeModuleMorphism[RingElement]: ...
+    def solve(
+        self,
+        x: GradedModuleElement[_AlgebraElement],
+    ) -> GradedModuleElement[_AlgebraElement] | None: ...
     def lift(
-        self, f: builtins.object, verbose: builtins.bool = ...
-    ) -> FPModuleMorphism: ...
-    def split(self, verbose: builtins.bool = ...) -> FPModuleMorphism: ...
+        self,
+        f: FPModuleMorphism[_AlgebraElement],
+        verbose: bool = ...,
+    ) -> FPModuleMorphism[_AlgebraElement] | None: ...
+    def split(
+        self,
+        verbose: bool = ...,
+    ) -> FPModuleMorphism[_AlgebraElement] | None: ...
     def homology(
         self,
-        f: builtins.object,
-        top_dim: builtins.object = ...,
-        verbose: builtins.bool = ...,
-    ) -> FPModuleMorphism: ...
-    def suspension(self, t: builtins.object) -> FPModuleMorphism: ...
-    def cokernel_projection(self) -> FPModuleMorphism: ...
+        f: FPModuleMorphism[_AlgebraElement],
+        top_dim: int | Integer | None = ...,
+        verbose: bool = ...,
+    ) -> FPModuleMorphism[_AlgebraElement]: ...
+    def suspension(
+        self,
+        t: int | Integer,
+    ) -> FPModuleMorphism[_AlgebraElement]: ...
+    def cokernel_projection(self) -> FPModuleMorphism[_AlgebraElement]: ...
     def kernel_inclusion(
-        self, top_dim: builtins.object = ..., verbose: builtins.bool = ...
-    ) -> FPModuleMorphism: ...
+        self,
+        top_dim: int | Integer | None = ...,
+        verbose: bool = ...,
+    ) -> FPModuleMorphism[_AlgebraElement]: ...
     def image(
-        self, top_dim: builtins.object = ..., verbose: builtins.bool = ...
-    ) -> FPModuleMorphism: ...
+        self,
+        top_dim: int | Integer | None = ...,
+        verbose: bool = ...,
+    ) -> FPModuleMorphism[_AlgebraElement]: ...
     def is_injective(
-        self, top_dim: builtins.object = ..., verbose: builtins.bool = ...
-    ) -> builtins.bool: ...
-    def is_surjective(self) -> builtins.bool: ...
-    def fp_module(self) -> FPModuleMorphism: ...
+        self,
+        top_dim: int | Integer | None = ...,
+        verbose: bool = ...,
+    ) -> bool: ...
+    def is_surjective(self) -> bool: ...
+    def fp_module(self) -> FPModule[_AlgebraElement]: ...
+
+from sage.modules.fp_graded.free_module import FreeGradedModule
+from sage.modules.fp_graded.homspace import FPModuleHomspace
+from sage.modules.fp_graded.module import FPModule

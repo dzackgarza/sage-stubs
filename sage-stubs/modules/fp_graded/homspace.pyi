@@ -1,29 +1,44 @@
-from collections.abc import Iterator, Sequence
-from typing import Self, TypeVar
-from sage.matrix.matrix0 import Matrix
-from sage.modules.free_module import FreeModule_generic
-from sage.modules.free_module_element import FreeModuleElement
-from sage.modules.free_module_homspace import FreeModuleHomspace
-from sage.rings.integer import Integer
-from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.rings.rational import Rational
-from sage.rings.real_double import RealDoubleElement
-from sage.rings.complex_double import ComplexDoubleElement
-from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
-from sage.rings.ring import Ring
+from collections.abc import Sequence
+from typing import Generic, TypeVar
+
+from sage.categories.homset import Homset
+from sage.modules.fp_graded.element import FPElement
+from sage.modules.fp_graded.free_element import FreeGradedModuleElement
 from sage.structure.element import RingElement
-from sage.structure.parent import ElementConstructorInput
-from sage.structure.sage_object import SageObject
-from sage.symbolic.expression import Expression
 
-_Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+_AlgebraElement = TypeVar(
+    "_AlgebraElement",
+    bound=RingElement,
+    default=RingElement,
+)
 
-import builtins
+type GradedModuleElement[_AlgebraElement: RingElement] = (
+    FPElement[int, _AlgebraElement]
+    | FreeGradedModuleElement[int, _AlgebraElement]
+)
 
-class _SageObject: ...
+class FPModuleHomspace(
+    Homset[
+        FPModuleMorphism[_AlgebraElement],
+        GradedModuleElement[_AlgebraElement],
+        GradedModuleElement[_AlgebraElement],
+    ],
+    Generic[_AlgebraElement],
+):
+    Element: type[FPModuleMorphism[_AlgebraElement]]
 
-class FPModuleHomspace:
-    def an_element(self, n: builtins.int = ...) -> FreeModuleElement[_Scalar]: ...
-    def basis_elements(self, n: builtins.int) -> FPModuleHomspace: ...
-    def zero(self) -> FreeModuleElement[_Scalar]: ...
-    def identity(self) -> FPModuleHomspace: ...
+    def _element_constructor_(
+        self,
+        values: FPModuleMorphism[_AlgebraElement]
+        | Sequence[GradedModuleElement[_AlgebraElement]]
+        | int,
+    ) -> FPModuleMorphism[_AlgebraElement]: ...
+    def an_element(self, n: int = ...) -> FPModuleMorphism[_AlgebraElement]: ...
+    def basis_elements(
+        self,
+        n: int,
+    ) -> list[FPModuleMorphism[_AlgebraElement]]: ...
+    def zero(self) -> FPModuleMorphism[_AlgebraElement]: ...
+    def identity(self) -> FPModuleMorphism[_AlgebraElement]: ...
+
+from sage.modules.fp_graded.morphism import FPModuleMorphism
