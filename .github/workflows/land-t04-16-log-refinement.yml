@@ -1,0 +1,128 @@
+name: Land T04.16 logarithm refinement
+
+on:
+  push:
+    branches: [t04-16-asymptotic-log-refinement]
+    paths:
+      - .github/workflows/land-t04-16-log-refinement.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: phase04-main-writes-v4
+  cancel-in-progress: false
+
+jobs:
+  land:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Apply source-grounded logarithm contracts
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          git switch -C main origin/main
+          python - <<'PY'
+          from pathlib import Path
+
+          stub = Path('sage-stubs/rings/asymptotic/asymptotic_ring.pyi')
+          text = stub.read_text()
+          if 'from collections.abc import Callable\n' in text:
+              text = text.replace(
+                  'from collections.abc import Callable\n',
+                  'from collections.abc import Callable, Mapping\n',
+                  1,
+              )
+          elif 'from collections.abc import Callable, Mapping\n' not in text:
+              raise SystemExit('unexpected collections.abc import')
+
+          old_log = (
+              '    def log(\n'
+              '        self,\n'
+              '        base: Ring | None = ...,\n'
+              '        precision: int | Integer | None = ...,\n'
+              '        locals: Ring | None = ...,\n'
+              '    ) -> AsymptoticExpansion: ...\n'
+          )
+          new_log = (
+              '    def log(\n'
+              '        self,\n'
+              '        base: ElementConstructorInput | None = ...,\n'
+              '        precision: int | Integer | None = ...,\n'
+              '        locals: Mapping[str, ElementConstructorInput] | None = ...,\n'
+              '    ) -> AsymptoticExpansion: ...\n'
+          )
+          if old_log in text:
+              text = text.replace(old_log, new_log, 1)
+          elif new_log not in text:
+              raise SystemExit('AsymptoticExpansion.log is not in the expected state')
+
+          old_rpow = (
+              '    def rpow(\n'
+              '        self,\n'
+              '        base: Ring,\n'
+              '        precision: int | Integer | None = ...,\n'
+              '        locals: Ring | None = ...,\n'
+              '    ) -> AsymptoticExpansion: ...\n'
+          )
+          new_rpow = (
+              '    def rpow(\n'
+              '        self,\n'
+              '        base: ElementConstructorInput,\n'
+              '        precision: int | Integer | None = ...,\n'
+              '        locals: Mapping[str, ElementConstructorInput] | None = ...,\n'
+              '    ) -> AsymptoticExpansion: ...\n'
+          )
+          if old_rpow in text:
+              text = text.replace(old_rpow, new_rpow, 1)
+          elif new_rpow not in text:
+              raise SystemExit('AsymptoticExpansion.rpow is not in the expected state')
+          stub.write_text(text)
+
+          phase = Path('.agents/phases/phase-04-number-theory-rings.md')
+          planning = phase.read_text()
+          rows = [line for line in planning.splitlines() if line.startswith('| T04.16 |')]
+          if len(rows) != 1:
+              raise SystemExit(f'expected one T04.16 row, found {len(rows)}')
+          row = rows[0]
+          if '✅ Done' not in row and 'Logarithm bases and local substitutions' not in row:
+              revised = row[:-2] + ' Logarithm bases and local substitutions are typed as element inputs and mappings rather than ring parents. |'
+              phase.write_text(planning.replace(row, revised))
+          PY
+
+      - name: Format and validate changed surface
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install --upgrade pip ruff
+          target=sage-stubs/rings/asymptotic/asymptotic_ring.pyi
+          ruff format "$target"
+          ruff check --fix "$target"
+          ruff check "$target"
+          ruff format --check "$target"
+          python scripts/check_stubs.py "$target"
+          python scripts/audit_stub_quality.py --root sage-stubs/rings/asymptotic --max-console 1000
+
+      - name: Commit and push immediately
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add sage-stubs/rings/asymptotic/asymptotic_ring.pyi .agents/phases/phase-04-number-theory-rings.md
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m 'fix(stubs): type asymptotic logarithm inputs'
+          git push origin main
