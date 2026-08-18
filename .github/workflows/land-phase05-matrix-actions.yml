@@ -1,0 +1,328 @@
+name: Land Phase 05 matrix actions and constructors
+
+on:
+  push:
+    branches: [phase05-matrix-actions-and-special]
+    paths:
+      - .github/workflows/land-phase05-matrix-actions.yml
+
+permissions:
+  contents: write
+
+jobs:
+  land:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 50
+
+      - name: Write matrix action and constructor stubs
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          cat > sage-stubs/matrix/action.pyi <<'PYI'
+          from typing import Generic, TypeVar
+
+          from sage.categories.action import Action
+          from sage.matrix.matrix import Matrix
+          from sage.matrix.matrix_space import MatrixSpace
+          from sage.modules.free_module import FreeModule_generic
+          from sage.modules.free_module_element import FreeModuleElement
+          from sage.structure.element import RingElement
+          from sage.structure.parent import Parent
+
+          _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+          _TargetScalar = TypeVar("_TargetScalar", bound=RingElement)
+
+
+          class MatrixAction(Action, Generic[_Scalar]):
+              def matrix_space(self) -> MatrixSpace[_Scalar]: ...
+
+
+          class MatrixMatrixAction(MatrixAction[_Scalar], Generic[_Scalar]):
+              def __init__(
+                  self,
+                  left: MatrixSpace[_Scalar],
+                  right: MatrixSpace[_Scalar],
+              ) -> None: ...
+              def _act_(
+                  self,
+                  left: Matrix[_Scalar],
+                  right: Matrix[_Scalar],
+              ) -> Matrix[_Scalar]: ...
+              def codomain(self) -> MatrixSpace[_Scalar]: ...
+
+
+          class MatrixVectorAction(MatrixAction[_Scalar], Generic[_Scalar]):
+              def __init__(
+                  self,
+                  matrix_space: MatrixSpace[_Scalar],
+                  vector_space: FreeModule_generic[_Scalar],
+              ) -> None: ...
+              def _act_(
+                  self,
+                  matrix: Matrix[_Scalar],
+                  vector: FreeModuleElement[_Scalar],
+              ) -> FreeModuleElement[_Scalar]: ...
+              def codomain(self) -> FreeModule_generic[_Scalar]: ...
+
+
+          class VectorMatrixAction(MatrixAction[_Scalar], Generic[_Scalar]):
+              def __init__(
+                  self,
+                  vector_space: FreeModule_generic[_Scalar],
+                  matrix_space: MatrixSpace[_Scalar],
+              ) -> None: ...
+              def _act_(
+                  self,
+                  vector: FreeModuleElement[_Scalar],
+                  matrix: Matrix[_Scalar],
+              ) -> FreeModuleElement[_Scalar]: ...
+              def codomain(self) -> FreeModule_generic[_Scalar]: ...
+
+
+          class MatrixScalarAction(
+              MatrixAction[_Scalar],
+              Generic[_Scalar, _TargetScalar],
+          ):
+              def __init__(
+                  self,
+                  scalar_parent: Parent[_TargetScalar],
+                  matrix_space: MatrixSpace[_Scalar],
+                  is_left: bool,
+              ) -> None: ...
+              def _act_(
+                  self,
+                  scalar: _TargetScalar,
+                  matrix: Matrix[_Scalar],
+              ) -> Matrix[_TargetScalar]: ...
+              def codomain(self) -> MatrixSpace[_TargetScalar]: ...
+          PYI
+
+          cat > sage-stubs/matrix/matrix_window.pyi <<'PYI'
+          from collections.abc import Iterator
+          from typing import Generic, Self, TypeVar
+
+          from sage.matrix.matrix import Matrix
+          from sage.modules.free_module_element import FreeModuleElement
+          from sage.structure.element import RingElement
+
+          _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+
+
+          class MatrixWindow(Generic[_Scalar]):
+              def __init__(
+                  self,
+                  matrix: Matrix[_Scalar],
+                  row: int,
+                  col: int,
+                  nrows: int,
+                  ncols: int,
+              ) -> None: ...
+              def matrix(self) -> Matrix[_Scalar]: ...
+              def nrows(self) -> int: ...
+              def ncols(self) -> int: ...
+              def dimensions(self) -> tuple[int, int]: ...
+              def row(self, i: int) -> FreeModuleElement[_Scalar]: ...
+              def column(self, j: int) -> FreeModuleElement[_Scalar]: ...
+              def __iter__(self) -> Iterator[FreeModuleElement[_Scalar]]: ...
+              def __getitem__(self, key: tuple[int, int]) -> _Scalar: ...
+              def __setitem__(self, key: tuple[int, int], value: _Scalar) -> None: ...
+              def window(
+                  self,
+                  row: int,
+                  col: int,
+                  nrows: int,
+                  ncols: int,
+              ) -> Self: ...
+              def set_to_zero(self) -> None: ...
+              def set_to_identity(self) -> None: ...
+              def add(self, left: Self, right: Self) -> None: ...
+              def subtract(self, left: Self, right: Self) -> None: ...
+              def multiply(self, left: Self, right: Self) -> None: ...
+              def to_matrix(self) -> Matrix[_Scalar]: ...
+          PYI
+
+          cat > sage-stubs/matrix/special.pyi <<'PYI'
+          from collections.abc import Callable, Iterable, Sequence
+          from typing import TypeVar
+
+          from sage.matrix.matrix import Matrix
+          from sage.rings.integer import Integer
+          from sage.structure.element import RingElement
+          from sage.structure.parent import ElementConstructorInput, Parent
+
+          _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+
+
+          def identity_matrix(
+              ring: Parent[_Scalar],
+              n: int | Integer,
+              sparse: bool = ...,
+          ) -> Matrix[_Scalar]: ...
+
+
+          def zero_matrix(
+              ring: Parent[_Scalar],
+              nrows: int | Integer,
+              ncols: int | Integer | None = ...,
+              sparse: bool = ...,
+          ) -> Matrix[_Scalar]: ...
+
+
+          def diagonal_matrix(
+              ring: Parent[_Scalar],
+              diagonal: Iterable[ElementConstructorInput],
+              sparse: bool = ...,
+          ) -> Matrix[_Scalar]: ...
+
+
+          def block_matrix(
+              blocks: Sequence[Sequence[Matrix[_Scalar] | ElementConstructorInput | None]],
+              subdivide: bool = ...,
+              sparse: bool | None = ...,
+          ) -> Matrix[_Scalar]: ...
+
+
+          def block_diagonal_matrix(
+              *blocks: Matrix[_Scalar],
+              subdivide: bool = ...,
+          ) -> Matrix[_Scalar]: ...
+
+
+          def elementary_matrix(
+              ring: Parent[_Scalar],
+              nrows: int | Integer,
+              row1: int | None = ...,
+              row2: int | None = ...,
+              scale: ElementConstructorInput | None = ...,
+              sparse: bool = ...,
+          ) -> Matrix[_Scalar]: ...
+
+
+          def companion_matrix(
+              polynomial: RingElement,
+              format: str = ...,
+          ) -> Matrix[_Scalar]: ...
+
+
+          def jordan_block(
+              eigenvalue: _Scalar,
+              size: int | Integer,
+              sparse: bool = ...,
+          ) -> Matrix[_Scalar]: ...
+
+
+          def diagonal_matrix_from_blocks(
+              blocks: Sequence[Matrix[_Scalar]],
+          ) -> Matrix[_Scalar]: ...
+
+
+          def circulant(
+              first_row: Sequence[_Scalar],
+          ) -> Matrix[_Scalar]: ...
+
+
+          def toeplitz(
+              first_column: Sequence[_Scalar],
+              first_row: Sequence[_Scalar] | None = ...,
+          ) -> Matrix[_Scalar]: ...
+
+
+          def vandermonde(
+              entries: Sequence[_Scalar],
+              ncols: int | Integer | None = ...,
+          ) -> Matrix[_Scalar]: ...
+
+
+          def random_matrix(
+              ring: Parent[_Scalar],
+              nrows: int | Integer,
+              ncols: int | Integer | None = ...,
+              algorithm: str = ...,
+              implementation: str | None = ...,
+              density: float | None = ...,
+              sparse: bool = ...,
+              *args: object,
+              **kwds: object,
+          ) -> Matrix[_Scalar]: ...
+
+
+          def matrix_from_rows(
+              rows: Sequence[Sequence[_Scalar]],
+              ring: Parent[_Scalar] | None = ...,
+          ) -> Matrix[_Scalar]: ...
+
+
+          def matrix_from_columns(
+              columns: Sequence[Sequence[_Scalar]],
+              ring: Parent[_Scalar] | None = ...,
+          ) -> Matrix[_Scalar]: ...
+
+
+          def matrix_from_function(
+              ring: Parent[_Scalar],
+              nrows: int | Integer,
+              ncols: int | Integer,
+              function: Callable[[int, int], _Scalar],
+          ) -> Matrix[_Scalar]: ...
+          PYI
+
+          cat > sage-stubs/matrix/operation_table.pyi <<'PYI'
+          from collections.abc import Callable, Iterator, Sequence
+          from typing import Generic, TypeVar
+
+          from sage.matrix.matrix import Matrix
+          from sage.rings.integer import Integer
+          from sage.structure.sage_object import SageObject
+
+          _Element = TypeVar("_Element")
+
+
+          class OperationTable(SageObject, Generic[_Element]):
+              def __init__(
+                  self,
+                  structure: object,
+                  operation: Callable[[_Element, _Element], _Element],
+                  names: str | Sequence[str] = ...,
+                  elements: Sequence[_Element] | None = ...,
+              ) -> None: ...
+              def __len__(self) -> int: ...
+              def __iter__(self) -> Iterator[list[_Element]]: ...
+              def __getitem__(self, key: int | tuple[int, int]) -> list[_Element] | _Element: ...
+              def table(self) -> list[list[_Element]]: ...
+              def elements(self) -> tuple[_Element, ...]: ...
+              def column_keys(self) -> tuple[_Element, ...]: ...
+              def row_keys(self) -> tuple[_Element, ...]: ...
+              def translation(self) -> dict[_Element, str]: ...
+              def change_names(self, names: str | Sequence[str]) -> None: ...
+              def matrix_of_variables(self) -> Matrix[Integer]: ...
+              def color_table(self, element_names: bool = ...) -> object: ...
+              def gray_table(self, element_names: bool = ...) -> object: ...
+          PYI
+
+      - name: Parse changed stubs
+        run: |
+          python - <<'PY'
+          import ast
+          from pathlib import Path
+
+          for name in ("action", "matrix_window", "special", "operation_table"):
+              path = Path("sage-stubs/matrix") / f"{name}.pyi"
+              ast.parse(path.read_text(), filename=str(path), feature_version=(3, 12))
+          PY
+
+      - name: Commit, rebase, and push to main
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "D. Zack Garza"
+          git config user.email "dzackgarza@gmail.com"
+          git add sage-stubs/matrix
+          git commit --no-verify -m "feat(stubs): type matrix actions and structured constructors"
+          git fetch origin main
+          git rebase origin/main
+          git push origin HEAD:main
