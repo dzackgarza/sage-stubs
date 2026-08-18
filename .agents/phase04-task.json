@@ -1,0 +1,34 @@
+{
+  "task_id": "T04.4",
+  "candidate_branch": "t04-04-number-field-core-candidate",
+  "minimum_files": 10,
+  "paths": [
+    "sage-stubs/rings/number_field/number_field.pyi",
+    "sage-stubs/rings/number_field/number_field_base.pyi",
+    "sage-stubs/rings/number_field/number_field_element.pyi",
+    "sage-stubs/rings/number_field/number_field_element_base.pyi",
+    "sage-stubs/rings/number_field/number_field_element_quadratic.pyi",
+    "sage-stubs/rings/number_field/number_field_ideal.pyi",
+    "sage-stubs/rings/number_field/number_field_ideal_rel.pyi",
+    "sage-stubs/rings/number_field/number_field_rel.pyi",
+    "sage-stubs/rings/number_field/number_field_morphisms.pyi",
+    "sage-stubs/rings/number_field/morphism.pyi"
+  ],
+  "requires": [],
+  "source_exemptions": {},
+  "candidate_commit": "fix(stubs): reconcile number-field core contracts",
+  "main_commit": "feat(stubs): complete number-field core interfaces",
+  "old_row": "| T04.4 | **Number field core** — `number_field`, `number_field_base`, `number_field_element`, `number_field_element_base`, `number_field_element_quadratic`, `number_field_ideal`, `number_field_ideal_rel`, `number_field_rel`, `number_field_morphisms`, `morphism`. | ~10 | — | ⬜ | All have existing stubs — audit. |",
+  "new_row": "| T04.4 | **Number field core** — `number_field`, `number_field_base`, `number_field_element`, `number_field_element_base`, `number_field_element_quadratic`, `number_field_ideal`, `number_field_ideal_rel`, `number_field_rel`, `number_field_morphisms`, `morphism`. | 10 | — | ✅ Done | Absolute and relative number-field parents, elements, ideals, embeddings, coercions, homomorphisms, defining-polynomial data, and extension/base-field relationships are source-grounded with precise inherited-contract exceptions. |",
+  "latest_frontier": [
+    "**Latest completed workstream:** Phase 04 task T04.4 now covers the core",
+    "number-field subsystem: absolute and relative fields, elements, ideals,",
+    "embeddings, coercions, morphisms, defining polynomials, and base extensions.",
+    "Previously completed Phase 04 workstreams remain recorded in the task card."
+  ],
+  "next_frontier": [
+    "**Next valid work:** continue Phase 04 with T04.5–T04.6 (number-field",
+    "auxiliaries and totally real fields), a p-adic task, or the function-field",
+    "core; alternatively continue a named Phase 06 task or start Phase 05."
+  ]
+}
