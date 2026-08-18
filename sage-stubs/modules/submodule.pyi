@@ -1,39 +1,30 @@
-from collections.abc import Iterator, Sequence
-from typing import Self, TypeVar
-from sage.matrix.matrix0 import Matrix
-from sage.modules.free_module import FreeModule_generic
+from collections.abc import Iterable
+from typing import Generic, Self, TypeVar
+
+from sage.matrix.matrix import Matrix
+from sage.modules.free_module import FreeModule_ambient, FreeModule_generic, FreeModule_submodule
 from sage.modules.free_module_element import FreeModuleElement
-from sage.modules.free_module_homspace import FreeModuleHomspace
 from sage.rings.integer import Integer
-from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.rings.rational import Rational
-from sage.rings.real_double import RealDoubleElement
-from sage.rings.complex_double import ComplexDoubleElement
-from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
-from sage.rings.ring import Ring
 from sage.structure.element import RingElement
-from sage.structure.parent import ElementConstructorInput
-from sage.structure.sage_object import SageObject
-from sage.symbolic.expression import Expression
 
 _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
 
-import builtins
 
-class _SageObject: ...
-
-class Submodule_free_ambient:
-    def __init__(
-        self,
-        ambient: builtins.object,
-        gens: builtins.object,
-        check: builtins.bool = ...,
-        already_echelonized: builtins.bool = ...,
-    ) -> None: ...
-    def matrix(self) -> Matrix[_Scalar]: ...
-    generators_matrix: _SageObject
-
-    def relations(self) -> ElementConstructorInput: ...
+class Submodule(FreeModule_submodule[_Scalar], Generic[_Scalar]):
+    def ambient_module(self) -> FreeModule_ambient[_Scalar]: ...
+    def basis_matrix(self) -> Matrix[_Scalar]: ...
+    def echelonized_basis_matrix(self) -> Matrix[_Scalar]: ...
     def gens(self) -> tuple[FreeModuleElement[_Scalar], ...]: ...
-    def gen(self, i: builtins.int = ...) -> FreeModuleElement[_Scalar]: ...
-    def ambient_module(self) -> FreeModule_generic: ...
+    def intersection(self, other: FreeModule_generic[_Scalar]) -> Self: ...
+    def sum(self, other: FreeModule_generic[_Scalar]) -> Self: ...
+    def saturation(self) -> Self: ...
+    def index_in(self, other: FreeModule_generic[_Scalar]) -> Integer: ...
+    def quotient(self, submodule: FreeModule_generic[_Scalar]) -> object: ...
+
+
+def span(
+    ambient: FreeModule_ambient[_Scalar],
+    generators: Iterable[FreeModuleElement[_Scalar]],
+    check: bool = ...,
+    already_echelonized: bool = ...,
+) -> Submodule[_Scalar]: ...
