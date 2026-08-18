@@ -1,4 +1,35 @@
-def has_equivalent_Jordan_decomposition_at_prime(self: object, other: object, prime: int) -> bool: ...
-def is_globally_equivalent_to(self: object, other: object, return_matrix: bool = False) -> bool | tuple[bool, object]: ...
-def is_locally_equivalent_to(self: object, other: object, prime: int, return_matrix: bool = False) -> bool | tuple[bool, object]: ...
-def is_rationally_isometric(self: object, other: object, return_matrix: bool = False) -> bool | tuple[bool, object]: ...
+from collections.abc import Iterator, Sequence
+from typing import Self, TypeVar
+from sage.matrix.matrix0 import Matrix
+from sage.modules.free_module import FreeModule_generic
+from sage.modules.free_module_element import FreeModuleElement
+from sage.modules.free_module_homspace import FreeModuleHomspace
+from sage.rings.integer import Integer
+from sage.rings.polynomial.polynomial_element import Polynomial
+from sage.rings.rational import Rational
+from sage.rings.real_double import RealDoubleElement
+from sage.rings.complex_double import ComplexDoubleElement
+from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
+from sage.rings.ring import Ring
+from sage.structure.element import RingElement
+from sage.structure.parent import ElementConstructorInput
+from sage.structure.sage_object import SageObject
+from sage.symbolic.expression import Expression
+
+_Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+
+def has_equivalent_Jordan_decomposition_at_prime(
+    self: object, other: ElementConstructorInput, prime: int
+) -> bool: ...
+def is_globally_equivalent_to(
+    self: object, other: ElementConstructorInput, return_matrix: bool = False
+) -> bool: ...
+def is_locally_equivalent_to(
+    self: object,
+    other: ElementConstructorInput,
+    prime: int,
+    return_matrix: bool = False,
+) -> bool: ...
+def is_rationally_isometric(
+    self: object, other: ElementConstructorInput, return_matrix: bool = False
+) -> bool: ...

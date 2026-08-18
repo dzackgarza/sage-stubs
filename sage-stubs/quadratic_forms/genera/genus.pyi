@@ -1,6 +1,24 @@
-from sage.modules.torsion_quadratic_module import TorsionQuadraticModule
+from collections.abc import Iterator, Sequence
+from typing import Self, TypeVar
+from sage.matrix.matrix0 import Matrix
+from sage.modules.free_module import FreeModule_generic
+from sage.modules.free_module_element import FreeModuleElement
+from sage.modules.free_module_homspace import FreeModuleHomspace
 from sage.rings.integer import Integer
-from sage.structure.element import Matrix
+from sage.rings.polynomial.polynomial_element import Polynomial
+from sage.rings.rational import Rational
+from sage.rings.real_double import RealDoubleElement
+from sage.rings.complex_double import ComplexDoubleElement
+from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
+from sage.rings.ring import Ring
+from sage.structure.element import RingElement
+from sage.structure.parent import ElementConstructorInput
+from sage.structure.sage_object import SageObject
+from sage.symbolic.expression import Expression
+
+_Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+
+from sage.modules.torsion_quadratic_module import TorsionQuadraticModule
 
 class Genus_Symbol_p_adic_ring:
     def prime(self) -> Integer: ...
@@ -24,13 +42,12 @@ class GenusSymbol_global_ring:
     def local_symbols(self) -> list[Genus_Symbol_p_adic_ring]: ...
     def local_symbol(self, p: int | Integer) -> Genus_Symbol_p_adic_ring: ...
     def discriminant_form(self) -> TorsionQuadraticModule: ...
-    def representative(self) -> Matrix: ...
+    def representative(self) -> ElementConstructorInput: ...
     def representatives(
         self, backend: str | None = ..., algorithm: str | None = ...
-    ) -> tuple[Matrix, ...]: ...
+    ) -> ElementConstructorInput: ...
     def spinor_generators(self, proper: bool) -> list[Integer]: ...
 
 def Genus(
-    A: Matrix,
-    factored_determinant: list[tuple[Integer, Integer]] | None = ...,
+    A: Matrix[_Scalar], factored_determinant: list[tuple[Integer, Integer]] | None = ...
 ) -> GenusSymbol_global_ring: ...

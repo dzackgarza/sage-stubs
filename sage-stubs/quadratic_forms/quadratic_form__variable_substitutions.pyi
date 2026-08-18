@@ -1,20 +1,64 @@
-# Generated from the pinned Sage 10.7 source tree.
+from collections.abc import Iterator, Sequence
+from typing import Self, TypeVar
+from sage.matrix.matrix0 import Matrix
+from sage.modules.free_module import FreeModule_generic
+from sage.modules.free_module_element import FreeModuleElement
+from sage.modules.free_module_homspace import FreeModuleHomspace
+from sage.rings.integer import Integer
+from sage.rings.polynomial.polynomial_element import Polynomial
+from sage.rings.rational import Rational
+from sage.rings.real_double import RealDoubleElement
+from sage.rings.complex_double import ComplexDoubleElement
+from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
+from sage.rings.ring import Ring
+from sage.structure.element import RingElement
+from sage.structure.parent import ElementConstructorInput
+from sage.structure.sage_object import SageObject
+from sage.symbolic.expression import Expression
+
+_Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+
 import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
 
 class _SageObject: ...
 
-def swap_variables(self: builtins.object, r: builtins.int, s: builtins.object, in_place: builtins.bool = ...) -> _SageObject: ...
-
-def multiply_variable(self: builtins.object, c: builtins.object, i: builtins.int, in_place: builtins.bool = ...) -> _SageObject: ...
-
-def divide_variable(self: builtins.object, c: builtins.object, i: builtins.int, in_place: builtins.bool = ...) -> _SageObject: ...
-
-def scale_by_factor(self: builtins.object, c: builtins.object, change_value_ring_flag: builtins.bool = ...) -> _SageObject: ...
-
-def extract_variables(QF: builtins.object, var_indices: builtins.object) -> _SageObject: ...
-
-def elementary_substitution(self: builtins.object, c: builtins.object, i: builtins.int, j: builtins.int, in_place: builtins.bool = ...) -> _SageObject: ...
-
-def add_symmetric(self: builtins.object, c: builtins.object, i: builtins.int, j: builtins.int, in_place: builtins.bool = ...) -> _SageObject: ...
+def swap_variables(
+    self: builtins.object,
+    r: builtins.int,
+    s: builtins.object,
+    in_place: builtins.bool = ...,
+) -> ElementConstructorInput: ...
+def multiply_variable(
+    self: builtins.object,
+    c: builtins.object,
+    i: builtins.int,
+    in_place: builtins.bool = ...,
+) -> ElementConstructorInput: ...
+def divide_variable(
+    self: builtins.object,
+    c: builtins.object,
+    i: builtins.int,
+    in_place: builtins.bool = ...,
+) -> ElementConstructorInput: ...
+def scale_by_factor(
+    self: builtins.object,
+    c: builtins.object,
+    change_value_ring_flag: builtins.bool = ...,
+) -> ElementConstructorInput: ...
+def extract_variables(
+    QF: builtins.object, var_indices: builtins.object
+) -> ElementConstructorInput: ...
+def elementary_substitution(
+    self: builtins.object,
+    c: builtins.object,
+    i: builtins.int,
+    j: builtins.int,
+    in_place: builtins.bool = ...,
+) -> ElementConstructorInput: ...
+def add_symmetric(
+    self: builtins.object,
+    c: builtins.object,
+    i: builtins.int,
+    j: builtins.int,
+    in_place: builtins.bool = ...,
+) -> ElementConstructorInput: ...
