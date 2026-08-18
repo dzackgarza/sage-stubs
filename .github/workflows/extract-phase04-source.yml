@@ -1,0 +1,180 @@
+name: Extract Phase 04 source signatures
+
+on:
+  push:
+    branches: [phase04-source-extract-20260818]
+    paths:
+      - .github/workflows/extract-phase04-source.yml
+
+permissions:
+  contents: write
+
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: recursive
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Extract source declarations
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from __future__ import annotations
+
+          import ast
+          import json
+          import re
+          from pathlib import Path
+
+          root = Path("sage-src/src/sage/rings")
+          targets = [
+              "function_field/drinfeld_modules/action.py",
+              "function_field/drinfeld_modules/carlitz_module.py",
+              "function_field/drinfeld_modules/charzero_drinfeld_module.py",
+              "function_field/drinfeld_modules/drinfeld_module.py",
+              "function_field/drinfeld_modules/finite_drinfeld_module.py",
+              "function_field/drinfeld_modules/homset.py",
+              "function_field/drinfeld_modules/morphism.py",
+              "bernmm.pyx",
+              "noncommutative_ideals.py",
+              "species.py",
+              "cfinite_sequence.py",
+          ]
+
+          def unparse(node):
+              if node is None:
+                  return None
+              try:
+                  return ast.unparse(node)
+              except Exception:
+                  return None
+
+          def doc_summary(node):
+              doc = ast.get_docstring(node, clean=True)
+              if not doc:
+                  return None
+              paragraphs = [p.strip().replace("\n", " ") for p in doc.split("\n\n") if p.strip()]
+              return paragraphs[0][:600] if paragraphs else None
+
+          def signature(node):
+              args = []
+              positional = list(node.args.posonlyargs) + list(node.args.args)
+              defaults = [None] * (len(positional) - len(node.args.defaults)) + list(node.args.defaults)
+              for arg, default in zip(positional, defaults):
+                  text = arg.arg
+                  ann = unparse(arg.annotation)
+                  if ann:
+                      text += f": {ann}"
+                  if default is not None:
+                      text += f" = {unparse(default)}"
+                  args.append(text)
+              if node.args.vararg:
+                  text = "*" + node.args.vararg.arg
+                  ann = unparse(node.args.vararg.annotation)
+                  if ann:
+                      text += f": {ann}"
+                  args.append(text)
+              elif node.args.kwonlyargs:
+                  args.append("*")
+              for arg, default in zip(node.args.kwonlyargs, node.args.kw_defaults):
+                  text = arg.arg
+                  ann = unparse(arg.annotation)
+                  if ann:
+                      text += f": {ann}"
+                  if default is not None:
+                      text += f" = {unparse(default)}"
+                  args.append(text)
+              if node.args.kwarg:
+                  text = "**" + node.args.kwarg.arg
+                  ann = unparse(node.args.kwarg.annotation)
+                  if ann:
+                      text += f": {ann}"
+                  args.append(text)
+              ret = unparse(node.returns)
+              return f"({', '.join(args)})" + (f" -> {ret}" if ret else "")
+
+          def function_record(node):
+              return {
+                  "kind": "async_function" if isinstance(node, ast.AsyncFunctionDef) else "function",
+                  "name": node.name,
+                  "line": node.lineno,
+                  "end_line": getattr(node, "end_lineno", None),
+                  "signature": signature(node),
+                  "decorators": [unparse(d) for d in node.decorator_list],
+                  "doc": doc_summary(node),
+              }
+
+          result = {}
+          for relative in targets:
+              path = root / relative
+              entry = {"path": str(path), "exists": path.exists()}
+              if not path.exists():
+                  result[relative] = entry
+                  continue
+              text = path.read_text(errors="replace")
+              entry["line_count"] = len(text.splitlines())
+              if path.suffix == ".py":
+                  tree = ast.parse(text)
+                  declarations = []
+                  for node in tree.body:
+                      if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                          declarations.append(function_record(node))
+                      elif isinstance(node, ast.ClassDef):
+                          methods = [
+                              function_record(child)
+                              for child in node.body
+                              if isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef))
+                          ]
+                          class_attrs = []
+                          for child in node.body:
+                              if isinstance(child, ast.AnnAssign) and isinstance(child.target, ast.Name):
+                                  class_attrs.append({
+                                      "name": child.target.id,
+                                      "annotation": unparse(child.annotation),
+                                      "value": unparse(child.value),
+                                      "line": child.lineno,
+                                  })
+                              elif isinstance(child, ast.Assign):
+                                  for target in child.targets:
+                                      if isinstance(target, ast.Name):
+                                          class_attrs.append({
+                                              "name": target.id,
+                                              "annotation": None,
+                                              "value": unparse(child.value),
+                                              "line": child.lineno,
+                                          })
+                          declarations.append({
+                              "kind": "class",
+                              "name": node.name,
+                              "line": node.lineno,
+                              "end_line": getattr(node, "end_lineno", None),
+                              "bases": [unparse(b) for b in node.bases],
+                              "decorators": [unparse(d) for d in node.decorator_list],
+                              "doc": doc_summary(node),
+                              "attributes": class_attrs,
+                              "methods": methods,
+                          })
+                  entry["declarations"] = declarations
+              else:
+                  patterns = []
+                  for number, line in enumerate(text.splitlines(), 1):
+                      if re.match(r"^\s*(?:cdef\s+)?class\s+\w+", line) or re.match(r"^\s*(?:cpdef|cdef|def)\s+\w+", line):
+                          patterns.append({"line": number, "text": line.strip()})
+                  entry["declarations"] = patterns
+              result[relative] = entry
+
+          output = Path(".agents/phase04-source-signatures.json")
+          output.parent.mkdir(parents=True, exist_ok=True)
+          output.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n")
+          PY
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add .agents/phase04-source-signatures.json
+          git commit -m 'chore: extract Phase 04 source signatures'
+          git push origin HEAD:phase04-source-extract-20260818
