@@ -1,25 +1,32 @@
-from collections.abc import Iterator, Sequence
-from typing import Self, TypeVar
-from sage.matrix.matrix0 import Matrix
-from sage.modules.free_module import FreeModule_generic
+from collections.abc import Iterable, Sequence
+from typing import TypeGuard, TypeVar
+
+from sage.modules.free_module import FreeModule_generic, FreeModule_submodule
 from sage.modules.free_module_element import FreeModuleElement
-from sage.modules.free_module_homspace import FreeModuleHomspace
-from sage.rings.integer import Integer
-from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.rings.rational import Rational
-from sage.rings.real_double import RealDoubleElement
-from sage.rings.complex_double import ComplexDoubleElement
-from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
-from sage.rings.ring import Ring
 from sage.structure.element import RingElement
-from sage.structure.parent import ElementConstructorInput
-from sage.structure.sage_object import SageObject
-from sage.symbolic.expression import Expression
+from sage.structure.parent import ElementConstructorInput, Parent
 
 _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
 
-import builtins
 
-class _SageObject: ...
+def is_FreeModule(x: object) -> TypeGuard[FreeModule_generic[RingElement]]: ...
 
-def gram_schmidt(B: builtins.object) -> ElementConstructorInput: ...
+
+def vector(
+    ring: Parent[_Scalar],
+    entries: Iterable[ElementConstructorInput],
+    sparse: bool = ...,
+) -> FreeModuleElement[_Scalar]: ...
+
+
+def free_module_element(
+    entries: Iterable[ElementConstructorInput],
+    ring: Parent[_Scalar] | None = ...,
+    sparse: bool = ...,
+) -> FreeModuleElement[_Scalar]: ...
+
+
+def span(
+    vectors: Sequence[FreeModuleElement[_Scalar]],
+    ring: Parent[_Scalar] | None = ...,
+) -> FreeModule_submodule[_Scalar]: ...

@@ -1,35 +1,19 @@
-from collections.abc import Iterator, Sequence
-from typing import Self, TypeVar
-from sage.matrix.matrix0 import Matrix
-from sage.modules.free_module import FreeModule_generic
-from sage.modules.free_module_element import FreeModuleElement
-from sage.modules.free_module_homspace import FreeModuleHomspace
-from sage.rings.integer import Integer
-from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.rings.rational import Rational
-from sage.rings.real_double import RealDoubleElement
-from sage.rings.complex_double import ComplexDoubleElement
-from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
-from sage.rings.ring import Ring
-from sage.structure.element import RingElement
-from sage.structure.parent import ElementConstructorInput
-from sage.structure.sage_object import SageObject
-from sage.symbolic.expression import Expression
+from collections.abc import Hashable
+from typing import TypeVar
 
-_Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+from sage.modules.free_module import FreeModule_submodule
+from sage.modules.multi_filtered_vector_space import MultiFilteredVectorSpace_class
+from sage.structure.element import FieldElement
 
-import builtins
+_Scalar = TypeVar("_Scalar", bound=FieldElement)
+_FiltrationIndex = TypeVar("_FiltrationIndex", bound=Hashable)
 
-class _SageObject: ...
 
-def plane_inequality(v: builtins.object) -> ElementConstructorInput: ...
-def jacobi(M: builtins.int) -> ElementConstructorInput: ...
-def diamond_cut(
-    V: builtins.object,
-    GM: builtins.object,
-    C: builtins.object,
-    verbose: builtins.bool = ...,
-) -> ElementConstructorInput: ...
-def calculate_voronoi_cell(
-    basis: builtins.object, radius: builtins.object = ..., verbose: builtins.bool = ...
-) -> ElementConstructorInput: ...
+def diamond_cutting(
+    filtrations: MultiFilteredVectorSpace_class[_FiltrationIndex, _Scalar],
+) -> dict[tuple[int, ...], FreeModule_submodule[_Scalar]]: ...
+
+
+def compatible_intersections(
+    filtrations: MultiFilteredVectorSpace_class[_FiltrationIndex, _Scalar],
+) -> tuple[FreeModule_submodule[_Scalar], ...]: ...
