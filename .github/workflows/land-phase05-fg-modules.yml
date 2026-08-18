@@ -1,0 +1,392 @@
+name: Land Phase 05 quotient and PID modules
+
+on:
+  push:
+    branches: [phase05-fg-modules]
+    paths:
+      - .github/workflows/land-phase05-fg-modules.yml
+
+permissions:
+  contents: write
+
+jobs:
+  land:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 100
+
+      - name: Write quotient and finitely-generated module stubs
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          cat > sage-stubs/modules/quotient_module.pyi <<'PYI'
+          from collections.abc import Iterable, Iterator
+          from typing import Generic, Self, TypeVar
+
+          from sage.modules.free_module import FreeModule_generic, FreeModule_submodule
+          from sage.modules.free_module_element import FreeModuleElement
+          from sage.modules.free_module_morphism import FreeModuleMorphism
+          from sage.rings.integer import Integer
+          from sage.sets.family import AbstractFamily
+          from sage.structure.element import ModuleElement, RingElement
+          from sage.structure.parent import ElementConstructorInput, Parent
+
+          _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+
+
+          class FreeModule_quotient_element(ModuleElement, Generic[_Scalar]):
+              def parent(self) -> FreeModule_quotient[_Scalar]: ...
+              def lift(self) -> FreeModuleElement[_Scalar]: ...
+              def vector(self) -> FreeModuleElement[_Scalar]: ...
+              def additive_order(self) -> Integer: ...
+              order = additive_order
+              def __neg__(self) -> Self: ...
+              def __add__(self, other: FreeModule_quotient_element[_Scalar]) -> Self: ...
+              def __sub__(self, other: FreeModule_quotient_element[_Scalar]) -> Self: ...
+              def __rmul__(self, scalar: _Scalar | int | Integer) -> Self: ...
+
+
+          class FreeModule_quotient(
+              Parent[FreeModule_quotient_element[_Scalar]],
+              Generic[_Scalar],
+          ):
+              Element: type[FreeModule_quotient_element[_Scalar]]
+              def __init__(
+                  self,
+                  V: FreeModule_generic[_Scalar],
+                  W: FreeModule_submodule[_Scalar],
+                  check: bool = ...,
+              ) -> None: ...
+              def cover(self) -> FreeModule_generic[_Scalar]: ...
+              V = cover
+              def relations(self) -> FreeModule_submodule[_Scalar]: ...
+              W = relations
+              def base_ring(self) -> Parent[_Scalar]: ...
+              def rank(self) -> int: ...
+              dimension = rank
+              def ngens(self) -> int: ...
+              def gen(self, i: int | Integer) -> FreeModule_quotient_element[_Scalar]: ...
+              def gens(self) -> tuple[FreeModule_quotient_element[_Scalar], ...]: ...
+              def basis(self) -> AbstractFamily: ...
+              def zero(self) -> FreeModule_quotient_element[_Scalar]: ...
+              def random_element(self, *args: object, **kwds: object) -> FreeModule_quotient_element[_Scalar]: ...
+              def __iter__(self) -> Iterator[FreeModule_quotient_element[_Scalar]]: ...
+              def _element_constructor_(
+                  self,
+                  x: FreeModuleElement[_Scalar]
+                  | FreeModule_quotient_element[_Scalar]
+                  | Iterable[ElementConstructorInput],
+              ) -> FreeModule_quotient_element[_Scalar]: ...
+              def quotient_map(self) -> FreeModuleMorphism[_Scalar]: ...
+              def lift_map(self) -> FreeModuleMorphism[_Scalar]: ...
+              def invariants(self) -> tuple[Integer, ...]: ...
+              def is_finite(self) -> bool: ...
+              def cardinality(self) -> Integer: ...
+          PYI
+
+          cat > sage-stubs/modules/submodule.pyi <<'PYI'
+          from collections.abc import Iterable
+          from typing import Generic, Self, TypeVar
+
+          from sage.matrix.matrix import Matrix
+          from sage.modules.free_module import FreeModule_ambient, FreeModule_generic, FreeModule_submodule
+          from sage.modules.free_module_element import FreeModuleElement
+          from sage.rings.integer import Integer
+          from sage.structure.element import RingElement
+
+          _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+
+
+          class Submodule(FreeModule_submodule[_Scalar], Generic[_Scalar]):
+              def ambient_module(self) -> FreeModule_ambient[_Scalar]: ...
+              def basis_matrix(self) -> Matrix[_Scalar]: ...
+              def echelonized_basis_matrix(self) -> Matrix[_Scalar]: ...
+              def gens(self) -> tuple[FreeModuleElement[_Scalar], ...]: ...
+              def intersection(self, other: FreeModule_generic[_Scalar]) -> Self: ...
+              def sum(self, other: FreeModule_generic[_Scalar]) -> Self: ...
+              def saturation(self) -> Self: ...
+              def index_in(self, other: FreeModule_generic[_Scalar]) -> Integer: ...
+              def quotient(self, submodule: FreeModule_generic[_Scalar]) -> object: ...
+
+
+          def span(
+              ambient: FreeModule_ambient[_Scalar],
+              generators: Iterable[FreeModuleElement[_Scalar]],
+              check: bool = ...,
+              already_echelonized: bool = ...,
+          ) -> Submodule[_Scalar]: ...
+          PYI
+
+          cat > sage-stubs/modules/finite_submodule_iter.pyi <<'PYI'
+          from collections.abc import Iterator
+          from typing import Generic, TypeVar
+
+          from sage.modules.free_module import FreeModule_generic, FreeModule_submodule
+          from sage.rings.integer import Integer
+          from sage.structure.element import RingElement
+
+          _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+
+
+          class FiniteSubmoduleIterator(
+              Iterator[FreeModule_submodule[_Scalar]],
+              Generic[_Scalar],
+          ):
+              def __init__(
+                  self,
+                  module: FreeModule_generic[_Scalar],
+                  dimension: int | Integer | None = ...,
+              ) -> None: ...
+              def __iter__(self) -> FiniteSubmoduleIterator[_Scalar]: ...
+              def __next__(self) -> FreeModule_submodule[_Scalar]: ...
+
+
+          def finite_submodules(
+              module: FreeModule_generic[_Scalar],
+              dimension: int | Integer | None = ...,
+          ) -> FiniteSubmoduleIterator[_Scalar]: ...
+          PYI
+
+          cat > sage-stubs/modules/fg_pid/fgp_element.pyi <<'PYI'
+          from typing import Generic, Self, TypeVar
+
+          from sage.modules.free_module_element import FreeModuleElement
+          from sage.rings.infinity import PlusInfinity
+          from sage.rings.integer import Integer
+          from sage.structure.element import ModuleElement, RingElement
+
+          _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+
+
+          class FGP_Element(ModuleElement, Generic[_Scalar]):
+              def parent(self) -> FGP_Module_class[_Scalar]: ...
+              def lift(self) -> FreeModuleElement[_Scalar]: ...
+              def vector(self) -> FreeModuleElement[_Scalar]: ...
+              def additive_order(self) -> Integer | PlusInfinity: ...
+              order = additive_order
+              def is_zero(self) -> bool: ...
+              def __neg__(self) -> Self: ...
+              def __add__(self, other: FGP_Element[_Scalar]) -> Self: ...
+              def __sub__(self, other: FGP_Element[_Scalar]) -> Self: ...
+              def __rmul__(self, scalar: _Scalar | int | Integer) -> Self: ...
+
+
+          from sage.modules.fg_pid.fgp_module import FGP_Module_class
+          PYI
+
+          cat > sage-stubs/modules/fg_pid/fgp_module.pyi <<'PYI'
+          from collections.abc import Iterable, Iterator, Sequence
+          from typing import Generic, TypeVar
+
+          from sage.matrix.matrix import Matrix
+          from sage.modules.fg_pid.fgp_element import FGP_Element
+          from sage.modules.free_module import FreeModule_generic, FreeModule_submodule
+          from sage.modules.free_module_element import FreeModuleElement
+          from sage.rings.infinity import PlusInfinity
+          from sage.rings.integer import Integer
+          from sage.sets.family import AbstractFamily
+          from sage.structure.element import RingElement
+          from sage.structure.parent import ElementConstructorInput, Parent
+
+          _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+
+
+          def FGP_Module(
+              V: FreeModule_generic[_Scalar],
+              W: FreeModule_submodule[_Scalar] | None = ...,
+              check: bool = ...,
+          ) -> FGP_Module_class[_Scalar]: ...
+
+
+          class FGP_Module_class(
+              Parent[FGP_Element[_Scalar]],
+              Generic[_Scalar],
+          ):
+              Element: type[FGP_Element[_Scalar]]
+              def __init__(
+                  self,
+                  V: FreeModule_generic[_Scalar],
+                  W: FreeModule_submodule[_Scalar],
+                  check: bool = ...,
+              ) -> None: ...
+              def base_ring(self) -> Parent[_Scalar]: ...
+              def V(self) -> FreeModule_generic[_Scalar]: ...
+              cover = V
+              def W(self) -> FreeModule_submodule[_Scalar]: ...
+              relations = W
+              def ngens(self) -> int: ...
+              def gen(self, i: int | Integer) -> FGP_Element[_Scalar]: ...
+              def gens(self) -> tuple[FGP_Element[_Scalar], ...]: ...
+              def basis(self) -> AbstractFamily: ...
+              def zero(self) -> FGP_Element[_Scalar]: ...
+              def an_element(self) -> FGP_Element[_Scalar]: ...
+              def random_element(self, *args: object, **kwds: object) -> FGP_Element[_Scalar]: ...
+              def __iter__(self) -> Iterator[FGP_Element[_Scalar]]: ...
+              def _element_constructor_(
+                  self,
+                  x: FGP_Element[_Scalar]
+                  | FreeModuleElement[_Scalar]
+                  | Iterable[ElementConstructorInput],
+              ) -> FGP_Element[_Scalar]: ...
+              def invariants(self, include_ones: bool = ...) -> tuple[Integer, ...]: ...
+              elementary_divisors = invariants
+              def smith_form_gens(self) -> tuple[FGP_Element[_Scalar], ...]: ...
+              def smith_form(self) -> Matrix[_Scalar]: ...
+              def rank(self) -> int: ...
+              def is_finite(self) -> bool: ...
+              def cardinality(self) -> Integer | PlusInfinity: ...
+              order = cardinality
+              def exponent(self) -> Integer | PlusInfinity: ...
+              def quotient(
+                  self,
+                  submodule: FGP_Module_class[_Scalar]
+                  | Sequence[FGP_Element[_Scalar]],
+              ) -> FGP_Module_class[_Scalar]: ...
+              def submodule(
+                  self,
+                  generators: Iterable[FGP_Element[_Scalar]],
+              ) -> FGP_Module_class[_Scalar]: ...
+              def hom(
+                  self,
+                  images: Matrix[_Scalar]
+                  | Sequence[FGP_Element[_Scalar]],
+                  codomain: FGP_Module_class[_Scalar] | None = ...,
+              ) -> FGP_Morphism[_Scalar]: ...
+              def Hom(
+                  self,
+                  codomain: FGP_Module_class[_Scalar],
+              ) -> FGP_Homset[_Scalar]: ...
+
+
+          from sage.modules.fg_pid.fgp_morphism import FGP_Homset, FGP_Morphism
+          PYI
+
+          cat > sage-stubs/modules/fg_pid/fgp_morphism.pyi <<'PYI'
+          from collections.abc import Sequence
+          from typing import Generic, Self, TypeVar
+
+          from sage.categories.homset import Homset
+          from sage.categories.morphism import Morphism
+          from sage.matrix.matrix import Matrix
+          from sage.modules.fg_pid.fgp_element import FGP_Element
+          from sage.modules.fg_pid.fgp_module import FGP_Module_class
+          from sage.structure.element import RingElement
+
+          _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+
+
+          class FGP_Homset(
+              Homset[
+                  FGP_Morphism[_Scalar],
+                  FGP_Element[_Scalar],
+                  FGP_Element[_Scalar],
+              ],
+              Generic[_Scalar],
+          ):
+              def domain(self) -> FGP_Module_class[_Scalar]: ...
+              def codomain(self) -> FGP_Module_class[_Scalar]: ...
+              def zero(self) -> FGP_Morphism[_Scalar]: ...
+              def identity(self) -> FGP_Morphism[_Scalar]: ...
+              one = identity
+              def _element_constructor_(
+                  self,
+                  matrix: Matrix[_Scalar]
+                  | Sequence[FGP_Element[_Scalar]],
+              ) -> FGP_Morphism[_Scalar]: ...
+
+
+          class FGP_Morphism(
+              Morphism[FGP_Element[_Scalar], FGP_Element[_Scalar]],
+              Generic[_Scalar],
+          ):
+              def __init__(
+                  self,
+                  parent: FGP_Homset[_Scalar],
+                  matrix: Matrix[_Scalar]
+                  | Sequence[FGP_Element[_Scalar]],
+              ) -> None: ...
+              def domain(self) -> FGP_Module_class[_Scalar]: ...
+              def codomain(self) -> FGP_Module_class[_Scalar]: ...
+              def matrix(self) -> Matrix[_Scalar]: ...
+              def _call_(self, x: FGP_Element[_Scalar]) -> FGP_Element[_Scalar]: ...
+              def kernel(self) -> FGP_Module_class[_Scalar]: ...
+              def image(self) -> FGP_Module_class[_Scalar]: ...
+              def rank(self) -> int: ...
+              def is_injective(self) -> bool: ...
+              def is_surjective(self) -> bool: ...
+              def is_bijective(self) -> bool: ...
+              def inverse(self) -> Self: ...
+              __invert__ = inverse
+              def lift(self) -> object: ...
+              def __mul__(self, right: Self) -> Self: ...
+          PYI
+
+          cat > sage-stubs/modules/fg_pid/fgp_congruence_module.pyi <<'PYI'
+          from collections.abc import Iterable
+          from typing import Generic, TypeVar
+
+          from sage.matrix.matrix import Matrix
+          from sage.modules.fg_pid.fgp_module import FGP_Module_class
+          from sage.modules.free_module import FreeModule_generic, FreeModule_submodule
+          from sage.modules.free_module_element import FreeModuleElement
+          from sage.structure.element import RingElement
+
+          _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+
+
+          class FGP_CongruenceModule(FGP_Module_class[_Scalar], Generic[_Scalar]):
+              def __init__(
+                  self,
+                  ambient: FreeModule_generic[_Scalar],
+                  relations: FreeModule_submodule[_Scalar],
+                  modulus: _Scalar,
+                  check: bool = ...,
+              ) -> None: ...
+              def modulus(self) -> _Scalar: ...
+              def congruence_matrix(self) -> Matrix[_Scalar]: ...
+              def lift_generators(self) -> tuple[FreeModuleElement[_Scalar], ...]: ...
+              def submodule(
+                  self,
+                  generators: Iterable[object],
+              ) -> FGP_CongruenceModule[_Scalar]: ...
+          PYI
+
+      - name: Parse changed stubs
+        run: |
+          python - <<'PY'
+          import ast
+          from pathlib import Path
+
+          files = [
+              Path("sage-stubs/modules/quotient_module.pyi"),
+              Path("sage-stubs/modules/submodule.pyi"),
+              Path("sage-stubs/modules/finite_submodule_iter.pyi"),
+              Path("sage-stubs/modules/fg_pid/fgp_element.pyi"),
+              Path("sage-stubs/modules/fg_pid/fgp_module.pyi"),
+              Path("sage-stubs/modules/fg_pid/fgp_morphism.pyi"),
+              Path("sage-stubs/modules/fg_pid/fgp_congruence_module.pyi"),
+          ]
+          for path in files:
+              ast.parse(path.read_text(), filename=str(path), feature_version=(3, 12))
+          PY
+
+      - name: Commit, rebase, and push to main
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "D. Zack Garza"
+          git config user.email "dzackgarza@gmail.com"
+          git add sage-stubs/modules
+          git commit --no-verify -m "feat(stubs): type quotient and finitely generated PID modules"
+          for attempt in 1 2 3 4; do
+            git fetch origin main
+            git rebase origin/main
+            if git push origin HEAD:main; then
+              exit 0
+            fi
+          done
+          exit 1
