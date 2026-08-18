@@ -1,0 +1,120 @@
+name: Finish Phase 06 implementation
+
+on:
+  push:
+    branches: [phase04-live-continuation-20260818-2]
+    paths:
+      - .github/workflows/finish-phase06-implementation.yml
+  workflow_dispatch:
+
+permissions:
+  actions: write
+  contents: write
+
+jobs:
+  finish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - name: Await Phase 05 and implement remaining Phase 06 tasks
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          api="https://api.github.com/repos/${REPOSITORY}"
+          headers=(
+            -H "Accept: application/vnd.github+json"
+            -H "Authorization: Bearer ${GH_TOKEN}"
+            -H "X-GitHub-Api-Version: 2022-11-28"
+          )
+
+          phase05=$(curl -fsSL "${headers[@]}" \
+            "${api}/actions/workflows/finish-phase05-implementation.yml/runs?branch=phase04-live-continuation-20260818-2&per_page=1" \
+            | python -c 'import json,sys; print(json.load(sys.stdin)["workflow_runs"][0]["id"])')
+          for attempt in $(seq 1 240); do
+            phase05_state=$(curl -fsSL "${headers[@]}" "${api}/actions/runs/${phase05}" \
+              | python -c 'import json,sys; r=json.load(sys.stdin); print((r["status"] or "")+":"+(r["conclusion"] or ""))')
+            case "$phase05_state" in
+              completed:success) break ;;
+              completed:*) echo "Phase 05 did not complete: ${phase05_state}"; exit 1 ;;
+            esac
+            sleep 5
+          done
+          [[ "$phase05_state" == "completed:success" ]]
+
+          unfinished_count() {
+            curl -fsSL "${headers[@]}" \
+              "${api}/contents/.agents/phases/phase-06-algebras-core.md?ref=main" \
+              | python -c 'import base64,json,sys; t=base64.b64decode(json.load(sys.stdin)["content"]).decode(); print(sum(1 for l in t.splitlines() if l.startswith("| T06.") and ("⬜" in l or "🟡" in l)))'
+          }
+
+          for round in $(seq 1 20); do
+            remaining=$(unfinished_count)
+            [[ "$remaining" -eq 0 ]] && break
+            before=$(curl -fsSL "${headers[@]}" \
+              "${api}/actions/workflows/implement-next-phase06-task.yml/runs?branch=phase04-live-continuation-20260818-2&per_page=1" \
+              | python -c 'import json,sys; d=json.load(sys.stdin); print(d["workflow_runs"][0]["id"] if d["workflow_runs"] else 0)')
+            curl --fail-with-body -sS "${headers[@]}" -X POST \
+              "${api}/actions/workflows/implement-next-phase06-task.yml/dispatches" \
+              -d '{"ref":"phase04-live-continuation-20260818-2"}'
+            run_id=""
+            for attempt in $(seq 1 40); do
+              sleep 4
+              run_id=$(curl -fsSL "${headers[@]}" \
+                "${api}/actions/workflows/implement-next-phase06-task.yml/runs?branch=phase04-live-continuation-20260818-2&event=workflow_dispatch&per_page=8" \
+                | python -c 'import json,sys; before=int(sys.argv[1]); runs=json.load(sys.stdin)["workflow_runs"]; print(next((str(r["id"]) for r in runs if r["id"] != before), ""))' "$before")
+              [[ -n "$run_id" ]] && break
+            done
+            [[ -n "$run_id" ]]
+            for attempt in $(seq 1 150); do
+              state=$(curl -fsSL "${headers[@]}" "${api}/actions/runs/${run_id}" \
+                | python -c 'import json,sys; r=json.load(sys.stdin); print((r["status"] or "")+":"+(r["conclusion"] or ""))')
+              case "$state" in
+                completed:success) break ;;
+                completed:*) echo "Phase 06 implementation stopped at run ${run_id}: ${state}"; exit 1 ;;
+              esac
+              sleep 5
+            done
+            [[ "$state" == "completed:success" ]]
+          done
+          [[ "$(unfinished_count)" -eq 0 ]]
+
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Commit Phase 06 completion after all algebra tasks
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          card = Path('.agents/phases/phase-06-algebras-core.md')
+          text = card.read_text()
+          unfinished = [line for line in text.splitlines() if line.startswith('| T06.') and ('⬜' in line or '🟡' in line)]
+          if unfinished:
+              raise SystemExit(f'Unfinished Phase 06 rows: {unfinished}')
+          text = text.replace('**Status:** ⬜ Not Started', '**Status:** ✅ Complete', 1)
+          text = text.replace('**Status:** 🟡 In Progress', '**Status:** ✅ Complete', 1)
+          card.write_text(text)
+
+          plan = Path('.agents/plan.md')
+          master = plan.read_text()
+          master = master.replace(
+              '| 06 | [Algebras: associative & non-Lie](phases/phase-06-algebras-core.md) | 2 | 02, 05 | ~70 | 🟡 In Progress |',
+              '| 06 | [Algebras: associative & non-Lie](phases/phase-06-algebras-core.md) | 2 | 02, 05 | ~70 | ✅ Complete |',
+          )
+          master = master.replace(
+              '| 06 | [Algebras: associative & non-Lie](phases/phase-06-algebras-core.md) | 2 | 02, 05 | ~70 | ⬜ Not Started |',
+              '| 06 | [Algebras: associative & non-Lie](phases/phase-06-algebras-core.md) | 2 | 02, 05 | ~70 | ✅ Complete |',
+          )
+          plan.write_text(master)
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .agents/phases/phase-06-algebras-core.md .agents/plan.md
+          git commit -m "plan: complete Phase 06 associative algebras"
+          git push origin HEAD:main
