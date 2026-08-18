@@ -1,18 +1,54 @@
-# Generated from the pinned Sage 10.7 source tree.
+from collections.abc import Iterator, Sequence
+from typing import Self, TypeVar
+from sage.matrix.matrix0 import Matrix
+from sage.modules.free_module import FreeModule_generic
+from sage.modules.free_module_element import FreeModuleElement
+from sage.modules.free_module_homspace import FreeModuleHomspace
+from sage.rings.integer import Integer
+from sage.rings.polynomial.polynomial_element import Polynomial
+from sage.rings.rational import Rational
+from sage.rings.real_double import RealDoubleElement
+from sage.rings.complex_double import ComplexDoubleElement
+from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
+from sage.rings.ring import Ring
+from sage.structure.element import RingElement
+from sage.structure.parent import ElementConstructorInput
+from sage.structure.sage_object import SageObject
+from sage.symbolic.expression import Expression
+
+_Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+
 import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
 
 class _SageObject: ...
 
 class Matrix_generic_sparse:
-    def __cinit__(self) -> _SageObject: ...
-    def __init__(self, parent: builtins.object, entries: builtins.object = ..., copy: builtins.object = ..., coerce: builtins.object = ...) -> None: ...
+    def __cinit__(self) -> Matrix_generic_sparse: ...
+    def __init__(
+        self,
+        parent: builtins.object,
+        entries: builtins.object = ...,
+        copy: builtins.object = ...,
+        coerce: builtins.object = ...,
+    ) -> None: ...
     def __bool__(self) -> builtins.bool: ...
-    def set_unsafe(self, i: builtins.object, j: builtins.object, value: builtins.object) -> _SageObject: ...
-    def get_unsafe(self, i: builtins.object, j: builtins.object) -> _SageObject: ...
-    def copy_from_unsafe(self, iDst: builtins.object, jDst: builtins.object, src: builtins.object, iSrc: builtins.object, jSrc: builtins.object) -> _SageObject: ...
-    def get_is_zero_unsafe(self, i: builtins.object, j: builtins.object) -> _SageObject: ...
+    def set_unsafe(
+        self, i: builtins.object, j: builtins.object, value: builtins.object
+    ) -> Matrix_generic_sparse: ...
+    def get_unsafe(
+        self, i: builtins.object, j: builtins.object
+    ) -> Matrix_generic_sparse: ...
+    def copy_from_unsafe(
+        self,
+        iDst: builtins.object,
+        jDst: builtins.object,
+        src: builtins.object,
+        iSrc: builtins.object,
+        jSrc: builtins.object,
+    ) -> Matrix_generic_sparse: ...
+    def get_is_zero_unsafe(
+        self, i: builtins.object, j: builtins.object
+    ) -> Matrix_generic_sparse: ...
     def __copy__(self) -> Self: ...
 
-def Matrix_sparse_from_rows(X: builtins.object) -> _SageObject: ...
+def Matrix_sparse_from_rows(X: builtins.object) -> ElementConstructorInput: ...
