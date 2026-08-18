@@ -1,0 +1,458 @@
+name: Land Phase 05 modules with basis
+
+on:
+  push:
+    branches: [phase05-modules-with-basis-core]
+    paths:
+      - .github/workflows/land-phase05-with-basis.yml
+
+permissions:
+  contents: write
+
+jobs:
+  land:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 100
+
+      - name: Write modules-with-basis stubs
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          cat > sage-stubs/modules/with_basis/indexed_element.pyi <<'PYI'
+          from collections.abc import Callable, Hashable, Iterator, Mapping
+          from typing import Generic, TypeVar
+
+          from sage.combinat.free_module import CombinatorialFreeModule
+          from sage.structure.element import RingElement
+
+          _Index = TypeVar("_Index", bound=Hashable, default=Hashable)
+          _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+          _NewScalar = TypeVar("_NewScalar", bound=RingElement)
+
+
+          class IndexedFreeModuleElement(
+              CombinatorialFreeModule.Element,
+              Generic[_Index, _Scalar],
+          ):
+              def parent(self) -> CombinatorialFreeModule: ...
+              def support(self) -> list[_Index]: ...
+              def monomial_coefficients(self, copy: bool = ...) -> dict[_Index, _Scalar]: ...
+              def coefficient(self, index: _Index) -> _Scalar: ...
+              __getitem__ = coefficient
+              def terms(self) -> Iterator[IndexedFreeModuleElement[_Index, _Scalar]]: ...
+              def leading_support(self, *args: object, **kwds: object) -> _Index: ...
+              def leading_coefficient(self, *args: object, **kwds: object) -> _Scalar: ...
+              def leading_item(self, *args: object, **kwds: object) -> tuple[_Index, _Scalar]: ...
+              def trailing_support(self, *args: object, **kwds: object) -> _Index: ...
+              def trailing_coefficient(self, *args: object, **kwds: object) -> _Scalar: ...
+              def map_coefficients(
+                  self,
+                  function: Callable[[_Scalar], _NewScalar],
+              ) -> IndexedFreeModuleElement[_Index, _NewScalar]: ...
+              def map_support(
+                  self,
+                  function: Callable[[_Index], _Index],
+              ) -> IndexedFreeModuleElement[_Index, _Scalar]: ...
+              def apply_multilinear_morphism(
+                  self,
+                  function: Callable[..., _NewScalar],
+                  *others: IndexedFreeModuleElement[_Index, _Scalar],
+              ) -> _NewScalar: ...
+              def tensor(
+                  self,
+                  other: IndexedFreeModuleElement[Hashable, _Scalar],
+              ) -> IndexedFreeModuleElement[tuple[_Index, Hashable], _Scalar]: ...
+          PYI
+
+          cat > sage-stubs/modules/with_basis/morphism.pyi <<'PYI'
+          from collections.abc import Callable, Hashable
+          from typing import Generic, TypeVar
+
+          from sage.categories.morphism import Morphism
+          from sage.combinat.free_module import CombinatorialFreeModule
+          from sage.modules.with_basis.indexed_element import IndexedFreeModuleElement
+          from sage.structure.element import RingElement
+
+          _DomainIndex = TypeVar("_DomainIndex", bound=Hashable, default=Hashable)
+          _CodomainIndex = TypeVar("_CodomainIndex", bound=Hashable, default=Hashable)
+          _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+
+
+          class ModuleMorphismByLinearity(
+              Morphism[
+                  IndexedFreeModuleElement[_DomainIndex, _Scalar],
+                  IndexedFreeModuleElement[_CodomainIndex, _Scalar],
+              ],
+              Generic[_DomainIndex, _CodomainIndex, _Scalar],
+          ):
+              def __init__(
+                  self,
+                  parent: object,
+                  on_basis: Callable[
+                      [_DomainIndex],
+                      IndexedFreeModuleElement[_CodomainIndex, _Scalar],
+                  ],
+                  position: int = ...,
+                  zero: object | None = ...,
+              ) -> None: ...
+              def on_basis(
+                  self,
+                  index: _DomainIndex,
+              ) -> IndexedFreeModuleElement[_CodomainIndex, _Scalar]: ...
+              def _call_(
+                  self,
+                  x: IndexedFreeModuleElement[_DomainIndex, _Scalar],
+              ) -> IndexedFreeModuleElement[_CodomainIndex, _Scalar]: ...
+
+
+          class DiagonalModuleMorphism(
+              ModuleMorphismByLinearity[_DomainIndex, _DomainIndex, _Scalar],
+              Generic[_DomainIndex, _Scalar],
+          ):
+              def __init__(
+                  self,
+                  parent: object,
+                  diagonal: Callable[[_DomainIndex], _Scalar],
+              ) -> None: ...
+              def diagonal(self, index: _DomainIndex) -> _Scalar: ...
+              def inverse(self) -> DiagonalModuleMorphism[_DomainIndex, _Scalar]: ...
+              __invert__ = inverse
+
+
+          class TriangularModuleMorphism(
+              ModuleMorphismByLinearity[_DomainIndex, _CodomainIndex, _Scalar],
+              Generic[_DomainIndex, _CodomainIndex, _Scalar],
+          ):
+              def __init__(
+                  self,
+                  parent: object,
+                  on_basis: Callable[
+                      [_DomainIndex],
+                      IndexedFreeModuleElement[_CodomainIndex, _Scalar],
+                  ],
+                  triangular: str = ...,
+                  unitriangular: bool = ...,
+                  key: Callable[[_CodomainIndex], object] | None = ...,
+                  inverse_on_support: Callable[[_CodomainIndex], _DomainIndex] | None = ...,
+              ) -> None: ...
+              def triangular(self) -> str: ...
+              def is_unitriangular(self) -> bool: ...
+              def preimage(
+                  self,
+                  x: IndexedFreeModuleElement[_CodomainIndex, _Scalar],
+              ) -> IndexedFreeModuleElement[_DomainIndex, _Scalar]: ...
+              def section(
+                  self,
+              ) -> TriangularModuleMorphism[_CodomainIndex, _DomainIndex, _Scalar]: ...
+              def inverse(self) -> TriangularModuleMorphism[_CodomainIndex, _DomainIndex, _Scalar]: ...
+              __invert__ = inverse
+          PYI
+
+          cat > sage-stubs/modules/with_basis/subquotient.pyi <<'PYI'
+          from collections.abc import Hashable, Iterable
+          from typing import Generic, TypeVar
+
+          from sage.combinat.free_module import CombinatorialFreeModule
+          from sage.modules.with_basis.indexed_element import IndexedFreeModuleElement
+          from sage.modules.with_basis.morphism import TriangularModuleMorphism
+          from sage.sets.family import AbstractFamily
+          from sage.structure.element import RingElement
+          from sage.structure.parent import Parent
+
+          _Index = TypeVar("_Index", bound=Hashable, default=Hashable)
+          _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+
+
+          class SubmoduleWithBasis(
+              CombinatorialFreeModule,
+              Generic[_Index, _Scalar],
+          ):
+              def __init__(
+                  self,
+                  basis: AbstractFamily,
+                  support_order: object | None = ...,
+                  ambient: CombinatorialFreeModule | None = ...,
+                  unitriangular: bool = ...,
+                  category: object | None = ...,
+              ) -> None: ...
+              def ambient(self) -> CombinatorialFreeModule: ...
+              def basis(self) -> AbstractFamily: ...
+              def lift(
+                  self,
+                  x: IndexedFreeModuleElement[_Index, _Scalar],
+              ) -> IndexedFreeModuleElement[Hashable, _Scalar]: ...
+              def retract(
+                  self,
+                  x: IndexedFreeModuleElement[Hashable, _Scalar],
+              ) -> IndexedFreeModuleElement[_Index, _Scalar]: ...
+              def lift_morphism(self) -> TriangularModuleMorphism: ...
+              def retract_morphism(self) -> TriangularModuleMorphism: ...
+              def is_submodule(self, other: CombinatorialFreeModule) -> bool: ...
+
+
+          class QuotientModuleWithBasis(
+              CombinatorialFreeModule,
+              Generic[_Index, _Scalar],
+          ):
+              def __init__(
+                  self,
+                  submodule: SubmoduleWithBasis[Hashable, _Scalar],
+                  category: object | None = ...,
+              ) -> None: ...
+              def ambient(self) -> CombinatorialFreeModule: ...
+              def relations(self) -> SubmoduleWithBasis[Hashable, _Scalar]: ...
+              def lift(
+                  self,
+                  x: IndexedFreeModuleElement[_Index, _Scalar],
+              ) -> IndexedFreeModuleElement[Hashable, _Scalar]: ...
+              def retract(
+                  self,
+                  x: IndexedFreeModuleElement[Hashable, _Scalar],
+              ) -> IndexedFreeModuleElement[_Index, _Scalar]: ...
+              def quotient_map(self) -> TriangularModuleMorphism: ...
+              def lift_map(self) -> TriangularModuleMorphism: ...
+
+
+          class SubquotientModuleWithBasis(
+              QuotientModuleWithBasis[_Index, _Scalar],
+              Generic[_Index, _Scalar],
+          ):
+              def __init__(
+                  self,
+                  submodule: SubmoduleWithBasis[Hashable, _Scalar],
+                  relations: SubmoduleWithBasis[Hashable, _Scalar],
+                  category: object | None = ...,
+              ) -> None: ...
+          PYI
+
+          cat > sage-stubs/modules/with_basis/representation.pyi <<'PYI'
+          from collections.abc import Callable, Hashable, Iterable
+          from typing import Generic, TypeVar
+
+          from sage.combinat.free_module import CombinatorialFreeModule
+          from sage.modules.with_basis.indexed_element import IndexedFreeModuleElement
+          from sage.rings.polynomial.polynomial_element import Polynomial
+          from sage.structure.element import Element, RingElement
+          from sage.structure.parent import Parent
+
+          _Index = TypeVar("_Index", bound=Hashable, default=Hashable)
+          _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+          _Actor = TypeVar("_Actor", bound=Element, default=Element)
+
+
+          class Representation_abstract(
+              CombinatorialFreeModule,
+              Generic[_Actor, _Index, _Scalar],
+          ):
+              def semigroup(self) -> Parent[_Actor]: ...
+              def side(self) -> str: ...
+              def representation_matrix(
+                  self,
+                  g: _Actor,
+                  side: str | None = ...,
+              ) -> object: ...
+              def character(self) -> Callable[[_Actor], _Scalar]: ...
+              def invariant_module(
+                  self,
+                  S: Iterable[_Actor] | None = ...,
+              ) -> CombinatorialFreeModule: ...
+              def twisted_invariant_module(
+                  self,
+                  chi: Callable[[_Actor], _Scalar],
+                  S: Iterable[_Actor] | None = ...,
+              ) -> CombinatorialFreeModule: ...
+              def tensor_product(
+                  self,
+                  other: Representation_abstract[_Actor, Hashable, _Scalar],
+              ) -> Representation_abstract[_Actor, tuple[_Index, Hashable], _Scalar]: ...
+
+
+          class Representation(
+              Representation_abstract[_Actor, _Index, _Scalar],
+              Generic[_Actor, _Index, _Scalar],
+          ):
+              def __init__(
+                  self,
+                  semigroup: Parent[_Actor],
+                  module: CombinatorialFreeModule,
+                  on_basis: Callable[
+                      [_Actor, _Index],
+                      IndexedFreeModuleElement[_Index, _Scalar],
+                  ],
+                  side: str = ...,
+                  category: object | None = ...,
+              ) -> None: ...
+              def action_on_basis(
+                  self,
+                  g: _Actor,
+                  index: _Index,
+              ) -> IndexedFreeModuleElement[_Index, _Scalar]: ...
+
+
+          class Representation_Exterior(
+              Representation_abstract[_Actor, tuple[_Index, ...], _Scalar],
+              Generic[_Actor, _Index, _Scalar],
+          ):
+              def degree(self) -> int: ...
+              def characteristic_polynomial(
+                  self,
+                  g: _Actor,
+                  var: str = ...,
+              ) -> Polynomial: ...
+          PYI
+
+          cat > sage-stubs/modules/with_basis/invariant.pyi <<'PYI'
+          from collections.abc import Callable, Hashable, Iterable
+          from typing import Generic, TypeVar
+
+          from sage.combinat.free_module import CombinatorialFreeModule
+          from sage.modules.with_basis.representation import Representation_abstract
+          from sage.modules.with_basis.subquotient import SubmoduleWithBasis
+          from sage.structure.element import Element, RingElement
+
+          _Index = TypeVar("_Index", bound=Hashable, default=Hashable)
+          _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+          _Actor = TypeVar("_Actor", bound=Element, default=Element)
+
+
+          class FiniteDimensionalInvariantModule(
+              SubmoduleWithBasis[_Index, _Scalar],
+              Generic[_Actor, _Index, _Scalar],
+          ):
+              def __init__(
+                  self,
+                  representation: Representation_abstract[_Actor, _Index, _Scalar],
+                  S: Iterable[_Actor] | None = ...,
+                  action: Callable | None = ...,
+                  side: str = ...,
+              ) -> None: ...
+              def representation(self) -> Representation_abstract[_Actor, _Index, _Scalar]: ...
+              def acting_set(self) -> tuple[_Actor, ...]: ...
+
+
+          class InvariantModule(
+              FiniteDimensionalInvariantModule[_Actor, _Index, _Scalar],
+              Generic[_Actor, _Index, _Scalar],
+          ):
+              pass
+
+
+          class TwistedInvariantModule(
+              FiniteDimensionalInvariantModule[_Actor, _Index, _Scalar],
+              Generic[_Actor, _Index, _Scalar],
+          ):
+              def character(self) -> Callable[[_Actor], _Scalar]: ...
+
+
+          def invariant_module(
+              representation: Representation_abstract[_Actor, _Index, _Scalar],
+              S: Iterable[_Actor] | None = ...,
+          ) -> InvariantModule[_Actor, _Index, _Scalar]: ...
+
+
+          def twisted_invariant_module(
+              representation: Representation_abstract[_Actor, _Index, _Scalar],
+              character: Callable[[_Actor], _Scalar],
+              S: Iterable[_Actor] | None = ...,
+          ) -> TwistedInvariantModule[_Actor, _Index, _Scalar]: ...
+          PYI
+
+          cat > sage-stubs/modules/with_basis/cell_module.pyi <<'PYI'
+          from collections.abc import Hashable
+          from typing import Generic, TypeVar
+
+          from sage.combinat.free_module import CombinatorialFreeModule
+          from sage.modules.with_basis.indexed_element import IndexedFreeModuleElement
+          from sage.modules.with_basis.subquotient import SubmoduleWithBasis
+          from sage.sets.family import AbstractFamily
+          from sage.structure.element import RingElement
+
+          _CellIndex = TypeVar("_CellIndex", bound=Hashable, default=Hashable)
+          _BasisIndex = TypeVar("_BasisIndex", bound=Hashable, default=Hashable)
+          _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+
+
+          class CellModuleElement(
+              IndexedFreeModuleElement[_BasisIndex, _Scalar],
+              Generic[_BasisIndex, _Scalar],
+          ):
+              pass
+
+
+          class CellModule(
+              CombinatorialFreeModule,
+              Generic[_CellIndex, _BasisIndex, _Scalar],
+          ):
+              Element: type[CellModuleElement[_BasisIndex, _Scalar]]
+              def __init__(
+                  self,
+                  algebra: CombinatorialFreeModule,
+                  cell_index: _CellIndex,
+                  category: object | None = ...,
+              ) -> None: ...
+              def algebra(self) -> CombinatorialFreeModule: ...
+              def cell_index(self) -> _CellIndex: ...
+              def indices(self) -> object: ...
+              def basis(self) -> AbstractFamily: ...
+              def action(
+                  self,
+                  algebra_element: CombinatorialFreeModule.Element,
+                  module_element: CellModuleElement[_BasisIndex, _Scalar],
+              ) -> CellModuleElement[_BasisIndex, _Scalar]: ...
+              def bilinear_form(
+                  self,
+                  left: CellModuleElement[_BasisIndex, _Scalar],
+                  right: CellModuleElement[_BasisIndex, _Scalar],
+              ) -> _Scalar: ...
+              def gram_matrix(self) -> object: ...
+              def radical(self) -> CellModuleSubmodule[_CellIndex, _BasisIndex, _Scalar]: ...
+              def simple_module(self) -> CombinatorialFreeModule: ...
+
+
+          class CellModuleSubmodule(
+              SubmoduleWithBasis[_BasisIndex, _Scalar],
+              Generic[_CellIndex, _BasisIndex, _Scalar],
+          ):
+              def ambient(self) -> CellModule[_CellIndex, _BasisIndex, _Scalar]: ...
+          PYI
+
+      - name: Parse changed stubs
+        run: |
+          python - <<'PY'
+          import ast
+          from pathlib import Path
+
+          names = [
+              "indexed_element",
+              "morphism",
+              "subquotient",
+              "representation",
+              "invariant",
+              "cell_module",
+          ]
+          for name in names:
+              path = Path("sage-stubs/modules/with_basis") / f"{name}.pyi"
+              ast.parse(path.read_text(), filename=str(path), feature_version=(3, 12))
+          PY
+
+      - name: Commit, rebase, and push to main
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "D. Zack Garza"
+          git config user.email "dzackgarza@gmail.com"
+          git add sage-stubs/modules/with_basis
+          git commit --no-verify -m "feat(stubs): type modules with basis and subquotients"
+          for attempt in 1 2 3 4; do
+            git fetch origin main
+            git rebase origin/main
+            if git push origin HEAD:main; then
+              exit 0
+            fi
+          done
+          exit 1
