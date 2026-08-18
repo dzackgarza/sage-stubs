@@ -1,0 +1,331 @@
+name: Land Phase 05 specialized dense matrices
+
+on:
+  push:
+    branches: [phase05-specialized-dense-matrices]
+    paths:
+      - .github/workflows/land-phase05-specialized-dense.yml
+
+permissions:
+  contents: write
+
+jobs:
+  land:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 50
+
+      - name: Write specialized dense matrix stubs
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          cat > sage-stubs/matrix/matrix_double_dense.pyi <<'PYI'
+          from typing import Generic, Self, TypeVar
+
+          from numpy import ndarray
+
+          from sage.matrix.matrix_dense import Matrix_dense
+          from sage.modules.free_module_element import FreeModuleElement
+          from sage.structure.element import RingElement
+
+          _DoubleScalar = TypeVar(
+              "_DoubleScalar",
+              bound=RingElement,
+              default=RingElement,
+          )
+
+
+          class Matrix_double_dense(Matrix_dense[_DoubleScalar], Generic[_DoubleScalar]):
+              def numpy(self) -> ndarray: ...
+              def norm(self, p: int | float | str = ...) -> float: ...
+              def condition(self, p: int | float | str = ...) -> float: ...
+              def singular_values(self, eps: float | None = ...) -> list[float]: ...
+              def SVD(self) -> tuple[Self, Self, Self]: ...
+              def QR(self) -> tuple[Self, Self]: ...
+              def schur(self) -> tuple[Self, Self]: ...
+              def exp(self) -> Self: ...
+              def logarithm(self) -> Self: ...
+              def pseudoinverse(self, eps: float | None = ...) -> Self: ...
+              def solve_right(self, B: Self | FreeModuleElement[_DoubleScalar]) -> Self | FreeModuleElement[_DoubleScalar]: ...
+              def solve_left(self, B: Self | FreeModuleElement[_DoubleScalar]) -> Self | FreeModuleElement[_DoubleScalar]: ...
+          PYI
+
+          cat > sage-stubs/matrix/matrix_double_sparse.pyi <<'PYI'
+          from typing import Self
+
+          from sage.matrix.matrix_sparse import Matrix_sparse
+          from sage.rings.real_double import RealDoubleElement
+
+
+          class Matrix_double_sparse(Matrix_sparse[RealDoubleElement]):
+              def transpose(self) -> Self: ...
+              def norm(self, p: int | float | str = ...) -> float: ...
+              def density(self) -> float: ...
+              def dense_matrix(self) -> Matrix_real_double_dense: ...
+
+
+          from sage.matrix.matrix_real_double_dense import Matrix_real_double_dense
+          PYI
+
+          cat > sage-stubs/matrix/matrix_real_double_dense.pyi <<'PYI'
+          from collections.abc import Sequence
+          from typing import Self
+
+          from numpy import ndarray
+
+          from sage.matrix.matrix_double_dense import Matrix_double_dense
+          from sage.modules.free_module_element import FreeModuleElement
+          from sage.rings.complex_double import ComplexDoubleElement
+          from sage.rings.real_double import RealDoubleElement
+          from sage.structure.parent import ElementConstructorInput, Parent
+
+
+          class Matrix_real_double_dense(Matrix_double_dense[RealDoubleElement]):
+              def __init__(
+                  self,
+                  parent: Parent[Self],
+                  entries: Sequence[float | RealDoubleElement] | ElementConstructorInput = ...,
+                  copy: bool = ...,
+                  coerce: bool = ...,
+              ) -> None: ...
+              def __copy__(self) -> Self: ...
+              def numpy(self) -> ndarray: ...
+              def list(self) -> list[RealDoubleElement]: ...
+              def row(self, i: int, from_list: bool = ...) -> FreeModuleElement[RealDoubleElement]: ...
+              def column(self, j: int, from_list: bool = ...) -> FreeModuleElement[RealDoubleElement]: ...
+              def determinant(self, algorithm: str = ...) -> RealDoubleElement: ...
+              det = determinant
+              def trace(self) -> RealDoubleElement: ...
+              def rank(self, eps: float | None = ...) -> int: ...
+              def inverse(self) -> Self: ...
+              __invert__ = inverse
+              def cholesky(self) -> Self: ...
+              def eigenvalues(self, algorithm: str = ...) -> list[ComplexDoubleElement]: ...
+              def eigenmatrix_right(
+                  self,
+                  algorithm: str = ...,
+              ) -> tuple[Matrix_complex_double_dense, Matrix_complex_double_dense]: ...
+              def SVD(self) -> tuple[Self, Self, Self]: ...
+              def QR(self) -> tuple[Self, Self]: ...
+              def solve_right(
+                  self,
+                  B: Self | FreeModuleElement[RealDoubleElement],
+              ) -> Self | FreeModuleElement[RealDoubleElement]: ...
+              def exp(self) -> Self: ...
+              def logarithm(self) -> Matrix_complex_double_dense: ...
+
+
+          from sage.matrix.matrix_complex_double_dense import Matrix_complex_double_dense
+          PYI
+
+          cat > sage-stubs/matrix/matrix_complex_double_dense.pyi <<'PYI'
+          from collections.abc import Sequence
+          from typing import Self
+
+          from numpy import ndarray
+
+          from sage.matrix.matrix_double_dense import Matrix_double_dense
+          from sage.modules.free_module_element import FreeModuleElement
+          from sage.rings.complex_double import ComplexDoubleElement
+          from sage.rings.real_double import RealDoubleElement
+          from sage.structure.parent import ElementConstructorInput, Parent
+
+
+          class Matrix_complex_double_dense(Matrix_double_dense[ComplexDoubleElement]):
+              def __init__(
+                  self,
+                  parent: Parent[Self],
+                  entries: Sequence[complex | ComplexDoubleElement] | ElementConstructorInput = ...,
+                  copy: bool = ...,
+                  coerce: bool = ...,
+              ) -> None: ...
+              def __copy__(self) -> Self: ...
+              def numpy(self) -> ndarray: ...
+              def list(self) -> list[ComplexDoubleElement]: ...
+              def row(self, i: int, from_list: bool = ...) -> FreeModuleElement[ComplexDoubleElement]: ...
+              def column(self, j: int, from_list: bool = ...) -> FreeModuleElement[ComplexDoubleElement]: ...
+              def determinant(self, algorithm: str = ...) -> ComplexDoubleElement: ...
+              det = determinant
+              def trace(self) -> ComplexDoubleElement: ...
+              def rank(self, eps: float | None = ...) -> int: ...
+              def inverse(self) -> Self: ...
+              __invert__ = inverse
+              def conjugate(self) -> Self: ...
+              def conjugate_transpose(self) -> Self: ...
+              H = conjugate_transpose
+              def is_hermitian(self, tol: float = ...) -> bool: ...
+              def eigenvalues(self, algorithm: str = ...) -> list[ComplexDoubleElement]: ...
+              def eigenmatrix_right(self, algorithm: str = ...) -> tuple[Self, Self]: ...
+              def singular_values(self, eps: float | None = ...) -> list[RealDoubleElement]: ...
+              def SVD(self) -> tuple[Self, Matrix_real_double_dense, Self]: ...
+              def QR(self) -> tuple[Self, Self]: ...
+              def solve_right(
+                  self,
+                  B: Self | FreeModuleElement[ComplexDoubleElement],
+              ) -> Self | FreeModuleElement[ComplexDoubleElement]: ...
+              def exp(self) -> Self: ...
+              def logarithm(self) -> Self: ...
+
+
+          from sage.matrix.matrix_real_double_dense import Matrix_real_double_dense
+          PYI
+
+          cat > sage-stubs/matrix/matrix_complex_ball_dense.pyi <<'PYI'
+          from collections.abc import Sequence
+          from typing import Self
+
+          from sage.matrix.matrix_dense import Matrix_dense
+          from sage.modules.free_module_element import FreeModuleElement
+          from sage.rings.complex_arb import ComplexBall
+          from sage.rings.polynomial.polynomial_element import Polynomial
+          from sage.structure.parent import ElementConstructorInput, Parent
+
+
+          class Matrix_complex_ball_dense(Matrix_dense[ComplexBall]):
+              def __init__(
+                  self,
+                  parent: Parent[Self],
+                  entries: Sequence[ComplexBall | ElementConstructorInput] | ElementConstructorInput = ...,
+                  copy: bool = ...,
+                  coerce: bool = ...,
+              ) -> None: ...
+              def __copy__(self) -> Self: ...
+              def list(self) -> list[ComplexBall]: ...
+              def row(self, i: int, from_list: bool = ...) -> FreeModuleElement[ComplexBall]: ...
+              def column(self, j: int, from_list: bool = ...) -> FreeModuleElement[ComplexBall]: ...
+              def determinant(self, algorithm: str = ...) -> ComplexBall: ...
+              det = determinant
+              def trace(self) -> ComplexBall: ...
+              def inverse(self) -> Self: ...
+              __invert__ = inverse
+              def solve_right(
+                  self,
+                  B: Self | FreeModuleElement[ComplexBall],
+              ) -> Self | FreeModuleElement[ComplexBall]: ...
+              def characteristic_polynomial(self, var: str = ...) -> Polynomial: ...
+              charpoly = characteristic_polynomial
+              def exp(self) -> Self: ...
+              def eigenvalues(self) -> list[ComplexBall]: ...
+          PYI
+
+          cat > sage-stubs/matrix/matrix_mpolynomial_dense.pyi <<'PYI'
+          from collections.abc import Sequence
+          from typing import Self
+
+          from sage.matrix.matrix_generic_dense import Matrix_generic_dense
+          from sage.rings.polynomial.multi_polynomial import MPolynomial
+          from sage.rings.polynomial.polynomial_element import Polynomial
+          from sage.structure.parent import ElementConstructorInput, Parent
+
+
+          class Matrix_mpolynomial_dense(Matrix_generic_dense[MPolynomial]):
+              def __init__(
+                  self,
+                  parent: Parent[Self],
+                  entries: Sequence[MPolynomial | ElementConstructorInput] | ElementConstructorInput = ...,
+                  copy: bool = ...,
+                  coerce: bool = ...,
+              ) -> None: ...
+              def determinant(self, algorithm: str = ...) -> MPolynomial: ...
+              det = determinant
+              def trace(self) -> MPolynomial: ...
+              def characteristic_polynomial(self, var: str = ...) -> Polynomial: ...
+              charpoly = characteristic_polynomial
+              def content(self) -> MPolynomial: ...
+              def denominator(self) -> MPolynomial: ...
+              def factor(self) -> Matrix_mpolynomial_dense: ...
+              def subs(self, *args: object, **kwds: object) -> Self: ...
+          PYI
+
+          cat > sage-stubs/matrix/matrix_polynomial_dense.pyi <<'PYI'
+          from collections.abc import Sequence
+          from typing import Self
+
+          from sage.matrix.matrix_generic_dense import Matrix_generic_dense
+          from sage.rings.polynomial.polynomial_element import Polynomial
+          from sage.structure.parent import ElementConstructorInput, Parent
+
+
+          class Matrix_polynomial_dense(Matrix_generic_dense[Polynomial]):
+              def __init__(
+                  self,
+                  parent: Parent[Self],
+                  entries: Sequence[Polynomial | ElementConstructorInput] | ElementConstructorInput = ...,
+                  copy: bool = ...,
+                  coerce: bool = ...,
+              ) -> None: ...
+              def determinant(self, algorithm: str = ...) -> Polynomial: ...
+              det = determinant
+              def trace(self) -> Polynomial: ...
+              def characteristic_polynomial(self, var: str = ...) -> Polynomial: ...
+              charpoly = characteristic_polynomial
+              def content(self) -> Polynomial: ...
+              def degree(self) -> int: ...
+              def resultant(self, other: Self, variable: object | None = ...) -> Polynomial: ...
+          PYI
+
+          cat > sage-stubs/matrix/matrix_laurent_mpolynomial_dense.pyi <<'PYI'
+          from collections.abc import Sequence
+          from typing import Self
+
+          from sage.matrix.matrix_generic_dense import Matrix_generic_dense
+          from sage.rings.polynomial.laurent_polynomial_mpair import LaurentPolynomial_mpair
+          from sage.rings.polynomial.polynomial_element import Polynomial
+          from sage.structure.parent import ElementConstructorInput, Parent
+
+
+          class Matrix_laurent_mpolynomial_dense(
+              Matrix_generic_dense[LaurentPolynomial_mpair]
+          ):
+              def __init__(
+                  self,
+                  parent: Parent[Self],
+                  entries: Sequence[LaurentPolynomial_mpair | ElementConstructorInput]
+                  | ElementConstructorInput = ...,
+                  copy: bool = ...,
+                  coerce: bool = ...,
+              ) -> None: ...
+              def determinant(self, algorithm: str = ...) -> LaurentPolynomial_mpair: ...
+              det = determinant
+              def trace(self) -> LaurentPolynomial_mpair: ...
+              def characteristic_polynomial(self, var: str = ...) -> Polynomial: ...
+              charpoly = characteristic_polynomial
+              def monomial_denominator(self) -> LaurentPolynomial_mpair: ...
+          PYI
+
+      - name: Parse changed stubs
+        run: |
+          python - <<'PY'
+          import ast
+          from pathlib import Path
+
+          names = [
+              "matrix_double_dense",
+              "matrix_double_sparse",
+              "matrix_real_double_dense",
+              "matrix_complex_double_dense",
+              "matrix_complex_ball_dense",
+              "matrix_mpolynomial_dense",
+              "matrix_polynomial_dense",
+              "matrix_laurent_mpolynomial_dense",
+          ]
+          for name in names:
+              path = Path("sage-stubs/matrix") / f"{name}.pyi"
+              ast.parse(path.read_text(), filename=str(path), feature_version=(3, 12))
+          PY
+
+      - name: Commit, rebase, and push to main
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "D. Zack Garza"
+          git config user.email "dzackgarza@gmail.com"
+          git add sage-stubs/matrix
+          git commit --no-verify -m "feat(stubs): type specialized dense matrix domains"
+          git fetch origin main
+          git rebase origin/main
+          git push origin HEAD:main
