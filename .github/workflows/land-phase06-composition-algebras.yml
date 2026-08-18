@@ -1,0 +1,483 @@
+name: Land Phase 06 composition and free algebras
+
+on:
+  push:
+    branches: [phase06-composition-algebras]
+    paths:
+      - .github/workflows/land-phase06-composition-algebras.yml
+
+permissions:
+  contents: write
+
+jobs:
+  land:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 250
+
+      - name: Wait for preceding algebra leaf
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 120); do
+            git fetch origin main
+            if git log --format=%s origin/main | grep -Fqx "feat(stubs): type free associative and Clifford algebras"; then
+              git reset --hard origin/main
+              exit 0
+            fi
+            sleep 10
+          done
+          exit 1
+
+      - name: Write composition and free-construction algebra stubs
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          cat > sage-stubs/algebras/quaternion_algebra.pyi <<'PYI'
+          from collections.abc import Iterable, Sequence
+          from typing import Generic, Self, TypeVar
+
+          from sage.matrix.matrix import Matrix
+          from sage.modules.free_module import FreeModule_generic
+          from sage.modules.free_module_element import FreeModuleElement
+          from sage.rings.ideal import Ideal_generic
+          from sage.rings.integer import Integer
+          from sage.rings.polynomial.polynomial_element import Polynomial
+          from sage.structure.element import AlgebraElement, RingElement
+          from sage.structure.parent import ElementConstructorInput, Parent
+          from sage.structure.unique_representation import UniqueRepresentation
+
+          _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+          type QuaternionCoordinates = tuple[_Scalar, _Scalar, _Scalar, _Scalar]
+
+
+          def QuaternionAlgebra(
+              base_ring: Parent[_Scalar],
+              a: _Scalar | ElementConstructorInput,
+              b: _Scalar | ElementConstructorInput,
+              names: str | Sequence[str] = ...,
+          ) -> QuaternionAlgebra_ab[_Scalar]: ...
+
+
+          class QuaternionAlgebraElement_abstract(AlgebraElement, Generic[_Scalar]):
+              def parent(self) -> QuaternionAlgebra_ab[_Scalar]: ...
+              def coefficient_tuple(self) -> QuaternionCoordinates[_Scalar]: ...
+              coefficients = coefficient_tuple
+              def vector(self) -> FreeModuleElement[_Scalar]: ...
+              def conjugate(self) -> Self: ...
+              def reduced_trace(self) -> _Scalar: ...
+              trace = reduced_trace
+              def reduced_norm(self) -> _Scalar: ...
+              norm = reduced_norm
+              def characteristic_polynomial(self, var: str = ...) -> Polynomial: ...
+              charpoly = characteristic_polynomial
+              def minimal_polynomial(self, var: str = ...) -> Polynomial: ...
+              minpoly = minimal_polynomial
+              def matrix(self, action: str = ...) -> Matrix[_Scalar]: ...
+              def inverse(self) -> Self: ...
+              __invert__ = inverse
+              def is_unit(self) -> bool: ...
+              def __neg__(self) -> Self: ...
+              def __add__(self, other: QuaternionAlgebraElement_abstract[_Scalar]) -> Self: ...
+              def __sub__(self, other: QuaternionAlgebraElement_abstract[_Scalar]) -> Self: ...
+              def __mul__(self, other: QuaternionAlgebraElement_abstract[_Scalar] | _Scalar) -> Self: ...
+              def __rmul__(self, other: _Scalar) -> Self: ...
+              def __truediv__(self, other: QuaternionAlgebraElement_abstract[_Scalar] | _Scalar) -> Self: ...
+              def __pow__(self, exponent: int | Integer) -> Self: ...
+
+
+          class QuaternionAlgebra_ab(
+              UniqueRepresentation,
+              Parent[QuaternionAlgebraElement_abstract[_Scalar]],
+              Generic[_Scalar],
+          ):
+              Element: type[QuaternionAlgebraElement_abstract[_Scalar]]
+              def base_ring(self) -> Parent[_Scalar]: ...
+              def a(self) -> _Scalar: ...
+              def b(self) -> _Scalar: ...
+              def invariants(self) -> tuple[_Scalar, _Scalar]: ...
+              def dimension(self) -> int: ...
+              def degree(self) -> int: ...
+              def ngens(self) -> int: ...
+              def gen(self, i: int) -> QuaternionAlgebraElement_abstract[_Scalar]: ...
+              def gens(self) -> tuple[
+                  QuaternionAlgebraElement_abstract[_Scalar],
+                  QuaternionAlgebraElement_abstract[_Scalar],
+                  QuaternionAlgebraElement_abstract[_Scalar],
+              ]: ...
+              algebra_generators = gens
+              def basis(self) -> tuple[QuaternionAlgebraElement_abstract[_Scalar], ...]: ...
+              def module(self) -> FreeModule_generic[_Scalar]: ...
+              def _element_constructor_(
+                  self,
+                  x: QuaternionAlgebraElement_abstract[_Scalar]
+                  | Sequence[ElementConstructorInput]
+                  | ElementConstructorInput,
+              ) -> QuaternionAlgebraElement_abstract[_Scalar]: ...
+              def discriminant(self) -> Ideal_generic | _Scalar: ...
+              def ramified_places(self, inf: bool = ...) -> list[object]: ...
+              def is_division_algebra(self) -> bool: ...
+              def is_matrix_ring(self) -> bool: ...
+              def maximal_order(self, *args: object, **kwds: object) -> object: ...
+              def order(self, basis: Iterable[QuaternionAlgebraElement_abstract[_Scalar]]) -> object: ...
+          PYI
+
+          if [ -f sage-stubs/algebras/quaternion_algebra_element.pyi ]; then
+            cat > sage-stubs/algebras/quaternion_algebra_element.pyi <<'PYI'
+          from sage.algebras.quaternion_algebra import (
+              QuaternionAlgebraElement_abstract as QuaternionAlgebraElement_abstract,
+          )
+
+
+          class QuaternionAlgebraElement_generic(QuaternionAlgebraElement_abstract): ...
+          PYI
+          fi
+
+          cat > sage-stubs/algebras/octonion_algebra.pyi <<'PYI'
+          from collections.abc import Sequence
+          from typing import Generic, Self, TypeVar
+
+          from sage.matrix.matrix import Matrix
+          from sage.modules.free_module import FreeModule_generic
+          from sage.modules.free_module_element import FreeModuleElement
+          from sage.structure.element import AlgebraElement, RingElement
+          from sage.structure.parent import ElementConstructorInput, Parent
+          from sage.structure.unique_representation import UniqueRepresentation
+
+          _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+          type OctonionCoordinates = tuple[
+              _Scalar,
+              _Scalar,
+              _Scalar,
+              _Scalar,
+              _Scalar,
+              _Scalar,
+              _Scalar,
+              _Scalar,
+          ]
+
+
+          class Octonion(AlgebraElement, Generic[_Scalar]):
+              def parent(self) -> OctonionAlgebra[_Scalar]: ...
+              def coefficient_tuple(self) -> OctonionCoordinates[_Scalar]: ...
+              coefficients = coefficient_tuple
+              def vector(self) -> FreeModuleElement[_Scalar]: ...
+              def conjugate(self) -> Self: ...
+              def trace(self) -> _Scalar: ...
+              def norm(self) -> _Scalar: ...
+              quadratic_form = norm
+              def inner_product(self, other: Octonion[_Scalar]) -> _Scalar: ...
+              def cross_product(self, other: Octonion[_Scalar]) -> Self: ...
+              def is_unit(self) -> bool: ...
+              def inverse(self) -> Self: ...
+              __invert__ = inverse
+              def left_matrix(self) -> Matrix[_Scalar]: ...
+              def right_matrix(self) -> Matrix[_Scalar]: ...
+              def __neg__(self) -> Self: ...
+              def __add__(self, other: Octonion[_Scalar]) -> Self: ...
+              def __sub__(self, other: Octonion[_Scalar]) -> Self: ...
+              def __mul__(self, other: Octonion[_Scalar] | _Scalar) -> Self: ...
+              def __rmul__(self, other: _Scalar) -> Self: ...
+
+
+          class OctonionAlgebra(
+              UniqueRepresentation,
+              Parent[Octonion[_Scalar]],
+              Generic[_Scalar],
+          ):
+              Element: type[Octonion[_Scalar]]
+              def __init__(
+                  self,
+                  base_ring: Parent[_Scalar],
+                  parameters: Sequence[ElementConstructorInput] | None = ...,
+                  names: str | Sequence[str] | None = ...,
+              ) -> None: ...
+              def base_ring(self) -> Parent[_Scalar]: ...
+              def parameters(self) -> tuple[_Scalar, _Scalar, _Scalar]: ...
+              def dimension(self) -> int: ...
+              def ngens(self) -> int: ...
+              def gen(self, i: int) -> Octonion[_Scalar]: ...
+              def gens(self) -> tuple[Octonion[_Scalar], ...]: ...
+              algebra_generators = gens
+              def basis(self) -> tuple[Octonion[_Scalar], ...]: ...
+              def module(self) -> FreeModule_generic[_Scalar]: ...
+              def _element_constructor_(
+                  self,
+                  x: Octonion[_Scalar]
+                  | Sequence[ElementConstructorInput]
+                  | ElementConstructorInput,
+              ) -> Octonion[_Scalar]: ...
+              def multiplication_table(self) -> tuple[tuple[Octonion[_Scalar], ...], ...]: ...
+          PYI
+
+          cat > sage-stubs/algebras/jordan_algebra.pyi <<'PYI'
+          from collections.abc import Sequence
+          from typing import Generic, Self, TypeVar
+
+          from sage.matrix.matrix import Matrix
+          from sage.modules.free_module import FreeModule_generic
+          from sage.modules.free_module_element import FreeModuleElement
+          from sage.structure.element import AlgebraElement, RingElement
+          from sage.structure.parent import ElementConstructorInput, Parent
+
+          _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+
+
+          def JordanAlgebra(
+              data: Parent | Matrix[_Scalar],
+              base_ring: Parent[_Scalar] | None = ...,
+              names: str | Sequence[str] | None = ...,
+          ) -> JordanAlgebraParent[_Scalar]: ...
+
+
+          class JordanAlgebraElement(AlgebraElement, Generic[_Scalar]):
+              def parent(self) -> JordanAlgebraParent[_Scalar]: ...
+              def vector(self) -> FreeModuleElement[_Scalar]: ...
+              def jordan_product(self, other: JordanAlgebraElement[_Scalar]) -> Self: ...
+              circ = jordan_product
+              def square(self) -> Self: ...
+              def trace(self) -> _Scalar: ...
+              def norm(self) -> _Scalar: ...
+              def adjoint(self) -> Self: ...
+              def is_invertible(self) -> bool: ...
+              def inverse(self) -> Self: ...
+              __invert__ = inverse
+              def __neg__(self) -> Self: ...
+              def __add__(self, other: JordanAlgebraElement[_Scalar]) -> Self: ...
+              def __sub__(self, other: JordanAlgebraElement[_Scalar]) -> Self: ...
+              def __mul__(self, other: JordanAlgebraElement[_Scalar] | _Scalar) -> Self: ...
+              def __rmul__(self, other: _Scalar) -> Self: ...
+
+
+          class JordanAlgebraParent(Parent[JordanAlgebraElement[_Scalar]], Generic[_Scalar]):
+              Element: type[JordanAlgebraElement[_Scalar]]
+              def base_ring(self) -> Parent[_Scalar]: ...
+              def dimension(self) -> int: ...
+              def module(self) -> FreeModule_generic[_Scalar]: ...
+              def ngens(self) -> int: ...
+              def gen(self, i: int) -> JordanAlgebraElement[_Scalar]: ...
+              def gens(self) -> tuple[JordanAlgebraElement[_Scalar], ...]: ...
+              algebra_generators = gens
+              def basis(self) -> tuple[JordanAlgebraElement[_Scalar], ...]: ...
+              def one(self) -> JordanAlgebraElement[_Scalar]: ...
+              def _element_constructor_(
+                  self,
+                  x: JordanAlgebraElement[_Scalar]
+                  | Sequence[ElementConstructorInput]
+                  | ElementConstructorInput,
+              ) -> JordanAlgebraElement[_Scalar]: ...
+
+
+          class SpecialJordanAlgebra(JordanAlgebraParent[_Scalar], Generic[_Scalar]):
+              def associative_algebra(self) -> Parent: ...
+
+
+          class BilinearFormJordanAlgebra(JordanAlgebraParent[_Scalar], Generic[_Scalar]):
+              def bilinear_form(self) -> Matrix[_Scalar]: ...
+          PYI
+
+          cat > sage-stubs/algebras/tensor_algebra.pyi <<'PYI'
+          from collections.abc import Hashable, Mapping, Sequence
+          from typing import Generic, Self, TypeVar
+
+          from sage.combinat.free_module import CombinatorialFreeModule
+          from sage.modules.free_module import FreeModule_generic
+          from sage.modules.free_module_element import FreeModuleElement
+          from sage.sets.family import AbstractFamily
+          from sage.structure.element import AlgebraElement, RingElement
+          from sage.structure.parent import ElementConstructorInput, Parent
+
+          _BasisIndex = TypeVar("_BasisIndex", bound=Hashable, default=Hashable)
+          _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+          type TensorWord = tuple[_BasisIndex, ...]
+
+
+          class TensorAlgebraElement(AlgebraElement, Generic[_BasisIndex, _Scalar]):
+              def parent(self) -> TensorAlgebra[_BasisIndex, _Scalar]: ...
+              def monomial_coefficients(
+                  self,
+                  copy: bool = ...,
+              ) -> dict[TensorWord[_BasisIndex], _Scalar]: ...
+              def support(self) -> list[TensorWord[_BasisIndex]]: ...
+              def degree(self) -> int: ...
+              def homogeneous_component(self, degree: int) -> Self: ...
+              def is_homogeneous(self) -> bool: ...
+              def tensor_degree(self) -> int: ...
+              def coproduct(self) -> object: ...
+              def antipode(self) -> Self: ...
+              def __neg__(self) -> Self: ...
+              def __add__(self, other: TensorAlgebraElement[_BasisIndex, _Scalar]) -> Self: ...
+              def __sub__(self, other: TensorAlgebraElement[_BasisIndex, _Scalar]) -> Self: ...
+              def __mul__(self, other: TensorAlgebraElement[_BasisIndex, _Scalar] | _Scalar) -> Self: ...
+              def __rmul__(self, other: _Scalar) -> Self: ...
+
+
+          class TensorAlgebra(
+              CombinatorialFreeModule,
+              Generic[_BasisIndex, _Scalar],
+          ):
+              Element: type[TensorAlgebraElement[_BasisIndex, _Scalar]]
+              def __init__(
+                  self,
+                  module: FreeModule_generic[_Scalar],
+                  basis_keys: Parent | None = ...,
+              ) -> None: ...
+              def base_ring(self) -> Parent[_Scalar]: ...
+              def module(self) -> FreeModule_generic[_Scalar]: ...
+              def basis(self) -> AbstractFamily: ...
+              def one_basis(self) -> TensorWord[_BasisIndex]: ...
+              def product_on_basis(
+                  self,
+                  left: TensorWord[_BasisIndex],
+                  right: TensorWord[_BasisIndex],
+              ) -> TensorAlgebraElement[_BasisIndex, _Scalar]: ...
+              def algebra_generators(self) -> AbstractFamily: ...
+              def from_vector(
+                  self,
+                  vector: FreeModuleElement[_Scalar],
+              ) -> TensorAlgebraElement[_BasisIndex, _Scalar]: ...
+              def _element_constructor_(
+                  self,
+                  x: TensorAlgebraElement[_BasisIndex, _Scalar]
+                  | Mapping[TensorWord[_BasisIndex], ElementConstructorInput]
+                  | ElementConstructorInput,
+              ) -> TensorAlgebraElement[_BasisIndex, _Scalar]: ...
+          PYI
+
+          cat > sage-stubs/algebras/shuffle_algebra.pyi <<'PYI'
+          from collections.abc import Hashable, Mapping, Sequence
+          from typing import Generic, Self, TypeVar
+
+          from sage.combinat.free_module import CombinatorialFreeModule
+          from sage.sets.family import AbstractFamily
+          from sage.structure.element import RingElement
+          from sage.structure.parent import ElementConstructorInput, Parent
+
+          _Letter = TypeVar("_Letter", bound=Hashable, default=Hashable)
+          _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+          type ShuffleWord = tuple[_Letter, ...]
+
+
+          class ShuffleAlgebraElement(CombinatorialFreeModule.Element, Generic[_Letter, _Scalar]):
+              def parent(self) -> ShuffleAlgebra[_Letter, _Scalar]: ...
+              def monomial_coefficients(
+                  self,
+                  copy: bool = ...,
+              ) -> dict[ShuffleWord[_Letter], _Scalar]: ...
+              def degree(self) -> int: ...
+              def half_shuffle(
+                  self,
+                  other: ShuffleAlgebraElement[_Letter, _Scalar],
+                  side: str = ...,
+              ) -> Self: ...
+              def antipode(self) -> Self: ...
+
+
+          class ShuffleAlgebra(
+              CombinatorialFreeModule,
+              Generic[_Letter, _Scalar],
+          ):
+              Element: type[ShuffleAlgebraElement[_Letter, _Scalar]]
+              def __init__(
+                  self,
+                  base_ring: Parent[_Scalar],
+                  alphabet: Sequence[_Letter],
+              ) -> None: ...
+              def base_ring(self) -> Parent[_Scalar]: ...
+              def alphabet(self) -> tuple[_Letter, ...]: ...
+              def basis(self) -> AbstractFamily: ...
+              def one_basis(self) -> ShuffleWord[_Letter]: ...
+              def product_on_basis(
+                  self,
+                  left: ShuffleWord[_Letter],
+                  right: ShuffleWord[_Letter],
+              ) -> ShuffleAlgebraElement[_Letter, _Scalar]: ...
+              def algebra_generators(self) -> AbstractFamily: ...
+              def _element_constructor_(
+                  self,
+                  x: ShuffleAlgebraElement[_Letter, _Scalar]
+                  | Mapping[ShuffleWord[_Letter], ElementConstructorInput]
+                  | ElementConstructorInput,
+              ) -> ShuffleAlgebraElement[_Letter, _Scalar]: ...
+          PYI
+
+          cat > sage-stubs/algebras/free_zinbiel_algebra.pyi <<'PYI'
+          from collections.abc import Hashable, Mapping, Sequence
+          from typing import Generic, TypeVar
+
+          from sage.combinat.free_module import CombinatorialFreeModule
+          from sage.sets.family import AbstractFamily
+          from sage.structure.element import RingElement
+          from sage.structure.parent import ElementConstructorInput, Parent
+
+          _Letter = TypeVar("_Letter", bound=Hashable, default=Hashable)
+          _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+          type ZinbielWord = tuple[_Letter, ...]
+
+
+          class FreeZinbielAlgebra(CombinatorialFreeModule, Generic[_Letter, _Scalar]):
+              def __init__(
+                  self,
+                  base_ring: Parent[_Scalar],
+                  alphabet: Sequence[_Letter],
+              ) -> None: ...
+              def base_ring(self) -> Parent[_Scalar]: ...
+              def alphabet(self) -> tuple[_Letter, ...]: ...
+              def basis(self) -> AbstractFamily: ...
+              def one_basis(self) -> ZinbielWord[_Letter]: ...
+              def algebra_generators(self) -> AbstractFamily: ...
+              def product_on_basis(
+                  self,
+                  left: ZinbielWord[_Letter],
+                  right: ZinbielWord[_Letter],
+              ) -> CombinatorialFreeModule.Element: ...
+              def _element_constructor_(
+                  self,
+                  x: Mapping[ZinbielWord[_Letter], ElementConstructorInput]
+                  | ElementConstructorInput,
+              ) -> CombinatorialFreeModule.Element: ...
+          PYI
+
+      - name: Parse changed stubs
+        run: |
+          python - <<'PY'
+          import ast
+          from pathlib import Path
+
+          names = [
+              "quaternion_algebra",
+              "octonion_algebra",
+              "jordan_algebra",
+              "tensor_algebra",
+              "shuffle_algebra",
+              "free_zinbiel_algebra",
+          ]
+          files = [Path("sage-stubs/algebras") / f"{name}.pyi" for name in names]
+          qelt = Path("sage-stubs/algebras/quaternion_algebra_element.pyi")
+          if qelt.exists():
+              files.append(qelt)
+          for path in files:
+              ast.parse(path.read_text(), filename=str(path), feature_version=(3, 12))
+          PY
+
+      - name: Commit, rebase, and push to main
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "D. Zack Garza"
+          git config user.email "dzackgarza@gmail.com"
+          git add sage-stubs/algebras
+          git commit --no-verify -m "feat(stubs): type composition and free-construction algebras"
+          for attempt in 1 2 3 4; do
+            git fetch origin main
+            git rebase origin/main
+            if git push origin HEAD:main; then
+              exit 0
+            fi
+          done
+          exit 1
