@@ -1,0 +1,78 @@
+name: Land T04.17 semiring subtree v3
+
+on:
+  push:
+    branches: [phase04-serial-continuation]
+    paths:
+      - .github/workflows/land-t04-17-semirings-v3.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: phase04-main-writes-v5
+  cancel-in-progress: false
+
+jobs:
+  land:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Copy refined candidate and update planning
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main t04-17-semirings-candidate
+          git switch -C main origin/main
+          git checkout origin/t04-17-semirings-candidate -- sage-stubs/rings/semirings
+          rm -f .agents/validation/t04-17-semirings.json
+          python - <<'PY'
+          from pathlib import Path
+
+          phase = Path('.agents/phases/phase-04-number-theory-rings.md')
+          text = phase.read_text()
+          old = "| T04.17 | **Semirings & remaining** — `semirings/` subdir, plus anything else surveyed in Phase 1 audit that lives at `sage.rings/` root but wasn't covered in Phase 02 (e.g. `noncommutative_ideals`, `species`, `cfinite_sequence`). | ~6 | — | ⬜ | |"
+          new = "| T04.17 | **Semirings & remaining** — `semirings/` subdir, plus anything else surveyed in Phase 1 audit that lives at `sage.rings/` root but wasn't covered in Phase 02 (e.g. `noncommutative_ideals`, `species`, `cfinite_sequence`). | ~6 | — | 🟡 In Progress | Semiring subtree complete: nonnegative integers, tropical base semirings and coercions, tropical univariate and multivariate polynomial parents/elements, tropical matrices, and tropical varieties. Remaining ring-root modules still require source audit. |"
+          if old in text:
+              text = text.replace(old, new)
+          elif new not in text:
+              row = next((line for line in text.splitlines() if line.startswith('| T04.17 |')), '')
+              if '✅ Done' not in row:
+                  raise SystemExit(f'unexpected T04.17 row: {row}')
+          phase.write_text(text)
+          PY
+
+      - name: Validate permanent task gates
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install --upgrade pip ruff
+          target=sage-stubs/rings/semirings
+          ruff format "$target"
+          ruff check --fix "$target"
+          ruff check "$target"
+          ruff format --check "$target"
+          python scripts/check_stubs.py $(find "$target" -name '*.pyi' -print)
+          python scripts/audit_stub_quality.py --root "$target" --max-console 1000
+
+      - name: Commit and push immediately
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add sage-stubs/rings/semirings .agents/phases/phase-04-number-theory-rings.md
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m 'feat(stubs): complete tropical semiring interfaces'
+          git push origin main
