@@ -1,65 +1,50 @@
-from collections.abc import Sequence
-from typing import Generic, TypeVar
+from collections.abc import Iterable, KeysView, Sequence, ValuesView
+from typing import Generic, Literal, TypeVar
 
-from sage.modules.free_module import FreeModule_generic
+from sage.modules.free_module import FreeModule_ambient_field
 from sage.modules.free_module_element import FreeModuleElement
-from sage.structure.element import RingElement
-from sage.structure.sage_object import SageObject
+from sage.rings.integer import Integer
+from sage.structure.element import ElementConstructorInput, FieldElement
+from sage.structure.formal_sum import FormalSum
+from sage.structure.parent import Parent
 
-_Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+_Scalar = TypeVar("_Scalar", bound=FieldElement, default=FieldElement)
 
+type TensorOperationKind = Literal["product", "symmetric", "antisymmetric"]
+type VectorInput = Sequence[ElementConstructorInput] | FreeModuleElement[FieldElement]
+type TensorMultiIndex = tuple[int | Integer, ...]
 
-class TensorOperation(SageObject, Generic[_Scalar]):
-    def domain(self) -> tuple[FreeModule_generic[_Scalar], ...]: ...
-    def codomain(self) -> FreeModule_generic[_Scalar]: ...
-    def __call__(
-        self,
-        *vectors: FreeModuleElement[_Scalar],
-    ) -> FreeModuleElement[_Scalar]: ...
+def symmetrized_coordinate_sums(
+    dim: int | Integer,
+    n: int | Integer,
+) -> tuple[FormalSum, ...]: ...
+def antisymmetrized_coordinate_sums(
+    dim: int | Integer,
+    n: int | Integer,
+) -> tuple[FormalSum, ...]: ...
 
-
-class TensorProductOperation(TensorOperation[_Scalar], Generic[_Scalar]):
+class VectorCollection(
+    FreeModule_ambient_field[_Scalar],
+    Generic[_Scalar],
+):
     def __init__(
         self,
-        modules: Sequence[FreeModule_generic[_Scalar]],
+        vector_collection: Iterable[VectorInput],
+        base_ring: Parent[_Scalar],
+        dim: int | Integer,
     ) -> None: ...
+    def vectors(self) -> tuple[FreeModuleElement[_Scalar], ...]: ...
+    def n_vectors(self) -> int: ...
 
-
-class SymmetricPowerOperation(TensorOperation[_Scalar], Generic[_Scalar]):
+class TensorOperation(VectorCollection[_Scalar], Generic[_Scalar]):
     def __init__(
         self,
-        module: FreeModule_generic[_Scalar],
-        degree: int,
+        vector_collections: Sequence[VectorCollection[_Scalar]],
+        operation: TensorOperationKind = ...,
     ) -> None: ...
-    def degree(self) -> int: ...
-
-
-class ExteriorPowerOperation(TensorOperation[_Scalar], Generic[_Scalar]):
-    def __init__(
+    def index_map(
         self,
-        module: FreeModule_generic[_Scalar],
-        degree: int,
-    ) -> None: ...
-    def degree(self) -> int: ...
-
-
-def tensor_product(
-    *modules: FreeModule_generic[_Scalar],
-) -> FreeModule_generic[_Scalar]: ...
-
-
-def symmetric_power(
-    module: FreeModule_generic[_Scalar],
-    degree: int,
-) -> FreeModule_generic[_Scalar]: ...
-
-
-def exterior_power(
-    module: FreeModule_generic[_Scalar],
-    degree: int,
-) -> FreeModule_generic[_Scalar]: ...
-
-
-def dual(
-    module: FreeModule_generic[_Scalar],
-) -> FreeModule_generic[_Scalar]: ...
+        *indices: int | Integer | Sequence[int | Integer],
+    ) -> int | None: ...
+    def preimage(self) -> KeysView[TensorMultiIndex]: ...
+    def codomain(self) -> ValuesView[int]: ...
