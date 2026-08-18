@@ -1,0 +1,347 @@
+name: Land Phase 05 free-module scalar contracts
+
+on:
+  push:
+    branches: [phase05-free-module-contracts-20260818]
+    paths:
+      - .github/workflows/land-phase05-free-module-contracts.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: phase05-free-module-main-writes
+  cancel-in-progress: false
+
+jobs:
+  land:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install transformation and validation tools
+        run: python -m pip install --upgrade pip ruff mypy basedpyright
+
+      - name: Refine free-module parent and element generics
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          git switch -C main origin/main
+          python - <<'PY'
+          from __future__ import annotations
+
+          import ast
+          from pathlib import Path
+
+          ELEMENT = Path('sage-stubs/modules/free_module_element.pyi')
+          PARENT = Path('sage-stubs/modules/free_module.pyi')
+          for path in (ELEMENT, PARENT):
+              if not path.exists():
+                  raise SystemExit(f'missing expected Phase 05 stub: {path}')
+
+          def expr(source: str) -> ast.expr:
+              return ast.parse(source, mode='eval').body
+
+          def ensure_import_from(tree: ast.Module, module: str, names: list[str]) -> None:
+              for node in tree.body:
+                  if isinstance(node, ast.ImportFrom) and node.module == module and node.level == 0:
+                      present = {alias.name for alias in node.names}
+                      node.names.extend(ast.alias(name=name) for name in names if name not in present)
+                      return
+              insert_at = 0
+              while insert_at < len(tree.body) and isinstance(
+                  tree.body[insert_at], (ast.Import, ast.ImportFrom)
+              ):
+                  insert_at += 1
+              tree.body.insert(
+                  insert_at,
+                  ast.ImportFrom(
+                      module=module,
+                      names=[ast.alias(name=name) for name in names],
+                      level=0,
+                  ),
+              )
+
+          def ensure_typevars(tree: ast.Module) -> None:
+              names = {
+                  target.id
+                  for node in tree.body
+                  if isinstance(node, ast.Assign)
+                  for target in node.targets
+                  if isinstance(target, ast.Name)
+              }
+              insertion = 0
+              while insertion < len(tree.body) and isinstance(
+                  tree.body[insertion], (ast.Import, ast.ImportFrom)
+              ):
+                  insertion += 1
+              additions: list[ast.stmt] = []
+              if '_Scalar' not in names:
+                  additions.append(
+                      ast.Assign(
+                          targets=[ast.Name(id='_Scalar', ctx=ast.Store())],
+                          value=ast.Call(
+                              func=ast.Name(id='TypeVar', ctx=ast.Load()),
+                              args=[ast.Constant('_Scalar')],
+                              keywords=[
+                                  ast.keyword(arg='bound', value=ast.Name(id='RingElement', ctx=ast.Load())),
+                                  ast.keyword(arg='default', value=ast.Name(id='RingElement', ctx=ast.Load())),
+                              ],
+                          ),
+                      )
+                  )
+              if '_NewScalar' not in names:
+                  additions.append(
+                      ast.Assign(
+                          targets=[ast.Name(id='_NewScalar', ctx=ast.Store())],
+                          value=ast.Call(
+                              func=ast.Name(id='TypeVar', ctx=ast.Load()),
+                              args=[ast.Constant('_NewScalar')],
+                              keywords=[
+                                  ast.keyword(arg='bound', value=ast.Name(id='RingElement', ctx=ast.Load())),
+                                  ast.keyword(arg='default', value=ast.Name(id='RingElement', ctx=ast.Load())),
+                              ],
+                          ),
+                      )
+                  )
+              tree.body[insertion:insertion] = additions
+
+          def generic_base_present(node: ast.ClassDef) -> bool:
+              return any(
+                  (isinstance(base, ast.Name) and base.id == 'Generic')
+                  or (
+                      isinstance(base, ast.Subscript)
+                      and isinstance(base.value, ast.Name)
+                      and base.value.id == 'Generic'
+                  )
+                  for base in node.bases
+              )
+
+          def function_map(node: ast.ClassDef) -> dict[str, list[ast.FunctionDef | ast.AsyncFunctionDef]]:
+              result: dict[str, list[ast.FunctionDef | ast.AsyncFunctionDef]] = {}
+              for child in node.body:
+                  if isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                      result.setdefault(child.name, []).append(child)
+              return result
+
+          element_tree = ast.parse(ELEMENT.read_text())
+          ensure_import_from(element_tree, 'typing', ['Generic', 'Self', 'TypeVar', 'overload'])
+          ensure_import_from(element_tree, 'collections.abc', ['Callable', 'Iterator', 'Sequence'])
+          ensure_import_from(element_tree, 'sage.structure.element', ['RingElement'])
+          ensure_import_from(element_tree, 'sage.structure.parent', ['Parent'])
+          ensure_import_from(element_tree, 'sage.rings.integer', ['Integer'])
+          ensure_import_from(element_tree, 'sage.modules.free_module', ['FreeModule_generic'])
+          ensure_typevars(element_tree)
+
+          element_classes = [
+              node for node in element_tree.body
+              if isinstance(node, ast.ClassDef) and node.name == 'FreeModuleElement'
+          ]
+          if len(element_classes) != 1:
+              raise SystemExit(f'expected one FreeModuleElement class, found {len(element_classes)}')
+          element_class = element_classes[0]
+          if not generic_base_present(element_class):
+              element_class.bases.append(expr('Generic[_Scalar]'))
+
+          methods = function_map(element_class)
+          returns: dict[str, str] = {
+              'parent': 'FreeModule_generic[_Scalar]',
+              'base_ring': 'Parent[_Scalar]',
+              'list': 'list[_Scalar]',
+              'tuple': 'tuple[_Scalar, ...]',
+              'dict': 'dict[int, _Scalar]',
+              '__iter__': 'Iterator[_Scalar]',
+              '__getitem__': '_Scalar | Self',
+              'degree': 'Integer',
+              'dimension': 'Integer',
+              'rank': 'Integer',
+              'hamming_weight': 'Integer',
+              'dot_product': '_Scalar',
+              'inner_product': '_Scalar',
+              'hermitian_inner_product': '_Scalar',
+              'pairwise_product': 'Self',
+              'cross_product': 'Self',
+              'vector': 'Self',
+              'change_ring': 'FreeModuleElement[_NewScalar]',
+              'apply_map': 'FreeModuleElement[_NewScalar]',
+          }
+          for name, annotation in returns.items():
+              for method in methods.get(name, []):
+                  method.returns = expr(annotation)
+
+          for name in ('dot_product', 'inner_product', 'hermitian_inner_product', 'pairwise_product', 'cross_product'):
+              for method in methods.get(name, []):
+                  positional = [*method.args.posonlyargs, *method.args.args]
+                  for argument in positional[1:2]:
+                      argument.annotation = expr('FreeModuleElement[_Scalar]')
+
+          for method in methods.get('change_ring', []):
+              positional = [*method.args.posonlyargs, *method.args.args]
+              if len(positional) >= 2:
+                  positional[1].annotation = expr('Parent[_NewScalar]')
+          for method in methods.get('apply_map', []):
+              positional = [*method.args.posonlyargs, *method.args.args]
+              if len(positional) >= 2:
+                  positional[1].annotation = expr('Callable[[_Scalar], _NewScalar]')
+
+          ast.fix_missing_locations(element_tree)
+          ELEMENT.write_text(ast.unparse(element_tree) + '\n')
+
+          parent_tree = ast.parse(PARENT.read_text())
+          ensure_import_from(parent_tree, 'typing', ['Generic', 'TypeVar'])
+          ensure_import_from(parent_tree, 'collections.abc', ['Sequence'])
+          ensure_import_from(parent_tree, 'sage.structure.element', ['RingElement'])
+          ensure_import_from(parent_tree, 'sage.structure.parent', ['Parent'])
+          ensure_import_from(parent_tree, 'sage.rings.integer', ['Integer'])
+          ensure_import_from(parent_tree, 'sage.modules.free_module_element', ['FreeModuleElement'])
+          ensure_import_from(parent_tree, 'sage.sets.family', ['AbstractFamily'])
+          ensure_typevars(parent_tree)
+
+          parent_classes = [
+              node for node in parent_tree.body
+              if isinstance(node, ast.ClassDef) and node.name == 'FreeModule_generic'
+          ]
+          if len(parent_classes) != 1:
+              raise SystemExit(f'expected one FreeModule_generic class, found {len(parent_classes)}')
+          parent_class = parent_classes[0]
+          if not generic_base_present(parent_class):
+              parent_class.bases.append(expr('Generic[_Scalar]'))
+
+          has_element_attribute = any(
+              isinstance(child, ast.AnnAssign)
+              and isinstance(child.target, ast.Name)
+              and child.target.id == 'Element'
+              for child in parent_class.body
+          )
+          if not has_element_attribute:
+              parent_class.body.insert(
+                  0,
+                  ast.AnnAssign(
+                      target=ast.Name(id='Element', ctx=ast.Store()),
+                      annotation=expr('type[FreeModuleElement[_Scalar]]'),
+                      value=None,
+                      simple=1,
+                  ),
+              )
+
+          parent_methods = function_map(parent_class)
+          parent_returns: dict[str, str] = {
+              'base_ring': 'Parent[_Scalar]',
+              'zero': 'FreeModuleElement[_Scalar]',
+              'gen': 'FreeModuleElement[_Scalar]',
+              'gens': 'tuple[FreeModuleElement[_Scalar], ...]',
+              'basis': 'AbstractFamily[FreeModuleElement[_Scalar]]',
+              '_an_element_': 'FreeModuleElement[_Scalar]',
+              'random_element': 'FreeModuleElement[_Scalar]',
+              '_element_constructor_': 'FreeModuleElement[_Scalar]',
+              'coordinate_vector': 'FreeModuleElement[_Scalar]',
+              'linear_combination_of_basis': 'FreeModuleElement[_Scalar]',
+              'from_vector': 'FreeModuleElement[_Scalar]',
+              'rank': 'Integer',
+              'degree': 'Integer',
+              'dimension': 'Integer',
+              'ngens': 'Integer',
+              'span': 'FreeModule_generic[_Scalar]',
+              'submodule': 'FreeModule_generic[_Scalar]',
+              'subspace': 'FreeModule_generic[_Scalar]',
+              'change_ring': 'FreeModule_generic[_NewScalar]',
+          }
+          for name, annotation in parent_returns.items():
+              for method in parent_methods.get(name, []):
+                  method.returns = expr(annotation)
+
+          for method in parent_methods.get('change_ring', []):
+              positional = [*method.args.posonlyargs, *method.args.args]
+              if len(positional) >= 2:
+                  positional[1].annotation = expr('Parent[_NewScalar]')
+
+          ast.fix_missing_locations(parent_tree)
+          PARENT.write_text(ast.unparse(parent_tree) + '\n')
+
+          phase = Path('.agents/phases/phase-05-linear-algebra.md')
+          text = phase.read_text()
+          rows = [line for line in text.splitlines() if line.startswith('| T05.')]
+          if not rows:
+              raise SystemExit('Phase 05 task table contains no T05 rows')
+          first = rows[0]
+          if '✅ Done' not in first:
+              parts = first.split('|')
+              parts[5] = ' 🟡 In Progress '
+              note = (
+                  ' Free-module parent and element contracts now preserve the scalar type through '
+                  'coordinates, iteration, generators, bases, products, coordinate vectors, '
+                  'submodules, and scalar extension. '
+              )
+              parts[6] = note
+              phase.write_text(text.replace(first, '|'.join(parts)))
+
+          plan = Path('.agents/plan.md')
+          planning = plan.read_text()
+          old = '| 05 | [Linear algebra: matrices & modules](phases/phase-05-linear-algebra.md) | 1 | 01 | ~120 | ⬜ Not Started |'
+          new = '| 05 | [Linear algebra: matrices & modules](phases/phase-05-linear-algebra.md) | 1 | 01 | ~120 | 🟡 In Progress |'
+          if old in planning:
+              plan.write_text(planning.replace(old, new))
+          PY
+
+      - name: Validate changed mathematical interfaces
+        shell: bash
+        run: |
+          set -euo pipefail
+          targets=(
+            sage-stubs/modules/free_module.pyi
+            sage-stubs/modules/free_module_element.pyi
+          )
+          ruff format "${targets[@]}"
+          ruff check --fix "${targets[@]}"
+          ruff check "${targets[@]}"
+          ruff format --check "${targets[@]}"
+          python scripts/check_stubs.py "${targets[@]}"
+          tmp=$(mktemp -d)
+          mkdir -p "$tmp/sage-stubs/modules"
+          cp "${targets[@]}" "$tmp/sage-stubs/modules/"
+          python scripts/audit_stub_quality.py --root "$tmp/sage-stubs" --max-console 1000
+          rm -rf "$tmp"
+          set +e
+          ln -s sage-stubs sage
+          MYPYPATH=. python -m mypy --strict --no-incremental --follow-imports=skip --show-error-codes --no-pretty sage/modules/free_module.pyi sage/modules/free_module_element.pyi > /tmp/phase05-mypy.txt 2>&1
+          mypy_status=$?
+          rm sage
+          basedpyright --project pyrightconfig.json "${targets[@]}" > /tmp/phase05-basedpyright.txt 2>&1
+          pyright_status=$?
+          set -e
+          printf 'strict mypy status=%s\nstrict basedpyright status=%s\n' "$mypy_status" "$pyright_status"
+
+      - name: Commit and push immediately
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add \
+            sage-stubs/modules/free_module.pyi \
+            sage-stubs/modules/free_module_element.pyi \
+            .agents/phases/phase-05-linear-algebra.md \
+            .agents/plan.md
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m 'feat(stubs): preserve free-module scalar contracts'
+          git push origin main
+
+      - name: Tag Phase 05 opening checkpoint
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          git tag -f phase05-free-module-checkpoint-20260818 origin/main
+          git push --force origin refs/tags/phase05-free-module-checkpoint-20260818
