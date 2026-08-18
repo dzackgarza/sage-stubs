@@ -1,5 +1,4 @@
 from collections.abc import Iterable, Iterator
-from typing import Self
 
 from sage.rings.infinity import MinusInfinity, PlusInfinity
 from sage.rings.integer import Integer

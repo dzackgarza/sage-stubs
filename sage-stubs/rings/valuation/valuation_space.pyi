@@ -1,9 +1,7 @@
 from collections.abc import Callable, Iterable
-from typing import Self
 
 from sage.categories.action import Action
 from sage.categories.homset import Homset
-from sage.categories.map import Map
 from sage.rings.infinity import MinusInfinity, PlusInfinity
 from sage.rings.integer import Integer
 from sage.rings.rational import Rational
@@ -21,7 +19,9 @@ from sage.structure.unique_representation import UniqueRepresentation
 
 type ValuationScalar = int | Integer | Rational | PlusInfinity | MinusInfinity
 type RingParent = Parent[RingElement]
-type ValuationOperation = Callable[[ElementConstructorInput, ElementConstructorInput], ElementConstructorInput]
+type ValuationOperation = Callable[
+    [ElementConstructorInput, ElementConstructorInput], ElementConstructorInput
+]
 
 class DiscretePseudoValuationSpace(
     UniqueRepresentation,
@@ -75,7 +75,9 @@ class DiscretePseudoValuationSpace(
             self,
             other: DiscretePseudoValuation,
         ) -> RingElement: ...
-        def shift(self, x: ElementConstructorInput, s: ValuationScalar) -> RingElement: ...
+        def shift(
+            self, x: ElementConstructorInput, s: ValuationScalar
+        ) -> RingElement: ...
         def simplify(
             self,
             x: ElementConstructorInput,
