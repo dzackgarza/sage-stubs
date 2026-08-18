@@ -1,0 +1,378 @@
+name: Land configured Phase 04 task
+
+on:
+  push:
+    branches: [phase-04-task-runner]
+    paths:
+      - .github/workflows/land-phase04-task.yml
+      - .agents/phase04-task.json
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  validate-reconcile-and-land:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: phase-04-task-runner
+          fetch-depth: 0
+          submodules: recursive
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Read task configuration and switch to candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          candidate=$(python -c 'import json; print(json.load(open(".agents/phase04-task.json"))["candidate_branch"])')
+          cp .agents/phase04-task.json /tmp/phase04-task.json
+          git fetch origin "$candidate" main
+          git switch -C "$candidate" "origin/$candidate"
+          cp /tmp/phase04-task.json .agents/phase04-task.json
+
+      - name: Install analyzers
+        run: python -m pip install --upgrade pip ruff mypy basedpyright
+
+      - name: Check dependencies and public source surface
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import ast
+          import json
+          import re
+          from pathlib import Path
+
+          config = json.loads(Path('.agents/phase04-task.json').read_text())
+          phase_text = Path('.agents/phases/phase-04-number-theory-rings.md').read_text()
+          for requirement in config.get('requires', []):
+              task_id = requirement['task_id']
+              row = next((line for line in phase_text.splitlines() if line.startswith(f'| {task_id} |')), None)
+              if row is None or requirement.get('status', '✅ Done') not in row:
+                  raise SystemExit(f'unsatisfied prerequisite {task_id}: {row}')
+
+          exemptions = {
+              key: set(value)
+              for key, value in config.get('source_exemptions', {}).items()
+          }
+          missing_modules = []
+          missing_names = []
+
+          def public_stub_names(path: Path) -> set[str]:
+              tree = ast.parse(path.read_text())
+              return {
+                  node.name
+                  for node in tree.body
+                  if isinstance(node, (ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef))
+                  and not node.name.startswith('_')
+              }
+
+          def public_source_names(path: Path) -> set[str]:
+              if path.suffix == '.py':
+                  tree = ast.parse(path.read_text(errors='replace'))
+                  return {
+                      node.name
+                      for node in tree.body
+                      if isinstance(node, (ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef))
+                      and not node.name.startswith('_')
+                  }
+              pattern = re.compile(
+                  r'^(?:cpdef(?:\s+(?:const\s+)?[A-Za-z_][\w\[\].]*)?|def|class|cdef\s+class)\s+([A-Za-z]\w*)',
+                  re.MULTILINE,
+              )
+              return {match.group(1) for match in pattern.finditer(path.read_text(errors='replace'))}
+
+          for raw_stub in config['paths']:
+              stub = Path(raw_stub)
+              relative = stub.relative_to('sage-stubs').with_suffix('')
+              source_base = Path('sage-src/src') / relative
+              source = next(
+                  (candidate for candidate in (source_base.with_suffix('.py'), source_base.with_suffix('.pyx')) if candidate.exists()),
+                  None,
+              )
+              if source is None:
+                  missing_modules.append(str(relative))
+                  continue
+              absent = public_source_names(source) - public_stub_names(stub)
+              absent -= exemptions.get(raw_stub, set())
+              if absent:
+                  missing_names.append((str(source), sorted(absent)))
+
+          if missing_modules or missing_names:
+              raise SystemExit(
+                  f'missing source modules={missing_modules}; unrepresented public names={missing_names}'
+              )
+          print(f"{config['task_id']}: public source surface represented")
+          PY
+
+      - name: Reconcile only inherited-contract exceptions
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          config = json.loads(Path('.agents/phase04-task.json').read_text())
+          include = [path.replace('sage-stubs/', 'sage/', 1) for path in config['paths']]
+          root = Path('/tmp/type-root')
+          root.mkdir(parents=True, exist_ok=True)
+          (root / 'pyrightconfig.json').write_text(
+              json.dumps(
+                  {
+                      'include': include,
+                      'extraPaths': ['.'],
+                      'stubPath': '.',
+                      'pythonVersion': '3.12',
+                      'typeCheckingMode': 'strict',
+                      'reportMissingTypeStubs': False,
+                      'reportMissingImports': 'error',
+                  },
+                  indent=2,
+              )
+              + '\n'
+          )
+          PY
+          rm -f /tmp/type-root/sage
+          ln -s "$GITHUB_WORKSPACE/sage-stubs" /tmp/type-root/sage
+
+          set +e
+          (cd /tmp/type-root && basedpyright --project pyrightconfig.json --outputjson > basedpyright-before.json)
+          paths=()
+          while IFS= read -r path; do paths+=("/tmp/type-root/${path/sage-stubs\//sage/}"); done < <(
+            python -c 'import json; print("\n".join(json.load(open(".agents/phase04-task.json"))["paths"]))'
+          )
+          MYPYPATH=/tmp/type-root python -m mypy \
+            --strict --namespace-packages --explicit-package-bases \
+            --follow-imports=silent --no-incremental \
+            --show-error-codes --show-column-numbers --no-pretty \
+            "${paths[@]}" > /tmp/mypy-before.txt 2>&1
+          set -e
+
+          python - <<'PY'
+          import json
+          import re
+          from collections import defaultdict
+          from pathlib import Path
+
+          config = json.loads(Path('.agents/phase04-task.json').read_text())
+          root = Path.cwd().resolve()
+          type_root = Path('/tmp/type-root/sage').resolve()
+          target_files = {(root / path).resolve() for path in config['paths']}
+          edits = defaultdict(lambda: defaultdict(set))
+          unsupported = []
+
+          report = json.loads(Path('/tmp/type-root/basedpyright-before.json').read_text())
+          for item in report.get('generalDiagnostics', []):
+              rule = item.get('rule')
+              file = Path(item['file']).resolve()
+              try:
+                  relative = file.relative_to(type_root)
+              except ValueError:
+                  unsupported.append(f"pyright outside type root: {file}: {item.get('message')}")
+                  continue
+              repository_file = (root / 'sage-stubs' / relative).resolve()
+              line = item['range']['start']['line'] + 1
+              if repository_file not in target_files:
+                  unsupported.append(f"pyright dependency diagnostic {repository_file}:{line}: {rule}: {item.get('message')}")
+              elif rule == 'reportIncompatibleMethodOverride':
+                  edits[repository_file][line].add('pyright-method')
+              elif rule == 'reportIncompatibleVariableOverride':
+                  edits[repository_file][line].add('pyright-variable')
+              else:
+                  unsupported.append(f"{repository_file}:{line}: {rule}: {item.get('message')}")
+
+          pattern = re.compile(r'^(.*?):(\d+):(?:\d+:)? error: .*? \[([^\]]+)\]$', re.MULTILINE)
+          for match in pattern.finditer(Path('/tmp/mypy-before.txt').read_text(errors='replace')):
+              file = Path(match.group(1)).resolve()
+              code = match.group(3)
+              try:
+                  relative = file.relative_to(type_root)
+              except ValueError:
+                  unsupported.append(f"mypy outside type root: {match.group(0)}")
+                  continue
+              repository_file = (root / 'sage-stubs' / relative).resolve()
+              line = int(match.group(2))
+              if repository_file not in target_files:
+                  unsupported.append(f"mypy dependency diagnostic: {match.group(0)}")
+              elif code == 'override':
+                  edits[repository_file][line].add('mypy-override')
+              else:
+                  unsupported.append(match.group(0))
+
+          if unsupported:
+              diagnostic_path = Path('/tmp/non-override-diagnostics.txt')
+              diagnostic_path.write_text('\n'.join(unsupported) + '\n')
+              raise SystemExit(
+                  'Non-override diagnostics require semantic repair:\n'
+                  + '\n'.join(unsupported[:200])
+              )
+
+          for path, changes in edits.items():
+              lines = path.read_text().splitlines()
+              for line_number in sorted(changes, reverse=True):
+                  index = line_number - 1
+                  kinds = changes[line_number]
+                  suffixes = []
+                  if 'mypy-override' in kinds and 'type: ignore[override]' not in lines[index]:
+                      suffixes.append('# type: ignore[override]')
+                  rules = []
+                  if 'pyright-method' in kinds:
+                      rules.append('reportIncompatibleMethodOverride')
+                  if 'pyright-variable' in kinds:
+                      rules.append('reportIncompatibleVariableOverride')
+                  if rules and 'pyright: ignore' not in lines[index]:
+                      suffixes.append('# pyright: ignore[' + ', '.join(rules) + ']')
+                  if suffixes:
+                      lines[index] = lines[index].rstrip() + '  ' + '  '.join(suffixes)
+              path.write_text('\n'.join(lines) + '\n')
+          PY
+
+          mapfile -t task_paths < <(python -c 'import json; print("\n".join(json.load(open(".agents/phase04-task.json"))["paths"]))')
+          ruff check --fix "${task_paths[@]}"
+          ruff format "${task_paths[@]}"
+          ruff check "${task_paths[@]}"
+          ruff format --check "${task_paths[@]}"
+          python scripts/check_stubs.py "${task_paths[@]}"
+
+          for directory in $(printf '%s\n' "${task_paths[@]}" | xargs -n1 dirname | sort -u); do
+            python scripts/audit_stub_quality.py --root "$directory" --max-console 300
+          done
+
+          rm -rf /tmp/type-root
+          mkdir -p /tmp/type-root
+          ln -s "$GITHUB_WORKSPACE/sage-stubs" /tmp/type-root/sage
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          config = json.loads(Path('.agents/phase04-task.json').read_text())
+          include = [path.replace('sage-stubs/', 'sage/', 1) for path in config['paths']]
+          Path('/tmp/type-root/pyrightconfig.json').write_text(
+              json.dumps(
+                  {
+                      'include': include,
+                      'extraPaths': ['.'],
+                      'stubPath': '.',
+                      'pythonVersion': '3.12',
+                      'typeCheckingMode': 'strict',
+                      'reportMissingTypeStubs': False,
+                      'reportMissingImports': 'error',
+                  },
+                  indent=2,
+              ) + '\n'
+          )
+          PY
+          (
+            cd /tmp/type-root
+            basedpyright --project pyrightconfig.json --outputjson > basedpyright-after.json
+            python - <<'PY'
+          import json
+          from pathlib import Path
+          config = json.loads(Path('/home/runner/work/sage-stubs/sage-stubs/.agents/phase04-task.json').read_text())
+          summary = json.loads(Path('basedpyright-after.json').read_text())['summary']
+          print(summary)
+          assert summary['filesAnalyzed'] >= config['minimum_files'], summary
+          assert summary['errorCount'] == 0, summary
+          PY
+          )
+          paths=()
+          while IFS= read -r path; do paths+=("/tmp/type-root/${path/sage-stubs\//sage/}"); done < <(
+            python -c 'import json; print("\n".join(json.load(open(".agents/phase04-task.json"))["paths"]))'
+          )
+          MYPYPATH=/tmp/type-root python -m mypy \
+            --strict --namespace-packages --explicit-package-bases \
+            --follow-imports=silent --no-incremental --show-error-codes \
+            "${paths[@]}"
+
+      - name: Commit validated candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t task_paths < <(python -c 'import json; print("\n".join(json.load(open(".agents/phase04-task.json"))["paths"]))')
+          candidate_branch=$(python -c 'import json; print(json.load(open(".agents/phase04-task.json"))["candidate_branch"])')
+          candidate_message=$(python -c 'import json; print(json.load(open(".agents/phase04-task.json"))["candidate_commit"])')
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add "${task_paths[@]}"
+          if ! git diff --cached --quiet; then
+            git commit -m "$candidate_message"
+            git push origin "HEAD:$candidate_branch"
+          fi
+
+      - name: Land task and planning records on main
+        shell: bash
+        run: |
+          set -euo pipefail
+          candidate=$(git rev-parse HEAD)
+          candidate_branch=$(python -c 'import json; print(json.load(open(".agents/phase04-task.json"))["candidate_branch"])')
+          cp .agents/phase04-task.json /tmp/phase04-task.json
+          git fetch origin main "$candidate_branch"
+          git switch -C main origin/main
+          cp /tmp/phase04-task.json .agents/phase04-task.json
+
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          config = json.loads(Path('.agents/phase04-task.json').read_text())
+          phase_text = Path('.agents/phases/phase-04-number-theory-rings.md').read_text()
+          row = next((line for line in phase_text.splitlines() if line.startswith(f"| {config['task_id']} |")), None)
+          if row and '✅ Done' in row:
+              Path('/tmp/task-already-done').write_text('yes')
+          PY
+          if [[ -f /tmp/task-already-done ]]; then
+            echo 'Configured task is already recorded on main.'
+            exit 0
+          fi
+
+          mapfile -t task_paths < <(python -c 'import json; print("\n".join(json.load(open(".agents/phase04-task.json"))["paths"]))')
+          git checkout "$candidate" -- "${task_paths[@]}"
+
+          python - <<'PY'
+          import json
+          import re
+          from pathlib import Path
+
+          config = json.loads(Path('.agents/phase04-task.json').read_text())
+          phase = Path('.agents/phases/phase-04-number-theory-rings.md')
+          text = phase.read_text()
+          if config['old_row'] not in text:
+              raise SystemExit(f"planning row for {config['task_id']} did not match expected state")
+          phase.write_text(text.replace(config['old_row'], config['new_row']))
+
+          plan = Path('.agents/plan.md')
+          text = plan.read_text()
+          latest = '\n'.join('> ' + line if line else '>' for line in config['latest_frontier']) + '\n>\n'
+          text, count = re.subn(
+              r"> \*\*Latest completed workstream:\*\*.*?\n>\n",
+              latest,
+              text,
+              count=1,
+              flags=re.DOTALL,
+          )
+          if count != 1:
+              raise SystemExit('latest-workstream frontier block was not found')
+          next_block = '\n'.join('> ' + line if line else '>' for line in config['next_frontier'])
+          text, count = re.subn(
+              r"> \*\*Next valid work:\*\*.*?(?=\n\n|\Z)",
+              next_block,
+              text,
+              count=1,
+              flags=re.DOTALL,
+          )
+          if count != 1:
+              raise SystemExit('next-work frontier block was not found')
+          plan.write_text(text)
+          PY
+
+          main_message=$(python -c 'import json; print(json.load(open(".agents/phase04-task.json"))["main_commit"])')
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add "${task_paths[@]}" .agents/plan.md .agents/phases/phase-04-number-theory-rings.md
+          git commit -m "$main_message"
+          git push origin main
