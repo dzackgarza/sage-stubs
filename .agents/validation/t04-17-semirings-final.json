@@ -1,0 +1,80 @@
+{
+  "accepted_source_override_diagnostics": [
+    {
+      "file": "/home/runner/work/sage-stubs/sage-stubs/sage/rings/semirings/tropical_polynomial.pyi",
+      "message": "Method \"roots\" overrides class \"Polynomial\" in an incompatible manner\n\u00a0\u00a0Positional parameter count mismatch; base method has 3, but override has 1\n\u00a0\u00a0Parameter 2 mismatch: base parameter \"ring\" is keyword parameter, override parameter is position-only\n\u00a0\u00a0Parameter 3 mismatch: base parameter \"multiplicities\" is keyword parameter, override parameter is position-only\n\u00a0\u00a0Return type mismatch: base method returns type \"list[tuple[RingElement, Integer]]\", override returns type \"list[TropicalSemiringElement[ModuleElement]]\"\n\u00a0\u00a0\u00a0\u00a0\"list[TropicalSemiringElement[ModuleElement]]\" is not assignable to \"list[tuple[RingElement, Integer]]\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0Type parameter \"_T@list\" is invariant, but \"TropicalSemiringElement[ModuleElement]\" is not the same as \"tuple[RingElement, Integer]\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0Consider switching from \"list\" to \"Sequence\" which is covariant",
+      "range": {
+        "end": {
+          "character": 13,
+          "line": 29
+        },
+        "start": {
+          "character": 8,
+          "line": 29
+        }
+      },
+      "rule": "reportIncompatibleMethodOverride",
+      "severity": "error"
+    },
+    {
+      "file": "/home/runner/work/sage-stubs/sage-stubs/sage/rings/semirings/tropical_polynomial.pyi",
+      "message": "Method \"factor\" overrides class \"Polynomial\" in an incompatible manner\n\u00a0\u00a0Parameter \"**kwargs\" has no corresponding parameter",
+      "range": {
+        "end": {
+          "character": 14,
+          "line": 31
+        },
+        "start": {
+          "character": 8,
+          "line": 31
+        }
+      },
+      "rule": "reportIncompatibleMethodOverride",
+      "severity": "error"
+    },
+    {
+      "file": "/home/runner/work/sage-stubs/sage-stubs/sage/rings/semirings/tropical_polynomial.pyi",
+      "message": "Method \"plot\" overrides class \"Polynomial\" in an incompatible manner\n\u00a0\u00a0Parameter 2 type mismatch: base parameter is type \"object\", override parameter is type \"ElementConstructorInput | None\"\n\u00a0\u00a0Parameter 3 type mismatch: base parameter is type \"object\", override parameter is type \"ElementConstructorInput | None\"\n\u00a0\u00a0Parameter \"args\" is missing in override\n\u00a0\u00a0Parameter \"**kwds\" has no corresponding parameter\n\u00a0\u00a0\u00a0\u00a0Type \"object\" is not assignable to type \"ElementConstructorInput | None\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"object\" is incompatible with protocol \"Element\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"_set_parent\" is not present\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"parent\" is not present\n  ...",
+      "range": {
+        "end": {
+          "character": 12,
+          "line": 33
+        },
+        "start": {
+          "character": 8,
+          "line": 33
+        }
+      },
+      "rule": "reportIncompatibleMethodOverride",
+      "severity": "error"
+    }
+  ],
+  "basedpyright_status": 1,
+  "basedpyright_summary": {
+    "errorCount": 3,
+    "filesAnalyzed": 9,
+    "informationCount": 0,
+    "timeInSec": 0.554,
+    "warningCount": 0
+  },
+  "check-stubs": 0,
+  "coverage": 1,
+  "coverage_output": [
+    "sage-src not initialised at /home/runner/work/sage-stubs/sage-stubs/sage-src/src/sage. Run: git submodule update --init --depth 1"
+  ],
+  "mypy_final": "Found 449 errors in 69 files (checked 8 source files)",
+  "mypy_status": 1,
+  "ruff": 1,
+  "ruff-format": 1,
+  "semantic": 0,
+  "task_mypy_diagnostics": [
+    "sage/rings/semirings/tropical_semiring.pyi:68:19: error: Variable \"sage.rings.semirings.tropical_semiring.TropicalSemiring.Element\" is not valid as a type  [valid-type]",
+    "sage/rings/semirings/tropical_polynomial.pyi:30:5: error: Signature of \"roots\" incompatible with supertype \"sage.rings.polynomial.polynomial_element.Polynomial\"  [override]",
+    "sage/rings/semirings/tropical_polynomial.pyi:32:5: error: Signature of \"factor\" incompatible with supertype \"sage.rings.polynomial.polynomial_element.Polynomial\"  [override]",
+    "sage/rings/semirings/tropical_polynomial.pyi:34:5: error: Signature of \"plot\" incompatible with supertype \"sage.rings.polynomial.polynomial_element.Polynomial\"  [override]"
+  ],
+  "unexpected_basedpyright_diagnostics": [],
+  "unexpected_task_mypy_diagnostics": [
+    "sage/rings/semirings/tropical_semiring.pyi:68:19: error: Variable \"sage.rings.semirings.tropical_semiring.TropicalSemiring.Element\" is not valid as a type  [valid-type]"
+  ]
+}
