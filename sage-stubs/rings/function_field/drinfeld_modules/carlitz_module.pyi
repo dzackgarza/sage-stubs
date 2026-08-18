@@ -1,24 +1,39 @@
+from sage.rings.function_field.drinfeld_modules.drinfeld_module import DrinfeldModule
+from sage.rings.infinity import PlusInfinity
 from sage.rings.integer import Integer
-from sage.rings.polynomial.multi_polynomial import MPolynomial
+from sage.rings.lazy_series import LazyPowerSeries
 from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.structure.element import Element
-from sage.structure.parent import ElementConstructorInput
+from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
+from sage.rings.power_series_ring_element import PowerSeries
+from sage.structure.element import RingElement
+from sage.structure.parent import Parent
+
+type CarlitzBase = Parent[RingElement] | RingElement | str | None
+type SeriesPrecision = int | Integer | PlusInfinity
+type CarlitzSeries = LazyPowerSeries | PowerSeries
 
 def CarlitzModule(
-    A: Element | ElementConstructorInput, base: Polynomial | MPolynomial = ...
-) -> Element: ...
+    A: PolynomialRing_generic,
+    base: CarlitzBase = ...,
+) -> DrinfeldModule: ...
 def carlitz_exponential(
-    A: Element | ElementConstructorInput, prec: int | Integer = ..., name: str = ...
-) -> Element: ...
+    A: PolynomialRing_generic,
+    prec: SeriesPrecision = ...,
+    name: str = ...,
+) -> CarlitzSeries: ...
 def carlitz_logarithm(
-    A: Element | ElementConstructorInput, prec: int | Integer = ..., name: str = ...
-) -> Element: ...
+    A: PolynomialRing_generic,
+    prec: SeriesPrecision = ...,
+    name: str = ...,
+) -> CarlitzSeries: ...
 def carlitz_factorial(
-    A: Element | ElementConstructorInput, n: int | Integer
-) -> Element: ...
+    A: PolynomialRing_generic,
+    n: int | Integer,
+) -> Polynomial: ...
 
-carlitz_series: Element
+carlitz_series: dict[Integer, LazyPowerSeries]
 
 def carlitz_bernoulli(
-    A: Element | ElementConstructorInput, n: int | Integer
-) -> Element: ...
+    A: PolynomialRing_generic,
+    n: int | Integer,
+) -> Polynomial: ...
