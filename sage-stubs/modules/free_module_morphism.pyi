@@ -1,28 +1,62 @@
-from collections.abc import Iterator, Sequence
-from typing import Self, TypeVar
-from sage.matrix.matrix0 import Matrix
-from sage.modules.free_module import FreeModule_generic
+from collections.abc import Iterable
+from typing import Generic, Self, TypeVar
+
+from sage.categories.morphism import Morphism
+from sage.matrix.matrix import Matrix
+from sage.modules.free_module import FreeModule_generic, FreeModule_submodule
 from sage.modules.free_module_element import FreeModuleElement
-from sage.modules.free_module_homspace import FreeModuleHomspace
-from sage.rings.integer import Integer
-from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.rings.rational import Rational
-from sage.rings.real_double import RealDoubleElement
-from sage.rings.complex_double import ComplexDoubleElement
-from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
-from sage.rings.ring import Ring
 from sage.structure.element import RingElement
-from sage.structure.parent import ElementConstructorInput
-from sage.structure.sage_object import SageObject
-from sage.symbolic.expression import Expression
 
 _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
 
-from .matrix_morphism import MatrixMorphism
 
-class FreeModuleMorphism(MatrixMorphism, Generic[_Scalar]):
-    def kernel(self) -> FreeModule_generic[_Scalar]: ...
-    def image(self) -> FreeModule_generic[_Scalar]: ...
-    def matrix(
-        self, side: Literal["left", "right"] | None = ...
-    ) -> Matrix[_Scalar]: ...
+class FreeModuleMorphism(
+    Morphism[FreeModuleElement[_Scalar], FreeModuleElement[_Scalar]],
+    Generic[_Scalar],
+):
+    def __init__(
+        self,
+        parent: FreeModuleHomspace[_Scalar],
+        matrix: Matrix[_Scalar]
+        | Iterable[FreeModuleElement[_Scalar]],
+        side: str = ...,
+    ) -> None: ...
+    def parent(self) -> FreeModuleHomspace[_Scalar]: ...
+    def domain(self) -> FreeModule_generic[_Scalar]: ...
+    def codomain(self) -> FreeModule_generic[_Scalar]: ...
+    def matrix(self, side: str | None = ...) -> Matrix[_Scalar]: ...
+    def _call_(
+        self,
+        x: FreeModuleElement[_Scalar],
+    ) -> FreeModuleElement[_Scalar]: ...
+    def rank(self) -> int: ...
+    def kernel(self) -> FreeModule_submodule[_Scalar]: ...
+    def image(self) -> FreeModule_submodule[_Scalar]: ...
+    range = image
+    def inverse_image(
+        self,
+        submodule: FreeModule_generic[_Scalar],
+    ) -> FreeModule_submodule[_Scalar]: ...
+    def is_injective(self) -> bool: ...
+    def is_surjective(self) -> bool: ...
+    def is_bijective(self) -> bool: ...
+    def is_identity(self) -> bool: ...
+    def inverse(self) -> Self: ...
+    __invert__ = inverse
+    def lift(
+        self,
+        x: FreeModuleElement[_Scalar],
+    ) -> FreeModuleElement[_Scalar]: ...
+    def section(self) -> Self: ...
+    def restrict_domain(
+        self,
+        submodule: FreeModule_generic[_Scalar],
+    ) -> Self: ...
+    def restrict_codomain(
+        self,
+        submodule: FreeModule_generic[_Scalar],
+    ) -> Self: ...
+    def __mul__(self, right: Self) -> Self: ...
+
+
+from sage.modules.free_module_homspace import FreeModuleHomspace

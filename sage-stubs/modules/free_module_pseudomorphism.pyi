@@ -1,35 +1,42 @@
-from collections.abc import Iterator, Sequence
-from typing import Self, TypeVar
-from sage.matrix.matrix0 import Matrix
-from sage.modules.free_module import FreeModule_generic
+from typing import Generic, TypeVar
+
+from sage.categories.map import Map
+from sage.categories.morphism import Morphism
+from sage.matrix.matrix import Matrix
+from sage.modules.free_module import FreeModule_generic, FreeModule_submodule
 from sage.modules.free_module_element import FreeModuleElement
-from sage.modules.free_module_homspace import FreeModuleHomspace
-from sage.rings.integer import Integer
-from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.rings.rational import Rational
-from sage.rings.real_double import RealDoubleElement
-from sage.rings.complex_double import ComplexDoubleElement
-from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
-from sage.rings.ring import Ring
 from sage.structure.element import RingElement
-from sage.structure.parent import ElementConstructorInput
-from sage.structure.sage_object import SageObject
-from sage.symbolic.expression import Expression
 
-_Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+_DomainScalar = TypeVar("_DomainScalar", bound=RingElement)
+_CodomainScalar = TypeVar("_CodomainScalar", bound=RingElement)
 
-import builtins
 
-class _SageObject: ...
-
-class FreeModulePseudoMorphism:
+class FreeModulePseudoMorphism(
+    Morphism[
+        FreeModuleElement[_DomainScalar],
+        FreeModuleElement[_CodomainScalar],
+    ],
+    Generic[_DomainScalar, _CodomainScalar],
+):
     def __init__(
-        self, parent: builtins.object, f: builtins.object, side: builtins.object
+        self,
+        parent: FreeModulePseudoHomspace[_DomainScalar, _CodomainScalar],
+        matrix: Matrix[_CodomainScalar],
+        side: str = ...,
     ) -> None: ...
-    def matrix(self) -> Matrix[_Scalar]: ...
-    def twisting_derivation(self) -> FreeModulePseudoMorphism: ...
-    def twisting_morphism(self) -> FreeModulePseudoMorphism: ...
-    def side(self) -> FreeModulePseudoMorphism: ...
-    def side_switch(self) -> FreeModulePseudoMorphism: ...
-    def __nonzero__(self) -> FreeModulePseudoMorphism: ...
-    def ore_module(self, names: builtins.object = ...) -> FreeModulePseudoMorphism: ...
+    def domain(self) -> FreeModule_generic[_DomainScalar]: ...
+    def codomain(self) -> FreeModule_generic[_CodomainScalar]: ...
+    def matrix(self, side: str | None = ...) -> Matrix[_CodomainScalar]: ...
+    def twisting_morphism(self) -> Map[_DomainScalar, _CodomainScalar]: ...
+    def _call_(
+        self,
+        x: FreeModuleElement[_DomainScalar],
+    ) -> FreeModuleElement[_CodomainScalar]: ...
+    def rank(self) -> int: ...
+    def kernel(self) -> FreeModule_submodule[_DomainScalar]: ...
+    def image(self) -> FreeModule_submodule[_CodomainScalar]: ...
+    def is_injective(self) -> bool: ...
+    def is_surjective(self) -> bool: ...
+
+
+from sage.modules.free_module_pseudohomspace import FreeModulePseudoHomspace

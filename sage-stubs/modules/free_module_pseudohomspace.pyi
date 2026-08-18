@@ -1,43 +1,38 @@
-from collections.abc import Iterator, Sequence
-from typing import Self, TypeVar
-from sage.matrix.matrix0 import Matrix
+from typing import Generic, TypeVar
+
+from sage.categories.homset import Homset
+from sage.categories.map import Map
+from sage.matrix.matrix import Matrix
+from sage.matrix.matrix_space import MatrixSpace
 from sage.modules.free_module import FreeModule_generic
 from sage.modules.free_module_element import FreeModuleElement
-from sage.modules.free_module_homspace import FreeModuleHomspace
-from sage.rings.integer import Integer
-from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.rings.rational import Rational
-from sage.rings.real_double import RealDoubleElement
-from sage.rings.complex_double import ComplexDoubleElement
-from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
-from sage.rings.ring import Ring
+from sage.modules.free_module_pseudomorphism import FreeModulePseudoMorphism
 from sage.structure.element import RingElement
-from sage.structure.parent import ElementConstructorInput
-from sage.structure.sage_object import SageObject
-from sage.symbolic.expression import Expression
 
-_Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+_DomainScalar = TypeVar("_DomainScalar", bound=RingElement)
+_CodomainScalar = TypeVar("_CodomainScalar", bound=RingElement)
 
-import builtins
 
-class _SageObject: ...
-
-class FreeModulePseudoHomspace:
-    Element: _SageObject
-
-    @staticmethod
-    def __classcall_private__(
-        cls: builtins.object,
-        domain: builtins.object,
-        codomain: builtins.object,
-        twist: builtins.object,
-    ) -> FreeModulePseudoHomspace: ...
+class FreeModulePseudoHomspace(
+    Homset[
+        FreeModulePseudoMorphism[_DomainScalar, _CodomainScalar],
+        FreeModuleElement[_DomainScalar],
+        FreeModuleElement[_CodomainScalar],
+    ],
+    Generic[_DomainScalar, _CodomainScalar],
+):
     def __init__(
-        self, domain: builtins.object, codomain: builtins.object, ore: builtins.object
+        self,
+        domain: FreeModule_generic[_DomainScalar],
+        codomain: FreeModule_generic[_CodomainScalar],
+        twisting_morphism: Map[_DomainScalar, _CodomainScalar],
     ) -> None: ...
-    def __reduce__(self) -> builtins.str | builtins.tuple[builtins.object, ...]: ...
-    def ore_ring(self, var: builtins.str = ...) -> FreeModulePseudoHomspace: ...
-    def matrix_space(self) -> Matrix[_Scalar]: ...
-    def basis(
-        self, side: builtins.str = ...
-    ) -> tuple[FreeModuleElement[_Scalar], ...]: ...
+    def domain(self) -> FreeModule_generic[_DomainScalar]: ...
+    def codomain(self) -> FreeModule_generic[_CodomainScalar]: ...
+    def twisting_morphism(self) -> Map[_DomainScalar, _CodomainScalar]: ...
+    def matrix_space(self) -> MatrixSpace[_CodomainScalar]: ...
+    def _element_constructor_(
+        self,
+        matrix: Matrix[_CodomainScalar],
+        side: str = ...,
+    ) -> FreeModulePseudoMorphism[_DomainScalar, _CodomainScalar]: ...
