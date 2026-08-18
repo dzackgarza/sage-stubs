@@ -1,0 +1,490 @@
+name: Land Phase 06 free associative algebras
+
+on:
+  push:
+    branches: [phase06-free-associative]
+    paths:
+      - .github/workflows/land-phase06-free-associative.yml
+
+permissions:
+  contents: write
+
+jobs:
+  land:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 250
+
+      - name: Wait for completed Phase 05
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 120); do
+            git fetch origin main
+            if git log --format=%s origin/main | grep -Fqx "feat(stubs): complete Phase 05 linear algebra"; then
+              git reset --hard origin/main
+              exit 0
+            fi
+            sleep 10
+          done
+          exit 1
+
+      - name: Write free-associative algebra stubs
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          cat > sage-stubs/algebras/free_algebra_element.pyi <<'PYI'
+          from collections.abc import Iterator, Mapping
+          from typing import Generic, Self, TypeVar
+
+          from sage.monoids.free_monoid_element import FreeMonoidElement
+          from sage.structure.element import AlgebraElement, RingElement
+
+          _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+
+
+          class FreeAlgebraElement(AlgebraElement, Generic[_Scalar]):
+              def parent(self) -> FreeAlgebra_generic[_Scalar]: ...
+              def monomial_coefficients(
+                  self,
+                  copy: bool = ...,
+              ) -> dict[FreeMonoidElement, _Scalar]: ...
+              dict = monomial_coefficients
+              def support(self) -> list[FreeMonoidElement]: ...
+              def coefficients(self) -> list[_Scalar]: ...
+              def coefficient(self, monomial: FreeMonoidElement) -> _Scalar: ...
+              __getitem__ = coefficient
+              def monomials(self) -> list[FreeAlgebraElement[_Scalar]]: ...
+              def terms(self) -> Iterator[FreeAlgebraElement[_Scalar]]: ...
+              def degree(self, generator: object | None = ...) -> int: ...
+              def homogeneous_component(self, degree: int) -> FreeAlgebraElement[_Scalar]: ...
+              def is_homogeneous(self) -> bool: ...
+              def leading_monomial(self, *args: object, **kwds: object) -> FreeMonoidElement: ...
+              def leading_coefficient(self, *args: object, **kwds: object) -> _Scalar: ...
+              def leading_term(self, *args: object, **kwds: object) -> FreeAlgebraElement[_Scalar]: ...
+              def map_coefficients(self, function: object) -> FreeAlgebraElement[RingElement]: ...
+              def __neg__(self) -> Self: ...
+              def __add__(self, other: FreeAlgebraElement[_Scalar]) -> Self: ...
+              def __sub__(self, other: FreeAlgebraElement[_Scalar]) -> Self: ...
+              def __mul__(self, other: FreeAlgebraElement[_Scalar] | _Scalar) -> Self: ...
+              def __rmul__(self, other: _Scalar) -> Self: ...
+              def __pow__(self, exponent: int) -> Self: ...
+
+
+          from sage.algebras.free_algebra import FreeAlgebra_generic
+          PYI
+
+          cat > sage-stubs/algebras/free_algebra.pyi <<'PYI'
+          from collections.abc import Iterable, Mapping, Sequence
+          from typing import Generic, TypeVar
+
+          from sage.algebras.free_algebra_element import FreeAlgebraElement
+          from sage.categories.morphism import Morphism
+          from sage.monoids.free_monoid import FreeMonoid
+          from sage.monoids.free_monoid_element import FreeMonoidElement
+          from sage.rings.noncommutative_ideals import Ideal_nc
+          from sage.sets.family import AbstractFamily
+          from sage.structure.element import RingElement
+          from sage.structure.parent import ElementConstructorInput, Parent
+          from sage.structure.unique_representation import UniqueRepresentation
+
+          _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+
+
+          def FreeAlgebra(
+              base_ring: Parent[_Scalar],
+              n: int | None = ...,
+              names: str | Sequence[str] | None = ...,
+              implementation: str = ...,
+              degrees: Sequence[int] | None = ...,
+              **kwds: object,
+          ) -> FreeAlgebra_generic[_Scalar]: ...
+
+
+          class FreeAlgebra_generic(
+              UniqueRepresentation,
+              Parent[FreeAlgebraElement[_Scalar]],
+              Generic[_Scalar],
+          ):
+              Element: type[FreeAlgebraElement[_Scalar]]
+              def __init__(
+                  self,
+                  base_ring: Parent[_Scalar],
+                  n: int,
+                  names: Sequence[str],
+                  degrees: Sequence[int] | None = ...,
+              ) -> None: ...
+              def base_ring(self) -> Parent[_Scalar]: ...
+              def monoid(self) -> FreeMonoid: ...
+              def ngens(self) -> int: ...
+              def gen(self, i: int) -> FreeAlgebraElement[_Scalar]: ...
+              def gens(self) -> tuple[FreeAlgebraElement[_Scalar], ...]: ...
+              algebra_generators = gens
+              def basis(self) -> AbstractFamily: ...
+              def one_basis(self) -> FreeMonoidElement: ...
+              def monomial(
+                  self,
+                  monomial: FreeMonoidElement,
+                  coefficient: _Scalar | None = ...,
+              ) -> FreeAlgebraElement[_Scalar]: ...
+              def sum_of_terms(
+                  self,
+                  terms: Iterable[tuple[FreeMonoidElement, _Scalar]],
+                  distinct: bool = ...,
+              ) -> FreeAlgebraElement[_Scalar]: ...
+              def _element_constructor_(
+                  self,
+                  x: FreeAlgebraElement[_Scalar]
+                  | Mapping[FreeMonoidElement, ElementConstructorInput]
+                  | ElementConstructorInput,
+              ) -> FreeAlgebraElement[_Scalar]: ...
+              def ideal(
+                  self,
+                  generators: Iterable[FreeAlgebraElement[_Scalar]],
+                  side: str = ...,
+              ) -> Ideal_nc: ...
+              def quotient(
+                  self,
+                  ideal: Ideal_nc,
+                  names: str | Sequence[str] | None = ...,
+              ) -> FreeAlgebraQuotient[_Scalar]: ...
+              quo = quotient
+              def hom(
+                  self,
+                  images: Sequence[object],
+                  codomain: Parent,
+                  check: bool = ...,
+              ) -> Morphism: ...
+              def degree_on_basis(self, monomial: FreeMonoidElement) -> int: ...
+
+
+          from sage.algebras.free_algebra_quotient import FreeAlgebraQuotient
+          PYI
+
+          cat > sage-stubs/algebras/free_algebra_quotient.pyi <<'PYI'
+          from collections.abc import Iterable, Mapping, Sequence
+          from typing import Generic, Self, TypeVar
+
+          from sage.algebras.free_algebra import FreeAlgebra_generic
+          from sage.algebras.free_algebra_element import FreeAlgebraElement
+          from sage.matrix.matrix import Matrix
+          from sage.monoids.free_monoid_element import FreeMonoidElement
+          from sage.rings.noncommutative_ideals import Ideal_nc
+          from sage.sets.family import AbstractFamily
+          from sage.structure.element import AlgebraElement, RingElement
+          from sage.structure.parent import ElementConstructorInput, Parent
+
+          _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+
+
+          class FreeAlgebraQuotientElement(AlgebraElement, Generic[_Scalar]):
+              def parent(self) -> FreeAlgebraQuotient[_Scalar]: ...
+              def lift(self) -> FreeAlgebraElement[_Scalar]: ...
+              def normal_form(self) -> FreeAlgebraElement[_Scalar]: ...
+              def vector(self) -> object: ...
+              def monomial_coefficients(
+                  self,
+                  copy: bool = ...,
+              ) -> dict[FreeMonoidElement, _Scalar]: ...
+              def __neg__(self) -> Self: ...
+              def __add__(self, other: FreeAlgebraQuotientElement[_Scalar]) -> Self: ...
+              def __sub__(self, other: FreeAlgebraQuotientElement[_Scalar]) -> Self: ...
+              def __mul__(self, other: FreeAlgebraQuotientElement[_Scalar] | _Scalar) -> Self: ...
+              def __rmul__(self, other: _Scalar) -> Self: ...
+              def __pow__(self, exponent: int) -> Self: ...
+
+
+          class FreeAlgebraQuotient(
+              Parent[FreeAlgebraQuotientElement[_Scalar]],
+              Generic[_Scalar],
+          ):
+              Element: type[FreeAlgebraQuotientElement[_Scalar]]
+              def __init__(
+                  self,
+                  free_algebra: FreeAlgebra_generic[_Scalar],
+                  ideal: Ideal_nc,
+                  names: Sequence[str] | None = ...,
+              ) -> None: ...
+              def base_ring(self) -> Parent[_Scalar]: ...
+              def cover(self) -> FreeAlgebra_generic[_Scalar]: ...
+              def relations(self) -> Ideal_nc: ...
+              defining_ideal = relations
+              def ngens(self) -> int: ...
+              def gen(self, i: int) -> FreeAlgebraQuotientElement[_Scalar]: ...
+              def gens(self) -> tuple[FreeAlgebraQuotientElement[_Scalar], ...]: ...
+              algebra_generators = gens
+              def basis(self) -> AbstractFamily: ...
+              def normal_basis(self, degree: int | None = ...) -> tuple[FreeMonoidElement, ...]: ...
+              def dimension(self) -> int: ...
+              def reduce(self, x: FreeAlgebraElement[_Scalar]) -> FreeAlgebraElement[_Scalar]: ...
+              def retract(
+                  self,
+                  x: FreeAlgebraElement[_Scalar],
+              ) -> FreeAlgebraQuotientElement[_Scalar]: ...
+              def lift(
+                  self,
+                  x: FreeAlgebraQuotientElement[_Scalar],
+              ) -> FreeAlgebraElement[_Scalar]: ...
+              def _element_constructor_(
+                  self,
+                  x: FreeAlgebraQuotientElement[_Scalar]
+                  | FreeAlgebraElement[_Scalar]
+                  | ElementConstructorInput,
+              ) -> FreeAlgebraQuotientElement[_Scalar]: ...
+              def multiplication_matrix(
+                  self,
+                  x: FreeAlgebraQuotientElement[_Scalar],
+                  side: str = ...,
+              ) -> Matrix[_Scalar]: ...
+          PYI
+
+          cat > sage-stubs/algebras/clifford_algebra.pyi <<'PYI'
+          from collections.abc import Iterable, Mapping, Sequence
+          from typing import Generic, Self, TypeVar
+
+          from sage.combinat.free_module import CombinatorialFreeModule
+          from sage.matrix.matrix import Matrix
+          from sage.quadratic_forms.quadratic_form import QuadraticForm
+          from sage.sets.family import AbstractFamily
+          from sage.structure.element import AlgebraElement, RingElement
+          from sage.structure.parent import ElementConstructorInput, Parent
+
+          _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+          type CliffordBasisIndex = tuple[int, ...]
+
+
+          class CliffordAlgebraElement(AlgebraElement, Generic[_Scalar]):
+              def parent(self) -> CliffordAlgebra[_Scalar]: ...
+              def monomial_coefficients(
+                  self,
+                  copy: bool = ...,
+              ) -> dict[CliffordBasisIndex, _Scalar]: ...
+              def support(self) -> list[CliffordBasisIndex]: ...
+              def coefficient(self, index: CliffordBasisIndex) -> _Scalar: ...
+              __getitem__ = coefficient
+              def homogeneous_component(self, degree: int) -> CliffordAlgebraElement[_Scalar]: ...
+              def is_homogeneous(self) -> bool: ...
+              def degree(self) -> int: ...
+              def grade_involution(self) -> Self: ...
+              def reversion(self) -> Self: ...
+              def conjugation(self) -> Self: ...
+              def scalar(self) -> _Scalar: ...
+              def quadratic_form(self) -> _Scalar: ...
+              def __neg__(self) -> Self: ...
+              def __add__(self, other: CliffordAlgebraElement[_Scalar]) -> Self: ...
+              def __sub__(self, other: CliffordAlgebraElement[_Scalar]) -> Self: ...
+              def __mul__(self, other: CliffordAlgebraElement[_Scalar] | _Scalar) -> Self: ...
+              def __rmul__(self, other: _Scalar) -> Self: ...
+
+
+          class CliffordAlgebra(
+              CombinatorialFreeModule,
+              Generic[_Scalar],
+          ):
+              Element: type[CliffordAlgebraElement[_Scalar]]
+              def __init__(
+                  self,
+                  quadratic_form: QuadraticForm | Matrix[_Scalar],
+                  names: str | Sequence[str] | None = ...,
+              ) -> None: ...
+              def base_ring(self) -> Parent[_Scalar]: ...
+              def quadratic_form(self) -> QuadraticForm: ...
+              def gram_matrix(self) -> Matrix[_Scalar]: ...
+              def dimension(self) -> int: ...
+              def ngens(self) -> int: ...
+              def gen(self, i: int) -> CliffordAlgebraElement[_Scalar]: ...
+              def gens(self) -> tuple[CliffordAlgebraElement[_Scalar], ...]: ...
+              algebra_generators = gens
+              def basis(self) -> AbstractFamily: ...
+              def one_basis(self) -> CliffordBasisIndex: ...
+              def product_on_basis(
+                  self,
+                  left: CliffordBasisIndex,
+                  right: CliffordBasisIndex,
+              ) -> CliffordAlgebraElement[_Scalar]: ...
+              def _element_constructor_(
+                  self,
+                  x: CliffordAlgebraElement[_Scalar]
+                  | Mapping[CliffordBasisIndex, ElementConstructorInput]
+                  | ElementConstructorInput,
+              ) -> CliffordAlgebraElement[_Scalar]: ...
+
+
+          class ExteriorAlgebraElement(CliffordAlgebraElement[_Scalar], Generic[_Scalar]):
+              def wedge(self, other: ExteriorAlgebraElement[_Scalar]) -> Self: ...
+              def coproduct(self) -> object: ...
+              def boundary(self) -> Self: ...
+
+
+          class ExteriorAlgebra(CliffordAlgebra[_Scalar], Generic[_Scalar]):
+              Element: type[ExteriorAlgebraElement[_Scalar]]
+              def product_on_basis(
+                  self,
+                  left: CliffordBasisIndex,
+                  right: CliffordBasisIndex,
+              ) -> ExteriorAlgebraElement[_Scalar]: ...
+              def volume_form(self) -> ExteriorAlgebraElement[_Scalar]: ...
+          PYI
+
+          if [ -f sage-stubs/algebras/exterior_algebra.pyi ]; then
+            cat > sage-stubs/algebras/exterior_algebra.pyi <<'PYI'
+          from sage.algebras.clifford_algebra import (
+              ExteriorAlgebra as ExteriorAlgebra,
+              ExteriorAlgebraElement as ExteriorAlgebraElement,
+          )
+          PYI
+          fi
+
+          mkdir -p sage-stubs/algebras/letterplace
+
+          cat > sage-stubs/algebras/letterplace/free_algebra_element_letterplace.pyi <<'PYI'
+          from typing import Generic, Self, TypeVar
+
+          from sage.rings.polynomial.multi_polynomial import MPolynomial
+          from sage.structure.element import AlgebraElement, RingElement
+
+          _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+
+
+          class FreeAlgebraElement_letterplace(AlgebraElement, Generic[_Scalar]):
+              def parent(self) -> FreeAlgebra_letterplace[_Scalar]: ...
+              def letterplace_polynomial(self) -> MPolynomial: ...
+              def degree(self) -> int: ...
+              def is_homogeneous(self) -> bool: ...
+              def homogeneous_component(self, degree: int) -> Self: ...
+              def normal_form(self, ideal: LetterplaceIdeal[_Scalar]) -> Self: ...
+              def __neg__(self) -> Self: ...
+              def __add__(self, other: FreeAlgebraElement_letterplace[_Scalar]) -> Self: ...
+              def __sub__(self, other: FreeAlgebraElement_letterplace[_Scalar]) -> Self: ...
+              def __mul__(self, other: FreeAlgebraElement_letterplace[_Scalar] | _Scalar) -> Self: ...
+              def __rmul__(self, other: _Scalar) -> Self: ...
+
+
+          from sage.algebras.letterplace.free_algebra_letterplace import FreeAlgebra_letterplace
+          from sage.algebras.letterplace.letterplace_ideal import LetterplaceIdeal
+          PYI
+
+          cat > sage-stubs/algebras/letterplace/free_algebra_letterplace.pyi <<'PYI'
+          from collections.abc import Iterable, Sequence
+          from typing import Generic, TypeVar
+
+          from sage.algebras.letterplace.free_algebra_element_letterplace import (
+              FreeAlgebraElement_letterplace,
+          )
+          from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
+          from sage.sets.family import AbstractFamily
+          from sage.structure.element import RingElement
+          from sage.structure.parent import ElementConstructorInput, Parent
+
+          _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+
+
+          class FreeAlgebra_letterplace(
+              Parent[FreeAlgebraElement_letterplace[_Scalar]],
+              Generic[_Scalar],
+          ):
+              Element: type[FreeAlgebraElement_letterplace[_Scalar]]
+              def __init__(
+                  self,
+                  base_ring: Parent[_Scalar],
+                  names: str | Sequence[str],
+                  degrees: Sequence[int] | None = ...,
+              ) -> None: ...
+              def base_ring(self) -> Parent[_Scalar]: ...
+              def polynomial_ring(self, degree: int | None = ...) -> MPolynomialRing_base: ...
+              def ngens(self) -> int: ...
+              def gen(self, i: int) -> FreeAlgebraElement_letterplace[_Scalar]: ...
+              def gens(self) -> tuple[FreeAlgebraElement_letterplace[_Scalar], ...]: ...
+              algebra_generators = gens
+              def basis(self) -> AbstractFamily: ...
+              def ideal(
+                  self,
+                  generators: Iterable[FreeAlgebraElement_letterplace[_Scalar]],
+              ) -> LetterplaceIdeal[_Scalar]: ...
+              def _element_constructor_(
+                  self,
+                  x: FreeAlgebraElement_letterplace[_Scalar] | ElementConstructorInput,
+              ) -> FreeAlgebraElement_letterplace[_Scalar]: ...
+
+
+          from sage.algebras.letterplace.letterplace_ideal import LetterplaceIdeal
+          PYI
+
+          cat > sage-stubs/algebras/letterplace/letterplace_ideal.pyi <<'PYI'
+          from collections.abc import Iterable, Iterator
+          from typing import Generic, Self, TypeVar
+
+          from sage.algebras.letterplace.free_algebra_element_letterplace import (
+              FreeAlgebraElement_letterplace,
+          )
+          from sage.rings.noncommutative_ideals import Ideal_nc
+          from sage.structure.element import RingElement
+
+          _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+
+
+          class LetterplaceIdeal(Ideal_nc, Generic[_Scalar]):
+              def gens(self) -> tuple[FreeAlgebraElement_letterplace[_Scalar], ...]: ...
+              def __iter__(self) -> Iterator[FreeAlgebraElement_letterplace[_Scalar]]: ...
+              def groebner_basis(
+                  self,
+                  degree_bound: int | None = ...,
+                  algorithm: str | None = ...,
+              ) -> tuple[FreeAlgebraElement_letterplace[_Scalar], ...]: ...
+              def normal_form(
+                  self,
+                  element: FreeAlgebraElement_letterplace[_Scalar],
+              ) -> FreeAlgebraElement_letterplace[_Scalar]: ...
+              reduce = normal_form
+              def normal_basis(
+                  self,
+                  degree: int | None = ...,
+              ) -> tuple[FreeAlgebraElement_letterplace[_Scalar], ...]: ...
+              def quotient(self) -> object: ...
+              def __add__(self, other: LetterplaceIdeal[_Scalar]) -> Self: ...
+              def __mul__(self, other: LetterplaceIdeal[_Scalar]) -> Self: ...
+          PYI
+
+      - name: Parse changed stubs
+        run: |
+          python - <<'PY'
+          import ast
+          from pathlib import Path
+
+          files = [
+              Path("sage-stubs/algebras/free_algebra_element.pyi"),
+              Path("sage-stubs/algebras/free_algebra.pyi"),
+              Path("sage-stubs/algebras/free_algebra_quotient.pyi"),
+              Path("sage-stubs/algebras/clifford_algebra.pyi"),
+              Path("sage-stubs/algebras/letterplace/free_algebra_element_letterplace.pyi"),
+              Path("sage-stubs/algebras/letterplace/free_algebra_letterplace.pyi"),
+              Path("sage-stubs/algebras/letterplace/letterplace_ideal.pyi"),
+          ]
+          exterior = Path("sage-stubs/algebras/exterior_algebra.pyi")
+          if exterior.exists():
+              files.append(exterior)
+          for path in files:
+              ast.parse(path.read_text(), filename=str(path), feature_version=(3, 12))
+          PY
+
+      - name: Commit, rebase, and push to main
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "D. Zack Garza"
+          git config user.email "dzackgarza@gmail.com"
+          git add sage-stubs/algebras
+          git commit --no-verify -m "feat(stubs): type free associative and Clifford algebras"
+          for attempt in 1 2 3 4; do
+            git fetch origin main
+            git rebase origin/main
+            if git push origin HEAD:main; then
+              exit 0
+            fi
+          done
+          exit 1
