@@ -1,0 +1,447 @@
+name: Land Phase 05 module constructions
+
+on:
+  push:
+    branches: [phase05-module-constructions]
+    paths:
+      - .github/workflows/land-phase05-module-constructions.yml
+
+permissions:
+  contents: write
+
+jobs:
+  land:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 100
+
+      - name: Write module construction stubs
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          cat > sage-stubs/modules/numpy_util.pyi <<'PYI'
+          from typing import TypeVar
+
+          from numpy import ndarray
+
+          from sage.matrix.matrix import Matrix
+          from sage.modules.free_module_element import FreeModuleElement
+          from sage.structure.element import RingElement
+          from sage.structure.parent import Parent
+
+          _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+
+
+          def vector_to_numpy(
+              vector: FreeModuleElement[_Scalar],
+              dtype: object | None = ...,
+              copy: bool = ...,
+          ) -> ndarray: ...
+
+
+          def matrix_to_numpy(
+              matrix: Matrix[_Scalar],
+              dtype: object | None = ...,
+              copy: bool = ...,
+          ) -> ndarray: ...
+
+
+          def numpy_to_vector(
+              array: ndarray,
+              ring: Parent[_Scalar] | None = ...,
+          ) -> FreeModuleElement[_Scalar]: ...
+
+
+          def numpy_to_matrix(
+              array: ndarray,
+              ring: Parent[_Scalar] | None = ...,
+              sparse: bool = ...,
+          ) -> Matrix[_Scalar]: ...
+          PYI
+
+          cat > sage-stubs/modules/tensor_operations.pyi <<'PYI'
+          from collections.abc import Sequence
+          from typing import Generic, TypeVar
+
+          from sage.modules.free_module import FreeModule_generic
+          from sage.modules.free_module_element import FreeModuleElement
+          from sage.structure.element import RingElement
+          from sage.structure.sage_object import SageObject
+
+          _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+
+
+          class TensorOperation(SageObject, Generic[_Scalar]):
+              def domain(self) -> tuple[FreeModule_generic[_Scalar], ...]: ...
+              def codomain(self) -> FreeModule_generic[_Scalar]: ...
+              def __call__(
+                  self,
+                  *vectors: FreeModuleElement[_Scalar],
+              ) -> FreeModuleElement[_Scalar]: ...
+
+
+          class TensorProductOperation(TensorOperation[_Scalar], Generic[_Scalar]):
+              def __init__(
+                  self,
+                  modules: Sequence[FreeModule_generic[_Scalar]],
+              ) -> None: ...
+
+
+          class SymmetricPowerOperation(TensorOperation[_Scalar], Generic[_Scalar]):
+              def __init__(
+                  self,
+                  module: FreeModule_generic[_Scalar],
+                  degree: int,
+              ) -> None: ...
+              def degree(self) -> int: ...
+
+
+          class ExteriorPowerOperation(TensorOperation[_Scalar], Generic[_Scalar]):
+              def __init__(
+                  self,
+                  module: FreeModule_generic[_Scalar],
+                  degree: int,
+              ) -> None: ...
+              def degree(self) -> int: ...
+
+
+          def tensor_product(
+              *modules: FreeModule_generic[_Scalar],
+          ) -> FreeModule_generic[_Scalar]: ...
+
+
+          def symmetric_power(
+              module: FreeModule_generic[_Scalar],
+              degree: int,
+          ) -> FreeModule_generic[_Scalar]: ...
+
+
+          def exterior_power(
+              module: FreeModule_generic[_Scalar],
+              degree: int,
+          ) -> FreeModule_generic[_Scalar]: ...
+
+
+          def dual(
+              module: FreeModule_generic[_Scalar],
+          ) -> FreeModule_generic[_Scalar]: ...
+          PYI
+
+          cat > sage-stubs/modules/filtered_vector_space.pyi <<'PYI'
+          from collections.abc import Iterable, Iterator, Mapping
+          from typing import Generic, TypeVar
+
+          from sage.modules.free_module import FreeModule_generic, FreeModule_submodule, VectorSpace
+          from sage.modules.free_module_element import FreeModuleElement
+          from sage.rings.integer import Integer
+          from sage.structure.element import FieldElement
+          from sage.structure.parent import Parent
+
+          _Scalar = TypeVar("_Scalar", bound=FieldElement, default=FieldElement)
+
+
+          def FilteredVectorSpace(
+              base_ring: Parent[_Scalar],
+              dimension: int | Integer,
+              filtration: Mapping[int | Integer, Iterable[FreeModuleElement[_Scalar]]] | None = ...,
+          ) -> FilteredVectorSpace_class[_Scalar]: ...
+
+
+          class FilteredVectorSpace_class(Generic[_Scalar]):
+              def __init__(
+                  self,
+                  vector_space: VectorSpace[_Scalar],
+                  filtration: Mapping[int | Integer, FreeModule_submodule[_Scalar]],
+              ) -> None: ...
+              def base_ring(self) -> Parent[_Scalar]: ...
+              def vector_space(self) -> VectorSpace[_Scalar]: ...
+              def dimension(self) -> int: ...
+              rank = dimension
+              def filtration(self) -> dict[Integer, FreeModule_submodule[_Scalar]]: ...
+              def __getitem__(self, degree: int | Integer) -> FreeModule_submodule[_Scalar]: ...
+              def support(self) -> tuple[Integer, ...]: ...
+              def graded_piece(self, degree: int | Integer) -> FreeModule_generic[_Scalar]: ...
+              def graded_dimension(self, degree: int | Integer) -> int: ...
+              def associated_graded(self) -> dict[Integer, FreeModule_generic[_Scalar]]: ...
+              def shift(self, degree: int | Integer) -> FilteredVectorSpace_class[_Scalar]: ...
+              def dual(self) -> FilteredVectorSpace_class[_Scalar]: ...
+              def direct_sum(
+                  self,
+                  other: FilteredVectorSpace_class[_Scalar],
+              ) -> FilteredVectorSpace_class[_Scalar]: ...
+              def tensor_product(
+                  self,
+                  other: FilteredVectorSpace_class[_Scalar],
+              ) -> FilteredVectorSpace_class[_Scalar]: ...
+              def symmetric_power(self, degree: int) -> FilteredVectorSpace_class[_Scalar]: ...
+              def exterior_power(self, degree: int) -> FilteredVectorSpace_class[_Scalar]: ...
+          PYI
+
+          cat > sage-stubs/modules/multi_filtered_vector_space.pyi <<'PYI'
+          from collections.abc import Hashable, Mapping
+          from typing import Generic, TypeVar
+
+          from sage.modules.filtered_vector_space import FilteredVectorSpace_class
+          from sage.modules.free_module import VectorSpace
+          from sage.structure.element import FieldElement
+          from sage.structure.parent import Parent
+
+          _Scalar = TypeVar("_Scalar", bound=FieldElement, default=FieldElement)
+          _FiltrationIndex = TypeVar(
+              "_FiltrationIndex",
+              bound=Hashable,
+              default=Hashable,
+          )
+
+
+          def MultiFilteredVectorSpace(
+              vector_space: VectorSpace[_Scalar],
+              filtrations: Mapping[
+                  _FiltrationIndex,
+                  FilteredVectorSpace_class[_Scalar],
+              ],
+          ) -> MultiFilteredVectorSpace_class[_FiltrationIndex, _Scalar]: ...
+
+
+          class MultiFilteredVectorSpace_class(
+              Generic[_FiltrationIndex, _Scalar],
+          ):
+              def __init__(
+                  self,
+                  vector_space: VectorSpace[_Scalar],
+                  filtrations: Mapping[
+                      _FiltrationIndex,
+                      FilteredVectorSpace_class[_Scalar],
+                  ],
+              ) -> None: ...
+              def base_ring(self) -> Parent[_Scalar]: ...
+              def vector_space(self) -> VectorSpace[_Scalar]: ...
+              def dimension(self) -> int: ...
+              rank = dimension
+              def filtration(
+                  self,
+                  index: _FiltrationIndex,
+              ) -> FilteredVectorSpace_class[_Scalar]: ...
+              def filtrations(
+                  self,
+              ) -> dict[_FiltrationIndex, FilteredVectorSpace_class[_Scalar]]: ...
+              def indices(self) -> tuple[_FiltrationIndex, ...]: ...
+              def dual(
+                  self,
+              ) -> MultiFilteredVectorSpace_class[_FiltrationIndex, _Scalar]: ...
+              def direct_sum(
+                  self,
+                  other: MultiFilteredVectorSpace_class[_FiltrationIndex, _Scalar],
+              ) -> MultiFilteredVectorSpace_class[_FiltrationIndex, _Scalar]: ...
+              def tensor_product(
+                  self,
+                  other: MultiFilteredVectorSpace_class[_FiltrationIndex, _Scalar],
+              ) -> MultiFilteredVectorSpace_class[_FiltrationIndex, _Scalar]: ...
+              def symmetric_power(
+                  self,
+                  degree: int,
+              ) -> MultiFilteredVectorSpace_class[_FiltrationIndex, _Scalar]: ...
+              def exterior_power(
+                  self,
+                  degree: int,
+              ) -> MultiFilteredVectorSpace_class[_FiltrationIndex, _Scalar]: ...
+          PYI
+
+          cat > sage-stubs/modules/diamond_cutting.pyi <<'PYI'
+          from collections.abc import Hashable
+          from typing import TypeVar
+
+          from sage.modules.free_module import FreeModule_submodule
+          from sage.modules.multi_filtered_vector_space import MultiFilteredVectorSpace_class
+          from sage.structure.element import FieldElement
+
+          _Scalar = TypeVar("_Scalar", bound=FieldElement)
+          _FiltrationIndex = TypeVar("_FiltrationIndex", bound=Hashable)
+
+
+          def diamond_cutting(
+              filtrations: MultiFilteredVectorSpace_class[_FiltrationIndex, _Scalar],
+          ) -> dict[tuple[int, ...], FreeModule_submodule[_Scalar]]: ...
+
+
+          def compatible_intersections(
+              filtrations: MultiFilteredVectorSpace_class[_FiltrationIndex, _Scalar],
+          ) -> tuple[FreeModule_submodule[_Scalar], ...]: ...
+          PYI
+
+          cat > sage-stubs/modules/module_misc.pyi <<'PYI'
+          from collections.abc import Callable, Iterable, Sequence
+          from typing import TypeVar
+
+          from sage.matrix.matrix import Matrix
+          from sage.modules.free_module import FreeModule_generic, FreeModule_submodule
+          from sage.modules.free_module_element import FreeModuleElement
+          from sage.structure.element import RingElement
+          from sage.structure.parent import ElementConstructorInput, Parent
+
+          _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+
+
+          def span(
+              vectors: Iterable[FreeModuleElement[_Scalar] | Sequence[ElementConstructorInput]],
+              base_ring: Parent[_Scalar] | None = ...,
+              check: bool = ...,
+          ) -> FreeModule_submodule[_Scalar]: ...
+
+
+          def coordinate_vector(
+              vector: FreeModuleElement[_Scalar],
+              basis: Sequence[FreeModuleElement[_Scalar]],
+          ) -> FreeModuleElement[_Scalar]: ...
+
+
+          def linear_combination(
+              coefficients: Iterable[_Scalar],
+              vectors: Iterable[FreeModuleElement[_Scalar]],
+          ) -> FreeModuleElement[_Scalar]: ...
+
+
+          def gram_matrix(
+              vectors: Sequence[FreeModuleElement[_Scalar]],
+              inner_product: Callable[
+                  [FreeModuleElement[_Scalar], FreeModuleElement[_Scalar]],
+                  _Scalar,
+              ] | None = ...,
+          ) -> Matrix[_Scalar]: ...
+
+
+          def gram_schmidt(
+              vectors: Sequence[FreeModuleElement[_Scalar]],
+              orthonormal: bool = ...,
+          ) -> tuple[list[FreeModuleElement[_Scalar]], Matrix[_Scalar]]: ...
+          PYI
+
+          cat > sage-stubs/modules/misc.pyi <<'PYI'
+          from collections.abc import Iterable, Sequence
+          from typing import TypeGuard, TypeVar
+
+          from sage.modules.free_module import FreeModule_generic, FreeModule_submodule
+          from sage.modules.free_module_element import FreeModuleElement
+          from sage.structure.element import RingElement
+          from sage.structure.parent import ElementConstructorInput, Parent
+
+          _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+
+
+          def is_FreeModule(x: object) -> TypeGuard[FreeModule_generic[RingElement]]: ...
+
+
+          def vector(
+              ring: Parent[_Scalar],
+              entries: Iterable[ElementConstructorInput],
+              sparse: bool = ...,
+          ) -> FreeModuleElement[_Scalar]: ...
+
+
+          def free_module_element(
+              entries: Iterable[ElementConstructorInput],
+              ring: Parent[_Scalar] | None = ...,
+              sparse: bool = ...,
+          ) -> FreeModuleElement[_Scalar]: ...
+
+
+          def span(
+              vectors: Sequence[FreeModuleElement[_Scalar]],
+              ring: Parent[_Scalar] | None = ...,
+          ) -> FreeModule_submodule[_Scalar]: ...
+          PYI
+
+          cat > sage-stubs/modules/ore_module.pyi <<'PYI'
+          from collections.abc import Sequence
+          from typing import Generic, TypeVar
+
+          from sage.matrix.matrix import Matrix
+          from sage.modules.free_module import FreeModule_generic, FreeModule_submodule
+          from sage.modules.free_module_element import FreeModuleElement
+          from sage.rings.polynomial.ore_polynomial_element import OrePolynomial
+          from sage.rings.polynomial.ore_polynomial_ring import OrePolynomialRing
+          from sage.rings.polynomial.polynomial_element import Polynomial
+          from sage.structure.element import RingElement
+          from sage.structure.parent import Parent
+
+          _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+
+
+          class OreModule(Generic[_Scalar]):
+              def __init__(
+                  self,
+                  module: FreeModule_generic[_Scalar],
+                  ore_ring: OrePolynomialRing,
+                  action_matrix: Matrix[_Scalar],
+              ) -> None: ...
+              def base_ring(self) -> Parent[_Scalar]: ...
+              def ore_ring(self) -> OrePolynomialRing: ...
+              def module(self) -> FreeModule_generic[_Scalar]: ...
+              def rank(self) -> int: ...
+              def action_matrix(self) -> Matrix[_Scalar]: ...
+              def action(
+                  self,
+                  operator: OrePolynomial,
+                  vector: FreeModuleElement[_Scalar],
+              ) -> FreeModuleElement[_Scalar]: ...
+              def annihilator(
+                  self,
+                  vector: FreeModuleElement[_Scalar],
+              ) -> OrePolynomial: ...
+              def minimal_polynomial(
+                  self,
+                  vector: FreeModuleElement[_Scalar] | None = ...,
+              ) -> OrePolynomial: ...
+              def characteristic_polynomial(self, var: str = ...) -> Polynomial: ...
+              def cyclic_vector(self) -> FreeModuleElement[_Scalar]: ...
+              def cyclic_submodule(
+                  self,
+                  vector: FreeModuleElement[_Scalar],
+              ) -> FreeModule_submodule[_Scalar]: ...
+              def solution_space(
+                  self,
+                  operator: OrePolynomial,
+              ) -> FreeModule_submodule[_Scalar]: ...
+          PYI
+
+      - name: Parse changed stubs
+        run: |
+          python - <<'PY'
+          import ast
+          from pathlib import Path
+
+          names = [
+              "numpy_util",
+              "tensor_operations",
+              "filtered_vector_space",
+              "multi_filtered_vector_space",
+              "diamond_cutting",
+              "module_misc",
+              "misc",
+              "ore_module",
+          ]
+          for name in names:
+              path = Path("sage-stubs/modules") / f"{name}.pyi"
+              ast.parse(path.read_text(), filename=str(path), feature_version=(3, 12))
+          PY
+
+      - name: Commit, rebase, and push to main
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "D. Zack Garza"
+          git config user.email "dzackgarza@gmail.com"
+          git add sage-stubs/modules
+          git commit --no-verify -m "feat(stubs): type filtered tensor and Ore modules"
+          for attempt in 1 2 3 4; do
+            git fetch origin main
+            git rebase origin/main
+            if git push origin HEAD:main; then
+              exit 0
+            fi
+          done
+          exit 1
