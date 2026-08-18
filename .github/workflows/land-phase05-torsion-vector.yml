@@ -1,0 +1,327 @@
+name: Land Phase 05 torsion and vector modules
+
+on:
+  push:
+    branches: [phase05-torsion-vector-modules]
+    paths:
+      - .github/workflows/land-phase05-torsion-vector.yml
+
+permissions:
+  contents: write
+
+jobs:
+  land:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 100
+
+      - name: Write torsion and vector-space module stubs
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          cat > sage-stubs/modules/torsion_quadratic_module.pyi <<'PYI'
+          from collections.abc import Iterable, Iterator
+          from typing import Self
+
+          from sage.matrix.matrix import Matrix
+          from sage.modules.free_module import FreeModule_generic, FreeModule_submodule
+          from sage.modules.free_module_element import FreeModuleElement
+          from sage.rings.integer import Integer
+          from sage.rings.rational import Rational
+          from sage.structure.element import ModuleElement, RingElement
+          from sage.structure.parent import ElementConstructorInput, Parent
+
+
+          class TorsionQuadraticModuleElement(ModuleElement):
+              def parent(self) -> TorsionQuadraticModule: ...
+              def lift(self) -> FreeModuleElement[RingElement]: ...
+              def vector(self) -> FreeModuleElement[RingElement]: ...
+              def additive_order(self) -> Integer: ...
+              order = additive_order
+              def bilinear_product(
+                  self,
+                  other: TorsionQuadraticModuleElement,
+              ) -> Rational: ...
+              inner_product = bilinear_product
+              def quadratic_product(self) -> Rational: ...
+              q = quadratic_product
+              def __neg__(self) -> Self: ...
+              def __add__(self, other: TorsionQuadraticModuleElement) -> Self: ...
+              def __sub__(self, other: TorsionQuadraticModuleElement) -> Self: ...
+              def __rmul__(self, scalar: int | Integer) -> Self: ...
+
+
+          class TorsionQuadraticModule(Parent[TorsionQuadraticModuleElement]):
+              Element: type[TorsionQuadraticModuleElement]
+              def __init__(
+                  self,
+                  V: FreeModule_generic[RingElement],
+                  W: FreeModule_submodule[RingElement],
+                  modulus: int | Integer | Rational = ...,
+                  check: bool = ...,
+              ) -> None: ...
+              def cover(self) -> FreeModule_generic[RingElement]: ...
+              V = cover
+              def relations(self) -> FreeModule_submodule[RingElement]: ...
+              W = relations
+              def modulus(self) -> Rational: ...
+              def gram_matrix(self) -> Matrix[Rational]: ...
+              def bilinear_form(self) -> Matrix[Rational]: ...
+              def quadratic_form(self) -> Matrix[Rational]: ...
+              def invariants(self) -> tuple[Integer, ...]: ...
+              elementary_divisors = invariants
+              def ngens(self) -> int: ...
+              def gen(self, i: int | Integer) -> TorsionQuadraticModuleElement: ...
+              def gens(self) -> tuple[TorsionQuadraticModuleElement, ...]: ...
+              def zero(self) -> TorsionQuadraticModuleElement: ...
+              def __iter__(self) -> Iterator[TorsionQuadraticModuleElement]: ...
+              def _element_constructor_(
+                  self,
+                  x: TorsionQuadraticModuleElement
+                  | FreeModuleElement[RingElement]
+                  | Iterable[ElementConstructorInput],
+              ) -> TorsionQuadraticModuleElement: ...
+              def cardinality(self) -> Integer: ...
+              order = cardinality
+              def is_nondegenerate(self) -> bool: ...
+              def radical(self) -> TorsionQuadraticModule: ...
+              def orthogonal_complement(
+                  self,
+                  submodule: Iterable[TorsionQuadraticModuleElement],
+              ) -> TorsionQuadraticModule: ...
+              def primary_part(self, p: int | Integer) -> TorsionQuadraticModule: ...
+              def jordan_decomposition(self) -> tuple[TorsionQuadraticModule, ...]: ...
+          PYI
+
+          cat > sage-stubs/modules/vector_space_homspace.pyi <<'PYI'
+          from typing import Generic, TypeVar
+
+          from sage.matrix.matrix_space import MatrixSpace
+          from sage.modules.free_module import VectorSpace
+          from sage.modules.free_module_element import FreeModuleElement
+          from sage.modules.free_module_homspace import FreeModuleHomspace
+          from sage.modules.vector_space_morphism import VectorSpaceMorphism
+          from sage.sets.family import AbstractFamily
+          from sage.structure.element import FieldElement
+
+          _Scalar = TypeVar("_Scalar", bound=FieldElement, default=FieldElement)
+
+
+          class VectorSpaceHomspace(
+              FreeModuleHomspace[_Scalar],
+              Generic[_Scalar],
+          ):
+              element_class: type[VectorSpaceMorphism[_Scalar]]
+              def domain(self) -> VectorSpace[_Scalar]: ...
+              def codomain(self) -> VectorSpace[_Scalar]: ...
+              def matrix_space(self) -> MatrixSpace[_Scalar]: ...
+              def dimension(self) -> int: ...
+              def basis(self) -> AbstractFamily: ...
+              def zero(self) -> VectorSpaceMorphism[_Scalar]: ...
+              def identity(self) -> VectorSpaceMorphism[_Scalar]: ...
+              one = identity
+              def _element_constructor_(
+                  self,
+                  matrix: object,
+                  side: str = ...,
+              ) -> VectorSpaceMorphism[_Scalar]: ...
+              def natural_map(self) -> VectorSpaceMorphism[_Scalar]: ...
+          PYI
+
+          cat > sage-stubs/modules/vector_space_morphism.pyi <<'PYI'
+          from typing import Generic, Self, TypeVar
+
+          from sage.matrix.matrix import Matrix
+          from sage.modules.free_module import FreeModule_submodule, VectorSpace
+          from sage.modules.free_module_element import FreeModuleElement
+          from sage.modules.free_module_morphism import FreeModuleMorphism
+          from sage.rings.polynomial.polynomial_element import Polynomial
+          from sage.structure.element import FieldElement
+
+          _Scalar = TypeVar("_Scalar", bound=FieldElement, default=FieldElement)
+
+
+          class VectorSpaceMorphism(
+              FreeModuleMorphism[_Scalar],
+              Generic[_Scalar],
+          ):
+              def domain(self) -> VectorSpace[_Scalar]: ...
+              def codomain(self) -> VectorSpace[_Scalar]: ...
+              def matrix(self, side: str | None = ...) -> Matrix[_Scalar]: ...
+              def kernel(self) -> FreeModule_submodule[_Scalar]: ...
+              def image(self) -> FreeModule_submodule[_Scalar]: ...
+              range = image
+              def rank(self) -> int: ...
+              def nullity(self) -> int: ...
+              def characteristic_polynomial(self, var: str = ...) -> Polynomial: ...
+              charpoly = characteristic_polynomial
+              def minimal_polynomial(self, var: str = ...) -> Polynomial: ...
+              minpoly = minimal_polynomial
+              def eigenvalues(self) -> list[_Scalar]: ...
+              def eigenvectors(self) -> list[tuple[_Scalar, list[FreeModuleElement[_Scalar]], int]]: ...
+              def is_diagonalizable(self) -> bool: ...
+              def inverse(self) -> Self: ...
+              __invert__ = inverse
+          PYI
+
+          cat > sage-stubs/modules/module.pyi <<'PYI'
+          from collections.abc import Iterable
+          from typing import Generic, TypeVar
+
+          from sage.modules.free_module_element import FreeModuleElement
+          from sage.structure.element import ModuleElement, RingElement
+          from sage.structure.parent import ElementConstructorInput, Parent
+
+          _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+          _Element = TypeVar("_Element", bound=ModuleElement, default=ModuleElement)
+
+
+          class Module(Parent[_Element], Generic[_Scalar, _Element]):
+              Element: type[_Element]
+              def __init__(
+                  self,
+                  base_ring: Parent[_Scalar],
+                  category: object | None = ...,
+              ) -> None: ...
+              def base_ring(self) -> Parent[_Scalar]: ...
+              def zero(self) -> _Element: ...
+              def an_element(self) -> _Element: ...
+              def _element_constructor_(
+                  self,
+                  x: ElementConstructorInput,
+              ) -> _Element: ...
+              def submodule(
+                  self,
+                  generators: Iterable[_Element],
+                  **kwds: object,
+              ) -> Module[_Scalar, _Element]: ...
+              def quotient(
+                  self,
+                  submodule: Module[_Scalar, _Element],
+                  **kwds: object,
+              ) -> Module[_Scalar, _Element]: ...
+              def tensor_product(
+                  self,
+                  other: Module[_Scalar, ModuleElement],
+              ) -> Module[_Scalar, ModuleElement]: ...
+              def direct_sum(
+                  self,
+                  other: Module[_Scalar, ModuleElement],
+              ) -> Module[_Scalar, ModuleElement]: ...
+          PYI
+
+          cat > sage-stubs/modules/module_functors.pyi <<'PYI'
+          from collections.abc import Sequence
+          from typing import Generic, TypeVar
+
+          from sage.categories.functor import ConstructionFunctor, Functor
+          from sage.modules.free_module import FreeModule_generic
+          from sage.modules.free_module_element import FreeModuleElement
+          from sage.modules.quotient_module import FreeModule_quotient
+          from sage.structure.element import RingElement
+          from sage.structure.parent import Parent
+
+          _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+          _TargetScalar = TypeVar("_TargetScalar", bound=RingElement)
+
+
+          class ModuleFunctor(ConstructionFunctor, Generic[_Scalar]):
+              def rank(self) -> int: ...
+              def __call__(
+                  self,
+                  ring: Parent[_Scalar],
+              ) -> FreeModule_generic[_Scalar]: ...
+
+
+          class FreeModuleFunctor(ModuleFunctor[_Scalar], Generic[_Scalar]):
+              def __init__(
+                  self,
+                  rank: int,
+                  sparse: bool = ...,
+                  inner_product_matrix: object | None = ...,
+              ) -> None: ...
+              def rank(self) -> int: ...
+              def is_sparse(self) -> bool: ...
+              def __call__(
+                  self,
+                  ring: Parent[_Scalar],
+              ) -> FreeModule_generic[_Scalar]: ...
+
+
+          class VectorFunctor(FreeModuleFunctor[_Scalar], Generic[_Scalar]):
+              pass
+
+
+          class SubspaceFunctor(ConstructionFunctor, Generic[_Scalar]):
+              def __init__(
+                  self,
+                  generators: Sequence[FreeModuleElement[_Scalar]],
+                  ambient_dimension: int,
+              ) -> None: ...
+              def __call__(
+                  self,
+                  ring: Parent[_Scalar],
+              ) -> FreeModule_generic[_Scalar]: ...
+
+
+          class QuotientModuleFunctor(ConstructionFunctor, Generic[_Scalar]):
+              def __init__(
+                  self,
+                  relations: Sequence[FreeModuleElement[_Scalar]],
+                  ambient_dimension: int,
+              ) -> None: ...
+              def __call__(
+                  self,
+                  ring: Parent[_Scalar],
+              ) -> FreeModule_quotient[_Scalar]: ...
+
+
+          class BaseChangeFunctor(Functor, Generic[_Scalar, _TargetScalar]):
+              def __init__(
+                  self,
+                  target_ring: Parent[_TargetScalar],
+              ) -> None: ...
+              def __call__(
+                  self,
+                  module: FreeModule_generic[_Scalar],
+              ) -> FreeModule_generic[_TargetScalar]: ...
+          PYI
+
+      - name: Parse changed stubs
+        run: |
+          python - <<'PY'
+          import ast
+          from pathlib import Path
+
+          names = [
+              "torsion_quadratic_module",
+              "vector_space_homspace",
+              "vector_space_morphism",
+              "module",
+              "module_functors",
+          ]
+          for name in names:
+              path = Path("sage-stubs/modules") / f"{name}.pyi"
+              ast.parse(path.read_text(), filename=str(path), feature_version=(3, 12))
+          PY
+
+      - name: Commit, rebase, and push to main
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "D. Zack Garza"
+          git config user.email "dzackgarza@gmail.com"
+          git add sage-stubs/modules
+          git commit --no-verify -m "feat(stubs): type torsion forms and vector-space maps"
+          for attempt in 1 2 3 4; do
+            git fetch origin main
+            git rebase origin/main
+            if git push origin HEAD:main; then
+              exit 0
+            fi
+          done
+          exit 1
