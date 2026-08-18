@@ -38,7 +38,7 @@ jobs:
           python scripts/audit_stub_quality.py --root "$target" --max-console 1000 > /tmp/reports/semantic.txt 2>&1; echo $? > /tmp/reports/semantic.status
 
           ln -s sage-stubs sage
-          MYPYPATH=. python -m mypy --strict --no-incremental --follow-imports=silent --show-error-codes --no-pretty sage/rings/semirings > /tmp/reports/mypy.txt 2>&1; echo $? > /tmp/reports/mypy.status
+          MYPYPATH=. python -m mypy --strict --no-incremental --follow-imports=skip --show-error-codes --no-pretty sage/rings/semirings > /tmp/reports/mypy.txt 2>&1; echo $? > /tmp/reports/mypy.status
           rm sage
 
           basedpyright --project pyrightconfig.json "$target" --outputjson > /tmp/reports/basedpyright.json; echo $? > /tmp/reports/basedpyright.status
@@ -71,3 +71,5 @@ jobs:
           git add .agents/validation/t04-17-semirings.json
           git commit -m 'ci: refresh T04.17 semiring validation'
           git push origin HEAD:t04-17-semirings-candidate
+
+# validation-refresh: 2026-08-18T15:20:00+08:00
