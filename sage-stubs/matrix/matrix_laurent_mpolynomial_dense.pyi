@@ -1,26 +1,26 @@
-from collections.abc import Iterator, Sequence
-from typing import Self, TypeVar
-from sage.matrix.matrix0 import Matrix
-from sage.modules.free_module import FreeModule_generic
-from sage.modules.free_module_element import FreeModuleElement
-from sage.modules.free_module_homspace import FreeModuleHomspace
-from sage.rings.integer import Integer
+from collections.abc import Sequence
+from typing import Self
+
+from sage.matrix.matrix_generic_dense import Matrix_generic_dense
+from sage.rings.polynomial.laurent_polynomial_mpair import LaurentPolynomial_mpair
 from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.rings.rational import Rational
-from sage.rings.real_double import RealDoubleElement
-from sage.rings.complex_double import ComplexDoubleElement
-from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
-from sage.rings.ring import Ring
-from sage.structure.element import RingElement
-from sage.structure.parent import ElementConstructorInput
-from sage.structure.sage_object import SageObject
-from sage.symbolic.expression import Expression
+from sage.structure.parent import ElementConstructorInput, Parent
 
-_Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
 
-import builtins
-
-class _SageObject: ...
-
-class Matrix_laurent_mpolynomial_dense:
-    def laurent_matrix_reduction(self) -> Matrix[_Scalar]: ...
+class Matrix_laurent_mpolynomial_dense(
+    Matrix_generic_dense[LaurentPolynomial_mpair]
+):
+    def __init__(
+        self,
+        parent: Parent[Self],
+        entries: Sequence[LaurentPolynomial_mpair | ElementConstructorInput]
+        | ElementConstructorInput = ...,
+        copy: bool = ...,
+        coerce: bool = ...,
+    ) -> None: ...
+    def determinant(self, algorithm: str = ...) -> LaurentPolynomial_mpair: ...
+    det = determinant
+    def trace(self) -> LaurentPolynomial_mpair: ...
+    def characteristic_polynomial(self, var: str = ...) -> Polynomial: ...
+    charpoly = characteristic_polynomial
+    def monomial_denominator(self) -> LaurentPolynomial_mpair: ...

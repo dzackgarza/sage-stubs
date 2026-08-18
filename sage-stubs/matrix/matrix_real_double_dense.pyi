@@ -1,35 +1,48 @@
-from collections.abc import Iterator, Sequence
-from typing import Self, TypeVar
-from sage.matrix.matrix0 import Matrix
-from sage.modules.free_module import FreeModule_generic
+from collections.abc import Sequence
+from typing import Self
+
+from numpy import ndarray
+
+from sage.matrix.matrix_double_dense import Matrix_double_dense
 from sage.modules.free_module_element import FreeModuleElement
-from sage.modules.free_module_homspace import FreeModuleHomspace
-from sage.rings.integer import Integer
-from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.rings.rational import Rational
-from sage.rings.real_double import RealDoubleElement
 from sage.rings.complex_double import ComplexDoubleElement
-from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
-from sage.rings.ring import Ring
-from sage.structure.element import RingElement
-from sage.structure.parent import ElementConstructorInput
-from sage.structure.sage_object import SageObject
-from sage.symbolic.expression import Expression
+from sage.rings.real_double import RealDoubleElement
+from sage.structure.parent import ElementConstructorInput, Parent
 
-_Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
 
-import builtins
+class Matrix_real_double_dense(Matrix_double_dense[RealDoubleElement]):
+    def __init__(
+        self,
+        parent: Parent[Self],
+        entries: Sequence[float | RealDoubleElement] | ElementConstructorInput = ...,
+        copy: bool = ...,
+        coerce: bool = ...,
+    ) -> None: ...
+    def __copy__(self) -> Self: ...
+    def numpy(self) -> ndarray: ...
+    def list(self) -> list[RealDoubleElement]: ...
+    def row(self, i: int, from_list: bool = ...) -> FreeModuleElement[RealDoubleElement]: ...
+    def column(self, j: int, from_list: bool = ...) -> FreeModuleElement[RealDoubleElement]: ...
+    def determinant(self, algorithm: str = ...) -> RealDoubleElement: ...
+    det = determinant
+    def trace(self) -> RealDoubleElement: ...
+    def rank(self, eps: float | None = ...) -> int: ...
+    def inverse(self) -> Self: ...
+    __invert__ = inverse
+    def cholesky(self) -> Self: ...
+    def eigenvalues(self, algorithm: str = ...) -> list[ComplexDoubleElement]: ...
+    def eigenmatrix_right(
+        self,
+        algorithm: str = ...,
+    ) -> tuple[Matrix_complex_double_dense, Matrix_complex_double_dense]: ...
+    def SVD(self) -> tuple[Self, Self, Self]: ...
+    def QR(self) -> tuple[Self, Self]: ...
+    def solve_right(
+        self,
+        B: Self | FreeModuleElement[RealDoubleElement],
+    ) -> Self | FreeModuleElement[RealDoubleElement]: ...
+    def exp(self) -> Self: ...
+    def logarithm(self) -> Matrix_complex_double_dense: ...
 
-class _SageObject: ...
 
-numpy: _SageObject
-scipy: _SageObject
-
-class Matrix_real_double_dense:
-    def __cinit__(self) -> Matrix_real_double_dense: ...
-    def set_unsafe_double(
-        self, i: builtins.object, j: builtins.object, value: builtins.object
-    ) -> Matrix_real_double_dense: ...
-    def get_unsafe_double(
-        self, i: builtins.object, j: builtins.object
-    ) -> Matrix_real_double_dense: ...
+from sage.matrix.matrix_complex_double_dense import Matrix_complex_double_dense
