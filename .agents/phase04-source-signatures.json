@@ -1,0 +1,1983 @@
+{
+  "bernmm.pyx": {
+    "declarations": [
+      {
+        "line": 32,
+        "text": "cdef extern from \"bernmm/bern_rat.h\":"
+      },
+      {
+        "line": 35,
+        "text": "cdef extern from \"bernmm/bern_modp.h\":"
+      },
+      {
+        "line": 42,
+        "text": "def bernmm_bern_rat(long k, int num_threads=1):"
+      },
+      {
+        "line": 85,
+        "text": "cdef Rational x"
+      },
+      {
+        "line": 98,
+        "text": "def bernmm_bern_modp(long p, long k):"
+      },
+      {
+        "line": 147,
+        "text": "cdef long x"
+      }
+    ],
+    "exists": true,
+    "line_count": 159,
+    "path": "sage-src/src/sage/rings/bernmm.pyx"
+  },
+  "cfinite_sequence.py": {
+    "declarations": [
+      {
+        "decorators": [],
+        "doc": "Return the commutative ring of C-Finite sequences.",
+        "end_line": 169,
+        "kind": "function",
+        "line": 119,
+        "name": "CFiniteSequences",
+        "signature": "(base_ring, names = None, category = None)"
+      },
+      {
+        "attributes": [],
+        "bases": [
+          "FieldElement"
+        ],
+        "decorators": [],
+        "doc": "Create a C-finite sequence given its ordinary generating function.",
+        "end_line": 890,
+        "kind": "class",
+        "line": 172,
+        "methods": [
+          {
+            "decorators": [
+              "staticmethod"
+            ],
+            "doc": "Ensure that elements created by :class:`CFiniteSequence` have the same parent than the ones created by the parent itself and follow the category framework (they should be instance of :class:`CFiniteSequences` automatic element class).",
+            "end_line": 326,
+            "kind": "function",
+            "line": 254,
+            "name": "__classcall_private__",
+            "signature": "(cls, ogf)"
+          },
+          {
+            "decorators": [],
+            "doc": "Initialize the C-Finite sequence.",
+            "end_line": 405,
+            "kind": "function",
+            "line": 328,
+            "name": "__init__",
+            "signature": "(self, parent, ogf)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return textual definition of sequence.",
+            "end_line": 422,
+            "kind": "function",
+            "line": 407,
+            "name": "_repr_",
+            "signature": "(self) -> str"
+          },
+          {
+            "decorators": [],
+            "doc": "Hash value for C finite sequence.",
+            "end_line": 434,
+            "kind": "function",
+            "line": 424,
+            "name": "__hash__",
+            "signature": "(self)"
+          },
+          {
+            "decorators": [],
+            "doc": "Addition of C-finite sequences.",
+            "end_line": 461,
+            "kind": "function",
+            "line": 436,
+            "name": "_add_",
+            "signature": "(self, other)"
+          },
+          {
+            "decorators": [],
+            "doc": "Subtraction of C-finite sequences.",
+            "end_line": 477,
+            "kind": "function",
+            "line": 463,
+            "name": "_sub_",
+            "signature": "(self, other)"
+          },
+          {
+            "decorators": [],
+            "doc": "Multiplication of C-finite sequences.",
+            "end_line": 497,
+            "kind": "function",
+            "line": 479,
+            "name": "_mul_",
+            "signature": "(self, other)"
+          },
+          {
+            "decorators": [],
+            "doc": "Division of C-finite sequences.",
+            "end_line": 513,
+            "kind": "function",
+            "line": 499,
+            "name": "_div_",
+            "signature": "(self, other)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the coefficients of the recurrence representation of the C-finite sequence.",
+            "end_line": 529,
+            "kind": "function",
+            "line": 515,
+            "name": "coefficients",
+            "signature": "(self)"
+          },
+          {
+            "decorators": [],
+            "doc": "Compare two CFiniteSequences.",
+            "end_line": 557,
+            "kind": "function",
+            "line": 531,
+            "name": "__eq__",
+            "signature": "(self, other)"
+          },
+          {
+            "decorators": [],
+            "doc": "Compare two CFiniteSequences.",
+            "end_line": 583,
+            "kind": "function",
+            "line": 559,
+            "name": "__ne__",
+            "signature": "(self, other)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return a slice of the sequence.",
+            "end_line": 684,
+            "kind": "function",
+            "line": 585,
+            "name": "__getitem__",
+            "signature": "(self, key)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the ordinary generating function associated with the CFiniteSequence.",
+            "end_line": 702,
+            "kind": "function",
+            "line": 686,
+            "name": "ogf",
+            "signature": "(self)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the numerator of the o.g.f of ``self``.",
+            "end_line": 715,
+            "kind": "function",
+            "line": 704,
+            "name": "numerator",
+            "signature": "(self)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the numerator of the o.g.f of ``self``.",
+            "end_line": 728,
+            "kind": "function",
+            "line": 717,
+            "name": "denominator",
+            "signature": "(self)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return a string with the recurrence representation of the C-finite sequence.",
+            "end_line": 779,
+            "kind": "function",
+            "line": 730,
+            "name": "recurrence_repr",
+            "signature": "(self) -> str"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the Laurent power series associated with the CFiniteSequence, with precision `n`.",
+            "end_line": 800,
+            "kind": "function",
+            "line": 781,
+            "name": "series",
+            "signature": "(self, n)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return a symbolic expression in ``n``, which equals the n-th term of the sequence.",
+            "end_line": 890,
+            "kind": "function",
+            "line": 802,
+            "name": "closed_form",
+            "signature": "(self, n = 'n')"
+          }
+        ],
+        "name": "CFiniteSequence"
+      },
+      {
+        "attributes": [
+          {
+            "annotation": null,
+            "line": 909,
+            "name": "Element",
+            "value": "CFiniteSequence"
+          }
+        ],
+        "bases": [
+          "Parent",
+          "UniqueRepresentation"
+        ],
+        "decorators": [],
+        "doc": "The class representing the ring of C-Finite Sequences.",
+        "end_line": 1280,
+        "kind": "class",
+        "line": 893,
+        "methods": [
+          {
+            "decorators": [],
+            "doc": "Create the ring of CFiniteSequences over ``base_ring``.",
+            "end_line": 944,
+            "kind": "function",
+            "line": 911,
+            "name": "__init__",
+            "signature": "(self, polynomial_ring, category)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the string representation of ``self``.",
+            "end_line": 956,
+            "kind": "function",
+            "line": 946,
+            "name": "_repr_",
+            "signature": "(self)"
+          },
+          {
+            "decorators": [],
+            "doc": "Construct a C-Finite Sequence.",
+            "end_line": 989,
+            "kind": "function",
+            "line": 958,
+            "name": "_element_constructor_",
+            "signature": "(self, ogf)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the number of generators of ``self``.",
+            "end_line": 1002,
+            "kind": "function",
+            "line": 991,
+            "name": "ngens",
+            "signature": "(self) -> int"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the i-th generator of ``self``.",
+            "end_line": 1029,
+            "kind": "function",
+            "line": 1004,
+            "name": "gen",
+            "signature": "(self, i = 0)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the generators of ``self``.",
+            "end_line": 1041,
+            "kind": "function",
+            "line": 1031,
+            "name": "gens",
+            "signature": "(self) -> tuple"
+          },
+          {
+            "decorators": [],
+            "doc": "Return an element of C-Finite Sequences.",
+            "end_line": 1056,
+            "kind": "function",
+            "line": 1043,
+            "name": "an_element",
+            "signature": "(self)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return ``True`` if x is an element of ``CFiniteSequences`` or canonically coerces to this ring.",
+            "end_line": 1080,
+            "kind": "function",
+            "line": 1058,
+            "name": "__contains__",
+            "signature": "(self, x) -> bool"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the fraction field used to represent the elements of ``self``.",
+            "end_line": 1092,
+            "kind": "function",
+            "line": 1082,
+            "name": "fraction_field",
+            "signature": "(self)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the polynomial ring used to represent the elements of ``self``.",
+            "end_line": 1104,
+            "kind": "function",
+            "line": 1094,
+            "name": "polynomial_ring",
+            "signature": "(self)"
+          },
+          {
+            "decorators": [],
+            "doc": "A coercion from `S` exists, if `S` coerces into ``self``'s fraction field.",
+            "end_line": 1124,
+            "kind": "function",
+            "line": 1106,
+            "name": "_coerce_map_from_",
+            "signature": "(self, S)"
+          },
+          {
+            "decorators": [],
+            "doc": "Create a C-finite sequence given the coefficients `c` and starting values `a` of a homogeneous linear recurrence.",
+            "end_line": 1175,
+            "kind": "function",
+            "line": 1126,
+            "name": "from_recurrence",
+            "signature": "(self, coefficients, values)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the minimal CFiniteSequence that generates the sequence.",
+            "end_line": 1280,
+            "kind": "function",
+            "line": 1177,
+            "name": "guess",
+            "signature": "(self, sequence, algorithm = 'sage')"
+          }
+        ],
+        "name": "CFiniteSequences_generic"
+      }
+    ],
+    "exists": true,
+    "line_count": 1280,
+    "path": "sage-src/src/sage/rings/cfinite_sequence.py"
+  },
+  "function_field/drinfeld_modules/action.py": {
+    "declarations": [
+      {
+        "attributes": [],
+        "bases": [
+          "Action"
+        ],
+        "decorators": [],
+        "doc": "This class implements the module action induced by a Drinfeld `\\GF{q}[T]`-module.",
+        "end_line": 198,
+        "kind": "class",
+        "line": 28,
+        "methods": [
+          {
+            "decorators": [],
+            "doc": "Initialize ``self``.",
+            "end_line": 108,
+            "kind": "function",
+            "line": 84,
+            "name": "__init__",
+            "signature": "(self, drinfeld_module) -> None"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the action of ``pol`` on ``x``.",
+            "end_line": 141,
+            "kind": "function",
+            "line": 110,
+            "name": "_act_",
+            "signature": "(self, pol, x)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return a LaTeX representation of the action.",
+            "end_line": 161,
+            "kind": "function",
+            "line": 143,
+            "name": "_latex_",
+            "signature": "(self) -> str"
+          },
+          {
+            "decorators": [],
+            "doc": "Return a string representation of the action.",
+            "end_line": 180,
+            "kind": "function",
+            "line": 163,
+            "name": "_repr_",
+            "signature": "(self) -> str"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the Drinfeld module defining the action.",
+            "end_line": 198,
+            "kind": "function",
+            "line": 182,
+            "name": "drinfeld_module",
+            "signature": "(self)"
+          }
+        ],
+        "name": "DrinfeldModuleAction"
+      }
+    ],
+    "exists": true,
+    "line_count": 198,
+    "path": "sage-src/src/sage/rings/function_field/drinfeld_modules/action.py"
+  },
+  "function_field/drinfeld_modules/carlitz_module.py": {
+    "declarations": [
+      {
+        "decorators": [],
+        "doc": "Return the Carlitz module over `A`.",
+        "end_line": 110,
+        "kind": "function",
+        "line": 31,
+        "name": "CarlitzModule",
+        "signature": "(A, base = None)"
+      },
+      {
+        "decorators": [],
+        "doc": "Return the Carlitz exponential attached the ring `A`.",
+        "end_line": 161,
+        "kind": "function",
+        "line": 113,
+        "name": "carlitz_exponential",
+        "signature": "(A, prec = +Infinity, name = 'z')"
+      },
+      {
+        "decorators": [],
+        "doc": "Return the Carlitz exponential attached the ring `A`.",
+        "end_line": 203,
+        "kind": "function",
+        "line": 164,
+        "name": "carlitz_logarithm",
+        "signature": "(A, prec = +Infinity, name = 'z')"
+      },
+      {
+        "decorators": [],
+        "doc": "Return the Carlitz factorial attached the ring `A`, evaluated at `n`.",
+        "end_line": 249,
+        "kind": "function",
+        "line": 206,
+        "name": "carlitz_factorial",
+        "signature": "(A, n)"
+      },
+      {
+        "decorators": [],
+        "doc": "Return the `n`-th Bernoulli-Carlitz number attached to the ring `A`.",
+        "end_line": 303,
+        "kind": "function",
+        "line": 255,
+        "name": "carlitz_bernoulli",
+        "signature": "(A, n)"
+      }
+    ],
+    "exists": true,
+    "line_count": 303,
+    "path": "sage-src/src/sage/rings/function_field/drinfeld_modules/carlitz_module.py"
+  },
+  "function_field/drinfeld_modules/charzero_drinfeld_module.py": {
+    "declarations": [
+      {
+        "attributes": [],
+        "bases": [
+          "DrinfeldModule"
+        ],
+        "decorators": [],
+        "doc": "This class implements Drinfeld `\\GF{q}[T]`-modules defined over fields of `\\GF{q}[T]`-characteristic zero.",
+        "end_line": 435,
+        "kind": "class",
+        "line": 42,
+        "methods": [
+          {
+            "decorators": [
+              "cached_method"
+            ],
+            "doc": "Return the `q^k`-th coefficient of the exponential of this Drinfeld module.",
+            "end_line": 153,
+            "kind": "function",
+            "line": 122,
+            "name": "_compute_coefficient_exp",
+            "signature": "(self, k)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the exponential of this Drinfeld module.",
+            "end_line": 244,
+            "kind": "function",
+            "line": 155,
+            "name": "exponential",
+            "signature": "(self, prec = Infinity, name = 'z')"
+          },
+          {
+            "decorators": [
+              "cached_method"
+            ],
+            "doc": "Return the `q^k`-th coefficient of the logarithm of this Drinfeld module.",
+            "end_line": 277,
+            "kind": "function",
+            "line": 247,
+            "name": "_compute_coefficient_log",
+            "signature": "(self, k)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the logarithm of the given Drinfeld module.",
+            "end_line": 352,
+            "kind": "function",
+            "line": 279,
+            "name": "logarithm",
+            "signature": "(self, prec = Infinity, name = 'z')"
+          },
+          {
+            "decorators": [
+              "cached_method"
+            ],
+            "doc": "Utility function for computing the n-th Goss polynomial.",
+            "end_line": 392,
+            "kind": "function",
+            "line": 355,
+            "name": "_compute_goss_polynomial",
+            "signature": "(self, n, q, poly_ring, X)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the `n`-th Goss polynomial of the Drinfeld module.",
+            "end_line": 435,
+            "kind": "function",
+            "line": 394,
+            "name": "goss_polynomial",
+            "signature": "(self, n, var = 'X')"
+          }
+        ],
+        "name": "DrinfeldModule_charzero"
+      },
+      {
+        "attributes": [],
+        "bases": [
+          "DrinfeldModule_charzero"
+        ],
+        "decorators": [],
+        "doc": "A class for Drinfeld modules defined over the fraction field of the underlying function field.",
+        "end_line": 657,
+        "kind": "class",
+        "line": 438,
+        "methods": [
+          {
+            "decorators": [],
+            "doc": "Return the `n`-th coefficient of this Drinfeld module as an element of the underlying function ring.",
+            "end_line": 492,
+            "kind": "function",
+            "line": 453,
+            "name": "coefficient_in_function_ring",
+            "signature": "(self, n)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the coefficients of this Drinfeld module as elements of the underlying function ring.",
+            "end_line": 537,
+            "kind": "function",
+            "line": 494,
+            "name": "coefficients_in_function_ring",
+            "signature": "(self, sparse = True)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the class polynomial, that is the Fitting ideal of the class module, of this Drinfeld module.",
+            "end_line": 657,
+            "kind": "function",
+            "line": 539,
+            "name": "class_polynomial",
+            "signature": "(self)"
+          }
+        ],
+        "name": "DrinfeldModule_rational"
+      }
+    ],
+    "exists": true,
+    "line_count": 657,
+    "path": "sage-src/src/sage/rings/function_field/drinfeld_modules/charzero_drinfeld_module.py"
+  },
+  "function_field/drinfeld_modules/drinfeld_module.py": {
+    "declarations": [
+      {
+        "attributes": [],
+        "bases": [
+          "Parent",
+          "UniqueRepresentation"
+        ],
+        "decorators": [],
+        "doc": "This class implements Drinfeld `\\GF{q}[T]`-modules.",
+        "end_line": 2137,
+        "kind": "class",
+        "line": 51,
+        "methods": [
+          {
+            "decorators": [
+              "staticmethod"
+            ],
+            "doc": "Check input validity and return an instance of the appropriate class.",
+            "end_line": 615,
+            "kind": "function",
+            "line": 506,
+            "name": "__classcall_private__",
+            "signature": "(cls, function_ring, gen, A_field = None, name = '\u03c4')"
+          },
+          {
+            "decorators": [],
+            "doc": "Initialize ``self``.",
+            "end_line": 665,
+            "kind": "function",
+            "line": 617,
+            "name": "__init__",
+            "signature": "(self, gen, category) -> None"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the image of input ``a`` by the morphism that defines the Drinfeld module; i.e. `\\phi_a` if the Drinfeld module is denoted `\\phi`.",
+            "end_line": 709,
+            "kind": "function",
+            "line": 667,
+            "name": "__call__",
+            "signature": "(self, a)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the set of morphisms from ``self`` to ``other``.",
+            "end_line": 744,
+            "kind": "function",
+            "line": 711,
+            "name": "_Hom_",
+            "signature": "(self, other, category)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return a LaTeX representation of the Drinfeld module.",
+            "end_line": 773,
+            "kind": "function",
+            "line": 746,
+            "name": "_latex_",
+            "signature": "(self) -> str"
+          },
+          {
+            "decorators": [],
+            "doc": "Return a string representation of this Drinfeld module.",
+            "end_line": 790,
+            "kind": "function",
+            "line": 775,
+            "name": "_repr_",
+            "signature": "(self) -> str"
+          },
+          {
+            "decorators": [],
+            "doc": "Run generic tests on the method :meth:`.category`.",
+            "end_line": 817,
+            "kind": "function",
+            "line": 792,
+            "name": "_test_category",
+            "signature": "(self, **options) -> None"
+          },
+          {
+            "decorators": [],
+            "doc": "Return a hash of ``self``.",
+            "end_line": 833,
+            "kind": "function",
+            "line": 819,
+            "name": "__hash__",
+            "signature": "(self) -> int"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the action object (:class:`sage.rings.function_field.drinfeld_modules.action.Action`) that represents the module action, on the base codomain, that is induced by the Drinfeld module.",
+            "end_line": 869,
+            "kind": "function",
+            "line": 835,
+            "name": "action",
+            "signature": "(self)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the list of basic `j`-invariant parameters.",
+            "end_line": 1042,
+            "kind": "function",
+            "line": 871,
+            "name": "basic_j_invariant_parameters",
+            "signature": "(self, coeff_indices = None, nonzero = False)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return a dictionary whose keys are all the basic `j`-invariants parameters and values are the corresponding `j`-invariant.",
+            "end_line": 1098,
+            "kind": "function",
+            "line": 1044,
+            "name": "basic_j_invariants",
+            "signature": "(self, nonzero = False)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the `n`-th coefficient of the generator.",
+            "end_line": 1134,
+            "kind": "function",
+            "line": 1100,
+            "name": "coefficient",
+            "signature": "(self, n)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the coefficients of the generator, as a list.",
+            "end_line": 1176,
+            "kind": "function",
+            "line": 1136,
+            "name": "coefficients",
+            "signature": "(self, sparse = True)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return this Drinfeld module viewed over another `A`-field.",
+            "end_line": 1201,
+            "kind": "function",
+            "line": 1178,
+            "name": "change_A_field",
+            "signature": "(self, A_field)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the generator of the Drinfeld module.",
+            "end_line": 1217,
+            "kind": "function",
+            "line": 1203,
+            "name": "gen",
+            "signature": "(self)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the height of the Drinfeld module if the function field characteristic is a prime ideal; raise :exc:`ValueError` otherwise.",
+            "end_line": 1288,
+            "kind": "function",
+            "line": 1219,
+            "name": "height",
+            "signature": "(self)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return ``True`` if this Drinfeld module is isomorphic to ``other``; return ``False`` otherwise.",
+            "end_line": 1445,
+            "kind": "function",
+            "line": 1290,
+            "name": "is_isomorphic",
+            "signature": "(self, other, absolutely = False) -> bool"
+          },
+          {
+            "decorators": [],
+            "doc": "Return ``True`` if this Drinfeld module is finite, ``False`` otherwise.",
+            "end_line": 1467,
+            "kind": "function",
+            "line": 1447,
+            "name": "is_finite",
+            "signature": "(self) -> bool"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the `j`-invariant of the Drinfeld `\\GF{q}[T]`-module for the given parameter.",
+            "end_line": 1725,
+            "kind": "function",
+            "line": 1469,
+            "name": "j_invariant",
+            "signature": "(self, parameter = None, check = True)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return a dictionary whose keys are all the integers `1 \\leqslant k \\leqslant r-1` and the values are the corresponding `j_k`-invariants",
+            "end_line": 1763,
+            "kind": "function",
+            "line": 1727,
+            "name": "jk_invariants",
+            "signature": "(self)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the morphism object that defines the Drinfeld module.",
+            "end_line": 1813,
+            "kind": "function",
+            "line": 1765,
+            "name": "morphism",
+            "signature": "(self)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the rank of the Drinfeld module.",
+            "end_line": 1851,
+            "kind": "function",
+            "line": 1815,
+            "name": "rank",
+            "signature": "(self)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return a new Drinfeld module such that ``isog`` defines an isogeny to this module with domain ``self``; if no such isogeny exists, raise an exception.",
+            "end_line": 1935,
+            "kind": "function",
+            "line": 1853,
+            "name": "velu",
+            "signature": "(self, isog)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the homomorphism defined by ``x`` having this Drinfeld module as domain.",
+            "end_line": 2035,
+            "kind": "function",
+            "line": 1937,
+            "name": "hom",
+            "signature": "(self, x, codomain = None)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the endomorphism of this Drinfeld module, which is the multiplication by `x`, i.e. the isogeny defined by the Ore polynomial `\\phi_x`.",
+            "end_line": 2073,
+            "kind": "function",
+            "line": 2043,
+            "name": "scalar_multiplication",
+            "signature": "(self, x)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the `n`-th iterate relative Frobenius of this Drinfeld module.",
+            "end_line": 2137,
+            "kind": "function",
+            "line": 2075,
+            "name": "frobenius_relative",
+            "signature": "(self, n = 1)"
+          }
+        ],
+        "name": "DrinfeldModule"
+      }
+    ],
+    "exists": true,
+    "line_count": 2137,
+    "path": "sage-src/src/sage/rings/function_field/drinfeld_modules/drinfeld_module.py"
+  },
+  "function_field/drinfeld_modules/finite_drinfeld_module.py": {
+    "declarations": [
+      {
+        "attributes": [],
+        "bases": [
+          "DrinfeldModule"
+        ],
+        "decorators": [],
+        "doc": "This class implements finite Drinfeld `\\GF{q}[T]`-modules.",
+        "end_line": 1128,
+        "kind": "class",
+        "line": 38,
+        "methods": [
+          {
+            "decorators": [],
+            "doc": "Initialize ``self``.",
+            "end_line": 164,
+            "kind": "function",
+            "line": 127,
+            "name": "__init__",
+            "signature": "(self, gen, category) -> None"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the matrix representing the Frobenius endomorphism on the crystalline cohomology of the Drinfeld module. This is done up to precision [K:Fq] + 1, which is enough to ensure the characteristic polynomial can be recovered.",
+            "end_line": 230,
+            "kind": "function",
+            "line": 166,
+            "name": "_frobenius_matrix_crystalline",
+            "signature": "(self)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the Frobenius endomorphism of the Drinfeld module.",
+            "end_line": 258,
+            "kind": "function",
+            "line": 232,
+            "name": "frobenius_endomorphism",
+            "signature": "(self)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the characteristic polynomial of the Frobenius endomorphism.",
+            "end_line": 444,
+            "kind": "function",
+            "line": 260,
+            "name": "frobenius_charpoly",
+            "signature": "(self, var = 'X', algorithm = None)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the characteristic polynomial of the Frobenius endomorphism using Crystalline cohomology.",
+            "end_line": 496,
+            "kind": "function",
+            "line": 446,
+            "name": "_frobenius_charpoly_CSA",
+            "signature": "(self)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the characteristic polynomial of the Frobenius endomorphism using Crystalline cohomology.",
+            "end_line": 558,
+            "kind": "function",
+            "line": 498,
+            "name": "_frobenius_charpoly_crystalline",
+            "signature": "(self)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the characteristic polynomial of the Frobenius endomorphism using Gekeler's algorithm.",
+            "end_line": 638,
+            "kind": "function",
+            "line": 560,
+            "name": "_frobenius_charpoly_gekeler",
+            "signature": "(self)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the characteristic polynomial of the Frobenius endomorphism using Motivic cohomology.",
+            "end_line": 684,
+            "kind": "function",
+            "line": 640,
+            "name": "_frobenius_charpoly_motive",
+            "signature": "(self)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the Frobenius norm of the Drinfeld module.",
+            "end_line": 757,
+            "kind": "function",
+            "line": 686,
+            "name": "frobenius_norm",
+            "signature": "(self)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the Frobenius trace of the Drinfeld module.",
+            "end_line": 906,
+            "kind": "function",
+            "line": 759,
+            "name": "frobenius_trace",
+            "signature": "(self, algorithm = None)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the preimage of the input under the Drinfeld module, if it exists.",
+            "end_line": 1018,
+            "kind": "function",
+            "line": 908,
+            "name": "invert",
+            "signature": "(self, ore_pol)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return ``True`` when ``self`` is isogenous to the other Drinfeld module.",
+            "end_line": 1074,
+            "kind": "function",
+            "line": 1020,
+            "name": "is_isogenous",
+            "signature": "(self, psi)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return ``True`` if this Drinfeld module is supersingular.",
+            "end_line": 1104,
+            "kind": "function",
+            "line": 1076,
+            "name": "is_supersingular",
+            "signature": "(self)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return ``True`` if this Drinfeld module is ordinary.",
+            "end_line": 1128,
+            "kind": "function",
+            "line": 1106,
+            "name": "is_ordinary",
+            "signature": "(self)"
+          }
+        ],
+        "name": "DrinfeldModule_finite"
+      }
+    ],
+    "exists": true,
+    "line_count": 1128,
+    "path": "sage-src/src/sage/rings/function_field/drinfeld_modules/finite_drinfeld_module.py"
+  },
+  "function_field/drinfeld_modules/homset.py": {
+    "declarations": [
+      {
+        "attributes": [],
+        "bases": [
+          "Action"
+        ],
+        "decorators": [],
+        "doc": "Action of the function ring on the homset of a Drinfeld module.",
+        "end_line": 134,
+        "kind": "class",
+        "line": 40,
+        "methods": [
+          {
+            "decorators": [],
+            "doc": "Initialize this action.",
+            "end_line": 109,
+            "kind": "function",
+            "line": 75,
+            "name": "__init__",
+            "signature": "(self, A, H, is_left, op) -> None"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the action of `a` on `f`.",
+            "end_line": 134,
+            "kind": "function",
+            "line": 111,
+            "name": "_act_",
+            "signature": "(self, a, f)"
+          }
+        ],
+        "name": "DrinfeldModuleMorphismAction"
+      },
+      {
+        "attributes": [
+          {
+            "annotation": null,
+            "line": 242,
+            "name": "Element",
+            "value": "DrinfeldModuleMorphism"
+          }
+        ],
+        "bases": [
+          "Homset"
+        ],
+        "decorators": [],
+        "doc": "This class implements the set of morphisms between two Drinfeld `\\GF{q}[T]`-modules.",
+        "end_line": 1023,
+        "kind": "class",
+        "line": 137,
+        "methods": [
+          {
+            "decorators": [],
+            "doc": "Initialize ``self``.",
+            "end_line": 290,
+            "kind": "function",
+            "line": 244,
+            "name": "__init__",
+            "signature": "(self, X, Y, category = None, check = True) -> None"
+          },
+          {
+            "decorators": [],
+            "doc": "Return a LaTeX representation of the homset.",
+            "end_line": 310,
+            "kind": "function",
+            "line": 292,
+            "name": "_latex_",
+            "signature": "(self) -> str"
+          },
+          {
+            "decorators": [],
+            "doc": "Return a string representation of the homset.",
+            "end_line": 328,
+            "kind": "function",
+            "line": 312,
+            "name": "_repr_",
+            "signature": "(self) -> str"
+          },
+          {
+            "decorators": [],
+            "doc": "Return ``True`` if the input defines a morphism in the homset.",
+            "end_line": 381,
+            "kind": "function",
+            "line": 330,
+            "name": "__contains__",
+            "signature": "(self, x) -> bool"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the Drinfeld module morphism defined by the given Ore polynomial.",
+            "end_line": 428,
+            "kind": "function",
+            "line": 383,
+            "name": "_element_constructor_",
+            "signature": "(self, *args, **kwds)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return an element in this homset.",
+            "end_line": 505,
+            "kind": "function",
+            "line": 430,
+            "name": "an_element",
+            "signature": "(self, degree = None)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the zero morphism is this homset.",
+            "end_line": 525,
+            "kind": "function",
+            "line": 507,
+            "name": "zero",
+            "signature": "(self)"
+          },
+          {
+            "decorators": [
+              "cached_method"
+            ],
+            "doc": "Return a basis of this homset over the underlying function ring.",
+            "end_line": 647,
+            "kind": "function",
+            "line": 528,
+            "name": "_A_basis",
+            "signature": "(self)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return a `\\GF{q}`-basis of the space of morphisms in this homset of degree at most ``degree``.",
+            "end_line": 741,
+            "kind": "function",
+            "line": 649,
+            "name": "_Fq_basis",
+            "signature": "(self, degree)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return a basis of this homset.",
+            "end_line": 841,
+            "kind": "function",
+            "line": 743,
+            "name": "basis",
+            "signature": "(self, degree = None)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return a basis of this homser over `\\GF{q}[\\tau^n]` where `n = [K:\\GF{q}]` (and thus `\\tau^n` is to the Frobenius endomorphism).",
+            "end_line": 960,
+            "kind": "function",
+            "line": 843,
+            "name": "basis_over_frobenius",
+            "signature": "(self)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return a random morphism in this homset.",
+            "end_line": 1023,
+            "kind": "function",
+            "line": 962,
+            "name": "random_element",
+            "signature": "(self, degree = None)"
+          }
+        ],
+        "name": "DrinfeldModuleHomset"
+      }
+    ],
+    "exists": true,
+    "line_count": 1023,
+    "path": "sage-src/src/sage/rings/function_field/drinfeld_modules/homset.py"
+  },
+  "function_field/drinfeld_modules/morphism.py": {
+    "declarations": [
+      {
+        "attributes": [],
+        "bases": [
+          "Morphism",
+          "UniqueRepresentation"
+        ],
+        "decorators": [],
+        "doc": "This class represents Drinfeld `\\GF{q}[T]`-module morphisms.",
+        "end_line": 930,
+        "kind": "class",
+        "line": 32,
+        "methods": [
+          {
+            "decorators": [
+              "staticmethod"
+            ],
+            "doc": "Create the morphism.",
+            "end_line": 187,
+            "kind": "function",
+            "line": 127,
+            "name": "__classcall_private__",
+            "signature": "(cls, parent, x)"
+          },
+          {
+            "decorators": [],
+            "doc": "Initialize ``self``.",
+            "end_line": 218,
+            "kind": "function",
+            "line": 189,
+            "name": "__init__",
+            "signature": "(self, parent, ore_pol) -> None"
+          },
+          {
+            "decorators": [],
+            "doc": "Return a LaTeX representation of the morphism.",
+            "end_line": 236,
+            "kind": "function",
+            "line": 220,
+            "name": "_latex_",
+            "signature": "(self) -> str"
+          },
+          {
+            "decorators": [],
+            "doc": "Return a string representation of the morphism.",
+            "end_line": 265,
+            "kind": "function",
+            "line": 238,
+            "name": "_repr_",
+            "signature": "(self) -> str"
+          },
+          {
+            "decorators": [],
+            "doc": "Return a hash of ``self``.",
+            "end_line": 283,
+            "kind": "function",
+            "line": 267,
+            "name": "__hash__",
+            "signature": "(self) -> int"
+          },
+          {
+            "decorators": [],
+            "doc": "Return ``True`` whether the morphism is the zero morphism.",
+            "end_line": 307,
+            "kind": "function",
+            "line": 285,
+            "name": "is_zero",
+            "signature": "(self) -> bool"
+          },
+          {
+            "decorators": [],
+            "doc": "Return ``True`` whether the morphism is the identity morphism.",
+            "end_line": 331,
+            "kind": "function",
+            "line": 309,
+            "name": "is_identity",
+            "signature": "(self) -> bool"
+          },
+          {
+            "decorators": [],
+            "doc": "Return ``True`` whether the morphism is an isogeny.",
+            "end_line": 367,
+            "kind": "function",
+            "line": 333,
+            "name": "is_isogeny",
+            "signature": "(self) -> bool"
+          },
+          {
+            "decorators": [],
+            "doc": "Return ``True`` whether the morphism is an isomorphism.",
+            "end_line": 403,
+            "kind": "function",
+            "line": 369,
+            "name": "is_isomorphism",
+            "signature": "(self) -> bool"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the Ore polynomial that defines the morphism.",
+            "end_line": 427,
+            "kind": "function",
+            "line": 405,
+            "name": "ore_polynomial",
+            "signature": "(self)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the degree of this isogeny, that is, by definition, the `\\tau`-degree of its defining Ore polynomial.",
+            "end_line": 447,
+            "kind": "function",
+            "line": 429,
+            "name": "degree",
+            "signature": "(self)"
+          },
+          {
+            "decorators": [
+              "coerce_binop"
+            ],
+            "doc": "Return the sum of this morphism and ``other``.",
+            "end_line": 481,
+            "kind": "function",
+            "line": 450,
+            "name": "__add__",
+            "signature": "(self, other)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the composite of this morphism and ``other``.",
+            "end_line": 501,
+            "kind": "function",
+            "line": 483,
+            "name": "_composition_",
+            "signature": "(self, other, H)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the inverse of this morphism.",
+            "end_line": 545,
+            "kind": "function",
+            "line": 503,
+            "name": "inverse",
+            "signature": "(self)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the inverse of this morphism.",
+            "end_line": 571,
+            "kind": "function",
+            "line": 547,
+            "name": "__invert__",
+            "signature": "(self)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the right gcd of this morphism and ``other``.",
+            "end_line": 616,
+            "kind": "function",
+            "line": 573,
+            "name": "right_gcd",
+            "signature": "(self, other)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the left lcm of this morphism and ``other``.",
+            "end_line": 664,
+            "kind": "function",
+            "line": 618,
+            "name": "left_lcm",
+            "signature": "(self, other)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the matrix giving the action of this morphism on the motives of the underlying Drinfeld modules.",
+            "end_line": 717,
+            "kind": "function",
+            "line": 666,
+            "name": "_motive_matrix",
+            "signature": "(self)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the norm of this isogeny.",
+            "end_line": 780,
+            "kind": "function",
+            "line": 719,
+            "name": "norm",
+            "signature": "(self, ideal = True)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return a dual isogeny to this morphism.",
+            "end_line": 836,
+            "kind": "function",
+            "line": 782,
+            "name": "dual_isogeny",
+            "signature": "(self)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the characteristic polynomial of this endomorphism.",
+            "end_line": 887,
+            "kind": "function",
+            "line": 838,
+            "name": "characteristic_polynomial",
+            "signature": "(self, var = 'X')"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the characteristic polynomial of this endomorphism.",
+            "end_line": 930,
+            "kind": "function",
+            "line": 889,
+            "name": "charpoly",
+            "signature": "(self, var = 'X')"
+          }
+        ],
+        "name": "DrinfeldModuleMorphism"
+      }
+    ],
+    "exists": true,
+    "line_count": 930,
+    "path": "sage-src/src/sage/rings/function_field/drinfeld_modules/morphism.py"
+  },
+  "noncommutative_ideals.py": {
+    "exists": false,
+    "path": "sage-src/src/sage/rings/noncommutative_ideals.py"
+  },
+  "species.py": {
+    "declarations": [
+      {
+        "decorators": [],
+        "doc": "Return a symmetric group quickly.",
+        "end_line": 97,
+        "kind": "function",
+        "line": 84,
+        "name": "_SymmetricGroup",
+        "signature": "(n)"
+      },
+      {
+        "decorators": [],
+        "doc": "Return labels as a list of tuples.",
+        "end_line": 138,
+        "kind": "function",
+        "line": 100,
+        "name": "_label_sets",
+        "signature": "(arity, labels)"
+      },
+      {
+        "attributes": [],
+        "bases": [
+          "WithEqualityById",
+          "Element",
+          "WithPicklingByInitArgs"
+        ],
+        "decorators": [],
+        "doc": "An atomic species.",
+        "end_line": 546,
+        "kind": "class",
+        "line": 141,
+        "methods": [
+          {
+            "decorators": [
+              "staticmethod"
+            ],
+            "doc": "Normalize the input for unique representation.",
+            "end_line": 290,
+            "kind": "function",
+            "line": 160,
+            "name": "__classcall__",
+            "signature": "(cls, parent, G, dompart)"
+          },
+          {
+            "decorators": [],
+            "doc": "Initialize an atomic species.",
+            "end_line": 310,
+            "kind": "function",
+            "line": 292,
+            "name": "__init__",
+            "signature": "(self, parent, dis, domain_partition) -> None"
+          },
+          {
+            "decorators": [],
+            "doc": "Return a string representation of ``self``.",
+            "end_line": 347,
+            "kind": "function",
+            "line": 312,
+            "name": "_repr_",
+            "signature": "(self)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the grade of ``self``.",
+            "end_line": 363,
+            "kind": "function",
+            "line": 349,
+            "name": "grade",
+            "signature": "(self)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return whether ``self`` is less than ``other``.",
+            "end_line": 418,
+            "kind": "function",
+            "line": 365,
+            "name": "__lt__",
+            "signature": "(self, other) -> bool"
+          },
+          {
+            "decorators": [],
+            "doc": "Return whether ``self`` is less than or equal to ``other``.",
+            "end_line": 431,
+            "kind": "function",
+            "line": 420,
+            "name": "__le__",
+            "signature": "(self, other) -> bool"
+          },
+          {
+            "decorators": [],
+            "doc": "Iterate over the structures on the given set of labels.",
+            "end_line": 474,
+            "kind": "function",
+            "line": 433,
+            "name": "structures",
+            "signature": "(self, *labels)"
+          },
+          {
+            "decorators": [],
+            "doc": "Substitute `M_1,\\ldots, M_k` into ``self``.",
+            "end_line": 546,
+            "kind": "function",
+            "line": 476,
+            "name": "__call__",
+            "signature": "(self, *args)"
+          }
+        ],
+        "name": "AtomicSpeciesElement"
+      },
+      {
+        "attributes": [
+          {
+            "annotation": null,
+            "line": 975,
+            "name": "Element",
+            "value": "AtomicSpeciesElement"
+          }
+        ],
+        "bases": [
+          "UniqueRepresentation",
+          "Parent"
+        ],
+        "decorators": [],
+        "doc": "The set of multisort atomic species.",
+        "end_line": 975,
+        "kind": "class",
+        "line": 549,
+        "methods": [
+          {
+            "decorators": [
+              "staticmethod"
+            ],
+            "doc": "Normalize the arguments.",
+            "end_line": 622,
+            "kind": "function",
+            "line": 605,
+            "name": "__classcall__",
+            "signature": "(cls, names)"
+          },
+          {
+            "decorators": [],
+            "doc": "Initialize the class of atomic species.",
+            "end_line": 652,
+            "kind": "function",
+            "line": 624,
+            "name": "__init__",
+            "signature": "(self, names) -> None"
+          },
+          {
+            "decorators": [],
+            "doc": "Return a string representation of ``self``.",
+            "end_line": 668,
+            "kind": "function",
+            "line": 654,
+            "name": "_repr_",
+            "signature": "(self)"
+          },
+          {
+            "decorators": [],
+            "doc": "Construct the atomic species with the given data.",
+            "end_line": 781,
+            "kind": "function",
+            "line": 670,
+            "name": "_element_constructor_",
+            "signature": "(self, G, pi = None, check = True)"
+          },
+          {
+            "decorators": [],
+            "doc": "Give common species of degree `n` their traditional names.",
+            "end_line": 839,
+            "kind": "function",
+            "line": 783,
+            "name": "_rename",
+            "signature": "(self, n)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return whether ``x`` is in ``self``.",
+            "end_line": 897,
+            "kind": "function",
+            "line": 841,
+            "name": "__contains__",
+            "signature": "(self, x) -> bool"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the set of non-negative integer vectors, whose length is the arity of ``self``.",
+            "end_line": 910,
+            "kind": "function",
+            "line": 899,
+            "name": "grading_set",
+            "signature": "(self)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the set of atomic species with given total cardinality.",
+            "end_line": 926,
+            "kind": "function",
+            "line": 912,
+            "name": "subset",
+            "signature": "(self, size)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the set of atomic species with given multicardinality.",
+            "end_line": 954,
+            "kind": "function",
+            "line": 928,
+            "name": "graded_component",
+            "signature": "(self, mc)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return an element of ``self``.",
+            "end_line": 973,
+            "kind": "function",
+            "line": 956,
+            "name": "_an_element_",
+            "signature": "(self)"
+          }
+        ],
+        "name": "AtomicSpecies"
+      },
+      {
+        "decorators": [],
+        "doc": "Return subgroups conjugate to the stabilizer subgroups of the given group action.",
+        "end_line": 1081,
+        "kind": "function",
+        "line": 978,
+        "name": "_stabilizer_subgroups",
+        "signature": "(G, X, a, side = 'right', check = True)"
+      },
+      {
+        "attributes": [],
+        "bases": [
+          "IndexedFreeAbelianMonoid"
+        ],
+        "decorators": [],
+        "doc": "The monoid of multisort molecular species.",
+        "end_line": 1881,
+        "kind": "class",
+        "line": 1084,
+        "methods": [
+          {
+            "decorators": [
+              "staticmethod"
+            ],
+            "doc": "Normalize the arguments.",
+            "end_line": 1116,
+            "kind": "function",
+            "line": 1102,
+            "name": "__classcall__",
+            "signature": "(cls, names)"
+          },
+          {
+            "decorators": [],
+            "doc": "Initialize the monoid of molecular species.",
+            "end_line": 1138,
+            "kind": "function",
+            "line": 1118,
+            "name": "__init__",
+            "signature": "(self, names) -> None"
+          },
+          {
+            "decorators": [],
+            "doc": "Return a string representation of ``self``.",
+            "end_line": 1154,
+            "kind": "function",
+            "line": 1140,
+            "name": "_repr_",
+            "signature": "(self)"
+          },
+          {
+            "decorators": [],
+            "doc": "Construct the molecular species with the given data.",
+            "end_line": 1348,
+            "kind": "function",
+            "line": 1156,
+            "name": "_element_constructor_",
+            "signature": "(self, G, pi = None, check = True)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the set of non-negative integer vectors, whose length is the arity of ``self``.",
+            "end_line": 1361,
+            "kind": "function",
+            "line": 1350,
+            "name": "grading_set",
+            "signature": "(self)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the set of molecular species with given total cardinality.",
+            "end_line": 1378,
+            "kind": "function",
+            "line": 1363,
+            "name": "subset",
+            "signature": "(self, size)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the set of molecular species with given multicardinality.",
+            "end_line": 1406,
+            "kind": "function",
+            "line": 1380,
+            "name": "graded_component",
+            "signature": "(self, mc)"
+          }
+        ],
+        "name": "MolecularSpecies"
+      },
+      {
+        "attributes": [],
+        "bases": [
+          "CombinatorialFreeModule.Element"
+        ],
+        "decorators": [],
+        "doc": "A (virtual) polynomial species.",
+        "end_line": 2491,
+        "kind": "class",
+        "line": 1884,
+        "methods": [
+          {
+            "decorators": [],
+            "doc": "Return ``True`` if this is a constant polynomial species.",
+            "end_line": 1918,
+            "kind": "function",
+            "line": 1900,
+            "name": "is_constant",
+            "signature": "(self)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return if ``self`` is a virtual species.",
+            "end_line": 1937,
+            "kind": "function",
+            "line": 1920,
+            "name": "is_virtual",
+            "signature": "(self)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return if ``self`` is a molecular species.",
+            "end_line": 1958,
+            "kind": "function",
+            "line": 1939,
+            "name": "is_molecular",
+            "signature": "(self)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return if ``self`` is an atomic species.",
+            "end_line": 1981,
+            "kind": "function",
+            "line": 1960,
+            "name": "is_atomic",
+            "signature": "(self)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the tilde species of ``self``.",
+            "end_line": 2028,
+            "kind": "function",
+            "line": 1983,
+            "name": "tilde",
+            "signature": "(self)"
+          },
+          {
+            "decorators": [],
+            "doc": "Compute the hadamard product of ``self`` and ``other``.",
+            "end_line": 2117,
+            "kind": "function",
+            "line": 2030,
+            "name": "hadamard_product",
+            "signature": "(self, other)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the inner sum of Exercise 2.6.16 in [BLL1998]_, generalized to the case of arbitrary arity.",
+            "end_line": 2197,
+            "kind": "function",
+            "line": 2119,
+            "name": "_compose_with_singletons",
+            "signature": "(self, names, args)"
+          },
+          {
+            "decorators": [],
+            "doc": "Compute the composition with `(\\sum_j m_{1,j} X_{1,j}, \\sum_j m_{2,j} X_{2,j}, \\ldots)` in the specified degrees.",
+            "end_line": 2322,
+            "kind": "function",
+            "line": 2199,
+            "name": "_compose_with_weighted_singletons",
+            "signature": "(self, names, multiplicities, degrees)"
+          },
+          {
+            "decorators": [],
+            "doc": "Substitute the arguments into ``self``.",
+            "end_line": 2411,
+            "kind": "function",
+            "line": 2324,
+            "name": "__call__",
+            "signature": "(self, *args)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the factorization of this species.",
+            "end_line": 2453,
+            "kind": "function",
+            "line": 2413,
+            "name": "factor",
+            "signature": "(self)"
+          },
+          {
+            "decorators": [],
+            "doc": "Iterate over the structures on the given set of labels.",
+            "end_line": 2491,
+            "kind": "function",
+            "line": 2455,
+            "name": "structures",
+            "signature": "(self, *labels)"
+          }
+        ],
+        "name": "PolynomialSpeciesElement"
+      },
+      {
+        "attributes": [
+          {
+            "annotation": null,
+            "line": 2960,
+            "name": "Element",
+            "value": "PolynomialSpeciesElement"
+          }
+        ],
+        "bases": [
+          "CombinatorialFreeModule"
+        ],
+        "decorators": [],
+        "doc": "The ring of polynomial weighted virtual multisort species.",
+        "end_line": 2960,
+        "kind": "class",
+        "line": 2494,
+        "methods": [
+          {
+            "decorators": [],
+            "doc": "Normalize the arguments.",
+            "end_line": 2528,
+            "kind": "function",
+            "line": 2512,
+            "name": "__classcall__",
+            "signature": "(cls, base_ring, names)"
+          },
+          {
+            "decorators": [],
+            "doc": "Initialize the ring of polynomial species.",
+            "end_line": 2548,
+            "kind": "function",
+            "line": 2530,
+            "name": "__init__",
+            "signature": "(self, base_ring, names) -> None"
+          },
+          {
+            "decorators": [],
+            "doc": "Return a string representation of ``self``.",
+            "end_line": 2565,
+            "kind": "function",
+            "line": 2550,
+            "name": "_repr_",
+            "signature": "(self)"
+          },
+          {
+            "decorators": [],
+            "doc": "Construct the polynomial species with the given data.",
+            "end_line": 2721,
+            "kind": "function",
+            "line": 2567,
+            "name": "_element_constructor_",
+            "signature": "(self, G, pi = None, check = True)"
+          },
+          {
+            "decorators": [],
+            "doc": "Used by the preparser for ``F.<x> = ...``.",
+            "end_line": 2740,
+            "kind": "function",
+            "line": 2723,
+            "name": "_first_ngens",
+            "signature": "(self, n)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the base change of ``self`` to `R`.",
+            "end_line": 2760,
+            "kind": "function",
+            "line": 2742,
+            "name": "change_ring",
+            "signature": "(self, R)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the degree of the molecular species indexed by ``m``.",
+            "end_line": 2779,
+            "kind": "function",
+            "line": 2762,
+            "name": "degree_on_basis",
+            "signature": "(self, m)"
+          },
+          {
+            "decorators": [
+              "cached_method"
+            ],
+            "doc": "Return ``SymmetricGroup(0)``, which indexes the one of this algebra, as per :meth:`AlgebrasWithBasis.ParentMethods.one_basis`.",
+            "end_line": 2797,
+            "kind": "function",
+            "line": 2782,
+            "name": "one_basis",
+            "signature": "(self)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return an element of ``self``.",
+            "end_line": 2813,
+            "kind": "function",
+            "line": 2799,
+            "name": "_an_element_",
+            "signature": "(self)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return the product of the basis elements indexed by `H` and `K`.",
+            "end_line": 2836,
+            "kind": "function",
+            "line": 2815,
+            "name": "product_on_basis",
+            "signature": "(self, H, K)"
+          },
+          {
+            "decorators": [
+              "cached_method"
+            ],
+            "doc": "Return the combinatorial powersum species `P_n(X_s)`.",
+            "end_line": 2874,
+            "kind": "function",
+            "line": 2839,
+            "name": "_powersum",
+            "signature": "(self, s, n)"
+          },
+          {
+            "decorators": [],
+            "doc": "Return `E(\\sum_i m_i X_i)` in the specified degrees.",
+            "end_line": 2958,
+            "kind": "function",
+            "line": 2876,
+            "name": "_exponential",
+            "signature": "(self, multiplicities, degrees)"
+          }
+        ],
+        "name": "PolynomialSpecies"
+      },
+      {
+        "decorators": [
+          "cached_function"
+        ],
+        "doc": "Return a list of the atomic set like species of degree `n`, and provide their traditional names.",
+        "end_line": 3021,
+        "kind": "function",
+        "line": 2964,
+        "name": "_atomic_set_like_species",
+        "signature": "(n, names)"
+      }
+    ],
+    "exists": true,
+    "line_count": 3021,
+    "path": "sage-src/src/sage/rings/species.py"
+  }
+}
