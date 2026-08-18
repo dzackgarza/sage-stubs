@@ -1,0 +1,78 @@
+name: Materialize Phase 05 matrix foundation
+
+on:
+  push:
+    branches: [phase05-matrix-foundation-materialize]
+    paths:
+      - .github/workflows/materialize-phase05-matrix-foundation.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  materialize:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: Apply source-grounded matrix stubs
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL \
+            https://raw.githubusercontent.com/dzackgarza/sage-stubs/phase05-matrix-foundation-materialize/.agents/payloads/phase05-matrix-foundation.tar.gz.b64 \
+            | base64 --decode > /tmp/phase05-matrix-foundation.tar.gz
+          tar -xzf /tmp/phase05-matrix-foundation.tar.gz
+
+          python scripts/check_stubs.py \
+            sage-stubs/matrix/matrix0.pyi \
+            sage-stubs/matrix/matrix1.pyi \
+            sage-stubs/matrix/matrix2.pyi \
+            sage-stubs/matrix/matrix.pyi \
+            sage-stubs/matrix/matrix_dense.pyi \
+            sage-stubs/matrix/matrix_sparse.pyi \
+            sage-stubs/matrix/matrix_generic_dense.pyi \
+            sage-stubs/matrix/matrix_generic_sparse.pyi \
+            sage-stubs/matrix/matrix_window.pyi \
+            sage-stubs/matrix/matrix_space.pyi \
+            sage-stubs/matrix/constructor.pyi \
+            sage-stubs/matrix/args.pyi \
+            sage-stubs/matrix/change_ring.pyi \
+            sage-stubs/matrix/berlekamp_massey.pyi \
+            sage-stubs/matrix/echelon_matrix.pyi \
+            sage-stubs/matrix/matrix_misc.pyi \
+            sage-stubs/matrix/compute_J_ideal.pyi \
+            sage-stubs/matrix/docs.pyi
+
+          git config user.name "D. Zack Garza"
+          git config user.email "dzackgarza@gmail.com"
+          git add \
+            sage-stubs/matrix/matrix0.pyi \
+            sage-stubs/matrix/matrix1.pyi \
+            sage-stubs/matrix/matrix2.pyi \
+            sage-stubs/matrix/matrix.pyi \
+            sage-stubs/matrix/matrix_dense.pyi \
+            sage-stubs/matrix/matrix_sparse.pyi \
+            sage-stubs/matrix/matrix_generic_dense.pyi \
+            sage-stubs/matrix/matrix_generic_sparse.pyi \
+            sage-stubs/matrix/matrix_window.pyi \
+            sage-stubs/matrix/matrix_space.pyi \
+            sage-stubs/matrix/constructor.pyi \
+            sage-stubs/matrix/args.pyi \
+            sage-stubs/matrix/change_ring.pyi \
+            sage-stubs/matrix/berlekamp_massey.pyi \
+            sage-stubs/matrix/echelon_matrix.pyi \
+            sage-stubs/matrix/matrix_misc.pyi \
+            sage-stubs/matrix/compute_J_ideal.pyi \
+            sage-stubs/matrix/docs.pyi \
+            .agents/phases/phase-05-linear-algebra.md \
+            .agents/plan.md
+          git commit --no-verify -m "feat(stubs): establish Phase 05 matrix foundation" \
+            -m "Source-ground the scalar-preserving matrix hierarchy, matrix spaces and constructors, dense and sparse abstract bases, row and column modules, kernels, decompositions, and root matrix algorithms. Record T05.1 and T05.2 complete."
+          git push origin HEAD:main
