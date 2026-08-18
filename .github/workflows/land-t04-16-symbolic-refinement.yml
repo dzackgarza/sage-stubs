@@ -1,0 +1,106 @@
+name: Land T04.16 symbolic-conversion refinement
+
+on:
+  push:
+    branches: [t04-16-asymptotic-symbolic-refinement]
+    paths:
+      - .github/workflows/land-t04-16-symbolic-refinement.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  land:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Apply source-grounded typing refinement
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          git switch -C main origin/main
+          python - <<'PY'
+          from pathlib import Path
+
+          stub = Path('sage-stubs/rings/asymptotic/asymptotic_ring.pyi')
+          text = stub.read_text()
+          if 'from typing import Self\n' in text:
+              text = text.replace(
+                  'from typing import Self\n',
+                  'from typing import Self, TypeVar, overload\n',
+                  1,
+              )
+          elif 'from typing import Self, TypeVar, overload\n' not in text:
+              raise SystemExit('unexpected typing import in asymptotic_ring.pyi')
+
+          marker = 'from sage.symbolic.expression import Expression\n\n'
+          typevar = 'from sage.symbolic.expression import Expression\n\n_SymbolicElement = TypeVar("_SymbolicElement", bound=Element)\n\n'
+          if '_SymbolicElement = TypeVar' not in text:
+              if marker not in text:
+                  raise SystemExit('Expression import marker not found')
+              text = text.replace(marker, typevar, 1)
+
+          old_symbolic = '    def symbolic_expression(self, R: Ring | None = ...) -> AsymptoticExpansion: ...\n'
+          new_symbolic = (
+              '    @overload\n'
+              '    def symbolic_expression(self, R: None = ...) -> Expression: ...\n'
+              '    @overload\n'
+              '    def symbolic_expression(\n'
+              '        self, R: Parent[_SymbolicElement]\n'
+              '    ) -> _SymbolicElement: ...\n'
+          )
+          if old_symbolic in text:
+              text = text.replace(old_symbolic, new_symbolic, 1)
+          elif new_symbolic not in text:
+              raise SystemExit('symbolic_expression signature not in expected state')
+
+          old_ring = '        new_coefficient_ring: int | Integer | None = ...,\n'
+          new_ring = '        new_coefficient_ring: Parent[Element] | None = ...,\n'
+          if old_ring in text:
+              text = text.replace(old_ring, new_ring, 1)
+          elif new_ring not in text:
+              raise SystemExit('map_coefficients codomain signature not in expected state')
+          stub.write_text(text)
+
+          phase = Path('.agents/phases/phase-04-number-theory-rings.md')
+          planning = phase.read_text()
+          old_row = "| T04.16 | **Asymptotic ring subpackage** — `asymptotic_ring`, `asymptotic_expansion_generators`, `asymptotics_multivariate_generating_functions`, `growth_group`, `growth_group_cartesian`, `term_monoid`, `misc`. | 7 | — | ⬜ | `asymptotic_ring` has existing stub. |"
+          partial_row = "| T04.16 | **Asymptotic ring subpackage** — `asymptotic_ring`, `asymptotic_expansion_generators`, `asymptotics_multivariate_generating_functions`, `growth_group`, `growth_group_cartesian`, `term_monoid`, `misc`. | 7 | — | 🟡 In Progress | Symbolic conversion preserves the selected codomain parent and coefficient maps accept typed parent codomains. The remaining task surface stays under source audit. |"
+          if old_row in planning:
+              phase.write_text(planning.replace(old_row, partial_row))
+          elif partial_row not in planning and '| T04.16 |' not in planning:
+              raise SystemExit('T04.16 planning row not found')
+          PY
+
+      - name: Validate changed stubs
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install --upgrade pip ruff
+          ruff check sage-stubs/rings/asymptotic/asymptotic_ring.pyi
+          ruff format --check sage-stubs/rings/asymptotic/asymptotic_ring.pyi
+          python scripts/check_stubs.py sage-stubs/rings/asymptotic/asymptotic_ring.pyi
+          python scripts/audit_stub_quality.py --root sage-stubs/rings/asymptotic --max-console 1000
+
+      - name: Commit and push immediately
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add sage-stubs/rings/asymptotic/asymptotic_ring.pyi .agents/phases/phase-04-number-theory-rings.md
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m 'fix(stubs): type asymptotic symbolic conversion maps'
+          git push origin main
