@@ -1,32 +1,19 @@
-from collections.abc import Iterator, Sequence
-from typing import Self, TypeVar
-from sage.matrix.matrix0 import Matrix
-from sage.modules.free_module import FreeModule_generic
-from sage.modules.free_module_element import FreeModuleElement
-from sage.modules.free_module_homspace import FreeModuleHomspace
+from collections.abc import Iterator
+from typing import TypeVar
+
+from sage.matrix.matrix import Matrix
 from sage.rings.integer import Integer
-from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.rings.rational import Rational
-from sage.rings.real_double import RealDoubleElement
-from sage.rings.complex_double import ComplexDoubleElement
-from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
-from sage.rings.ring import Ring
 from sage.structure.element import RingElement
-from sage.structure.parent import ElementConstructorInput
-from sage.structure.sage_object import SageObject
-from sage.symbolic.expression import Expression
+from sage.structure.parent import Parent
 
-_Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+_Scalar = TypeVar("_Scalar", bound=RingElement)
 
-import builtins
-
-class _SageObject: ...
 
 def reduced_echelon_matrix_iterator(
-    K: builtins.object,
-    k: builtins.object,
-    n: builtins.object,
-    sparse: builtins.object = ...,
-    copy: builtins.object = ...,
-    set_immutable: builtins.object = ...,
-) -> Matrix[_Scalar]: ...
+    K: Parent[_Scalar],
+    k: int | Integer,
+    n: int | Integer,
+    sparse: bool = ...,
+    copy: bool = ...,
+    set_immutable: bool = ...,
+) -> Iterator[Matrix[_Scalar]]: ...

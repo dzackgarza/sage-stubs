@@ -1,54 +1,60 @@
-from collections.abc import Iterator, Sequence
-from typing import Self, TypeVar
-from sage.matrix.matrix0 import Matrix
-from sage.modules.free_module import FreeModule_generic
-from sage.modules.free_module_element import FreeModuleElement
-from sage.modules.free_module_homspace import FreeModuleHomspace
+from collections.abc import Sequence
+from typing import Generic, TypeVar
+
+from sage.matrix.matrix import Matrix
+from sage.rings.fraction_field_element import FractionFieldElement
+from sage.rings.ideal import Ideal_generic
 from sage.rings.integer import Integer
 from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.rings.rational import Rational
-from sage.rings.real_double import RealDoubleElement
-from sage.rings.complex_double import ComplexDoubleElement
-from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
-from sage.rings.ring import Ring
 from sage.structure.element import RingElement
-from sage.structure.parent import ElementConstructorInput
 from sage.structure.sage_object import SageObject
-from sage.symbolic.expression import Expression
 
 _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
 
-import builtins
-
-class _SageObject: ...
 
 def lifting(
-    p: builtins.int, t: builtins.object, A: builtins.object, G: builtins.object
-) -> ElementConstructorInput: ...
-def p_part(f: builtins.object, p: builtins.int) -> ElementConstructorInput: ...
+    p: _Scalar,
+    t: int | Integer,
+    A: Matrix[Polynomial],
+    G: Matrix[Polynomial] | None,
+) -> Matrix[Polynomial]: ...
 
-class ComputeMinimalPolynomials:
-    def __init__(self, B: builtins.object) -> None: ...
+
+def p_part(f: Polynomial, p: _Scalar) -> Polynomial: ...
+
+
+class ComputeMinimalPolynomials(SageObject, Generic[_Scalar]):
+    chi_B: Polynomial
+    mu_B: Polynomial
+
+    def __init__(self, B: Matrix[_Scalar]) -> None: ...
     def find_monic_replacements(
         self,
-        p: builtins.int,
-        t: builtins.object,
-        pt_generators: builtins.object,
-        prev_nu: builtins.object,
-    ) -> ElementConstructorInput: ...
+        p: _Scalar,
+        t: int | Integer,
+        pt_generators: Sequence[Polynomial],
+        prev_nu: Polynomial,
+    ) -> list[Polynomial]: ...
     def current_nu(
         self,
-        p: builtins.int,
-        t: builtins.object,
-        pt_generators: builtins.object,
-        prev_nu: builtins.object,
-    ) -> ElementConstructorInput: ...
+        p: _Scalar,
+        t: int | Integer,
+        pt_generators: Sequence[Polynomial],
+        prev_nu: Polynomial,
+    ) -> Polynomial: ...
     def mccoy_column(
-        self, p: builtins.int, t: builtins.object, nu: builtins.object
-    ) -> ElementConstructorInput: ...
+        self,
+        p: _Scalar,
+        t: int | Integer,
+        nu: Polynomial,
+    ) -> Matrix[Polynomial]: ...
     def p_minimal_polynomials(
-        self, p: builtins.int, s_max: builtins.object = ...
-    ) -> ElementConstructorInput: ...
-    def null_ideal(self, b: builtins.int = ...) -> ElementConstructorInput: ...
-    def prime_candidates(self) -> ElementConstructorInput: ...
-    def integer_valued_polynomials_generators(self) -> ElementConstructorInput: ...
+        self,
+        p: _Scalar,
+        s_max: int | Integer | None = ...,
+    ) -> dict[int, Polynomial]: ...
+    def null_ideal(self, b: _Scalar | int = ...) -> Ideal_generic: ...
+    def prime_candidates(self) -> list[_Scalar]: ...
+    def integer_valued_polynomials_generators(
+        self,
+    ) -> tuple[Polynomial, list[Polynomial | FractionFieldElement]]: ...

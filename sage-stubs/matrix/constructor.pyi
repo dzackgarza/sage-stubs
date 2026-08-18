@@ -1,70 +1,89 @@
-from collections.abc import Iterator, Sequence
-from typing import Self, TypeVar
-from sage.matrix.matrix0 import Matrix
-from sage.modules.free_module import FreeModule_generic
+from collections.abc import Callable, Iterable, Mapping, Sequence
+from typing import TypeVar, overload
+
+from sage.matrix.matrix import Matrix as MatrixClass
+from sage.matrix.matrix_space import MatrixIndexKeys, MatrixSpace
 from sage.modules.free_module_element import FreeModuleElement
-from sage.modules.free_module_homspace import FreeModuleHomspace
 from sage.rings.integer import Integer
-from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.rings.rational import Rational
-from sage.rings.real_double import RealDoubleElement
-from sage.rings.complex_double import ComplexDoubleElement
-from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
-from sage.rings.ring import Ring
 from sage.structure.element import RingElement
-from sage.structure.parent import ElementConstructorInput
-from sage.structure.sage_object import SageObject
-from sage.symbolic.expression import Expression
+from sage.structure.parent import ElementConstructorInput, Parent
 
 _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
 
-from sage.matrix.matrix2 import Matrix as _MatrixClass
-from sage.matrix.matrix_space import MatrixSpace, MatrixIndexKeys
-
-type MatrixEntry = RingElement | Element | int | Integer
 type MatrixEntries = (
-    _MatrixClass
-    | FreeModuleElement
-    | Sequence[MatrixEntry]
-    | Sequence[Sequence[MatrixEntry]]
-    | Mapping[tuple[int, int], MatrixEntry]
-    | Callable[[int, int], MatrixEntry]
+    MatrixClass[_Scalar]
+    | FreeModuleElement[_Scalar]
+    | Sequence[ElementConstructorInput]
+    | Sequence[Sequence[ElementConstructorInput]]
+    | Mapping[tuple[int, int], ElementConstructorInput]
+    | Callable[[int, int], ElementConstructorInput]
 )
 
-class _MatrixConstructor:
+
+class MatrixFactory:
+    @overload
     def __call__(
         self,
-        ring: Ring | None = None,
-        nrows: int | Integer | MatrixIndexKeys | MatrixEntries | None = None,
-        ncols: int | Integer | MatrixIndexKeys | MatrixEntries | None = None,
-        entries: MatrixEntry | MatrixEntries = 0,
+        ring: Parent[_Scalar],
+        nrows: int | Integer,
+        ncols: int | Integer,
+        entries: MatrixEntries[_Scalar] | ElementConstructorInput = ...,
         *,
-        base_ring: Ring | None = None,
-        sparse: bool | None = None,
-        row_keys: MatrixIndexKeys | None = None,
-        column_keys: MatrixIndexKeys | None = None,
-        space: MatrixSpace | None = None,
-        immutable: bool = False,
-    ) -> _MatrixClass: ...
+        sparse: bool | None = ...,
+        immutable: bool = ...,
+    ) -> MatrixClass[_Scalar]: ...
+    @overload
+    def __call__(
+        self,
+        ring: Parent[_Scalar],
+        entries: MatrixEntries[_Scalar],
+        *,
+        sparse: bool | None = ...,
+        immutable: bool = ...,
+    ) -> MatrixClass[_Scalar]: ...
+    @overload
+    def __call__(
+        self,
+        entries: MatrixEntries[RingElement],
+        *,
+        sparse: bool | None = ...,
+        immutable: bool = ...,
+    ) -> MatrixClass[RingElement]: ...
     def diagonal(
         self,
-        arg0: MatrixEntries | Iterable[MatrixEntry],
-        arg1: MatrixEntries | Iterable[MatrixEntry] | None = None,
-    ) -> _MatrixClass: ...
-    def identity(self, ring: Ring | None = None, n: int = 1) -> _MatrixClass: ...
+        entries: Iterable[ElementConstructorInput],
+        ring: Parent[_Scalar] | None = ...,
+    ) -> MatrixClass[_Scalar]: ...
+    def identity(self, ring: Parent[_Scalar], n: int | Integer) -> MatrixClass[_Scalar]: ...
     def zero(
-        self, ring: Ring | None = None, nrows: int = 1, ncols: int = 1
-    ) -> _MatrixClass: ...
-    def block(self, blocks: Iterable[MatrixEntries]) -> _MatrixClass: ...
+        self,
+        ring: Parent[_Scalar],
+        nrows: int | Integer,
+        ncols: int | Integer | None = ...,
+    ) -> MatrixClass[_Scalar]: ...
+    def block(self, blocks: Iterable[MatrixClass[_Scalar] | None]) -> MatrixClass[_Scalar]: ...
 
-matrix: _MatrixConstructor
-Matrix: _MatrixConstructor
 
-def identity_matrix(ring: Ring | None = None, n: int = 1) -> _MatrixClass: ...
+matrix: MatrixFactory
+Matrix = matrix
+
+
+def identity_matrix(
+    ring: Parent[_Scalar],
+    n: int | Integer,
+) -> MatrixClass[_Scalar]: ...
 def zero_matrix(
-    ring: Ring | None = None, nrows: int = 1, ncols: int = 1
-) -> _MatrixClass: ...
+    ring: Parent[_Scalar],
+    nrows: int | Integer,
+    ncols: int | Integer | None = ...,
+) -> MatrixClass[_Scalar]: ...
 def diagonal_matrix(
-    arg0: MatrixEntries | Iterable[MatrixEntry],
-    arg1: MatrixEntries | Iterable[MatrixEntry] | None = None,
-) -> _MatrixClass: ...
+    ring: Parent[_Scalar],
+    entries: Iterable[ElementConstructorInput],
+) -> MatrixClass[_Scalar]: ...
+def matrix_space(
+    ring: Parent[_Scalar],
+    nrows: int | Integer,
+    ncols: int | Integer | None = ...,
+    sparse: bool = ...,
+) -> MatrixSpace[_Scalar]: ...
