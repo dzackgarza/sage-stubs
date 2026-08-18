@@ -1,67 +1,53 @@
-from collections.abc import Iterator, Sequence
-from typing import Self, TypeVar
-from sage.matrix.matrix0 import Matrix
-from sage.modules.free_module import FreeModule_generic
-from sage.modules.free_module_element import FreeModuleElement
-from sage.modules.free_module_homspace import FreeModuleHomspace
-from sage.rings.integer import Integer
-from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.rings.rational import Rational
-from sage.rings.real_double import RealDoubleElement
-from sage.rings.complex_double import ComplexDoubleElement
-from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
-from sage.rings.ring import Ring
-from sage.structure.element import RingElement
-from sage.structure.parent import ElementConstructorInput
-from sage.structure.sage_object import SageObject
-from sage.symbolic.expression import Expression
+from collections.abc import Callable, Hashable, Iterable
+from typing import Generic, TypeVar
 
+from sage.combinat.free_module import CombinatorialFreeModule
+from sage.modules.with_basis.representation import Representation_abstract
+from sage.modules.with_basis.subquotient import SubmoduleWithBasis
+from sage.structure.element import Element, RingElement
+
+_Index = TypeVar("_Index", bound=Hashable, default=Hashable)
 _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+_Actor = TypeVar("_Actor", bound=Element, default=Element)
 
-import builtins
 
-class _SageObject: ...
-
-class FiniteDimensionalInvariantModule:
+class FiniteDimensionalInvariantModule(
+    SubmoduleWithBasis[_Index, _Scalar],
+    Generic[_Actor, _Index, _Scalar],
+):
     def __init__(
         self,
-        M: builtins.int,
-        S: builtins.object,
-        action: builtins.object = ...,
-        side: builtins.str = ...,
-        *args: builtins.object,
-        **kwargs: builtins.object,
+        representation: Representation_abstract[_Actor, _Index, _Scalar],
+        S: Iterable[_Actor] | None = ...,
+        action: Callable | None = ...,
+        side: str = ...,
     ) -> None: ...
-    def construction(self) -> FiniteDimensionalInvariantModule: ...
-    def semigroup(self) -> FiniteDimensionalInvariantModule: ...
-    semigroup_representation: _SageObject
+    def representation(self) -> Representation_abstract[_Actor, _Index, _Scalar]: ...
+    def acting_set(self) -> tuple[_Actor, ...]: ...
 
-    class Element: ...
 
-class FiniteDimensionalTwistedInvariantModule:
-    @staticmethod
-    def __classcall_private__(
-        cls: builtins.object,
-        M: builtins.int,
-        G: builtins.object,
-        chi: builtins.object,
-        action: builtins.object = ...,
-        side: builtins.str = ...,
-        **kwargs: builtins.object,
-    ) -> FiniteDimensionalInvariantModule: ...
-    def __init__(
-        self,
-        M: builtins.int,
-        G: builtins.object,
-        chi: builtins.object,
-        action: builtins.object = ...,
-        side: builtins.str = ...,
-        **kwargs: builtins.object,
-    ) -> None: ...
-    def project(self, x: builtins.object) -> FiniteDimensionalInvariantModule: ...
-    def project_ambient(
-        self, x: builtins.object
-    ) -> FiniteDimensionalInvariantModule: ...
-    def projection_matrix(self) -> Matrix[_Scalar]: ...
+class InvariantModule(
+    FiniteDimensionalInvariantModule[_Actor, _Index, _Scalar],
+    Generic[_Actor, _Index, _Scalar],
+):
+    pass
 
-    class Element: ...
+
+class TwistedInvariantModule(
+    FiniteDimensionalInvariantModule[_Actor, _Index, _Scalar],
+    Generic[_Actor, _Index, _Scalar],
+):
+    def character(self) -> Callable[[_Actor], _Scalar]: ...
+
+
+def invariant_module(
+    representation: Representation_abstract[_Actor, _Index, _Scalar],
+    S: Iterable[_Actor] | None = ...,
+) -> InvariantModule[_Actor, _Index, _Scalar]: ...
+
+
+def twisted_invariant_module(
+    representation: Representation_abstract[_Actor, _Index, _Scalar],
+    character: Callable[[_Actor], _Scalar],
+    S: Iterable[_Actor] | None = ...,
+) -> TwistedInvariantModule[_Actor, _Index, _Scalar]: ...

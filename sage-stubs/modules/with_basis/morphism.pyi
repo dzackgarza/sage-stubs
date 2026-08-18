@@ -1,63 +1,81 @@
-from collections.abc import Iterator, Sequence
-from typing import Self, TypeVar
-from sage.matrix.matrix0 import Matrix
-from sage.modules.free_module import FreeModule_generic
-from sage.modules.free_module_element import FreeModuleElement
-from sage.modules.free_module_homspace import FreeModuleHomspace
-from sage.rings.integer import Integer
-from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.rings.rational import Rational
-from sage.rings.real_double import RealDoubleElement
-from sage.rings.complex_double import ComplexDoubleElement
-from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
-from sage.rings.ring import Ring
-from sage.structure.element import RingElement
-from sage.structure.parent import ElementConstructorInput
-from sage.structure.sage_object import SageObject
-from sage.symbolic.expression import Expression
+from collections.abc import Callable, Hashable
+from typing import Generic, TypeVar
 
+from sage.categories.morphism import Morphism
+from sage.combinat.free_module import CombinatorialFreeModule
+from sage.modules.with_basis.indexed_element import IndexedFreeModuleElement
+from sage.structure.element import RingElement
+
+_DomainIndex = TypeVar("_DomainIndex", bound=Hashable, default=Hashable)
+_CodomainIndex = TypeVar("_CodomainIndex", bound=Hashable, default=Hashable)
 _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
 
-from sage.modules.with_basis.indexed_element import IndexedFreeModuleElement
 
-class ModuleMorphism:
+class ModuleMorphismByLinearity(
+    Morphism[
+        IndexedFreeModuleElement[_DomainIndex, _Scalar],
+        IndexedFreeModuleElement[_CodomainIndex, _Scalar],
+    ],
+    Generic[_DomainIndex, _CodomainIndex, _Scalar],
+):
     def __init__(
         self,
-        domain: FreeModule_generic,
-        codomain: FreeModule_generic = ...,
-        category: ElementConstructorInput = ...,
-        affine: bool = ...,
+        parent: object,
+        on_basis: Callable[
+            [_DomainIndex],
+            IndexedFreeModuleElement[_CodomainIndex, _Scalar],
+        ],
+        position: int = ...,
+        zero: object | None = ...,
     ) -> None: ...
-    def __call__(self, x: IndexedFreeModuleElement) -> IndexedFreeModuleElement: ...
+    def on_basis(
+        self,
+        index: _DomainIndex,
+    ) -> IndexedFreeModuleElement[_CodomainIndex, _Scalar]: ...
+    def _call_(
+        self,
+        x: IndexedFreeModuleElement[_DomainIndex, _Scalar],
+    ) -> IndexedFreeModuleElement[_CodomainIndex, _Scalar]: ...
 
-class ModuleMorphismFromFunction(ModuleMorphism):
+
+class DiagonalModuleMorphism(
+    ModuleMorphismByLinearity[_DomainIndex, _DomainIndex, _Scalar],
+    Generic[_DomainIndex, _Scalar],
+):
     def __init__(
         self,
-        domain: FreeModule_generic,
-        codomain: FreeModule_generic,
-        function: ElementConstructorInput,
-        category: ElementConstructorInput = ...,
+        parent: object,
+        diagonal: Callable[[_DomainIndex], _Scalar],
     ) -> None: ...
+    def diagonal(self, index: _DomainIndex) -> _Scalar: ...
+    def inverse(self) -> DiagonalModuleMorphism[_DomainIndex, _Scalar]: ...
+    __invert__ = inverse
 
-class ModuleMorphismByLinearity(ModuleMorphism):
+
+class TriangularModuleMorphism(
+    ModuleMorphismByLinearity[_DomainIndex, _CodomainIndex, _Scalar],
+    Generic[_DomainIndex, _CodomainIndex, _Scalar],
+):
     def __init__(
         self,
-        domain: FreeModule_generic,
-        codomain: FreeModule_generic = ...,
-        on_basis: ElementConstructorInput = ...,
-        category: ElementConstructorInput = ...,
+        parent: object,
+        on_basis: Callable[
+            [_DomainIndex],
+            IndexedFreeModuleElement[_CodomainIndex, _Scalar],
+        ],
+        triangular: str = ...,
+        unitriangular: bool = ...,
+        key: Callable[[_CodomainIndex], object] | None = ...,
+        inverse_on_support: Callable[[_CodomainIndex], _DomainIndex] | None = ...,
     ) -> None: ...
-
-class TriangularModuleMorphism(ModuleMorphism):
-    def __init__(
+    def triangular(self) -> str: ...
+    def is_unitriangular(self) -> bool: ...
+    def preimage(
         self,
-        domain: FreeModule_generic,
-        codomain: FreeModule_generic = ...,
-        on_basis: ElementConstructorInput = ...,
-        category: ElementConstructorInput = ...,
-        unitriangular: str = ...,
-    ) -> None: ...
-
-class TriangularModuleMorphismByLinearity(
-    ModuleMorphismByLinearity, TriangularModuleMorphism
-): ...
+        x: IndexedFreeModuleElement[_CodomainIndex, _Scalar],
+    ) -> IndexedFreeModuleElement[_DomainIndex, _Scalar]: ...
+    def section(
+        self,
+    ) -> TriangularModuleMorphism[_CodomainIndex, _DomainIndex, _Scalar]: ...
+    def inverse(self) -> TriangularModuleMorphism[_CodomainIndex, _DomainIndex, _Scalar]: ...
+    __invert__ = inverse

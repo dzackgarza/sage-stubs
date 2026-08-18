@@ -1,53 +1,56 @@
-from collections.abc import Iterator, Sequence
-from typing import Self, TypeVar
-from sage.matrix.matrix0 import Matrix
-from sage.modules.free_module import FreeModule_generic
-from sage.modules.free_module_element import FreeModuleElement
-from sage.modules.free_module_homspace import FreeModuleHomspace
-from sage.rings.integer import Integer
-from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.rings.rational import Rational
-from sage.rings.real_double import RealDoubleElement
-from sage.rings.complex_double import ComplexDoubleElement
-from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
-from sage.rings.ring import Ring
-from sage.structure.element import RingElement
-from sage.structure.parent import ElementConstructorInput
-from sage.structure.sage_object import SageObject
-from sage.symbolic.expression import Expression
+from collections.abc import Hashable
+from typing import Generic, TypeVar
 
+from sage.combinat.free_module import CombinatorialFreeModule
+from sage.modules.with_basis.indexed_element import IndexedFreeModuleElement
+from sage.modules.with_basis.subquotient import SubmoduleWithBasis
+from sage.sets.family import AbstractFamily
+from sage.structure.element import RingElement
+
+_CellIndex = TypeVar("_CellIndex", bound=Hashable, default=Hashable)
+_BasisIndex = TypeVar("_BasisIndex", bound=Hashable, default=Hashable)
 _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
 
-import builtins
 
-class _SageObject: ...
+class CellModuleElement(
+    IndexedFreeModuleElement[_BasisIndex, _Scalar],
+    Generic[_BasisIndex, _Scalar],
+):
+    pass
 
-class CellModule:
-    @staticmethod
-    def __classcall_private__(
-        cls: builtins.object,
-        A: builtins.object,
-        mu: builtins.object,
-        **kwds: builtins.object,
-    ) -> CellModule: ...
+
+class CellModule(
+    CombinatorialFreeModule,
+    Generic[_CellIndex, _BasisIndex, _Scalar],
+):
+    Element: type[CellModuleElement[_BasisIndex, _Scalar]]
     def __init__(
-        self, A: builtins.object, mu: builtins.object, **kwds: builtins.object
+        self,
+        algebra: CombinatorialFreeModule,
+        cell_index: _CellIndex,
+        category: object | None = ...,
     ) -> None: ...
-    def cellular_algebra(self) -> CellModule: ...
+    def algebra(self) -> CombinatorialFreeModule: ...
+    def cell_index(self) -> _CellIndex: ...
+    def indices(self) -> object: ...
+    def basis(self) -> AbstractFamily: ...
+    def action(
+        self,
+        algebra_element: CombinatorialFreeModule.Element,
+        module_element: CellModuleElement[_BasisIndex, _Scalar],
+    ) -> CellModuleElement[_BasisIndex, _Scalar]: ...
     def bilinear_form(
-        self, x: builtins.object, y: builtins.object
-    ) -> Matrix[_Scalar]: ...
-    def bilinear_form_matrix(
-        self, ordering: builtins.object = ...
-    ) -> Matrix[_Scalar]: ...
-    def nonzero_bilinear_form(self) -> CellModule: ...
-    def radical_basis(self) -> CellModule: ...
-    def radical(self) -> CellModule: ...
-    def simple_module(self) -> CellModule: ...
+        self,
+        left: CellModuleElement[_BasisIndex, _Scalar],
+        right: CellModuleElement[_BasisIndex, _Scalar],
+    ) -> _Scalar: ...
+    def gram_matrix(self) -> object: ...
+    def radical(self) -> CellModuleSubmodule[_CellIndex, _BasisIndex, _Scalar]: ...
+    def simple_module(self) -> CombinatorialFreeModule: ...
 
-    class Element: ...
 
-class SimpleModule:
-    def __init__(self, submodule: builtins.object) -> None: ...
-
-    class Element: ...
+class CellModuleSubmodule(
+    SubmoduleWithBasis[_BasisIndex, _Scalar],
+    Generic[_CellIndex, _BasisIndex, _Scalar],
+):
+    def ambient(self) -> CellModule[_CellIndex, _BasisIndex, _Scalar]: ...
