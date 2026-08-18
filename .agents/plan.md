@@ -147,12 +147,17 @@ See [feature.md](feature.md#measuring-progress) for the full workflow.
 > functions) is complete: 56 in-scope Sage modules, six Cython-fragment support
 > stubs, five package initializers, and two documented harness exemptions.
 >
+> **Latest completed workstream:** Phase 04 task T04.17 now covers the full
+> semiring subpackage, including typed tropical coefficients, coercions, matrices,
+> polynomial parents/elements, subdivisions, varieties, and plotting surfaces.
+>
 > **Active first-level phases:** Phase 04 (number-theoretic rings) and Phase 06
 > (associative and non-Lie algebras). Phase 05 (linear algebra) remains an
 > unstarted dependency frontier for Phases 06–08, 12, 14, 15, and 17.
 >
-> **Next valid work:** continue a named task under Phase 04 or Phase 06, or
-> start Phase 05. Commits remain leaves beneath those task cards and must not
-> invent new phase numbers.
+> **Next valid work:** continue Phase 04 with T04.16 (asymptotic rings), T04.15
+> (valuations), or another dependency-compatible task; alternatively continue a
+> named Phase 06 task or start Phase 05. Commits remain leaves beneath those task
+> cards and must not invent new phase numbers.
 
 Update the frontier whenever a first-level phase or task status changes.
