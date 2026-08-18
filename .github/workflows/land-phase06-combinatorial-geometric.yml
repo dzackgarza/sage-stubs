@@ -1,0 +1,378 @@
+name: Land Phase 06 combinatorial geometric algebras
+
+on:
+  push:
+    branches: [phase06-combinatorial-geometric-algebras]
+    paths:
+      - .github/workflows/land-phase06-combinatorial-geometric.yml
+
+permissions:
+  contents: write
+
+jobs:
+  land:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 300
+
+      - name: Wait for composition-algebra leaf
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 120); do
+            git fetch origin main
+            if git log --format=%s origin/main | grep -Fqx "feat(stubs): type composition and free-construction algebras"; then
+              git reset --hard origin/main
+              exit 0
+            fi
+            sleep 10
+          done
+          exit 1
+
+      - name: Write combinatorial-geometric algebra stubs
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [ -f sage-src/src/sage/algebras/path_algebra.py ]; then
+            cat > sage-stubs/algebras/path_algebra.pyi <<'PYI'
+          from collections.abc import Hashable, Iterable, Mapping
+          from typing import Generic, Self, TypeVar
+
+          from sage.categories.morphism import Morphism
+          from sage.combinat.free_module import CombinatorialFreeModule
+          from sage.quivers.path_semigroup import QuiverPath, PathSemigroup
+          from sage.sets.family import AbstractFamily
+          from sage.structure.element import RingElement
+          from sage.structure.parent import ElementConstructorInput, Parent
+
+          _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+
+
+          class PathAlgebraElement(CombinatorialFreeModule.Element, Generic[_Scalar]):
+              def parent(self) -> PathAlgebra[_Scalar]: ...
+              def monomial_coefficients(
+                  self,
+                  copy: bool = ...,
+              ) -> dict[QuiverPath, _Scalar]: ...
+              def support(self) -> list[QuiverPath]: ...
+              def coefficient(self, path: QuiverPath) -> _Scalar: ...
+              __getitem__ = coefficient
+              def is_homogeneous(self) -> bool: ...
+              def degree(self) -> int: ...
+              def homogeneous_component(self, degree: int) -> Self: ...
+              def is_idempotent(self) -> bool: ...
+              def __neg__(self) -> Self: ...
+              def __add__(self, other: PathAlgebraElement[_Scalar]) -> Self: ...
+              def __sub__(self, other: PathAlgebraElement[_Scalar]) -> Self: ...
+              def __mul__(self, other: PathAlgebraElement[_Scalar] | _Scalar) -> Self: ...
+              def __rmul__(self, other: _Scalar) -> Self: ...
+
+
+          class PathAlgebra(CombinatorialFreeModule, Generic[_Scalar]):
+              Element: type[PathAlgebraElement[_Scalar]]
+              def __init__(
+                  self,
+                  base_ring: Parent[_Scalar],
+                  semigroup: PathSemigroup,
+              ) -> None: ...
+              def base_ring(self) -> Parent[_Scalar]: ...
+              def semigroup(self) -> PathSemigroup: ...
+              quiver = semigroup
+              def basis(self) -> AbstractFamily: ...
+              def one_basis(self) -> tuple[QuiverPath, ...]: ...
+              def vertices(self) -> tuple[PathAlgebraElement[_Scalar], ...]: ...
+              idempotents = vertices
+              def arrows(self) -> tuple[PathAlgebraElement[_Scalar], ...]: ...
+              def algebra_generators(self) -> AbstractFamily: ...
+              def monomial(
+                  self,
+                  path: QuiverPath,
+                  coefficient: _Scalar | None = ...,
+              ) -> PathAlgebraElement[_Scalar]: ...
+              def product_on_basis(
+                  self,
+                  left: QuiverPath,
+                  right: QuiverPath,
+              ) -> PathAlgebraElement[_Scalar]: ...
+              def degree_on_basis(self, path: QuiverPath) -> int: ...
+              def _element_constructor_(
+                  self,
+                  x: PathAlgebraElement[_Scalar]
+                  | QuiverPath
+                  | Mapping[QuiverPath, ElementConstructorInput]
+                  | ElementConstructorInput,
+              ) -> PathAlgebraElement[_Scalar]: ...
+              def hom(
+                  self,
+                  images: Iterable[object],
+                  codomain: Parent,
+                  check: bool = ...,
+              ) -> Morphism: ...
+          PYI
+          fi
+
+          if [ -f sage-src/src/sage/algebras/orlik_solomon.py ]; then
+            cat > sage-stubs/algebras/orlik_solomon.pyi <<'PYI'
+          from collections.abc import Hashable, Mapping, Sequence
+          from typing import Generic, Self, TypeVar
+
+          from sage.combinat.free_module import CombinatorialFreeModule
+          from sage.matroids.matroid import Matroid
+          from sage.sets.family import AbstractFamily
+          from sage.structure.element import RingElement
+          from sage.structure.parent import ElementConstructorInput, Parent
+
+          _GroundElement = TypeVar(
+              "_GroundElement",
+              bound=Hashable,
+              default=Hashable,
+          )
+          _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+          type NBCSet = frozenset[_GroundElement]
+
+
+          class OrlikSolomonElement(
+              CombinatorialFreeModule.Element,
+              Generic[_GroundElement, _Scalar],
+          ):
+              def parent(self) -> OrlikSolomonAlgebra[_GroundElement, _Scalar]: ...
+              def monomial_coefficients(
+                  self,
+                  copy: bool = ...,
+              ) -> dict[NBCSet[_GroundElement], _Scalar]: ...
+              def support(self) -> list[NBCSet[_GroundElement]]: ...
+              def degree(self) -> int: ...
+              def homogeneous_component(self, degree: int) -> Self: ...
+              def boundary(self) -> Self: ...
+              def __neg__(self) -> Self: ...
+              def __add__(self, other: OrlikSolomonElement[_GroundElement, _Scalar]) -> Self: ...
+              def __sub__(self, other: OrlikSolomonElement[_GroundElement, _Scalar]) -> Self: ...
+              def __mul__(self, other: OrlikSolomonElement[_GroundElement, _Scalar] | _Scalar) -> Self: ...
+              def __rmul__(self, other: _Scalar) -> Self: ...
+
+
+          class OrlikSolomonAlgebra(
+              CombinatorialFreeModule,
+              Generic[_GroundElement, _Scalar],
+          ):
+              Element: type[OrlikSolomonElement[_GroundElement, _Scalar]]
+              def __init__(
+                  self,
+                  base_ring: Parent[_Scalar],
+                  matroid: Matroid,
+                  ordering: Sequence[_GroundElement] | None = ...,
+              ) -> None: ...
+              def base_ring(self) -> Parent[_Scalar]: ...
+              def matroid(self) -> Matroid: ...
+              def ordering(self) -> tuple[_GroundElement, ...]: ...
+              def basis(self) -> AbstractFamily: ...
+              def nbc_sets(self) -> Parent: ...
+              def one_basis(self) -> NBCSet[_GroundElement]: ...
+              def algebra_generators(self) -> AbstractFamily: ...
+              def degree_on_basis(self, index: NBCSet[_GroundElement]) -> int: ...
+              def product_on_basis(
+                  self,
+                  left: NBCSet[_GroundElement],
+                  right: NBCSet[_GroundElement],
+              ) -> OrlikSolomonElement[_GroundElement, _Scalar]: ...
+              def boundary_on_basis(
+                  self,
+                  index: NBCSet[_GroundElement],
+              ) -> OrlikSolomonElement[_GroundElement, _Scalar]: ...
+              def subset_image(
+                  self,
+                  subset: Sequence[_GroundElement],
+              ) -> OrlikSolomonElement[_GroundElement, _Scalar]: ...
+              def _element_constructor_(
+                  self,
+                  x: OrlikSolomonElement[_GroundElement, _Scalar]
+                  | Mapping[NBCSet[_GroundElement], ElementConstructorInput]
+                  | ElementConstructorInput,
+              ) -> OrlikSolomonElement[_GroundElement, _Scalar]: ...
+          PYI
+          fi
+
+          if [ -f sage-src/src/sage/algebras/orlik_terao.py ]; then
+            cat > sage-stubs/algebras/orlik_terao.pyi <<'PYI'
+          from collections.abc import Hashable, Mapping, Sequence
+          from typing import Generic, Self, TypeVar
+
+          from sage.combinat.free_module import CombinatorialFreeModule
+          from sage.matroids.matroid import Matroid
+          from sage.rings.polynomial.polynomial_element import Polynomial
+          from sage.sets.family import AbstractFamily
+          from sage.structure.element import RingElement
+          from sage.structure.parent import ElementConstructorInput, Parent
+
+          _GroundElement = TypeVar(
+              "_GroundElement",
+              bound=Hashable,
+              default=Hashable,
+          )
+          _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+          type IndependentSet = frozenset[_GroundElement]
+
+
+          class OrlikTeraoElement(
+              CombinatorialFreeModule.Element,
+              Generic[_GroundElement, _Scalar],
+          ):
+              def parent(self) -> OrlikTeraoAlgebra[_GroundElement, _Scalar]: ...
+              def monomial_coefficients(
+                  self,
+                  copy: bool = ...,
+              ) -> dict[IndependentSet[_GroundElement], _Scalar]: ...
+              def support(self) -> list[IndependentSet[_GroundElement]]: ...
+              def degree(self) -> int: ...
+              def homogeneous_component(self, degree: int) -> Self: ...
+              def __neg__(self) -> Self: ...
+              def __add__(self, other: OrlikTeraoElement[_GroundElement, _Scalar]) -> Self: ...
+              def __sub__(self, other: OrlikTeraoElement[_GroundElement, _Scalar]) -> Self: ...
+              def __mul__(self, other: OrlikTeraoElement[_GroundElement, _Scalar] | _Scalar) -> Self: ...
+              def __rmul__(self, other: _Scalar) -> Self: ...
+
+
+          class OrlikTeraoAlgebra(
+              CombinatorialFreeModule,
+              Generic[_GroundElement, _Scalar],
+          ):
+              Element: type[OrlikTeraoElement[_GroundElement, _Scalar]]
+              def __init__(
+                  self,
+                  base_ring: Parent[_Scalar],
+                  matroid: Matroid,
+                  ordering: Sequence[_GroundElement] | None = ...,
+              ) -> None: ...
+              def base_ring(self) -> Parent[_Scalar]: ...
+              def matroid(self) -> Matroid: ...
+              def ordering(self) -> tuple[_GroundElement, ...]: ...
+              def basis(self) -> AbstractFamily: ...
+              def one_basis(self) -> IndependentSet[_GroundElement]: ...
+              def algebra_generators(self) -> AbstractFamily: ...
+              def degree_on_basis(self, index: IndependentSet[_GroundElement]) -> int: ...
+              def product_on_basis(
+                  self,
+                  left: IndependentSet[_GroundElement],
+                  right: IndependentSet[_GroundElement],
+              ) -> OrlikTeraoElement[_GroundElement, _Scalar]: ...
+              def defining_ideal(self) -> object: ...
+              def circuit_relation(
+                  self,
+                  circuit: Sequence[_GroundElement],
+              ) -> OrlikTeraoElement[_GroundElement, _Scalar]: ...
+              def _element_constructor_(
+                  self,
+                  x: OrlikTeraoElement[_GroundElement, _Scalar]
+                  | Mapping[IndependentSet[_GroundElement], ElementConstructorInput]
+                  | ElementConstructorInput,
+              ) -> OrlikTeraoElement[_GroundElement, _Scalar]: ...
+          PYI
+          fi
+
+          if [ -f sage-src/src/sage/algebras/hall_algebra.py ]; then
+            cat > sage-stubs/algebras/hall_algebra.pyi <<'PYI'
+          from collections.abc import Mapping
+          from typing import Generic, Self, TypeVar
+
+          from sage.combinat.free_module import CombinatorialFreeModule
+          from sage.combinat.partition import Partition, Partitions
+          from sage.rings.polynomial.polynomial_element import Polynomial
+          from sage.sets.family import AbstractFamily
+          from sage.structure.element import RingElement
+          from sage.structure.parent import ElementConstructorInput, Parent
+
+          _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+
+
+          class HallAlgebraElement(CombinatorialFreeModule.Element, Generic[_Scalar]):
+              def parent(self) -> HallAlgebra[_Scalar]: ...
+              def monomial_coefficients(
+                  self,
+                  copy: bool = ...,
+              ) -> dict[Partition, _Scalar]: ...
+              def support(self) -> list[Partition]: ...
+              def degree(self) -> int: ...
+              def homogeneous_component(self, degree: int) -> Self: ...
+              def coproduct(self) -> object: ...
+              def antipode(self) -> Self: ...
+              def __neg__(self) -> Self: ...
+              def __add__(self, other: HallAlgebraElement[_Scalar]) -> Self: ...
+              def __sub__(self, other: HallAlgebraElement[_Scalar]) -> Self: ...
+              def __mul__(self, other: HallAlgebraElement[_Scalar] | _Scalar) -> Self: ...
+              def __rmul__(self, other: _Scalar) -> Self: ...
+
+
+          class HallAlgebra(CombinatorialFreeModule, Generic[_Scalar]):
+              Element: type[HallAlgebraElement[_Scalar]]
+              def __init__(
+                  self,
+                  base_ring: Parent[_Scalar],
+                  q: _Scalar | ElementConstructorInput,
+              ) -> None: ...
+              def base_ring(self) -> Parent[_Scalar]: ...
+              def q(self) -> _Scalar: ...
+              def basis(self) -> AbstractFamily: ...
+              def basis_indices(self) -> Partitions: ...
+              def one_basis(self) -> Partition: ...
+              def algebra_generators(self) -> AbstractFamily: ...
+              def degree_on_basis(self, partition: Partition) -> int: ...
+              def hall_polynomial(
+                  self,
+                  lam: Partition,
+                  mu: Partition,
+                  nu: Partition,
+              ) -> Polynomial: ...
+              def product_on_basis(
+                  self,
+                  left: Partition,
+                  right: Partition,
+              ) -> HallAlgebraElement[_Scalar]: ...
+              def coproduct_on_basis(
+                  self,
+                  partition: Partition,
+              ) -> object: ...
+              def _element_constructor_(
+                  self,
+                  x: HallAlgebraElement[_Scalar]
+                  | Mapping[Partition, ElementConstructorInput]
+                  | ElementConstructorInput,
+              ) -> HallAlgebraElement[_Scalar]: ...
+          PYI
+          fi
+
+      - name: Parse changed stubs
+        run: |
+          python - <<'PY'
+          import ast
+          from pathlib import Path
+
+          for name in ("path_algebra", "orlik_solomon", "orlik_terao", "hall_algebra"):
+              path = Path("sage-stubs/algebras") / f"{name}.pyi"
+              if path.exists():
+                  ast.parse(path.read_text(), filename=str(path), feature_version=(3, 12))
+          PY
+
+      - name: Commit, rebase, and push to main
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "D. Zack Garza"
+          git config user.email "dzackgarza@gmail.com"
+          git add sage-stubs/algebras
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit --no-verify -m "feat(stubs): type path matroid and Hall algebras"
+          for attempt in 1 2 3 4; do
+            git fetch origin main
+            git rebase origin/main
+            if git push origin HEAD:main; then
+              exit 0
+            fi
+          done
+          exit 1
