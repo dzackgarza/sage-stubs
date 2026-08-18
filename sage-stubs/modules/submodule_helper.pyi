@@ -1,42 +1,46 @@
-from collections.abc import Iterator, Sequence
-from typing import Self, TypeVar
+from typing import Generic, TypeVar
+
 from sage.matrix.matrix0 import Matrix
-from sage.modules.free_module import FreeModule_generic
-from sage.modules.free_module_element import FreeModuleElement
-from sage.modules.free_module_homspace import FreeModuleHomspace
-from sage.rings.integer import Integer
-from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.rings.rational import Rational
-from sage.rings.real_double import RealDoubleElement
-from sage.rings.complex_double import ComplexDoubleElement
-from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
-from sage.rings.ring import Ring
 from sage.structure.element import RingElement
-from sage.structure.parent import ElementConstructorInput
-from sage.structure.sage_object import SageObject
-from sage.symbolic.expression import Expression
 
 _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
 
-import builtins
+class SubmoduleHelper(Generic[_Scalar]):
+    rank: int
+    basis: Matrix[_Scalar]
+    complement: Matrix[_Scalar]
+    coordinates: Matrix[_Scalar]
+    is_saturated: bool
 
-class _SageObject: ...
-
-class SubmoduleHelper:
+    @staticmethod
     def __classcall_private__(
-        self, mat: builtins.object, saturate: builtins.bool = ...
-    ) -> ElementConstructorInput: ...
-    def __hash__(self) -> builtins.int: ...
-    def __eq__(self, other: builtins.object) -> builtins.bool: ...
+        class_: type[SubmoduleHelper[_Scalar]],
+        mat: Matrix[_Scalar],
+        saturate: bool = ...,
+    ) -> SubmoduleHelper[_Scalar]: ...
+    def __hash__(self) -> int: ...
+    def __eq__(self, other: object) -> bool: ...
 
-class SubmoduleHelper_field:
-    def __init__(self, mat: builtins.object, saturate: builtins.object) -> None: ...
+class SubmoduleHelper_field(SubmoduleHelper[_Scalar], Generic[_Scalar]):
+    def __init__(
+        self,
+        mat: Matrix[_Scalar],
+        saturate: bool,
+    ) -> None: ...
 
-class SubmoduleHelper_PID:
-    def __init__(self, mat: builtins.object, saturate: builtins.object) -> None: ...
+class SubmoduleHelper_PID(SubmoduleHelper[_Scalar], Generic[_Scalar]):
+    def __init__(
+        self,
+        mat: Matrix[_Scalar],
+        saturate: bool,
+    ) -> None: ...
 
-class SubmoduleHelper_polynomial_ring:
-    def __init__(self, mat: builtins.object, saturate: builtins.object) -> None: ...
-    def complement(self) -> ElementConstructorInput: ...
-    def coordinates(self) -> tuple[_Scalar, ...]: ...
-    def is_saturated(self) -> builtins.bool: ...
+class SubmoduleHelper_polynomial_ring(
+    SubmoduleHelper[_Scalar],
+    Generic[_Scalar],
+):
+    def __init__(
+        self,
+        mat: Matrix[_Scalar],
+        saturate: bool,
+    ) -> None: ...

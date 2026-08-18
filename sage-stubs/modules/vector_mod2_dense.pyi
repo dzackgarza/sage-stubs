@@ -1,57 +1,54 @@
-from collections.abc import Iterator, Sequence
-from typing import Self, TypeVar
-from sage.matrix.matrix0 import Matrix
+from collections.abc import Callable, Sequence
+from typing import Self
+
 from sage.modules.free_module import FreeModule_generic
 from sage.modules.free_module_element import FreeModuleElement
-from sage.modules.free_module_homspace import FreeModuleHomspace
-from sage.rings.integer import Integer
-from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.rings.rational import Rational
-from sage.rings.real_double import RealDoubleElement
-from sage.rings.complex_double import ComplexDoubleElement
 from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
-from sage.rings.ring import Ring
-from sage.structure.element import RingElement
-from sage.structure.parent import ElementConstructorInput
-from sage.structure.sage_object import SageObject
-from sage.symbolic.expression import Expression
+from sage.structure.element import ElementConstructorInput
 
-_Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
-
-import builtins
-
-class _SageObject: ...
-
-class Vector_mod2_dense:
-    def is_dense_c(self) -> builtins.bool: ...
-    def is_sparse_c(self) -> builtins.bool: ...
-    def __copy__(self) -> Self: ...
-    def __cinit__(
-        self,
-        parent: builtins.object = ...,
-        x: builtins.object = ...,
-        coerce: builtins.object = ...,
-        copy: builtins.object = ...,
-    ) -> Vector_mod2_dense: ...
+class Vector_mod2_dense(FreeModuleElement[IntegerMod_abstract]):
     def __init__(
         self,
-        parent: builtins.object,
-        x: builtins.object,
-        coerce: builtins.object = ...,
-        copy: builtins.object = ...,
+        parent: FreeModule_generic[IntegerMod_abstract],
+        x: Sequence[ElementConstructorInput] | int,
+        coerce: bool = ...,
+        copy: bool = ...,
     ) -> None: ...
-    def __dealloc__(self) -> Vector_mod2_dense: ...
-    def get_unsafe(self, i: builtins.object) -> Vector_mod2_dense: ...
-    def set_unsafe(
-        self, i: builtins.object, value: builtins.object
-    ) -> Vector_mod2_dense: ...
-    def __reduce__(self) -> builtins.str | builtins.tuple[builtins.object, ...]: ...
-    def hamming_weight(self) -> Vector_mod2_dense: ...
-    def list(self, copy: builtins.object = ...) -> tuple[IntegerMod_abstract, ...]: ...
+    def __copy__(self) -> Self: ...
+    def _richcmp_(
+        self,
+        right: Vector_mod2_dense,
+        op: int,
+    ) -> bool: ...
+    def _add_(self, right: Vector_mod2_dense) -> Self: ...
+    def _sub_(self, right: Vector_mod2_dense) -> Self: ...
+    def hamming_weight(self) -> int: ...
+    def _dot_product_(
+        self,
+        right: Vector_mod2_dense,
+    ) -> IntegerMod_abstract: ...
+    def _pairwise_product_(
+        self,
+        right: Vector_mod2_dense,
+    ) -> Self: ...
+    def _lmul_(self, left: IntegerMod_abstract) -> Self: ...
+    def _neg_(self) -> Self: ...
+    def list(self, copy: bool = ...) -> list[IntegerMod_abstract]: ...
+    def __reduce__(
+        self,
+    ) -> tuple[
+        Callable[..., Vector_mod2_dense],
+        tuple[
+            FreeModule_generic[IntegerMod_abstract],
+            list[IntegerMod_abstract],
+            int,
+            bool,
+        ],
+    ]: ...
 
 def unpickle_v0(
-    parent: builtins.object,
-    entries: builtins.object,
-    degree: builtins.object,
-    immutable: builtins.object,
-) -> ElementConstructorInput: ...
+    parent: FreeModule_generic[IntegerMod_abstract],
+    entries: Sequence[ElementConstructorInput],
+    degree: int,
+    immutable: bool,
+) -> Vector_mod2_dense: ...
