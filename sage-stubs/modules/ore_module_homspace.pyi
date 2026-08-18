@@ -1,36 +1,38 @@
-from collections.abc import Iterator, Sequence
-from typing import Self, TypeVar
-from sage.matrix.matrix0 import Matrix
-from sage.modules.free_module import FreeModule_generic
-from sage.modules.free_module_element import FreeModuleElement
-from sage.modules.free_module_homspace import FreeModuleHomspace
-from sage.rings.integer import Integer
-from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.rings.rational import Rational
-from sage.rings.real_double import RealDoubleElement
-from sage.rings.complex_double import ComplexDoubleElement
-from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
-from sage.rings.ring import Ring
+from typing import Generic, TypeVar
+
+from sage.categories.category import Category
+from sage.categories.homset import HomsetWithBase
+from sage.matrix.matrix_space import MatrixSpace
+from sage.modules.ore_module import OreModule
+from sage.modules.ore_module_element import OreModuleElement
+from sage.modules.ore_module_morphism import OreModuleMorphism, OreModuleMorphismInput
 from sage.structure.element import RingElement
-from sage.structure.parent import ElementConstructorInput
-from sage.structure.sage_object import SageObject
-from sage.symbolic.expression import Expression
+from sage.structure.unique_representation import UniqueRepresentation
 
 _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
 
-import builtins
-
-class _SageObject: ...
-
-class OreModule_homspace:
-    Element: _SageObject
+class OreModule_homspace(
+    UniqueRepresentation,
+    HomsetWithBase[
+        OreModuleMorphism[_Scalar],
+        OreModuleElement[_Scalar],
+        OreModuleElement[_Scalar],
+    ],
+    Generic[_Scalar],
+):
+    Element: type[OreModuleMorphism[_Scalar]]
 
     def __init__(
         self,
-        domain: builtins.object,
-        codomain: builtins.object,
-        category: builtins.object = ...,
+        domain: OreModule[_Scalar],
+        codomain: OreModule[_Scalar],
+        category: Category | None = ...,
     ) -> None: ...
-    def matrix_space(self) -> Matrix[_Scalar]: ...
-    def identity(self) -> OreModule_homspace: ...
-    def zero(self) -> FreeModuleElement[_Scalar]: ...
+    def _element_constructor_(
+        self,
+        im_gens: OreModuleMorphismInput[_Scalar],
+        check: bool = ...,
+    ) -> OreModuleMorphism[_Scalar]: ...
+    def matrix_space(self) -> MatrixSpace[_Scalar]: ...
+    def identity(self) -> OreModuleMorphism[_Scalar]: ...
+    def zero(self) -> OreModuleMorphism[_Scalar]: ...
