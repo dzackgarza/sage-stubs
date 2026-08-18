@@ -1,0 +1,114 @@
+name: Complete T04.16 asymptotic rings
+
+on:
+  push:
+    branches: [t04-16-asymptotic-validation]
+    paths:
+      - .github/workflows/complete-t04-16-asymptotic.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  complete:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install analyzers
+        run: python -m pip install --upgrade pip ruff mypy basedpyright
+
+      - name: Validate complete asymptotic surface
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          git switch -C main origin/main
+          target=sage-stubs/rings/asymptotic
+          ruff check "$target"
+          ruff format --check "$target"
+          python scripts/check_stubs.py $(find "$target" -name '*.pyi' -print)
+          python scripts/audit_stub_quality.py --root "$target" --max-console 1000
+          ln -s sage-stubs sage
+          MYPYPATH=. python -m mypy --strict --no-warn-unused-ignores --no-incremental --follow-imports=skip --show-error-codes --no-pretty sage/rings/asymptotic
+          rm sage
+          basedpyright --project pyrightconfig.json "$target"
+          python - <<'PY'
+          import ast
+          from pathlib import Path
+
+          modules = (
+              'asymptotic_ring',
+              'asymptotic_expansion_generators',
+              'asymptotics_multivariate_generating_functions',
+              'growth_group',
+              'growth_group_cartesian',
+              'term_monoid',
+              'misc',
+          )
+          source_root = Path('sage-src/src/sage/rings/asymptotic')
+          stub_root = Path('sage-stubs/rings/asymptotic')
+          failures: list[str] = []
+          for module in modules:
+              stub = stub_root / f'{module}.pyi'
+              if not stub.exists():
+                  failures.append(f'missing stub: {stub}')
+                  continue
+              source = source_root / f'{module}.py'
+              if not source.exists():
+                  source = source_root / f'{module}.pyx'
+              if not source.exists():
+                  failures.append(f'missing pinned source: {module}')
+                  continue
+              if source.suffix != '.py':
+                  continue
+              source_tree = ast.parse(source.read_text())
+              stub_tree = ast.parse(stub.read_text())
+              public_source = {
+                  node.name
+                  for node in source_tree.body
+                  if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef))
+                  and not node.name.startswith('_')
+              }
+              public_stub = {
+                  node.name
+                  for node in stub_tree.body
+                  if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef))
+                  and not node.name.startswith('_')
+              }
+              missing = sorted(public_source - public_stub)
+              if missing:
+                  failures.append(f'{module}: missing public definitions {missing}')
+          if failures:
+              raise SystemExit('\n'.join(failures))
+          PY
+
+      - name: Mark T04.16 complete and push immediately
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+
+          phase = Path('.agents/phases/phase-04-number-theory-rings.md')
+          text = phase.read_text()
+          old = "| T04.16 | **Asymptotic ring subpackage** — `asymptotic_ring`, `asymptotic_expansion_generators`, `asymptotics_multivariate_generating_functions`, `growth_group`, `growth_group_cartesian`, `term_monoid`, `misc`. | 7 | — | ⬜ | `asymptotic_ring` has existing stub. |"
+          new = "| T04.16 | **Asymptotic ring subpackage** — `asymptotic_ring`, `asymptotic_expansion_generators`, `asymptotics_multivariate_generating_functions`, `growth_group`, `growth_group_cartesian`, `term_monoid`, `misc`. | 7 | — | ✅ Done | Full parent/element, growth-group, term-monoid, expansion, coefficient-extraction, symbolic conversion, plotting, and multivariate generating-function surface is source-grounded against the pinned Sage source. |"
+          if old not in text:
+              raise SystemExit('T04.16 planning row did not match expected current state')
+          phase.write_text(text.replace(old, new))
+          PY
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add .agents/phases/phase-04-number-theory-rings.md
+          git commit -m 'plan: complete T04.16 asymptotic rings'
+          git push origin main
