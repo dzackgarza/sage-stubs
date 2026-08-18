@@ -1,0 +1,104 @@
+name: Refine T04.17 semiring candidate
+
+on:
+  push:
+    branches: [t04-17-semirings-validation]
+    paths:
+      - .github/workflows/refine-t04-17-semirings-candidate.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  refine:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: t04-17-semirings-candidate
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Replace erased override widenings
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+
+          mpoly = Path('sage-stubs/rings/semirings/tropical_mpolynomial.pyi')
+          text = mpoly.read_text()
+          old = (
+              '    def subs(\n'
+              '        self,\n'
+              '        fixed: object = ...,\n'
+              '        **kwds: ElementConstructorInput,\n'
+              '    ) -> TropicalMPolynomial: ...\n'
+          )
+          new = (
+              '    def subs(  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]\n'
+              '        self,\n'
+              '        fixed: Mapping[TropicalMPolynomial | int, ElementConstructorInput] | None = ...,\n'
+              '        **kwds: ElementConstructorInput,\n'
+              '    ) -> TropicalMPolynomial: ...\n'
+          )
+          if old in text:
+              text = text.replace(old, new, 1)
+          elif new not in text:
+              raise SystemExit('tropical multivariate subs signature not in expected state')
+          mpoly.write_text(text)
+
+          poly = Path('sage-stubs/rings/semirings/tropical_polynomial.pyi')
+          text = poly.read_text()
+          old = (
+              '    def plot(\n'
+              '        self,\n'
+              '        xmin: object = ...,\n'
+              '        xmax: object = ...,\n'
+              '        *args: object,\n'
+              '        **kwds: object,\n'
+              '    ) -> Graphics: ...\n'
+          )
+          new = (
+              '    def plot(  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]\n'
+              '        self,\n'
+              '        xmin: ElementConstructorInput | None = ...,\n'
+              '        xmax: ElementConstructorInput | None = ...,\n'
+              '        *args: ElementConstructorInput,\n'
+              '        **kwds: ElementConstructorInput,\n'
+              '    ) -> Graphics: ...\n'
+          )
+          if old in text:
+              text = text.replace(old, new, 1)
+          elif new not in text:
+              raise SystemExit('tropical plot signature not in expected state')
+          poly.write_text(text)
+          PY
+
+      - name: Format and validate candidate
+        run: |
+          set -euo pipefail
+          python -m pip install --upgrade pip ruff
+          target=sage-stubs/rings/semirings
+          ruff format "$target"
+          ruff check --fix "$target"
+          ruff check "$target"
+          ruff format --check "$target"
+          python scripts/check_stubs.py $(find "$target" -name '*.pyi' -print)
+          python scripts/audit_stub_quality.py --root "$target" --max-console 1000
+
+      - name: Commit refined candidate
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add sage-stubs/rings/semirings
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m 'fix(stubs): preserve precise tropical override inputs'
+          git push origin HEAD:t04-17-semirings-candidate
