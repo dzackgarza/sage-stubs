@@ -1,27 +1,37 @@
-from collections.abc import Iterator, Sequence
-from typing import Self, TypeVar
-from sage.matrix.matrix0 import Matrix
-from sage.modules.free_module import FreeModule_generic
-from sage.modules.free_module_element import FreeModuleElement
-from sage.modules.free_module_homspace import FreeModuleHomspace
-from sage.rings.integer import Integer
-from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.rings.rational import Rational
-from sage.rings.real_double import RealDoubleElement
-from sage.rings.complex_double import ComplexDoubleElement
-from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
-from sage.rings.ring import Ring
-from sage.structure.element import RingElement
+from collections.abc import Mapping, Sequence
+from typing import Self
+
+from sage.matrix.matrix_symbolic_dense import Matrix_symbolic_dense
+from sage.modules.free_module_element import FreeModuleElement_generic_dense
 from sage.structure.parent import ElementConstructorInput
-from sage.structure.sage_object import SageObject
 from sage.symbolic.expression import Expression
 
-_Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
 
-import builtins
-
-class _SageObject: ...
-
-def apply_map(phi: builtins.object) -> ElementConstructorInput: ...
-
-class Vector_symbolic_dense: ...
+class Vector_symbolic_dense(FreeModuleElement_generic_dense[Expression]):
+    def __init__(
+        self,
+        parent: object,
+        entries: Sequence[Expression | ElementConstructorInput] = ...,
+        coerce: bool = ...,
+        copy: bool = ...,
+    ) -> None: ...
+    def __copy__(self) -> Self: ...
+    def list(self, copy: bool = ...) -> list[Expression]: ...
+    def dot_product(self, right: Vector_symbolic_dense) -> Expression: ...
+    inner_product = dot_product
+    def pairwise_product(self, right: Vector_symbolic_dense) -> Self: ...
+    def simplify(self, algorithm: str | None = ...) -> Self: ...
+    def simplify_full(self) -> Self: ...
+    def expand(self) -> Self: ...
+    def factor(self) -> Self: ...
+    def subs(
+        self,
+        substitutions: Mapping[object, ElementConstructorInput] | None = ...,
+        **kwds: ElementConstructorInput,
+    ) -> Self: ...
+    substitute = subs
+    def derivative(self, *args: object) -> Self: ...
+    diff = derivative
+    def integral(self, *args: object, **kwds: object) -> Self: ...
+    def row(self) -> Matrix_symbolic_dense: ...
+    def column(self) -> Matrix_symbolic_dense: ...

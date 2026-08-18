@@ -1,45 +1,29 @@
-from collections.abc import Iterator, Sequence
-from typing import Self, TypeVar
-from sage.matrix.matrix0 import Matrix
-from sage.modules.free_module import FreeModule_generic
-from sage.modules.free_module_element import FreeModuleElement
-from sage.modules.free_module_homspace import FreeModuleHomspace
-from sage.rings.integer import Integer
-from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.rings.rational import Rational
-from sage.rings.real_double import RealDoubleElement
-from sage.rings.complex_double import ComplexDoubleElement
-from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
-from sage.rings.ring import Ring
+from typing import Generic, Self, TypeVar
+
+from numpy import ndarray
+
+from sage.modules.free_module_element import FreeModuleElement_generic_dense
 from sage.structure.element import RingElement
-from sage.structure.parent import ElementConstructorInput
-from sage.structure.sage_object import SageObject
-from sage.symbolic.expression import Expression
 
-_Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+_DoubleScalar = TypeVar(
+    "_DoubleScalar",
+    bound=RingElement,
+    default=RingElement,
+)
 
-import builtins
 
-class _SageObject: ...
-
-class Vector_double_dense:
-    def inv_fft(
-        self, algorithm: builtins.object = ..., inplace: builtins.object = ...
-    ) -> Vector_double_dense: ...
-    def fft(
+class Vector_double_dense(
+    FreeModuleElement_generic_dense[_DoubleScalar],
+    Generic[_DoubleScalar],
+):
+    def numpy(self) -> ndarray: ...
+    def norm(self, p: int | float | str = ...) -> float: ...
+    def dot_product(
         self,
-        direction: builtins.object = ...,
-        algorithm: builtins.object = ...,
-        inplace: builtins.object = ...,
-    ) -> Vector_double_dense: ...
-    def complex_vector(self) -> Vector_double_dense: ...
-    def zero_at(self, eps: builtins.object) -> Vector_double_dense: ...
-    def norm(self, p: builtins.object = ...) -> Vector_double_dense: ...
-    def mean(self) -> Vector_double_dense: ...
-    def variance(self, population: builtins.object = ...) -> Vector_double_dense: ...
-    def standard_deviation(
-        self, population: builtins.object = ...
-    ) -> Vector_double_dense: ...
-    def stats_kurtosis(self) -> Vector_double_dense: ...
-    def prod(self) -> Vector_double_dense: ...
-    def sum(self) -> FreeModule_generic: ...
+        right: Vector_double_dense[_DoubleScalar],
+    ) -> _DoubleScalar: ...
+    inner_product = dot_product
+    def pairwise_product(
+        self,
+        right: Vector_double_dense[_DoubleScalar],
+    ) -> Self: ...
