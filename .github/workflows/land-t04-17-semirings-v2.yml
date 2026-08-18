@@ -1,0 +1,133 @@
+name: Land T04.17 semiring stubs v2
+
+on:
+  push:
+    branches: [t04-17-semirings-validation]
+    paths:
+      - .github/workflows/land-t04-17-semirings-v2.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  validate-and-land:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: t04-17-semirings-candidate
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install analyzers
+        run: python -m pip install --upgrade pip ruff mypy basedpyright
+
+      - name: Validate source-grounded semiring surface
+        shell: bash
+        run: |
+          set -euo pipefail
+          target=sage-stubs/rings/semirings
+          ruff check "$target"
+          ruff format --check "$target"
+          python scripts/check_stubs.py "$target"/*.pyi
+          python scripts/audit_stub_quality.py --root "$target" --max-console 300
+
+          rm -rf /tmp/type-root
+          mkdir -p /tmp/type-root
+          ln -s "$GITHUB_WORKSPACE/sage-stubs" /tmp/type-root/sage
+          cat > /tmp/type-root/pyrightconfig.json <<'JSON'
+          {
+            "include": ["sage/rings/semirings"],
+            "extraPaths": ["."],
+            "stubPath": ".",
+            "pythonVersion": "3.12",
+            "typeCheckingMode": "strict",
+            "reportMissingTypeStubs": false,
+            "reportMissingImports": "error"
+          }
+          JSON
+          (
+            cd /tmp/type-root
+            basedpyright --project pyrightconfig.json --outputjson > basedpyright.json
+            python - <<'PY'
+          import json
+          from pathlib import Path
+          summary = json.loads(Path("basedpyright.json").read_text())["summary"]
+          print(summary)
+          assert summary["filesAnalyzed"] >= 8, summary
+          assert summary["errorCount"] == 0, summary
+          PY
+          )
+
+          set +e
+          MYPYPATH=/tmp/type-root python -m mypy \
+            --strict \
+            --namespace-packages \
+            --explicit-package-bases \
+            --follow-imports=silent \
+            --no-incremental \
+            --show-error-codes \
+            /tmp/type-root/sage/rings/semirings | tee /tmp/t04-17-mypy.txt
+          mypy_status=${PIPESTATUS[0]}
+          set -e
+          echo "targeted mypy status: $mypy_status"
+
+      - name: Commit validated workstream and planning files to main
+        shell: bash
+        run: |
+          set -euo pipefail
+          candidate=$(git rev-parse HEAD)
+          git fetch origin main t04-17-semirings-candidate
+          git switch -C main origin/main
+
+          paths=(
+            sage-stubs/rings/semirings/all.pyi
+            sage-stubs/rings/semirings/non_negative_integer_semiring.pyi
+            sage-stubs/rings/semirings/tropical_matrix.pyi
+            sage-stubs/rings/semirings/tropical_semiring.pyi
+            sage-stubs/rings/semirings/tropical_mpolynomial.pyi
+            sage-stubs/rings/semirings/tropical_polynomial.pyi
+            sage-stubs/rings/semirings/tropical_variety.pyi
+          )
+
+          if grep -q '| T04.17 | \*\*Semirings\*\*' .agents/phases/phase-04-number-theory-rings.md; then
+            for path in "${paths[@]}"; do
+              test "$(git rev-parse HEAD:$path)" = "$(git rev-parse $candidate:$path)"
+            done
+            echo 'T04.17 is already present on main.'
+            exit 0
+          fi
+
+          test "$(git rev-parse HEAD)" = '863e972fd4c5c696d4fe0aa521d0a732c2421d0e'
+          git checkout "$candidate" -- "${paths[@]}"
+
+          python - <<'PY'
+          from pathlib import Path
+
+          phase = Path('.agents/phases/phase-04-number-theory-rings.md')
+          text = phase.read_text()
+          old = "| T04.17 | **Semirings & remaining** — `semirings/` subdir, plus anything else surveyed in Phase 1 audit that lives at `sage.rings/` root but wasn't covered in Phase 02 (e.g. `noncommutative_ideals`, `species`, `cfinite_sequence`). | ~6 | — | ⬜ | |"
+          new = "| T04.17 | **Semirings** — full `sage.rings.semirings/` subpackage: nonnegative integers, tropical base semiring and coercions, tropical matrices, polynomial and multivariate-polynomial parents/elements, and tropical varieties. | 7 | — | ✅ Done | Source-grounded coefficient types, parent/element relations, coercion maps, matrix closures, polynomial constructors, Newton polytope and dual-subdivision data, and plotting/variety return types. |\n| T04.18 | **Remaining Phase 04 root-level ring modules** — `bernmm` and any root-level `sage.rings` modules assigned by the Phase 01 inventory but not owned by Phases 02–03, including `noncommutative_ideals`, `species`, and `cfinite_sequence` where in scope. | ~5 | 02, 03 | ⬜ | Reconcile ownership against the Phase 01 inventory before implementation. |"
+          if old not in text:
+              raise SystemExit('T04.17 planning row did not match expected main state')
+          phase.write_text(text.replace(old, new))
+
+          plan = Path('.agents/plan.md')
+          text = plan.read_text()
+          old = "> **Active first-level phases:** Phase 04 (number-theoretic rings) and Phase 06\n> (associative and non-Lie algebras). Phase 05 (linear algebra) remains an\n> unstarted dependency frontier for Phases 06–08, 12, 14, 15, and 17.\n>\n> **Next valid work:** continue a named task under Phase 04 or Phase 06, or\n> start Phase 05. Commits remain leaves beneath those task cards and must not\n> invent new phase numbers."
+          new = "> **Latest completed workstream:** Phase 04 task T04.17 now covers the full\n> semiring subpackage, including typed tropical coefficients, coercions, matrices,\n> polynomial parents/elements, subdivisions, varieties, and plotting surfaces.\n>\n> **Active first-level phases:** Phase 04 (number-theoretic rings) and Phase 06\n> (associative and non-Lie algebras). Phase 05 (linear algebra) remains an\n> unstarted dependency frontier for Phases 06–08, 12, 14, 15, and 17.\n>\n> **Next valid work:** continue Phase 04 with T04.16 (asymptotic rings), T04.15\n> (valuations), or another dependency-compatible task; alternatively continue a\n> named Phase 06 task or start Phase 05. Commits remain leaves beneath those task\n> cards and must not invent new phase numbers."
+          if old not in text:
+              raise SystemExit('master frontier did not match expected main state')
+          plan.write_text(text.replace(old, new))
+          PY
+
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add "${paths[@]}" .agents/plan.md .agents/phases/phase-04-number-theory-rings.md
+          git commit -m 'feat(stubs): type tropical and semiring interfaces'
+          git push origin main
