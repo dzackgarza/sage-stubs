@@ -1,32 +1,15 @@
-from collections.abc import Iterable, Sequence
-from typing import TypeGuard, TypeVar
+from collections.abc import Sequence
+from typing import TypeVar
 
-from sage.modules.free_module import FreeModule_generic, FreeModule_submodule
+from sage.matrix.matrix0 import Matrix
 from sage.modules.free_module_element import FreeModuleElement
-from sage.structure.element import RingElement
-from sage.structure.parent import ElementConstructorInput, Parent
+from sage.structure.element import FieldElement, RingElement
 
-_Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+_InputScalar = TypeVar("_InputScalar", bound=RingElement)
 
-
-def is_FreeModule(x: object) -> TypeGuard[FreeModule_generic[RingElement]]: ...
-
-
-def vector(
-    ring: Parent[_Scalar],
-    entries: Iterable[ElementConstructorInput],
-    sparse: bool = ...,
-) -> FreeModuleElement[_Scalar]: ...
-
-
-def free_module_element(
-    entries: Iterable[ElementConstructorInput],
-    ring: Parent[_Scalar] | None = ...,
-    sparse: bool = ...,
-) -> FreeModuleElement[_Scalar]: ...
-
-
-def span(
-    vectors: Sequence[FreeModuleElement[_Scalar]],
-    ring: Parent[_Scalar] | None = ...,
-) -> FreeModule_submodule[_Scalar]: ...
+def gram_schmidt(
+    B: Sequence[FreeModuleElement[_InputScalar]],
+) -> tuple[
+    list[FreeModuleElement[FieldElement]],
+    Matrix[FieldElement],
+]: ...
