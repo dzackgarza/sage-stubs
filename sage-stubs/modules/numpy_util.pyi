@@ -1,37 +1,30 @@
-from typing import TypeVar
+import numpy as np
+from numpy.typing import NDArray
 
-from numpy import ndarray
+from sage.matrix.matrix_mod2_dense import Matrix_mod2_dense
 
-from sage.matrix.matrix import Matrix
-from sage.modules.free_module_element import FreeModuleElement
-from sage.structure.element import RingElement
-from sage.structure.parent import Parent
+type Mod2VectorArray = (
+    NDArray[np.int8]
+    | NDArray[np.int32]
+    | NDArray[np.int64]
+    | NDArray[np.bool_]
+)
+type Mod2MatrixArray = (
+    NDArray[np.int8]
+    | NDArray[np.int32]
+    | NDArray[np.int64]
+)
 
-_Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
-
-
-def vector_to_numpy(
-    vector: FreeModuleElement[_Scalar],
-    dtype: object | None = ...,
-    copy: bool = ...,
-) -> ndarray: ...
-
-
-def matrix_to_numpy(
-    matrix: Matrix[_Scalar],
-    dtype: object | None = ...,
-    copy: bool = ...,
-) -> ndarray: ...
-
-
-def numpy_to_vector(
-    array: ndarray,
-    ring: Parent[_Scalar] | None = ...,
-) -> FreeModuleElement[_Scalar]: ...
-
-
-def numpy_to_matrix(
-    array: ndarray,
-    ring: Parent[_Scalar] | None = ...,
-    sparse: bool = ...,
-) -> Matrix[_Scalar]: ...
+def set_mzd_from_numpy(
+    entries_addr: int,
+    degree: int,
+    x: Mod2VectorArray | object,
+) -> int: ...
+def _set_matrix_mod2_from_numpy_helper(
+    a: Matrix_mod2_dense,
+    b: Mod2MatrixArray,
+) -> int: ...
+def set_matrix_mod2_from_numpy(
+    a: Matrix_mod2_dense,
+    b: Mod2MatrixArray | object,
+) -> int: ...

@@ -1,30 +1,43 @@
-from collections.abc import Iterable
-from typing import Generic, Self, TypeVar
+from collections.abc import Iterable, Sequence
+from typing import Generic, TypeVar
 
-from sage.matrix.matrix import Matrix
-from sage.modules.free_module import FreeModule_ambient, FreeModule_generic, FreeModule_submodule
+from sage.matrix.matrix0 import Matrix
+from sage.modules.free_module import (
+    FreeModule_ambient,
+    Module_free_ambient,
+)
 from sage.modules.free_module_element import FreeModuleElement
-from sage.rings.integer import Integer
-from sage.structure.element import RingElement
+from sage.structure.element import ElementConstructorInput, RingElement
 
 _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
 
+type AmbientFreeModule[_Scalar: RingElement] = (
+    FreeModule_ambient[_Scalar]
+    | QuotientModule_free_ambient[_Scalar]
+)
 
-class Submodule(FreeModule_submodule[_Scalar], Generic[_Scalar]):
-    def ambient_module(self) -> FreeModule_ambient[_Scalar]: ...
-    def basis_matrix(self) -> Matrix[_Scalar]: ...
-    def echelonized_basis_matrix(self) -> Matrix[_Scalar]: ...
-    def gens(self) -> tuple[FreeModuleElement[_Scalar], ...]: ...
-    def intersection(self, other: FreeModule_generic[_Scalar]) -> Self: ...
-    def sum(self, other: FreeModule_generic[_Scalar]) -> Self: ...
-    def saturation(self) -> Self: ...
-    def index_in(self, other: FreeModule_generic[_Scalar]) -> Integer: ...
-    def quotient(self, submodule: FreeModule_generic[_Scalar]) -> object: ...
+class Submodule_free_ambient(
+    Module_free_ambient[_Scalar],
+    Generic[_Scalar],
+):
+    def __init__(
+        self,
+        ambient: AmbientFreeModule[_Scalar],
+        gens: Iterable[
+            FreeModuleElement[_Scalar]
+            | Sequence[ElementConstructorInput]
+        ],
+        check: bool = ...,
+        already_echelonized: bool = ...,
+    ) -> None: ...
+    def _repr_(self) -> str: ...
+    def matrix(self) -> Matrix[_Scalar]: ...
+    generators_matrix = matrix
+    def relations(self) -> Submodule_free_ambient[_Scalar]: ...
+    def gens(self) -> list[FreeModuleElement[_Scalar]]: ...
+    def gen(self, i: int = ...) -> FreeModuleElement[_Scalar]: ...
+    def ambient_module(self) -> AmbientFreeModule[_Scalar]: ...
 
+Submodule = Submodule_free_ambient
 
-def span(
-    ambient: FreeModule_ambient[_Scalar],
-    generators: Iterable[FreeModuleElement[_Scalar]],
-    check: bool = ...,
-    already_echelonized: bool = ...,
-) -> Submodule[_Scalar]: ...
+from sage.modules.quotient_module import QuotientModule_free_ambient
