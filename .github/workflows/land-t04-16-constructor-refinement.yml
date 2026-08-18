@@ -1,0 +1,99 @@
+name: Land T04.16 constructor refinement
+
+on:
+  push:
+    branches: [t04-16-asymptotic-constructor-refinement-v2]
+    paths:
+      - .github/workflows/land-t04-16-constructor-refinement.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: phase04-main-writes-v3
+  cancel-in-progress: false
+
+jobs:
+  land:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Apply source-grounded constructor contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          git switch -C main origin/main
+          python - <<'PY'
+          from pathlib import Path
+
+          stub = Path('sage-stubs/rings/asymptotic/asymptotic_ring.pyi')
+          text = stub.read_text()
+          old = (
+              '    def _element_constructor_(\n'
+              '        self,\n'
+              '        data: int | Integer,\n'
+              '        simplify: int | Integer = ...,\n'
+              '        convert: int | Integer = ...,\n'
+              '    ) -> AsymptoticExpansion: ...\n'
+          )
+          new = (
+              '    def _element_constructor_(\n'
+              '        self,\n'
+              '        data: ElementConstructorInput,\n'
+              '        simplify: bool = ...,\n'
+              '        convert: bool = ...,\n'
+              '    ) -> AsymptoticExpansion: ...\n'
+          )
+          if old in text:
+              text = text.replace(old, new, 1)
+          elif new not in text:
+              raise SystemExit('AsymptoticRing._element_constructor_ is not in the expected state')
+          stub.write_text(text)
+
+          phase = Path('.agents/phases/phase-04-number-theory-rings.md')
+          planning = phase.read_text()
+          previous = "| T04.16 | **Asymptotic ring subpackage** — `asymptotic_ring`, `asymptotic_expansion_generators`, `asymptotics_multivariate_generating_functions`, `growth_group`, `growth_group_cartesian`, `term_monoid`, `misc`. | 7 | — | 🟡 In Progress | Symbolic conversion preserves the selected codomain parent and coefficient maps accept typed parent codomains. The remaining task surface stays under source audit. |"
+          revised = "| T04.16 | **Asymptotic ring subpackage** — `asymptotic_ring`, `asymptotic_expansion_generators`, `asymptotics_multivariate_generating_functions`, `growth_group`, `growth_group_cartesian`, `term_monoid`, `misc`. | 7 | — | 🟡 In Progress | Construction accepts arbitrary Sage element-constructor inputs with boolean simplify/convert controls; symbolic conversion preserves the selected codomain parent and coefficient maps accept typed parent codomains. The remaining task surface stays under source audit. |"
+          if previous in planning:
+              phase.write_text(planning.replace(previous, revised))
+          elif revised not in planning:
+              row = next((line for line in planning.splitlines() if line.startswith('| T04.16 |')), '')
+              if '✅ Done' not in row:
+                  raise SystemExit(f'unexpected T04.16 planning row: {row}')
+          PY
+
+      - name: Format and validate changed surface
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install --upgrade pip ruff
+          target=sage-stubs/rings/asymptotic/asymptotic_ring.pyi
+          ruff format "$target"
+          ruff check --fix "$target"
+          ruff check "$target"
+          ruff format --check "$target"
+          python scripts/check_stubs.py "$target"
+          python scripts/audit_stub_quality.py --root sage-stubs/rings/asymptotic --max-console 1000
+
+      - name: Commit and push immediately
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add sage-stubs/rings/asymptotic/asymptotic_ring.pyi .agents/phases/phase-04-number-theory-rings.md
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m 'fix(stubs): type asymptotic parent construction'
+          git push origin main
