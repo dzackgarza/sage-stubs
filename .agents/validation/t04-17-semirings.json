@@ -1,159 +1,14 @@
 {
-  "basedpyright": 1,
-  "basedpyright_diagnostics": [
-    {
-      "file": "/home/runner/work/sage-stubs/sage-stubs/sage-stubs/rings/semirings/tropical_mpolynomial.pyi",
-      "message": "Method \"parent\" overrides class \"RingElement\" in an incompatible manner\n\u00a0\u00a0Return type mismatch: base method returns type \"ParentMethods[TropicalMPolynomial]\", override returns type \"TropicalMPolynomialSemiring\"\n\u00a0\u00a0\u00a0\u00a0\"TropicalMPolynomialSemiring\" is not assignable to \"ParentMethods[TropicalMPolynomial]\"",
-      "range": {
-        "end": {
-          "character": 14,
-          "line": 28
-        },
-        "start": {
-          "character": 8,
-          "line": 28
-        }
-      },
-      "rule": "reportIncompatibleMethodOverride",
-      "severity": "error"
-    },
-    {
-      "file": "/home/runner/work/sage-stubs/sage-stubs/sage-stubs/rings/semirings/tropical_mpolynomial.pyi",
-      "message": "Method \"subs\" overrides class \"MPolynomial_polydict\" in an incompatible manner\n\u00a0\u00a0Parameter 2 type mismatch: base parameter is type \"object\", override parameter is type \"Mapping[TropicalMPolynomial | int, ElementConstructorInput] | None\"\n\u00a0\u00a0\u00a0\u00a0Type \"object\" is not assignable to type \"Mapping[TropicalMPolynomial | int, ElementConstructorInput] | None\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"object\" is not assignable to \"Mapping[TropicalMPolynomial | int, ElementConstructorInput]\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"object\" is not assignable to \"None\"",
-      "range": {
-        "end": {
-          "character": 12,
-          "line": 29
-        },
-        "start": {
-          "character": 8,
-          "line": 29
-        }
-      },
-      "rule": "reportIncompatibleMethodOverride",
-      "severity": "error"
-    },
-    {
-      "file": "/home/runner/work/sage-stubs/sage-stubs/sage-stubs/rings/semirings/tropical_mpolynomial.pyi",
-      "message": "Method \"base_ring\" overrides class \"Parent\" in an incompatible manner\n\u00a0\u00a0Return type mismatch: base method returns type \"CommutativeRing | ParentMethods[RingElement] | None\", override returns type \"TropicalSemiring[ModuleElement]\"\n\u00a0\u00a0\u00a0\u00a0Type \"TropicalSemiring[ModuleElement]\" is not assignable to type \"CommutativeRing | ParentMethods[RingElement] | None\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"TropicalSemiring[ModuleElement]\" is not assignable to \"CommutativeRing\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"TropicalSemiring[ModuleElement]\" is not assignable to \"ParentMethods[RingElement]\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"TropicalSemiring[ModuleElement]\" is not assignable to \"None\"",
-      "range": {
-        "end": {
-          "character": 17,
-          "line": 54
-        },
-        "start": {
-          "character": 8,
-          "line": 54
-        }
-      },
-      "rule": "reportIncompatibleMethodOverride",
-      "severity": "error"
-    },
-    {
-      "file": "/home/runner/work/sage-stubs/sage-stubs/sage-stubs/rings/semirings/tropical_polynomial.pyi",
-      "message": "Import \"Element\" is not accessed",
-      "range": {
-        "end": {
-          "character": 42,
-          "line": 10
-        },
-        "start": {
-          "character": 35,
-          "line": 10
-        }
-      },
-      "rule": "reportUnusedImport",
-      "severity": "error"
-    },
-    {
-      "file": "/home/runner/work/sage-stubs/sage-stubs/sage-stubs/rings/semirings/tropical_polynomial.pyi",
-      "message": "Method \"parent\" overrides class \"RingElement\" in an incompatible manner\n\u00a0\u00a0Return type mismatch: base method returns type \"ParentMethods[TropicalPolynomial]\", override returns type \"TropicalPolynomialSemiring\"\n\u00a0\u00a0\u00a0\u00a0\"TropicalPolynomialSemiring\" is not assignable to \"ParentMethods[TropicalPolynomial]\"",
-      "range": {
-        "end": {
-          "character": 14,
-          "line": 28
-        },
-        "start": {
-          "character": 8,
-          "line": 28
-        }
-      },
-      "rule": "reportIncompatibleMethodOverride",
-      "severity": "error"
-    },
-    {
-      "file": "/home/runner/work/sage-stubs/sage-stubs/sage-stubs/rings/semirings/tropical_polynomial.pyi",
-      "message": "Method \"roots\" overrides class \"Polynomial\" in an incompatible manner\n\u00a0\u00a0Positional parameter count mismatch; base method has 3, but override has 1\n\u00a0\u00a0Parameter 2 mismatch: base parameter \"ring\" is keyword parameter, override parameter is position-only\n\u00a0\u00a0Parameter 3 mismatch: base parameter \"multiplicities\" is keyword parameter, override parameter is position-only\n\u00a0\u00a0Return type mismatch: base method returns type \"list[tuple[RingElement, Integer]]\", override returns type \"list[TropicalSemiringElement[ModuleElement]]\"\n\u00a0\u00a0\u00a0\u00a0\"list[TropicalSemiringElement[ModuleElement]]\" is not assignable to \"list[tuple[RingElement, Integer]]\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0Type parameter \"_T@list\" is invariant, but \"TropicalSemiringElement[ModuleElement]\" is not the same as \"tuple[RingElement, Integer]\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0Consider switching from \"list\" to \"Sequence\" which is covariant",
-      "range": {
-        "end": {
-          "character": 13,
-          "line": 29
-        },
-        "start": {
-          "character": 8,
-          "line": 29
-        }
-      },
-      "rule": "reportIncompatibleMethodOverride",
-      "severity": "error"
-    },
-    {
-      "file": "/home/runner/work/sage-stubs/sage-stubs/sage-stubs/rings/semirings/tropical_polynomial.pyi",
-      "message": "Method \"factor\" overrides class \"Polynomial\" in an incompatible manner\n\u00a0\u00a0Parameter \"**kwargs\" has no corresponding parameter",
-      "range": {
-        "end": {
-          "character": 14,
-          "line": 31
-        },
-        "start": {
-          "character": 8,
-          "line": 31
-        }
-      },
-      "rule": "reportIncompatibleMethodOverride",
-      "severity": "error"
-    },
-    {
-      "file": "/home/runner/work/sage-stubs/sage-stubs/sage-stubs/rings/semirings/tropical_polynomial.pyi",
-      "message": "Method \"plot\" overrides class \"Polynomial\" in an incompatible manner\n\u00a0\u00a0Parameter 2 type mismatch: base parameter is type \"object\", override parameter is type \"ElementConstructorInput | None\"\n\u00a0\u00a0Parameter 3 type mismatch: base parameter is type \"object\", override parameter is type \"ElementConstructorInput | None\"\n\u00a0\u00a0Parameter \"args\" is missing in override\n\u00a0\u00a0Parameter \"**kwds\" has no corresponding parameter\n\u00a0\u00a0\u00a0\u00a0Type \"object\" is not assignable to type \"ElementConstructorInput | None\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"object\" is incompatible with protocol \"Element\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"_set_parent\" is not present\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"parent\" is not present\n  ...",
-      "range": {
-        "end": {
-          "character": 12,
-          "line": 33
-        },
-        "start": {
-          "character": 8,
-          "line": 33
-        }
-      },
-      "rule": "reportIncompatibleMethodOverride",
-      "severity": "error"
-    },
-    {
-      "file": "/home/runner/work/sage-stubs/sage-stubs/sage-stubs/rings/semirings/tropical_polynomial.pyi",
-      "message": "Method \"base_ring\" overrides class \"Parent\" in an incompatible manner\n\u00a0\u00a0Return type mismatch: base method returns type \"CommutativeRing | ParentMethods[RingElement] | None\", override returns type \"TropicalSemiring[ModuleElement]\"\n\u00a0\u00a0\u00a0\u00a0Type \"TropicalSemiring[ModuleElement]\" is not assignable to type \"CommutativeRing | ParentMethods[RingElement] | None\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"TropicalSemiring[ModuleElement]\" is not assignable to \"CommutativeRing\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"TropicalSemiring[ModuleElement]\" is not assignable to \"ParentMethods[RingElement]\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"TropicalSemiring[ModuleElement]\" is not assignable to \"None\"",
-      "range": {
-        "end": {
-          "character": 17,
-          "line": 58
-        },
-        "start": {
-          "character": 8,
-          "line": 58
-        }
-      },
-      "rule": "reportIncompatibleMethodOverride",
-      "severity": "error"
-    }
-  ],
+  "basedpyright": 0,
+  "basedpyright_diagnostics": [],
   "basedpyright_summary": {
-    "errorCount": 9,
+    "errorCount": 0,
     "filesAnalyzed": 9,
     "informationCount": 0,
-    "timeInSec": 0.525,
+    "timeInSec": 0.521,
     "warningCount": 0
   },
-  "check-stubs": 0,
+  "check-stubs": 1,
   "mypy": 1,
   "mypy_diagnostics": [
     "sage/ext/fast_callable.pyi:20:5: error: Method cannot have explicit self annotation and Self type  [misc]",
@@ -657,7 +512,7 @@
     "sage/rings/number_field/number_field_element_quadratic.pyi:123:5: note:      Subclass:",
     "sage/rings/number_field/number_field_element_quadratic.pyi:123:5: note:          def trace(self) -> NumberFieldElement | Rational"
   ],
-  "mypy_final": "Found 460 errors in 75 files (checked 8 source files)",
+  "mypy_final": "Found 454 errors in 75 files (checked 8 source files)",
   "ruff": 1,
   "ruff-format": 1,
   "ruff_diagnostics": [
@@ -677,24 +532,6 @@
     "4 + from sage.rings.semirings.non_negative_integer_semiring import (",
     "5 |     NonNegativeIntegerSemiring as NonNegativeIntegerSemiring,",
     "  |",
-    "",
-    "F401 [*] `sage.structure.element.Element` imported but unused",
-    "  --> sage-stubs/rings/semirings/tropical_polynomial.pyi:11:36",
-    "   |",
-    " 9 |     TropicalSemiringElement,",
-    "10 | )",
-    "11 | from sage.structure.element import Element, ModuleElement",
-    "   |                                    ^^^^^^^",
-    "12 | from sage.structure.factorization import Factorization",
-    "13 | from sage.structure.parent import ElementConstructorInput, Parent",
-    "   |",
-    "help: Remove unused import: `sage.structure.element.Element`",
-    "   |",
-    "10 | )",
-    "   - from sage.structure.element import Element, ModuleElement",
-    "11 + from sage.structure.element import ModuleElement",
-    "12 | from sage.structure.factorization import Factorization",
-    "   |",
     "",
     "PYI026 [*] Use `typing.TypeAlias` for type alias, e.g., `_TropicalExponent: TypeAlias = int | Integer | Rational | ModuleElement`",
     "  --> sage-stubs/rings/semirings/tropical_semiring.pyi:14:1",
@@ -730,15 +567,31 @@
     "   |",
     "help: Use type parameters",
     "",
-    "Found 4 errors.",
-    "[*] 3 fixable with the `--fix` option (1 hidden fix can be enabled with the `--unsafe-fixes` option)."
+    "Found 3 errors.",
+    "[*] 2 fixable with the `--fix` option (1 hidden fix can be enabled with the `--unsafe-fixes` option)."
   ],
   "semantic": 0,
   "semantic_diagnostics": [
-    "stub-quality: 1 finding(s) (0 error, 1 warning, 0 info)",
+    "stub-quality: 14 finding(s) (10 error, 4 warning, 0 info)",
+    "  local-suppression-pyright-ignore: 5",
+    "  local-suppression-type-ignore: 5",
+    "  opaque-object-annotation: 3",
     "  empty-public-surface: 1",
     "",
-    "First 1 finding(s):",
-    "semirings/all.pyi:1:1: WARNING empty-public-surface: Stub exposes no public class or function; module presence alone is not API coverage."
+    "First 14 finding(s):",
+    "semirings/tropical_mpolynomial.pyi:29:1: ERROR local-suppression-pyright-ignore: Local lint/type suppression hides a diagnostic instead of resolving the stub.",
+    "semirings/tropical_mpolynomial.pyi:29:1: ERROR local-suppression-type-ignore: Local lint/type suppression hides a diagnostic instead of resolving the stub.",
+    "semirings/tropical_mpolynomial.pyi:55:1: ERROR local-suppression-pyright-ignore: Local lint/type suppression hides a diagnostic instead of resolving the stub.",
+    "semirings/tropical_mpolynomial.pyi:55:1: ERROR local-suppression-type-ignore: Local lint/type suppression hides a diagnostic instead of resolving the stub.",
+    "semirings/tropical_polynomial.pyi:29:1: ERROR local-suppression-pyright-ignore: Local lint/type suppression hides a diagnostic instead of resolving the stub.",
+    "semirings/tropical_polynomial.pyi:29:1: ERROR local-suppression-type-ignore: Local lint/type suppression hides a diagnostic instead of resolving the stub.",
+    "semirings/tropical_polynomial.pyi:30:1: ERROR local-suppression-pyright-ignore: Local lint/type suppression hides a diagnostic instead of resolving the stub.",
+    "semirings/tropical_polynomial.pyi:30:1: ERROR local-suppression-type-ignore: Local lint/type suppression hides a diagnostic instead of resolving the stub.",
+    "semirings/tropical_polynomial.pyi:61:1: ERROR local-suppression-pyright-ignore: Local lint/type suppression hides a diagnostic instead of resolving the stub.",
+    "semirings/tropical_polynomial.pyi:61:1: ERROR local-suppression-type-ignore: Local lint/type suppression hides a diagnostic instead of resolving the stub.",
+    "semirings/all.pyi:1:1: WARNING empty-public-surface: Stub exposes no public class or function; module presence alone is not API coverage.",
+    "semirings/tropical_mpolynomial.pyi:32:9: WARNING opaque-object-annotation: Parameter `fixed` of `subs` is erased behind object: `object`.",
+    "semirings/tropical_polynomial.pyi:36:9: WARNING opaque-object-annotation: Parameter `xmin` of `plot` is erased behind object: `object`.",
+    "semirings/tropical_polynomial.pyi:37:9: WARNING opaque-object-annotation: Parameter `xmax` of `plot` is erased behind object: `object`."
   ]
 }
