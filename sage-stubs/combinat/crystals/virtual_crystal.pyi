@@ -1,20 +1,85 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from collections.abc import Iterable
+from typing import Generic, Protocol, Self, TypeVar
 
-class _SageObject: ...
+from sage.categories.category import Category
+from sage.combinat.crystals.direct_sum import (
+    CrystalElementProtocol,
+    CrystalIndex,
+)
+from sage.combinat.crystals.subcrystal import (
+    CartanTypeInput,
+    ContainmentPredicate,
+    ScalingFactorsInput,
+    Subcrystal,
+    VirtualizationInput,
+)
+from sage.combinat.root_system.cartan_type import CartanType_abstract
+from sage.rings.integer import Integer
+from sage.sets.family import AbstractFamily
+from sage.structure.element import Element
+from sage.structure.parent import Parent
 
-class VirtualCrystal:
+class VirtualizableCrystalElement(CrystalElementProtocol, Protocol):
+    def e_string(
+        self,
+        indices: Iterable[CrystalIndex],
+    ) -> Self | None: ...
+    def f_string(
+        self,
+        indices: Iterable[CrystalIndex],
+    ) -> Self | None: ...
+
+_AmbientElement = TypeVar(
+    "_AmbientElement",
+    bound=VirtualizableCrystalElement,
+)
+
+class VirtualCrystal(
+    Subcrystal[_AmbientElement],
+    Generic[_AmbientElement],
+):
+    _virtualization: AbstractFamily
+    _scaling_factors: AbstractFamily
+
+    class Element(
+        Subcrystal.Element[_AmbientElement],
+        Generic[_AmbientElement],
+    ):
+        value: _AmbientElement
+        def parent(self) -> VirtualCrystal[_AmbientElement]: ...
+        def e(self, i: CrystalIndex) -> Self | None: ...
+        def f(self, i: CrystalIndex) -> Self | None: ...
+        def epsilon(self, i: CrystalIndex) -> int | Integer: ...
+        def phi(self, i: CrystalIndex) -> int | Integer: ...
+        def weight(self) -> Element: ...
+
+    Element: type[Element[_AmbientElement]]
+    element_class: type[Element[_AmbientElement]]
+
     @staticmethod
-    def __classcall_private__(cls: builtins.object, ambient: builtins.object, virtualization: builtins.object, scaling_factors: builtins.object, contained: builtins.object = ..., generators: builtins.object = ..., cartan_type: builtins.object = ..., index_set: builtins.object = ..., category: builtins.object = ...) -> _SageObject: ...
-    def __init__(self, ambient: builtins.object, virtualization: builtins.object, scaling_factors: builtins.object, contained: builtins.object, generators: builtins.object, cartan_type: builtins.object, index_set: builtins.object, category: builtins.object) -> None: ...
-    def __contains__(self, x: builtins.object) -> builtins.bool: ...
-    def virtualization(self) -> _SageObject: ...
-    def scaling_factors(self) -> _SageObject: ...
-    class Element:
-        def e(self, i: builtins.int) -> _SageObject: ...
-        def f(self, i: builtins.int) -> _SageObject: ...
-        def epsilon(self, i: builtins.int) -> _SageObject: ...
-        def phi(self, i: builtins.int) -> _SageObject: ...
-        def weight(self) -> _SageObject: ...
+    def __classcall_private__(
+        cls: type[VirtualCrystal[_AmbientElement]],
+        ambient: Parent[_AmbientElement],
+        virtualization: VirtualizationInput,
+        scaling_factors: ScalingFactorsInput,
+        contained: ContainmentPredicate[_AmbientElement] = ...,
+        generators: Iterable[_AmbientElement] | None = ...,
+        cartan_type: CartanTypeInput | None = ...,
+        index_set: Iterable[CrystalIndex] | None = ...,
+        category: Category | None = ...,
+    ) -> VirtualCrystal[_AmbientElement]: ...
+    def __init__(
+        self,
+        ambient: Parent[_AmbientElement],
+        virtualization: AbstractFamily,
+        scaling_factors: AbstractFamily,
+        contained: ContainmentPredicate[_AmbientElement],
+        generators: tuple[_AmbientElement, ...],
+        cartan_type: CartanType_abstract,
+        index_set: tuple[CrystalIndex, ...],
+        category: Category,
+    ) -> None: ...
+    def _repr_(self) -> str: ...
+    def __contains__(self, x: object) -> bool: ...
+    def virtualization(self) -> AbstractFamily: ...
+    def scaling_factors(self) -> AbstractFamily: ...
