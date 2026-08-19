@@ -1,48 +1,95 @@
-from typing import Generic, TypeVar
+from collections.abc import Callable, Sequence
+from typing import Generic, Literal, TypeVar
 
 from sage.categories.category import Category
 from sage.categories.homset import Homset
-from sage.matrix.matrix import Matrix
+from sage.matrix.matrix0 import Matrix
 from sage.matrix.matrix_space import MatrixSpace
 from sage.modules.free_module import FreeModule_generic
 from sage.modules.free_module_element import FreeModuleElement
 from sage.modules.free_module_morphism import FreeModuleMorphism
-from sage.rings.integer import Integer
-from sage.sets.family import AbstractFamily
 from sage.structure.element import RingElement
+from sage.structure.parent import ElementConstructorInput
 
-_Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+_DomainScalar = TypeVar(
+    "_DomainScalar",
+    bound=RingElement,
+    default=RingElement,
+)
+_CodomainScalar = TypeVar(
+    "_CodomainScalar",
+    bound=RingElement,
+    default=RingElement,
+)
 
+type MatrixSide = Literal["left", "right"]
+type FreeModuleMorphismRule[
+    _DomainScalar: RingElement,
+    _CodomainScalar: RingElement,
+] = (
+    Matrix[_CodomainScalar]
+    | Sequence[
+        FreeModuleElement[_CodomainScalar]
+        | Sequence[ElementConstructorInput]
+    ]
+    | Callable[
+        [FreeModuleElement[_DomainScalar]],
+        FreeModuleElement[_CodomainScalar]
+        | Sequence[ElementConstructorInput],
+    ]
+)
 
 class FreeModuleHomspace(
     Homset[
-        FreeModuleMorphism[_Scalar],
-        FreeModuleElement[_Scalar],
-        FreeModuleElement[_Scalar],
+        FreeModuleMorphism[_DomainScalar, _CodomainScalar],
+        FreeModuleElement[_DomainScalar],
+        FreeModuleElement[_CodomainScalar],
     ],
-    Generic[_Scalar],
+    Generic[_DomainScalar, _CodomainScalar],
 ):
-    element_class: type[FreeModuleMorphism[_Scalar]]
+    element_class: type[
+        FreeModuleMorphism[_DomainScalar, _CodomainScalar]
+    ]
+
     def __init__(
         self,
-        domain: FreeModule_generic[_Scalar],
-        codomain: FreeModule_generic[_Scalar],
+        domain: FreeModule_generic[_DomainScalar],
+        codomain: FreeModule_generic[_CodomainScalar],
         category: Category | None = ...,
     ) -> None: ...
-    def domain(self) -> FreeModule_generic[_Scalar]: ...
-    def codomain(self) -> FreeModule_generic[_Scalar]: ...
-    def matrix_space(self) -> MatrixSpace[_Scalar]: ...
-    def dimension(self) -> int: ...
-    def rank(self) -> int: ...
-    def basis(self) -> AbstractFamily: ...
-    def zero(self) -> FreeModuleMorphism[_Scalar]: ...
-    def identity(self) -> FreeModuleMorphism[_Scalar]: ...
-    one = identity
-    def random_element(self, *args: object, **kwds: object) -> FreeModuleMorphism[_Scalar]: ...
-    def _element_constructor_(
+    def domain(self) -> FreeModule_generic[_DomainScalar]: ...
+    def codomain(self) -> FreeModule_generic[_CodomainScalar]: ...
+    def __call__(
         self,
-        matrix: Matrix[_Scalar]
-        | list[FreeModuleElement[_Scalar]]
-        | FreeModuleMorphism[_Scalar],
-        side: str = ...,
-    ) -> FreeModuleMorphism[_Scalar]: ...
+        A: FreeModuleMorphism[
+            _DomainScalar,
+            _CodomainScalar,
+        ] | FreeModuleMorphismRule[
+            _DomainScalar,
+            _CodomainScalar,
+        ],
+        **kwds: object,
+    ) -> FreeModuleMorphism[_DomainScalar, _CodomainScalar]: ...
+    def zero(
+        self,
+        side: MatrixSide = ...,
+    ) -> FreeModuleMorphism[_DomainScalar, _CodomainScalar]: ...
+    def _matrix_space(
+        self,
+        side: MatrixSide = ...,
+    ) -> MatrixSpace[_CodomainScalar]: ...
+    def basis(
+        self,
+        side: MatrixSide = ...,
+    ) -> tuple[
+        FreeModuleMorphism[_DomainScalar, _CodomainScalar],
+        ...,
+    ]: ...
+    def identity(
+        self,
+        side: MatrixSide = ...,
+    ) -> FreeModuleMorphism[_DomainScalar, _CodomainScalar]: ...
+    one = identity
+    def natural_map(
+        self,
+    ) -> FreeModuleMorphism[_DomainScalar, _CodomainScalar]: ...

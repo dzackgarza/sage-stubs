@@ -1,62 +1,109 @@
-from collections.abc import Iterable
-from typing import Generic, Self, TypeVar
+from collections.abc import Sequence
+from typing import Generic, Literal, TypeVar
 
+from sage.categories.homset import Homset
 from sage.categories.morphism import Morphism
-from sage.matrix.matrix import Matrix
-from sage.modules.free_module import FreeModule_generic, FreeModule_submodule
+from sage.matrix.matrix0 import Matrix
+from sage.modules.free_module import (
+    FreeModule_generic,
+    FreeModule_generic_field,
+)
 from sage.modules.free_module_element import FreeModuleElement
-from sage.structure.element import RingElement
+from sage.modules.matrix_morphism import MatrixMorphism
+from sage.structure.element import FieldElement, RingElement
+from sage.structure.parent import Parent
 
-_Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+_DomainScalar = TypeVar(
+    "_DomainScalar",
+    bound=RingElement,
+    default=RingElement,
+)
+_CodomainScalar = TypeVar(
+    "_CodomainScalar",
+    bound=RingElement,
+    default=RingElement,
+)
+_NewScalar = TypeVar("_NewScalar", bound=RingElement)
 
+type MatrixSide = Literal["left", "right"]
 
 class FreeModuleMorphism(
-    Morphism[FreeModuleElement[_Scalar], FreeModuleElement[_Scalar]],
-    Generic[_Scalar],
+    MatrixMorphism,
+    Generic[_DomainScalar, _CodomainScalar],
 ):
     def __init__(
         self,
-        parent: FreeModuleHomspace[_Scalar],
-        matrix: Matrix[_Scalar]
-        | Iterable[FreeModuleElement[_Scalar]],
-        side: str = ...,
+        parent: FreeModuleHomspace[_DomainScalar, _CodomainScalar],
+        A: Matrix[_CodomainScalar] | MatrixMorphism,
+        side: MatrixSide = ...,
     ) -> None: ...
-    def parent(self) -> FreeModuleHomspace[_Scalar]: ...
-    def domain(self) -> FreeModule_generic[_Scalar]: ...
-    def codomain(self) -> FreeModule_generic[_Scalar]: ...
-    def matrix(self, side: str | None = ...) -> Matrix[_Scalar]: ...
-    def _call_(
+    def parent(
         self,
-        x: FreeModuleElement[_Scalar],
-    ) -> FreeModuleElement[_Scalar]: ...
-    def rank(self) -> int: ...
-    def kernel(self) -> FreeModule_submodule[_Scalar]: ...
-    def image(self) -> FreeModule_submodule[_Scalar]: ...
-    range = image
+    ) -> FreeModuleHomspace[_DomainScalar, _CodomainScalar]: ...
+    def domain(self) -> FreeModule_generic[_DomainScalar]: ...
+    def codomain(self) -> FreeModule_generic[_CodomainScalar]: ...
+    def pushforward(
+        self,
+        x: FreeModule_generic[_DomainScalar],
+    ) -> FreeModule_generic[_CodomainScalar]: ...
+    def _repr_(self) -> str: ...
+    def change_ring(
+        self,
+        R: Parent[_NewScalar],
+    ) -> FreeModuleMorphism[_NewScalar, _NewScalar]: ...
     def inverse_image(
         self,
-        submodule: FreeModule_generic[_Scalar],
-    ) -> FreeModule_submodule[_Scalar]: ...
-    def is_injective(self) -> bool: ...
-    def is_surjective(self) -> bool: ...
-    def is_bijective(self) -> bool: ...
-    def is_identity(self) -> bool: ...
-    def inverse(self) -> Self: ...
-    __invert__ = inverse
+        V: FreeModule_generic[_CodomainScalar],
+    ) -> FreeModule_generic[_DomainScalar]: ...
     def lift(
         self,
-        x: FreeModuleElement[_Scalar],
-    ) -> FreeModuleElement[_Scalar]: ...
-    def section(self) -> Self: ...
-    def restrict_domain(
+        x: FreeModuleElement[_CodomainScalar],
+    ) -> FreeModuleElement[_DomainScalar]: ...
+    preimage_representative = lift
+    def eigenvalues(
         self,
-        submodule: FreeModule_generic[_Scalar],
-    ) -> Self: ...
-    def restrict_codomain(
+        extend: bool = ...,
+    ) -> list[RingElement]: ...
+    def eigenvectors(
         self,
-        submodule: FreeModule_generic[_Scalar],
-    ) -> Self: ...
-    def __mul__(self, right: Self) -> Self: ...
+        extend: bool = ...,
+    ) -> list[
+        tuple[
+            RingElement,
+            Sequence[FreeModuleElement[RingElement]],
+            int,
+        ]
+    ]: ...
+    def eigenspaces(
+        self,
+        extend: bool = ...,
+    ) -> list[
+        tuple[
+            RingElement,
+            FreeModule_generic_field[FieldElement],
+        ]
+    ]: ...
 
+class BaseIsomorphism1D(Morphism):
+    def _repr_type(self) -> str: ...
+    def is_injective(self) -> bool: ...
+    def is_surjective(self) -> bool: ...
+    def _richcmp_(self, other: BaseIsomorphism1D, op: int) -> bool: ...
+
+class BaseIsomorphism1D_to_FM(BaseIsomorphism1D):
+    def __init__(
+        self,
+        parent: Homset,
+        basis: RingElement | None = ...,
+    ) -> None: ...
+    def _call_(self, x: RingElement) -> FreeModuleElement[RingElement]: ...
+
+class BaseIsomorphism1D_from_FM(BaseIsomorphism1D):
+    def __init__(
+        self,
+        parent: Homset,
+        basis: RingElement | None = ...,
+    ) -> None: ...
+    def _call_(self, x: FreeModuleElement[RingElement]) -> RingElement: ...
 
 from sage.modules.free_module_homspace import FreeModuleHomspace

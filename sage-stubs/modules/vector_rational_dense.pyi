@@ -1,31 +1,54 @@
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
 from typing import Self
 
-from sage.matrix.matrix_rational_dense import Matrix_rational_dense
+from sage.modules.free_module import FreeModule_generic
 from sage.modules.free_module_element import FreeModuleElement_generic_dense
 from sage.rings.integer import Integer
 from sage.rings.rational import Rational
 from sage.structure.parent import ElementConstructorInput
 
-
 class Vector_rational_dense(FreeModuleElement_generic_dense[Rational]):
     def __init__(
         self,
-        parent: object,
-        entries: Sequence[int | Integer | Rational | ElementConstructorInput] = ...,
+        parent: FreeModule_generic[Rational],
+        x: Sequence[ElementConstructorInput] | int,
         coerce: bool = ...,
         copy: bool = ...,
     ) -> None: ...
     def __copy__(self) -> Self: ...
+    def _richcmp_(
+        self,
+        right: Vector_rational_dense,
+        op: int,
+    ) -> bool: ...
     def list(self, copy: bool = ...) -> list[Rational]: ...
-    def denominator(self) -> Integer: ...
-    def dot_product(self, right: Vector_rational_dense) -> Rational: ...
-    inner_product = dot_product
-    def pairwise_product(self, right: Vector_rational_dense) -> Self: ...
-    def norm(self, p: int | float | None = ...) -> object: ...
-    def row(self) -> Matrix_rational_dense: ...
-    def column(self) -> Matrix_rational_dense: ...
-    def clear_denominators(self) -> Vector_integer_dense: ...
+    def __reduce__(
+        self,
+    ) -> tuple[
+        Callable[..., Vector_rational_dense],
+        tuple[
+            FreeModule_generic[Rational],
+            list[Rational],
+            int,
+            bool,
+        ],
+    ]: ...
+    def _add_(self, right: Vector_rational_dense) -> Self: ...
+    def _sub_(self, right: Vector_rational_dense) -> Self: ...
+    def _dot_product_(self, right: Vector_rational_dense) -> Rational: ...
+    def _pairwise_product_(self, right: Vector_rational_dense) -> Self: ...
+    def _rmul_(self, left: Integer | Rational) -> Self: ...
+    def _lmul_(self, right: Integer | Rational) -> Self: ...
+    def _neg_(self) -> Self: ...
 
-
-from sage.modules.vector_integer_dense import Vector_integer_dense
+def unpickle_v0(
+    parent: FreeModule_generic[Rational],
+    entries: Sequence[ElementConstructorInput],
+    degree: int,
+) -> Vector_rational_dense: ...
+def unpickle_v1(
+    parent: FreeModule_generic[Rational],
+    entries: Sequence[ElementConstructorInput],
+    degree: int,
+    immutable: bool,
+) -> Vector_rational_dense: ...
