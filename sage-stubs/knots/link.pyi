@@ -1,5 +1,5 @@
 from collections.abc import Mapping, Sequence
-from typing import Literal, Self
+from typing import Literal, Self, overload
 
 from sage.groups.braid import Braid
 from sage.groups.finitely_presented import (
@@ -40,6 +40,17 @@ type KhovanovHomology = dict[
 ]
 type FoxColoring = dict[tuple[int, ...], IntegerMod_abstract]
 type LinkPlotColor = str | Mapping[tuple[int, ...], int | Integer]
+type KnotInfoIdentification = (
+    KnotInfoBase
+    | KnotInfoSeries
+    | FreeKnotInfoMonoidElement
+    | tuple[KnotInfoBase | KnotInfoSeries, SymmetryMutant]
+)
+type KnotInfoCandidate = (
+    KnotInfoBase
+    | FreeKnotInfoMonoidElement
+    | tuple[KnotInfoBase, SymmetryMutant]
+)
 
 
 class Link(SageObject):
@@ -132,11 +143,20 @@ class Link(SageObject):
         color: LinkPlotColor = ...,
         **kwargs: Element | int | float | bool | str,
     ) -> Graphics: ...
+
+    @overload
     def get_knotinfo(
         self,
         mirror_version: bool = ...,
-        unique: bool = ...,
-    ) -> KnotInfoBase | list[KnotInfoBase]: ...
+        unique: Literal[True] = ...,
+    ) -> KnotInfoIdentification: ...
+    @overload
+    def get_knotinfo(
+        self,
+        mirror_version: bool,
+        unique: Literal[False],
+    ) -> list[KnotInfoCandidate]: ...
+
     def is_isotopic(self, other: Link) -> bool: ...
     def simplify(
         self,
@@ -146,4 +166,5 @@ class Link(SageObject):
     ) -> Self: ...
 
 
-from sage.knots.knotinfo import KnotInfoBase
+from sage.knots.free_knotinfo_monoid import FreeKnotInfoMonoidElement
+from sage.knots.knotinfo import KnotInfoBase, KnotInfoSeries, SymmetryMutant
