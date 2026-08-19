@@ -16,6 +16,7 @@ _Module = TypeVar(
     bound=Parent[ModuleElement],
     default=Parent[ModuleElement],
 )
+_Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
 
 PointIndex = int | Integer
 PointIndices = Iterable[PointIndex]
@@ -31,7 +32,7 @@ PointCollectionFormat = Literal[
 class PointCollection(
     SageObject,
     Sequence[_Point],
-    Generic[_Point, _Module],
+    Generic[_Point, _Module, _Scalar],
 ):
     def __init__(
         self,
@@ -40,15 +41,15 @@ class PointCollection(
     ) -> None: ...
     def __add__(
         self,
-        right: PointCollection[_Point, _Module],
-    ) -> PointCollection[_Point, _Module]: ...
+        right: PointCollection[_Point, _Module, _Scalar],
+    ) -> PointCollection[_Point, _Module, _Scalar]: ...
     def __call__(
         self,
         *indices: PointIndex | PointIndices,
-    ) -> PointCollection[_Point, _Module]: ...
+    ) -> PointCollection[_Point, _Module, _Scalar]: ...
     def __richcmp__(
         self,
-        other: PointCollection[_Point, _Module],
+        other: PointCollection[_Point, _Module, _Scalar],
         op: int,
     ) -> bool: ...
     @overload
@@ -64,28 +65,35 @@ class PointCollection(
     def __rmul__(self, left: object) -> object: ...
     def __reduce__(
         self,
-    ) -> tuple[type[PointCollection], tuple[tuple[_Point, ...], _Module]]: ...
+    ) -> tuple[
+        type[PointCollection],
+        tuple[tuple[_Point, ...], _Module],
+    ]: ...
     def _latex_(self) -> str: ...
-    def _matrix_(self, ring: Ring | None = ...) -> Matrix[RingElement]: ...
+    def _matrix_(self, ring: Ring | None = ...) -> Matrix[_Scalar]: ...
     def _repr_(self) -> str: ...
-    def basis(self) -> PointCollection[_Point, _Module]: ...
+    def basis(self) -> PointCollection[_Point, _Module, _Scalar]: ...
     def cardinality(self) -> int: ...
     def cartesian_product(
         self,
         other: PointCollection,
         module: Parent[ModuleElement] | None = ...,
-    ) -> PointCollection[ModuleElement, Parent[ModuleElement]]: ...
-    def column_matrix(self) -> Matrix[RingElement]: ...
+    ) -> PointCollection[
+        ModuleElement,
+        Parent[ModuleElement],
+        RingElement,
+    ]: ...
+    def column_matrix(self) -> Matrix[_Scalar]: ...
     def dimension(self) -> int: ...
     dim = dimension
-    def dual_module(self) -> FreeModule_generic[RingElement]: ...
+    def dual_module(self) -> FreeModule_generic[_Scalar]: ...
     def index(
         self,
         point: _Point,
         start: PointIndex = ...,
         stop: PointIndex = ...,
     ) -> int: ...
-    def matrix(self) -> Matrix[RingElement]: ...
+    def matrix(self) -> Matrix[_Scalar]: ...
     def module(self) -> _Module: ...
     @staticmethod
     @overload
@@ -102,13 +110,21 @@ def read_palp_point_collection(
     f: TextIO,
     lattice: _Module | None = ...,
     permutation: Literal[False] = ...,
-) -> PointCollection[FreeModuleElement[RingElement], _Module] | None: ...
+) -> PointCollection[
+    FreeModuleElement[Integer],
+    _Module,
+    Integer,
+] | None: ...
 @overload
 def read_palp_point_collection(
     f: TextIO,
     lattice: _Module | None = ...,
     permutation: Literal[True] = ...,
 ) -> tuple[
-    PointCollection[FreeModuleElement[RingElement], _Module],
+    PointCollection[
+        FreeModuleElement[Integer],
+        _Module,
+        Integer,
+    ],
     tuple[int, ...],
 ] | None: ...
