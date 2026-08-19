@@ -1,26 +1,43 @@
-from collections.abc import Sequence
-from typing import Self
+from typing import Literal, Self, overload
 
+from sage.matrix.matrix import Matrix
 from sage.matrix.matrix_generic_dense import Matrix_generic_dense
+from sage.rings.fraction_field_element import FractionFieldElement
+from sage.rings.ideal import Ideal_generic
 from sage.rings.polynomial.multi_polynomial import MPolynomial
-from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.structure.parent import ElementConstructorInput, Parent
+
+type MPolynomialEchelonAlgorithm = Literal[
+    "row_reduction",
+    "bareiss",
+]
 
 
 class Matrix_mpolynomial_dense(Matrix_generic_dense[MPolynomial]):
-    def __init__(
+    @overload
+    def echelon_form(
         self,
-        parent: Parent[Self],
-        entries: Sequence[MPolynomial | ElementConstructorInput] | ElementConstructorInput = ...,
-        copy: bool = ...,
-        coerce: bool = ...,
+        algorithm: Literal["frac"],
+        **kwds: object,
+    ) -> Matrix[FractionFieldElement]: ...
+    @overload
+    def echelon_form(
+        self,
+        algorithm: MPolynomialEchelonAlgorithm = ...,
+        **kwds: object,
+    ) -> Self: ...
+    def pivots(self) -> tuple[int, ...]: ...
+    def echelonize(
+        self,
+        algorithm: MPolynomialEchelonAlgorithm = ...,
+        **kwds: object,
     ) -> None: ...
-    def determinant(self, algorithm: str = ...) -> MPolynomial: ...
+    def swapped_columns(self) -> tuple[int, ...] | None: ...
+    def _fitting_ideal(
+        self,
+        i: int,
+    ) -> Ideal_generic: ...
+    def determinant(
+        self,
+        algorithm: str | None = ...,
+    ) -> MPolynomial: ...
     det = determinant
-    def trace(self) -> MPolynomial: ...
-    def characteristic_polynomial(self, var: str = ...) -> Polynomial: ...
-    charpoly = characteristic_polynomial
-    def content(self) -> MPolynomial: ...
-    def denominator(self) -> MPolynomial: ...
-    def factor(self) -> Matrix_mpolynomial_dense: ...
-    def subs(self, *args: object, **kwds: object) -> Self: ...
