@@ -11,12 +11,19 @@ _AlgebraElement = TypeVar(
     bound=RingElement,
     default=RingElement,
 )
+_GroundElement = TypeVar(
+    "_GroundElement",
+    bound=RingElement,
+    default=RingElement,
+)
 
 class FreeGradedModuleElement(
     IndexedFreeModuleElement[GeneratorIndex, _AlgebraElement],
-    Generic[_AlgebraElement],
+    Generic[_AlgebraElement, _GroundElement],
 ):
-    def parent(self) -> FreeGradedModule[_AlgebraElement]: ...
+    def parent(
+        self,
+    ) -> FreeGradedModule[_AlgebraElement, _GroundElement]: ...
     def dense_coefficient_list(
         self,
         order: Iterable[GeneratorIndex] | None = ...,
@@ -26,7 +33,7 @@ class FreeGradedModuleElement(
     def _lmul_(self, a: _AlgebraElement) -> Self: ...
     def vector_presentation(
         self,
-    ) -> FreeModuleElement[RingElement] | None: ...
+    ) -> FreeModuleElement[_GroundElement] | None: ...
     def is_zero(self) -> bool: ...
 
 from sage.modules.fp_graded.free_module import FreeGradedModule, GeneratorIndex

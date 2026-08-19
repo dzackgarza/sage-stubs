@@ -12,27 +12,39 @@ _AlgebraElement = TypeVar(
     bound=RingElement,
     default=RingElement,
 )
+_GroundElement = TypeVar(
+    "_GroundElement",
+    bound=RingElement,
+    default=RingElement,
+)
 
-type GradedPieceElement = (
-    FreeModuleElement[RingElement]
-    | FGP_Element[RingElement]
+type GradedPieceElement[_GroundElement: RingElement] = (
+    FreeModuleElement[_GroundElement]
+    | FGP_Element[_GroundElement]
 )
 
 class FPElement(
     IndexedFreeModuleElement[GeneratorIndex, _AlgebraElement],
-    Generic[_AlgebraElement],
+    Generic[_AlgebraElement, _GroundElement],
 ):
-    def parent(self) -> FPModule[_AlgebraElement]: ...
+    def parent(
+        self,
+    ) -> FPModule[_AlgebraElement, _GroundElement]: ...
     def lift_to_free(
         self,
-    ) -> FreeGradedModuleElement[_AlgebraElement]: ...
+    ) -> FreeGradedModuleElement[
+        _AlgebraElement,
+        _GroundElement,
+    ]: ...
     def degree(self) -> int | Integer: ...
     def dense_coefficient_list(
         self,
         order: Iterable[GeneratorIndex] | None = ...,
     ) -> list[_AlgebraElement]: ...
     def _lmul_(self, a: _AlgebraElement) -> Self: ...
-    def vector_presentation(self) -> GradedPieceElement | None: ...
+    def vector_presentation(
+        self,
+    ) -> GradedPieceElement[_GroundElement] | None: ...
     def is_zero(self) -> bool: ...
     def __bool__(self) -> bool: ...
     def __eq__(self, other: object) -> bool: ...

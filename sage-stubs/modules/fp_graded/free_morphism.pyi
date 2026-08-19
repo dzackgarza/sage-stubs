@@ -15,27 +15,58 @@ _AlgebraElement = TypeVar(
     bound=RingElement,
     default=RingElement,
 )
+_GroundElement = TypeVar(
+    "_GroundElement",
+    bound=RingElement,
+    default=RingElement,
+)
 
 class FreeGradedModuleMorphism(
-    FPModuleMorphism[_AlgebraElement],
-    Generic[_AlgebraElement],
+    FPModuleMorphism[_AlgebraElement, _GroundElement],
+    Generic[_AlgebraElement, _GroundElement],
 ):
     def __init__(
         self,
-        parent: FreeGradedModuleHomspace[_AlgebraElement],
-        values: Sequence[GradedModuleElement[_AlgebraElement]],
+        parent: FreeGradedModuleHomspace[
+            _AlgebraElement,
+            _GroundElement,
+        ],
+        values: Sequence[
+            GradedModuleElement[
+                _AlgebraElement,
+                _GroundElement,
+            ]
+        ],
     ) -> None: ...
-    def parent(self) -> FreeGradedModuleHomspace[_AlgebraElement]: ...
-    def domain(self) -> FreeGradedModule[_AlgebraElement]: ...
-    def codomain(self) -> GradedModule[_AlgebraElement]: ...
+    def parent(
+        self,
+    ) -> FreeGradedModuleHomspace[
+        _AlgebraElement,
+        _GroundElement,
+    ]: ...
+    def domain(
+        self,
+    ) -> FreeGradedModule[_AlgebraElement, _GroundElement]: ...
+    def codomain(
+        self,
+    ) -> GradedModule[_AlgebraElement, _GroundElement]: ...
     def degree(self) -> int | Integer: ...
     def __call__(
         self,
-        x: FreeGradedModuleElement[_AlgebraElement],
-    ) -> GradedModuleElement[_AlgebraElement]: ...
+        x: FreeGradedModuleElement[
+            _AlgebraElement,
+            _GroundElement,
+        ],
+    ) -> GradedModuleElement[
+        _AlgebraElement,
+        _GroundElement,
+    ]: ...
     def fp_module(
         self,
-    ) -> FPModule[_AlgebraElement] | FreeGradedModule[_AlgebraElement]: ...
+    ) -> (
+        FPModule[_AlgebraElement, _GroundElement]
+        | FreeGradedModule[_AlgebraElement, _GroundElement]
+    ): ...
 
 from sage.modules.fp_graded.free_homspace import FreeGradedModuleHomspace
 from sage.modules.fp_graded.free_module import FreeGradedModule

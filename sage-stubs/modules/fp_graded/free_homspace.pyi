@@ -13,32 +13,80 @@ _AlgebraElement = TypeVar(
     bound=RingElement,
     default=RingElement,
 )
+_GroundElement = TypeVar(
+    "_GroundElement",
+    bound=RingElement,
+    default=RingElement,
+)
 
 class FreeGradedModuleHomspace(
-    FPModuleHomspace[_AlgebraElement],
-    Generic[_AlgebraElement],
+    FPModuleHomspace[_AlgebraElement, _GroundElement],
+    Generic[_AlgebraElement, _GroundElement],
 ):
-    Element: type[FreeGradedModuleMorphism[_AlgebraElement]]
-    element_class: type[FreeGradedModuleMorphism[_AlgebraElement]]
+    Element: type[
+        FreeGradedModuleMorphism[
+            _AlgebraElement,
+            _GroundElement,
+        ]
+    ]
+    element_class: type[
+        FreeGradedModuleMorphism[
+            _AlgebraElement,
+            _GroundElement,
+        ]
+    ]
 
-    def domain(self) -> FreeGradedModule[_AlgebraElement]: ...
-    def codomain(self) -> GradedModule[_AlgebraElement]: ...
+    def domain(
+        self,
+    ) -> FreeGradedModule[_AlgebraElement, _GroundElement]: ...
+    def codomain(
+        self,
+    ) -> GradedModule[_AlgebraElement, _GroundElement]: ...
     def _element_constructor_(
         self,
-        values: FreeGradedModuleMorphism[_AlgebraElement]
-        | Sequence[GradedModuleElement[_AlgebraElement]]
+        values: FreeGradedModuleMorphism[
+            _AlgebraElement,
+            _GroundElement,
+        ]
+        | Sequence[
+            GradedModuleElement[
+                _AlgebraElement,
+                _GroundElement,
+            ]
+        ]
         | int,
-    ) -> FreeGradedModuleMorphism[_AlgebraElement]: ...
+    ) -> FreeGradedModuleMorphism[
+        _AlgebraElement,
+        _GroundElement,
+    ]: ...
     def an_element(
         self,
         n: GeneratorDegree = ...,
-    ) -> FreeGradedModuleMorphism[_AlgebraElement]: ...
+    ) -> FreeGradedModuleMorphism[
+        _AlgebraElement,
+        _GroundElement,
+    ]: ...
     def basis_elements(
         self,
         n: GeneratorDegree,
-    ) -> list[FreeGradedModuleMorphism[_AlgebraElement]]: ...
-    def zero(self) -> FreeGradedModuleMorphism[_AlgebraElement]: ...
-    def identity(self) -> FreeGradedModuleMorphism[_AlgebraElement]: ...
+    ) -> list[
+        FreeGradedModuleMorphism[
+            _AlgebraElement,
+            _GroundElement,
+        ]
+    ]: ...
+    def zero(
+        self,
+    ) -> FreeGradedModuleMorphism[
+        _AlgebraElement,
+        _GroundElement,
+    ]: ...
+    def identity(
+        self,
+    ) -> FreeGradedModuleMorphism[
+        _AlgebraElement,
+        _GroundElement,
+    ]: ...
     one = identity
 
 from sage.modules.fp_graded.free_module import FreeGradedModule, GeneratorDegree
