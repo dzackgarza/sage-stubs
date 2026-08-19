@@ -1,35 +1,82 @@
-from collections.abc import Mapping, Sequence
-from typing import Self
+from collections.abc import Sequence
+from typing import Literal, Self, overload
 
-from sage.matrix.matrix_sparse import Matrix_sparse
+from sage.matrix.matrix import Matrix
+from sage.matrix.matrix_generic_sparse import Matrix_generic_sparse
+from sage.modules.free_module_element import FreeModuleElement
+from sage.rings.integer import Integer
 from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.structure.parent import ElementConstructorInput, Parent
-from sage.symbolic.expression import Expression
+from sage.structure.factorization import Factorization
+from sage.symbolic.expression import (
+    Expression,
+    SymbolicInput,
+    SymbolicSubstitution,
+)
+
+type SymbolicSparseEigenvectorData = tuple[
+    Expression,
+    list[FreeModuleElement[Expression]],
+    Integer,
+]
 
 
-class Matrix_symbolic_sparse(Matrix_sparse[Expression]):
-    def __init__(
+class Matrix_symbolic_sparse(Matrix_generic_sparse[Expression]):
+    # Classical echelon form and exact Maxima spectral data
+    def echelonize(self, **kwds: object) -> None: ...
+    def eigenvalues(self, extend: bool = ...) -> list[Expression]: ...
+    def eigenvectors_left(
         self,
-        parent: Parent[Self],
-        entries: Sequence[Expression | ElementConstructorInput]
-        | Mapping[tuple[int, int], Expression | ElementConstructorInput]
-        | ElementConstructorInput = ...,
-        copy: bool = ...,
-        coerce: bool = ...,
-    ) -> None: ...
-    def determinant(self, algorithm: str = ...) -> Expression: ...
-    det = determinant
-    def trace(self) -> Expression: ...
-    def characteristic_polynomial(self, var: str = ...) -> Polynomial: ...
-    charpoly = characteristic_polynomial
-    def simplify(self, algorithm: str | None = ...) -> Self: ...
-    def expand(self) -> Self: ...
+        other: Matrix_symbolic_sparse | None = ...,
+    ) -> list[SymbolicSparseEigenvectorData]: ...
+    def eigenvectors_right(
+        self,
+        other: Matrix_symbolic_sparse | None = ...,
+    ) -> list[SymbolicSparseEigenvectorData]: ...
+    def exp(self) -> Self: ...
+
+    # Characteristic, minimal, and Jordan forms
+    def charpoly(
+        self,
+        var: str = ...,
+        algorithm: str | None = ...,
+    ) -> Polynomial: ...
+    characteristic_polynomial = charpoly
+    def minpoly(self, var: str = ...) -> Polynomial: ...
+    minimal_polynomial = minpoly
+    def fcp(self, var: str = ...) -> Factorization: ...
+
+    @overload
+    def jordan_form(
+        self,
+        subdivide: bool = ...,
+        transformation: Literal[False] = ...,
+    ) -> Self: ...
+    @overload
+    def jordan_form(
+        self,
+        subdivide: bool,
+        transformation: Literal[True],
+    ) -> tuple[Self, Self]: ...
+
+    # Symbolic simplification and normalization
+    def simplify(self) -> Self: ...
+    def simplify_trig(self) -> Self: ...
+    def simplify_rational(self) -> Self: ...
+    def simplify_full(self) -> Self: ...
+    def canonicalize_radical(self) -> Self: ...
     def factor(self) -> Self: ...
-    def subs(self, *args: object, **kwds: ElementConstructorInput) -> Self: ...
-    substitute = subs
-    def derivative(self, *args: object) -> Self: ...
-    diff = derivative
-    def dense_matrix(self) -> Matrix_symbolic_dense: ...
+    def expand(self) -> Self: ...
 
-
-from sage.matrix.matrix_symbolic_dense import Matrix_symbolic_dense
+    # Variables, evaluation, and callable symbolic matrices
+    def variables(self) -> tuple[Expression, ...]: ...
+    def arguments(self) -> tuple[Expression, ...]: ...
+    def number_of_arguments(self) -> int: ...
+    def __call__(
+        self,
+        *args: SymbolicSubstitution,
+        **kwargs: SymbolicInput,
+    ) -> Self: ...
+    def function(
+        self,
+        *args: Expression | Sequence[Expression],
+    ) -> Matrix[Expression]: ...
