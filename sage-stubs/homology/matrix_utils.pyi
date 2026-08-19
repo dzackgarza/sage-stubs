@@ -1,8 +1,8 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from sage.matrix.matrix_integer_dense import Matrix_integer_dense
+from sage.rings.integer import Integer
 
-class _SageObject: ...
 
-def dhsw_snf(mat: builtins.object, verbose: builtins.bool = ...) -> _SageObject: ...
+def dhsw_snf(
+    mat: Matrix_integer_dense,
+    verbose: bool = ...,
+) -> list[Integer]: ...
