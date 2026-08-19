@@ -1,8 +1,5 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+type RolfsenKnotIndex = tuple[int, int]
+type BraidWord = list[int]
+type RolfsenBraidData = tuple[int, BraidWord]
 
-class _SageObject: ...
-
-small_knots_table: _SageObject
+small_knots_table: dict[RolfsenKnotIndex, RolfsenBraidData]

@@ -1,12 +1,35 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from collections.abc import Sequence
 
-class _SageObject: ...
+from sage.graphs.graph import Graph
+from sage.rings.integer import Integer
 
-def dowker_to_gauss(code: builtins.object) -> _SageObject: ...
 
-def recover_orientations(gauss: builtins.object) -> _SageObject: ...
+type SignedGaussCode = Sequence[int | Integer]
+type DowkerThistlethwaiteCode = Sequence[int | Integer]
+type CrossingPair = tuple[int, int]
+type CrossingCoordinates = list[CrossingPair]
+type RecoveredGaussData = tuple[
+    list[int],
+    list[CrossingPair],
+    list[CrossingPair],
+    list[int],
+]
+type RectangularDiagram = tuple[
+    Graph,
+    tuple[CrossingCoordinates, CrossingCoordinates],
+]
 
-def rectangular_diagram(gauss: builtins.object) -> _SageObject: ...
+
+def dowker_to_gauss(
+    code: DowkerThistlethwaiteCode,
+) -> list[int]: ...
+
+
+def recover_orientations(
+    gauss: SignedGaussCode,
+) -> RecoveredGaussData: ...
+
+
+def rectangular_diagram(
+    gauss: SignedGaussCode,
+) -> RectangularDiagram: ...
