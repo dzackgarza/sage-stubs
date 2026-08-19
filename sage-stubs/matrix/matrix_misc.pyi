@@ -1,35 +1,50 @@
-from collections.abc import Iterator, Sequence
-from typing import Self, TypeVar
-from sage.matrix.matrix0 import Matrix
-from sage.modules.free_module import FreeModule_generic
-from sage.modules.free_module_element import FreeModuleElement
-from sage.modules.free_module_homspace import FreeModuleHomspace
-from sage.rings.integer import Integer
-from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.rings.rational import Rational
-from sage.rings.real_double import RealDoubleElement
-from sage.rings.complex_double import ComplexDoubleElement
-from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
-from sage.rings.ring import Ring
-from sage.structure.element import RingElement
-from sage.structure.parent import ElementConstructorInput
-from sage.structure.sage_object import SageObject
-from sage.symbolic.expression import Expression
-
-_Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+from collections.abc import Iterator, Mapping
+from typing import Literal, TypeVar, overload
 
 from sage.matrix.matrix import Matrix
+from sage.modules.free_module_element import FreeModuleElement
+from sage.rings.polynomial.polynomial_element import Polynomial
+from sage.structure.element import RingElement
 
-def row_iterator(A: Matrix[_Scalar]) -> ElementConstructorInput: ...
+_Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+_PolynomialValue = TypeVar("_PolynomialValue", bound=RingElement)
+
+
+def row_iterator(
+    A: Matrix[_Scalar],
+) -> Iterator[FreeModuleElement[_Scalar]]: ...
+
+
 def prm_mul(
-    p1: ElementConstructorInput,
-    p2: ElementConstructorInput,
+    p1: Mapping[int, _PolynomialValue],
+    p2: Mapping[int, _PolynomialValue],
     mask_free: int,
     prec: int | None,
-) -> ElementConstructorInput: ...
+) -> dict[int, _PolynomialValue]: ...
+
+
+@overload
 def permanental_minor_polynomial(
     A: Matrix[_Scalar],
-    permanent_only: bool = False,
-    var: str = "t",
-    prec: int | None = None,
-) -> ElementConstructorInput: ...
+    permanent_only: Literal[False] = ...,
+    var: str = ...,
+    prec: int | None = ...,
+) -> Polynomial: ...
+
+
+@overload
+def permanental_minor_polynomial(
+    A: Matrix[_Scalar],
+    permanent_only: Literal[True],
+    var: str = ...,
+    prec: int | None = ...,
+) -> _Scalar: ...
+
+
+@overload
+def permanental_minor_polynomial(
+    A: Matrix[_Scalar],
+    permanent_only: bool,
+    var: str = ...,
+    prec: int | None = ...,
+) -> Polynomial | _Scalar: ...
