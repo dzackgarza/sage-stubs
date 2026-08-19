@@ -1,8 +1,8 @@
 from sage.rings.ring import Ring
 from sage.structure.element import Element
-from sage.structure.sage_object import SageObject
 
-class CubicHeckeElement(SageObject):
+
+class CubicHeckeElement(Element):
     def Tietze(self) -> Element: ...
     def max_len(self) -> Element: ...
     def braid_group_algebra_pre_image(self) -> Element: ...

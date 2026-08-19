@@ -45,7 +45,7 @@ def steenrod_algebra_basis(
     profile: ModTwoProfile | OddPrimaryProfile | None = ...,
     truncation_type: TruncationType | None = ...,
     generic: bool | None = ...,
-    **kwds: object,
+    **kwds: Element | int | float | complex | str | bool | list[Element],
 ) -> SteenrodBasis: ...
 def restricted_partitions(
     n: int | Integer,
@@ -64,18 +64,18 @@ def milnor_basis(
     profile: ModTwoProfile | OddPrimaryProfile | None = ...,
     truncation_type: TruncationType | None = ...,
     generic: bool | None = ...,
-    **kwds: object,
+    **kwds: Element | int | float | complex | str | bool | list[Element],
 ) -> tuple[MilnorBasisKey, ...]: ...
 def serre_cartan_basis(
     n: int | Integer,
     p: int | Integer = ...,
     bound: int | Integer = ...,
-    **kwds: object,
+    **kwds: Element | int | float | complex | str | bool | list[Element],
 ) -> tuple[SerreCartanBasisKey, ...]: ...
 def atomic_basis(
     n: int | Integer,
     basis: str,
-    **kwds: object,
+    **kwds: Element | int | float | complex | str | bool | list[Element],
 ) -> tuple[PairMonomial, ...]: ...
 def arnonC_basis(
     n: int | Integer,
@@ -89,12 +89,12 @@ def atomic_basis_odd(
     profile: OddPrimaryProfile | None = ...,
     truncation_type: TruncationType | None = ...,
     generic: bool | None = ...,
-    **kwds: object,
+    **kwds: Element | int | float | complex | str | bool | list[Element],
 ) -> tuple[GenericAtomicMonomial, ...]: ...
 def steenrod_basis_error_check(
     dim: int | Integer,
     p: int | Integer,
     *,
     generic: bool | None = ...,
-    **kwds: object,
+    **kwds: Element | int | float | complex | str | bool | list[Element],
 ) -> None: ...

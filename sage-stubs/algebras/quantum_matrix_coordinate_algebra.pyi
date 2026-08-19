@@ -47,7 +47,7 @@ class QuantumMatrixCoordinateAlgebra_abstract(
         q: _Scalar | None = ...,
         bar: Callable[[_Scalar], _Scalar] | None = ...,
         R: Ring | None = ...,
-        **kwds: object,
+        **kwds: Element | int | str | bool,
     ) -> QuantumMatrixCoordinateAlgebra_abstract[_Scalar]: ...
     def __init__(
         self,
@@ -57,7 +57,7 @@ class QuantumMatrixCoordinateAlgebra_abstract(
         bar: Callable[[_Scalar], _Scalar] | None,
         R: Ring,
         category: Category,
-        indices_key: Callable[[QuantumGenerator], object] | None = ...,
+        indices_key: Callable[[QuantumGenerator], tuple[int, ...]] | None = ...,
     ) -> None: ...
     def base_ring(self) -> Ring: ...
     def indices(self) -> IndexedFreeAbelianMonoid[QuantumGenerator]: ...

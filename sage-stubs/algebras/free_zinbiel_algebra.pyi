@@ -23,7 +23,7 @@ type ZinbielTensorElement[_Scalar: RingElement] = IndexedFreeModuleElement[
     _Scalar,
 ]
 type ZinbielNames = str | Sequence[Hashable] | None
-type ZinbielIndexSet = int | Integer | object
+type ZinbielIndexSet = int | Integer | str | tuple[str, ...] | list[str]
 
 class FreeZinbielAlgebra(
     CombinatorialFreeModule,
@@ -88,21 +88,21 @@ class FreeZinbielAlgebra(
     def counit(self, S: ZinbielElement[_Scalar]) -> _Scalar: ...
     def _element_constructor_(
         self,
-        x: ZinbielElement[_Scalar] | FiniteWord_class | object,
+        x: ZinbielElement[_Scalar] | FiniteWord_class | int | float | str | bool,
     ) -> ZinbielElement[_Scalar]: ...
     def _coerce_map_from_(
         self,
-        R: object,
+        R: Ring,
     ) -> bool | Morphism | None: ...
     def construction(self) -> tuple[ZinbielFunctor, Ring]: ...
 
 class ZinbielFunctor(ConstructionFunctor):
     rank: int
-    vars: object
+    vars: tuple[str, ...]
 
     def __init__(
         self,
-        variables: object,
+        variables: str | tuple[str, ...],
         side: ZinbielSide,
     ) -> None: ...
     def _apply_functor(
@@ -117,7 +117,7 @@ class ZinbielFunctor(ConstructionFunctor):
         FiniteWord_class,
         RingElement,
     ]: ...
-    def __eq__(self, other: object) -> bool: ...
+    def __eq__(self, other: Element) -> bool: ...
     def __hash__(self) -> int: ...
     def __mul__(
         self,

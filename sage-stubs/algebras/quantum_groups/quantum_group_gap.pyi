@@ -4,7 +4,7 @@ from sage.interfaces.expect import ExpectElement
 from sage.rings.ring import Ring
 from sage.structure.element import Element
 from sage.structure.parent import Parent
-from sage.structure.sage_object import SageObject
+
 
 def projection_lower_half(Q: Element | int | str | bool | None) -> Element: ...
 
@@ -58,7 +58,7 @@ class QuaGroupRepresentationElement(QuaGroupModuleElement):
     def monomial_coefficients(self, copy: Element | int | str | bool | None) -> Element: ...
     def _vector_(self, R: Ring, order: Element | int | str | bool | None, sparse: Element | int | str | bool | None) -> Element: ...
 
-class CrystalGraphVertex(SageObject):
+class CrystalGraphVertex(Element):
     def __hash__(self) -> int: ...
 
 class QuantumGroupModule(Parent, UniqueRepresentation):

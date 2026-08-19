@@ -1,7 +1,7 @@
 from sage.structure.element import Element
-from sage.structure.sage_object import SageObject
 
-class FMatrix(SageObject):
+
+class FMatrix(Element):
     def _repr_(self) -> str: ...
     def clear_equations(self) -> Element: ...
     def clear_vars(self) -> Element: ...

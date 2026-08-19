@@ -47,21 +47,21 @@ def SteenrodAlgebra(
     p: Literal[2] = ...,
     basis: str = ...,
     generic: Literal["auto", False] = ...,
-    **kwds: object,
+    **kwds: Element | int | float | complex | str | bool | list[Element],
 ) -> SteenrodAlgebra_mod_two: ...
 @overload
 def SteenrodAlgebra(
     p: Literal[2],
     basis: str = ...,
     generic: Literal[True] = ...,
-    **kwds: object,
+    **kwds: Element | int | float | complex | str | bool | list[Element],
 ) -> SteenrodAlgebra_generic: ...
 @overload
 def SteenrodAlgebra(
     p: int | Integer = ...,
     basis: str = ...,
     generic: SteenrodGenericFlag = ...,
-    **kwds: object,
+    **kwds: Element | int | float | complex | str | bool | list[Element],
 ) -> SteenrodAlgebra_generic | SteenrodAlgebra_mod_two: ...
 
 
@@ -118,13 +118,13 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         class_: type[SteenrodAlgebra_generic],
         p: int | Integer = ...,
         basis: str = ...,
-        **kwds: object,
+        **kwds: Element | int | float | complex | str | bool | list[Element],
     ) -> SteenrodAlgebra_generic: ...
     def __init__(
         self,
         p: int | Integer = ...,
         basis: str = ...,
-        **kwds: object,
+        **kwds: Element | int | float | complex | str | bool | list[Element],
     ) -> None: ...
     def base_ring(self) -> FiniteField: ...
     def free_graded_module(
@@ -217,12 +217,12 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         self,
         t: SteenrodBasisKey,
     ) -> int | Integer: ...
-    def _coerce_map_from_(self, S: object) -> bool: ...
+    def _coerce_map_from_(self, S: Parent) -> bool: ...
     def _element_constructor_(
         self,
-        x: object,
+        x: Element | int | float | complex | str | bool | list[Element],
     ) -> SteenrodAlgebra_generic.Element: ...
-    def __contains__(self, x: object) -> bool: ...
+    def __contains__(self, x: Element | int | float | complex | str | bool | list[Element]) -> bool: ...
     def basis(
         self,
         d: int | Integer | None = ...,

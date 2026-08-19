@@ -3,7 +3,7 @@ from typing import Self
 
 from sage.structure.element import Element
 from sage.structure.parent import Parent
-from sage.structure.sage_object import SageObject
+
 
 class LieAlgebraElement(IndexedFreeModuleElement):
     def _im_gens_(self, codomain: Element | int | str | bool | None, im_gens: Element | int | str | bool | None, base_map: Element | int | str | bool | None) -> Element: ...
@@ -48,7 +48,7 @@ type _BuiltinList[_T] = list[_T]
 class FreeLieAlgebraElement(LieAlgebraElement):
     def list(self) -> _BuiltinList[Element]: ...
 
-class LieObject(SageObject):
+class LieObject(Element):
     ...
 
 class LieGenerator(LieObject):
