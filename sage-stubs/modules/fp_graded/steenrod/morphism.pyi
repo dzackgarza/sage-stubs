@@ -4,12 +4,18 @@ from sage.algebras.steenrod.steenrod_algebra import SteenrodAlgebra_generic
 from sage.modules.fp_graded.free_morphism import FreeGradedModuleMorphism
 from sage.modules.fp_graded.morphism import FPModuleMorphism
 from sage.modules.fp_graded.steenrod.profile import SteenrodProfile
+from sage.rings.finite_rings.element_base import FiniteRingElement
 from sage.rings.integer import Integer
 from sage.structure.element import RingElement
 
-type SteenrodActionMethod = Callable[..., FPModuleMorphism[RingElement]]
+type SteenrodActionMethod = Callable[
+    ...,
+    FPModuleMorphism[RingElement, FiniteRingElement],
+]
 
-class SteenrodFPModuleMorphism(FPModuleMorphism[RingElement]):
+class SteenrodFPModuleMorphism(
+    FPModuleMorphism[RingElement, FiniteRingElement],
+):
     def parent(self) -> SteenrodFPModuleHomspace: ...
     def domain(self) -> SteenrodFPModule | SteenrodFreeModule: ...
     def codomain(self) -> SteenrodFPModule | SteenrodFreeModule: ...
@@ -76,7 +82,7 @@ class SteenrodFPModuleMorphism(FPModuleMorphism[RingElement]):
     def fp_module(self) -> SteenrodFPModule | SteenrodFreeModule: ...
 
 class SteenrodFreeModuleMorphism(
-    FreeGradedModuleMorphism[RingElement],
+    FreeGradedModuleMorphism[RingElement, FiniteRingElement],
     SteenrodFPModuleMorphism,
 ):
     def parent(self) -> SteenrodFreeModuleHomspace: ...

@@ -12,12 +12,13 @@ from sage.modules.fp_graded.free_module import (
 )
 from sage.modules.fp_graded.module import FPModule, FPRelations
 from sage.modules.fp_graded.steenrod.profile import SteenrodProfile
+from sage.rings.finite_rings.element_base import FiniteRingElement
 from sage.rings.integer import Integer
 from sage.structure.element import RingElement
 
 type SteenrodModuleElement = (
-    FPElement[RingElement]
-    | FreeGradedModuleElement[RingElement]
+    FPElement[RingElement, FiniteRingElement]
+    | FreeGradedModuleElement[RingElement, FiniteRingElement]
 )
 
 class SteenrodModuleMixin:
@@ -28,7 +29,7 @@ class SteenrodModuleMixin:
     ) -> str: ...
 
 class SteenrodFPModule(
-    FPModule[RingElement],
+    FPModule[RingElement, FiniteRingElement],
     SteenrodModuleMixin,
 ):
     @staticmethod
@@ -72,7 +73,7 @@ class SteenrodFPModule(
     ) -> list[SteenrodFreeModuleMorphism]: ...
 
 class SteenrodFreeModule(
-    FreeGradedModule[RingElement],
+    FreeGradedModule[RingElement, FiniteRingElement],
     SteenrodModuleMixin,
 ):
     def base_ring(self) -> SteenrodAlgebra_generic: ...

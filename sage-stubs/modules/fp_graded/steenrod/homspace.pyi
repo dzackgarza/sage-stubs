@@ -12,16 +12,19 @@ from sage.modules.fp_graded.steenrod.morphism import (
     SteenrodFPModuleMorphism,
     SteenrodFreeModuleMorphism,
 )
+from sage.rings.finite_rings.element_base import FiniteRingElement
 from sage.rings.integer import Integer
 from sage.structure.element import RingElement
 
 type SteenrodModule = SteenrodFPModule | SteenrodFreeModule
 type SteenrodModuleElement = (
-    FPElement[RingElement]
-    | FreeGradedModuleElement[RingElement]
+    FPElement[RingElement, FiniteRingElement]
+    | FreeGradedModuleElement[RingElement, FiniteRingElement]
 )
 
-class SteenrodFPModuleHomspace(FPModuleHomspace[RingElement]):
+class SteenrodFPModuleHomspace(
+    FPModuleHomspace[RingElement, FiniteRingElement],
+):
     Element: type[SteenrodFPModuleMorphism]
     element_class: type[SteenrodFPModuleMorphism]
 
@@ -47,7 +50,7 @@ class SteenrodFPModuleHomspace(FPModuleHomspace[RingElement]):
 
 class SteenrodFreeModuleHomspace(
     SteenrodFPModuleHomspace,
-    FreeGradedModuleHomspace[RingElement],
+    FreeGradedModuleHomspace[RingElement, FiniteRingElement],
 ):
     Element: type[SteenrodFreeModuleMorphism]
     element_class: type[SteenrodFreeModuleMorphism]
