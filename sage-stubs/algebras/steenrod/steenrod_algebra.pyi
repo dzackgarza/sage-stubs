@@ -1,6 +1,7 @@
 from collections.abc import Callable, Iterable, Iterator, Mapping, Sequence
 from typing import Literal, overload
 
+from sage.algebras.steenrod.steenrod_algebra_bases import SteenrodBasisKey
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.modules.with_basis.indexed_element import IndexedFreeModuleElement
 from sage.modules.with_basis.morphism import ModuleMorphism
@@ -11,7 +12,6 @@ from sage.rings.integer import Integer
 from sage.sets.family import AbstractFamily
 
 
-type SteenrodBasisKey = tuple[object, ...]
 type SteenrodTensorKey = tuple[SteenrodBasisKey, SteenrodBasisKey]
 type SteenrodTensorElement = IndexedFreeModuleElement[
     SteenrodTensorKey,
@@ -51,11 +51,18 @@ def SteenrodAlgebra(
 ) -> SteenrodAlgebra_mod_two: ...
 @overload
 def SteenrodAlgebra(
+    p: Literal[2],
+    basis: str = ...,
+    generic: Literal[True] = ...,
+    **kwds: object,
+) -> SteenrodAlgebra_generic: ...
+@overload
+def SteenrodAlgebra(
     p: int | Integer = ...,
     basis: str = ...,
     generic: SteenrodGenericFlag = ...,
     **kwds: object,
-) -> SteenrodAlgebra_generic: ...
+) -> SteenrodAlgebra_generic | SteenrodAlgebra_mod_two: ...
 
 
 @overload
@@ -67,7 +74,7 @@ def AA(
 def AA(
     n: int | Integer | None = ...,
     p: int | Integer = ...,
-) -> SteenrodAlgebra_generic: ...
+) -> SteenrodAlgebra_generic | SteenrodAlgebra_mod_two: ...
 
 
 def Sq(*nums: int | Integer) -> SteenrodAlgebra_mod_two.Element: ...

@@ -1,7 +1,6 @@
 from collections.abc import Iterator, Sequence
 from typing import Literal
 
-from sage.algebras.steenrod.steenrod_algebra import SteenrodBasisKey
 from sage.algebras.steenrod.steenrod_algebra_misc import (
     GenericAtomicMonomial,
     GenericMilnorMonomial,
@@ -20,6 +19,11 @@ type IntegerTuple = tuple[int | Integer, ...]
 type MilnorBasisKey = IntegerTuple | GenericMilnorMonomial
 type SerreCartanBasisKey = IntegerTuple
 type AtomicBasisKey = PairMonomial | GenericAtomicMonomial
+type SteenrodBasisKey = (
+    MilnorBasisKey
+    | SerreCartanBasisKey
+    | AtomicBasisKey
+)
 type SteenrodBasis = tuple[SteenrodBasisKey, ...]
 
 def convert_to_milnor_matrix(
