@@ -2,7 +2,6 @@ from collections.abc import Callable, Iterable, Iterator, Mapping, Sequence
 from typing import Literal, overload
 
 from sage.combinat.free_module import CombinatorialFreeModule
-from sage.modules.free_module import FreeModule_ambient
 from sage.modules.with_basis.indexed_element import IndexedFreeModuleElement
 from sage.modules.with_basis.morphism import ModuleMorphism
 from sage.rings.finite_rings.element_base import FiniteRingElement
@@ -10,7 +9,7 @@ from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.infinity import PlusInfinity
 from sage.rings.integer import Integer
 from sage.sets.family import AbstractFamily
-from sage.structure.parent import ElementConstructorInput
+
 
 type SteenrodBasisKey = tuple[object, ...]
 type SteenrodTensorKey = tuple[SteenrodBasisKey, SteenrodBasisKey]
@@ -19,14 +18,17 @@ type SteenrodTensorElement = IndexedFreeModuleElement[
     FiniteRingElement,
 ]
 type SteenrodProfileValue = int | Integer | PlusInfinity
-type SteenrodProfileFunction = Callable[[int], SteenrodProfileValue]
+type SteenrodProfileFunction = Callable[
+    [int | Integer],
+    SteenrodProfileValue,
+]
 type SteenrodModTwoProfileInput = (
     Iterable[SteenrodProfileValue]
     | SteenrodProfileFunction
 )
 type SteenrodOddExteriorProfileInput = (
     Iterable[int | Integer]
-    | Callable[[int], int | Integer]
+    | Callable[[int | Integer], int | Integer]
 )
 type SteenrodProfileInput = (
     SteenrodModTwoProfileInput
@@ -34,9 +36,11 @@ type SteenrodProfileInput = (
         SteenrodModTwoProfileInput,
         SteenrodOddExteriorProfileInput,
     ]
+    | PlusInfinity
     | None
 )
 type SteenrodGenericFlag = bool | Literal["auto"]
+
 
 @overload
 def SteenrodAlgebra(
@@ -53,6 +57,7 @@ def SteenrodAlgebra(
     **kwds: object,
 ) -> SteenrodAlgebra_generic: ...
 
+
 @overload
 def AA(
     n: int | Integer | None = ...,
@@ -64,7 +69,9 @@ def AA(
     p: int | Integer = ...,
 ) -> SteenrodAlgebra_generic: ...
 
+
 def Sq(*nums: int | Integer) -> SteenrodAlgebra_mod_two.Element: ...
+
 
 class SteenrodAlgebra_generic(CombinatorialFreeModule):
     class Element(
@@ -74,7 +81,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         ]
     ):
         def parent(self) -> SteenrodAlgebra_generic: ...
-        def prime(self) -> Integer: ...
+        def prime(self) -> int | Integer: ...
         def basis_name(self) -> str: ...
         def is_homogeneous(self) -> bool: ...
         def degree(self) -> int | Integer: ...
@@ -89,14 +96,15 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         ) -> dict[SteenrodBasisKey, FiniteRingElement]: ...
         def coproduct(
             self,
-            algorithm: str = ...,
+            algorithm: str | None = ...,
         ) -> SteenrodTensorElement: ...
         def excess(self) -> int | Integer: ...
         def is_unit(self) -> bool: ...
         def is_nilpotent(self) -> bool: ...
-        def may_weight(self) -> int | Integer: ...
+        def may_weight(self) -> int | Integer | PlusInfinity: ...
         def is_decomposable(self) -> bool: ...
         def wall_height(self) -> list[int | Integer]: ...
+        def additive_order(self) -> int | Integer: ...
 
     @staticmethod
     def __classcall__(
@@ -116,11 +124,9 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         self,
         generator_degrees: Iterable[int | Integer],
         names: str | Sequence[str] | None = ...,
-        prefix: str | None = ...,
-        **kwds: object,
     ) -> SteenrodFreeModule: ...
     def _basis_key_iterator(self) -> Iterator[SteenrodBasisKey]: ...
-    def prime(self) -> Integer: ...
+    def prime(self) -> int | Integer: ...
     def basis_name(self) -> str: ...
     def _has_nontrivial_profile(self) -> bool: ...
     def _repr_(self) -> str: ...
@@ -130,12 +136,12 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
     def profile(
         self,
         i: int | Integer,
-        component: int = ...,
+        component: int | Integer = ...,
     ) -> SteenrodProfileValue: ...
     def homogeneous_component(
         self,
         n: int | Integer,
-    ) -> FreeModule_ambient[FiniteRingElement]: ...
+    ) -> CombinatorialFreeModule: ...
     __getitem__ = homogeneous_component
     def one_basis(self) -> SteenrodBasisKey: ...
     def zero(self) -> SteenrodAlgebra_generic.Element: ...
@@ -147,13 +153,13 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
     def term(
         self,
         index: SteenrodBasisKey,
-        coeff: FiniteRingElement | int = ...,
+        coeff: FiniteRingElement | int | Integer = ...,
     ) -> SteenrodAlgebra_generic.Element: ...
     def _from_dict(
         self,
         d: Mapping[
             SteenrodBasisKey,
-            FiniteRingElement | int,
+            FiniteRingElement | int | Integer,
         ],
         coerce: bool = ...,
         remove_zeros: bool = ...,
@@ -171,7 +177,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
     def coproduct(
         self,
         x: SteenrodAlgebra_generic.Element,
-        algorithm: str = ...,
+        algorithm: str | None = ...,
     ) -> SteenrodTensorElement: ...
     def antipode_on_basis(
         self,
@@ -231,6 +237,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         *nums: int | Integer,
     ) -> SteenrodAlgebra_generic.Element: ...
     def _an_element_(self) -> SteenrodAlgebra_generic.Element: ...
+    def an_element(self) -> SteenrodAlgebra_generic.Element: ...
     def pst(
         self,
         s: int | Integer,
@@ -247,12 +254,13 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
     def is_finite(self) -> bool: ...
     def dimension(self) -> int | Integer | PlusInfinity: ...
     def top_class(self) -> SteenrodAlgebra_generic.Element: ...
-    def order(self) -> Integer | PlusInfinity: ...
+    def order(self) -> int | Integer | PlusInfinity: ...
     def is_division_algebra(self) -> bool: ...
     def is_field(self, proof: bool = ...) -> bool: ...
     def is_integral_domain(self, proof: bool = ...) -> bool: ...
     def is_noetherian(self) -> bool: ...
     def is_generic(self) -> bool: ...
+
 
 class SteenrodAlgebra_mod_two(SteenrodAlgebra_generic):
     def Sq(
@@ -260,6 +268,8 @@ class SteenrodAlgebra_mod_two(SteenrodAlgebra_generic):
         *nums: int | Integer,
     ) -> SteenrodAlgebra_mod_two.Element: ...
 
+
 SteenrodAlgebraElement = SteenrodAlgebra_generic.Element
+
 
 from sage.modules.fp_graded.steenrod.module import SteenrodFreeModule
