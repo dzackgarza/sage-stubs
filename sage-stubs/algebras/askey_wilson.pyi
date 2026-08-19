@@ -47,7 +47,7 @@ _CodomainElement = TypeVar(
     "_CodomainElement",
     bound=MultiplicativeAlgebraElement,
 )
-_CodomainParent = TypeVar("_CodomainParent", default=Parent[Element])
+_CodomainParent = TypeVar("_CodomainParent")
 
 class _AskeyWilsonGeneratorFamily(Protocol[_Coefficient]):
     def __getitem__(
