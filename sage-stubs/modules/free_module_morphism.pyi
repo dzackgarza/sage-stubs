@@ -28,7 +28,11 @@ _NewScalar = TypeVar("_NewScalar", bound=RingElement)
 type MatrixSide = Literal["left", "right"]
 
 class FreeModuleMorphism(
-    MatrixMorphism,
+    MatrixMorphism[
+        FreeModuleElement[_DomainScalar],
+        FreeModuleElement[_CodomainScalar],
+        _CodomainScalar,
+    ],
     Generic[_DomainScalar, _CodomainScalar],
 ):
     def __init__(
@@ -46,6 +50,8 @@ class FreeModuleMorphism(
         self,
         x: FreeModule_generic[_DomainScalar],
     ) -> FreeModule_generic[_CodomainScalar]: ...
+    def kernel(self) -> FreeModule_generic[_DomainScalar]: ...
+    def image(self) -> FreeModule_generic[_CodomainScalar]: ...
     def _repr_(self) -> str: ...
     def change_ring(
         self,

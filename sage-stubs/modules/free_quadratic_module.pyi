@@ -1,190 +1,237 @@
-from collections.abc import Iterator, Sequence
-from typing import Self, TypeVar
+from collections.abc import Iterable, Sequence
+from typing import Generic, TypeVar, overload
+
 from sage.matrix.matrix0 import Matrix
-from sage.modules.free_module import FreeModule_generic
+from sage.modules.free_module import (
+    FreeModule_ambient,
+    FreeModule_ambient_domain,
+    FreeModule_ambient_field,
+    FreeModule_ambient_pid,
+    FreeModule_generic,
+    FreeModule_generic_field,
+    FreeModule_generic_pid,
+    FreeModule_submodule_field,
+    FreeModule_submodule_pid,
+    FreeModule_submodule_with_basis_field,
+    FreeModule_submodule_with_basis_pid,
+)
 from sage.modules.free_module_element import FreeModuleElement
-from sage.modules.free_module_homspace import FreeModuleHomspace
 from sage.rings.integer import Integer
-from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.rings.rational import Rational
-from sage.rings.real_double import RealDoubleElement
-from sage.rings.complex_double import ComplexDoubleElement
-from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
-from sage.rings.ring import Ring
-from sage.structure.element import RingElement
-from sage.structure.parent import ElementConstructorInput
-from sage.structure.sage_object import SageObject
-from sage.symbolic.expression import Expression
+from sage.structure.element import FieldElement, RingElement
+from sage.structure.parent import ElementConstructorInput, Parent
 
 _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+_FieldScalar = TypeVar("_FieldScalar", bound=FieldElement)
+_NewScalar = TypeVar("_NewScalar", bound=RingElement)
 
-from sage.matrix.matrix2 import Matrix
+type QuadraticModuleVector[_Scalar: RingElement] = (
+    FreeModuleElement[_Scalar]
+    | Sequence[ElementConstructorInput]
+)
+type QuadraticModuleBasis[_Scalar: RingElement] = (
+    Matrix[_Scalar]
+    | Iterable[QuadraticModuleVector[_Scalar]]
+)
+type InnerProductMatrix[_Scalar: RingElement] = (
+    Matrix[_Scalar]
+    | Iterable[ElementConstructorInput]
+)
 
-type _BasisVector = FreeModuleElement | Iterable[Element | int | Integer]
-type _BasisData = Matrix | Iterable[_BasisVector]
-
+@overload
 def FreeQuadraticModule(
-    base_ring: Ring,
+    base_ring: Parent[_FieldScalar],
     rank: int | Integer,
-    inner_product_matrix: MatrixData,
+    inner_product_matrix: InnerProductMatrix[_FieldScalar],
     sparse: bool = ...,
-    inner_product_ring: Ring | None = ...,
-) -> FreeQuadraticModule_generic: ...
-def QuadraticSpace(
-    K: Ring,
-    dimension: int | Integer,
-    inner_product_matrix: MatrixData,
+    inner_product_ring: None = ...,
+) -> FreeQuadraticModule_ambient_field[_FieldScalar]: ...
+@overload
+def FreeQuadraticModule(
+    base_ring: Parent[_Scalar],
+    rank: int | Integer,
+    inner_product_matrix: InnerProductMatrix[_Scalar],
     sparse: bool = ...,
-) -> FreeQuadraticModule_generic_field: ...
+    inner_product_ring: Parent | None = ...,
+) -> FreeQuadraticModule_ambient[_Scalar]: ...
 
-class FreeQuadraticModule_generic(FreeModule_generic):
+def QuadraticSpace(
+    K: Parent[_FieldScalar],
+    dimension: int | Integer,
+    inner_product_matrix: InnerProductMatrix[_FieldScalar],
+    sparse: bool = ...,
+) -> FreeQuadraticModule_ambient_field[_FieldScalar]: ...
+
+InnerProductSpace = QuadraticSpace
+
+class FreeQuadraticModule_generic(
+    FreeModule_generic[_Scalar],
+    Generic[_Scalar],
+):
     def __init__(
         self,
-        base_ring: Ring,
+        base_ring: Parent[_Scalar],
         rank: int | Integer,
         degree: int | Integer,
-        inner_product_matrix: ElementConstructorInput,
+        inner_product_matrix: Matrix[_Scalar],
         sparse: bool = ...,
     ) -> None: ...
-    def ambient_module(self) -> FreeModule_generic: ...
+    def ambient_module(self) -> FreeQuadraticModule_ambient[_Scalar]: ...
     def determinant(self) -> _Scalar: ...
-    def discriminant(self) -> FreeQuadraticModule_generic_pid: ...
+    def discriminant(self) -> _Scalar: ...
     def gram_matrix(self) -> Matrix[_Scalar]: ...
     def inner_product_matrix(self) -> Matrix[_Scalar]: ...
+    def _inner_product_is_dot_product(self) -> bool: ...
+    def _inner_product_is_diagonal(self) -> bool: ...
 
 class FreeQuadraticModule_generic_pid(
-    FreeModule_generic_pid, FreeQuadraticModule_generic
+    FreeModule_generic_pid[_Scalar],
+    FreeQuadraticModule_generic[_Scalar],
+    Generic[_Scalar],
 ):
     def span(
         self,
-        gens: FreeModule_generic | _BasisData,
-        base_ring: Ring | None = ...,
+        gens: FreeModule_generic[_Scalar] | QuadraticModuleBasis[_Scalar],
         check: bool = ...,
         already_echelonized: bool = ...,
-    ) -> FreeQuadraticModule_submodule_with_basis_pid: ...
-    def submodule(
-        self, gens: _BasisData, check: bool = ..., already_echelonized: bool = ...
-    ) -> FreeQuadraticModule_submodule_pid: ...
+    ) -> FreeQuadraticModule_submodule_pid[_Scalar]: ...
     def span_of_basis(
         self,
-        basis: ElementConstructorInput,
-        base_ring: Ring | None = ...,
+        basis: QuadraticModuleBasis[_Scalar],
         check: bool = ...,
         already_echelonized: bool = ...,
-    ) -> FreeQuadraticModule_submodule_with_basis_pid: ...
-    def zero_submodule(self) -> FreeQuadraticModule_submodule_pid: ...
+    ) -> FreeQuadraticModule_submodule_with_basis_pid[_Scalar]: ...
+    def submodule(
+        self,
+        gens: QuadraticModuleBasis[_Scalar],
+        check: bool = ...,
+        already_echelonized: bool = ...,
+    ) -> FreeQuadraticModule_submodule_pid[_Scalar]: ...
+    def zero_submodule(self) -> FreeQuadraticModule_submodule_pid[_Scalar]: ...
 
 class FreeQuadraticModule_generic_field(
-    FreeModule_generic_field, FreeQuadraticModule_generic_pid
+    FreeModule_generic_field[_FieldScalar],
+    FreeQuadraticModule_generic_pid[_FieldScalar],
+    Generic[_FieldScalar],
+):
+    def span(
+        self,
+        gens: FreeModule_generic[_FieldScalar] | QuadraticModuleBasis[_FieldScalar],
+        check: bool = ...,
+        already_echelonized: bool = ...,
+    ) -> FreeQuadraticModule_submodule_field[_FieldScalar]: ...
+    def span_of_basis(
+        self,
+        basis: QuadraticModuleBasis[_FieldScalar],
+        check: bool = ...,
+        already_echelonized: bool = ...,
+    ) -> FreeQuadraticModule_submodule_with_basis_field[_FieldScalar]: ...
+    def submodule(
+        self,
+        gens: QuadraticModuleBasis[_FieldScalar],
+        check: bool = ...,
+        already_echelonized: bool = ...,
+    ) -> FreeQuadraticModule_submodule_field[_FieldScalar]: ...
+
+class FreeQuadraticModule_ambient(
+    FreeModule_ambient[_Scalar],
+    FreeQuadraticModule_generic[_Scalar],
+    Generic[_Scalar],
 ):
     def __init__(
         self,
-        base_field: Ring,
-        dimension: int | Integer,
-        degree: int | Integer,
-        inner_product_matrix: ElementConstructorInput,
-        sparse: bool = ...,
-    ) -> None: ...
-    def span(
-        self,
-        gens: FreeModule_generic | _BasisData,
-        base_ring: Ring | None = ...,
-        check: bool = ...,
-        already_echelonized: bool = ...,
-    ) -> FreeQuadraticModule_submodule_field: ...
-    def span_of_basis(
-        self,
-        basis: ElementConstructorInput,
-        base_ring: Ring | None = ...,
-        check: bool = ...,
-        already_echelonized: bool = ...,
-    ) -> FreeQuadraticModule_submodule_with_basis_field: ...
-
-class FreeQuadraticModule_ambient(FreeModule_ambient, FreeQuadraticModule_generic):
-    def __init__(
-        self,
-        base_ring: Ring,
+        base_ring: Parent[_Scalar],
         rank: int | Integer,
-        inner_product_matrix: ElementConstructorInput,
+        inner_product_matrix: Matrix[_Scalar],
         sparse: bool = ...,
     ) -> None: ...
 
 class FreeQuadraticModule_ambient_domain(
-    FreeModule_ambient_domain, FreeQuadraticModule_ambient
+    FreeModule_ambient_domain[_Scalar],
+    FreeQuadraticModule_ambient[_Scalar],
+    Generic[_Scalar],
 ):
-    def __init__(
+    def ambient_vector_space(
         self,
-        base_ring: Ring,
-        rank: int | Integer,
-        inner_product_matrix: ElementConstructorInput,
-        sparse: bool = ...,
-    ) -> None: ...
-    def ambient_vector_space(self) -> FreeQuadraticModule_ambient_field: ...
+    ) -> FreeQuadraticModule_ambient_field[FieldElement]: ...
 
 class FreeQuadraticModule_ambient_pid(
-    FreeModule_ambient_pid,
-    FreeQuadraticModule_generic_pid,
-    FreeQuadraticModule_ambient_domain,
+    FreeModule_ambient_pid[_Scalar],
+    FreeQuadraticModule_generic_pid[_Scalar],
+    FreeQuadraticModule_ambient_domain[_Scalar],
+    Generic[_Scalar],
 ): ...
 
 class FreeQuadraticModule_ambient_field(
-    FreeModule_ambient_field,
-    FreeQuadraticModule_generic_field,
-    FreeQuadraticModule_ambient_pid,
+    FreeModule_ambient_field[_FieldScalar],
+    FreeQuadraticModule_generic_field[_FieldScalar],
+    FreeQuadraticModule_ambient_pid[_FieldScalar],
+    Generic[_FieldScalar],
 ):
-    def ambient_vector_space(self) -> FreeQuadraticModule_ambient_field: ...
+    def ambient_vector_space(
+        self,
+    ) -> FreeQuadraticModule_ambient_field[_FieldScalar]: ...
 
 class FreeQuadraticModule_submodule_with_basis_pid(
-    FreeModule_submodule_with_basis_pid, FreeQuadraticModule_generic_pid
+    FreeModule_submodule_with_basis_pid[_Scalar],
+    FreeQuadraticModule_generic_pid[_Scalar],
+    Generic[_Scalar],
 ):
     def __init__(
         self,
-        ambient: FreeQuadraticModule_generic,
-        basis: _BasisData,
-        inner_product_matrix: ElementConstructorInput,
+        ambient: FreeQuadraticModule_generic[_Scalar],
+        basis: QuadraticModuleBasis[_Scalar],
+        inner_product_matrix: Matrix[_Scalar],
         check: bool = ...,
         echelonize: bool = ...,
-        echelonized_basis: bool = ...,
+        echelonized_basis: Matrix[_Scalar] | None = ...,
         already_echelonized: bool = ...,
     ) -> None: ...
-    def change_ring(self, R: Ring) -> FreeQuadraticModule_generic: ...
+    def change_ring(
+        self,
+        R: Parent[_NewScalar],
+    ) -> FreeQuadraticModule_generic[_NewScalar]: ...
 
 class FreeQuadraticModule_submodule_pid(
-    FreeModule_submodule_pid, FreeQuadraticModule_submodule_with_basis_pid
+    FreeModule_submodule_pid[_Scalar],
+    FreeQuadraticModule_submodule_with_basis_pid[_Scalar],
+    Generic[_Scalar],
 ):
     def __init__(
         self,
-        ambient: FreeQuadraticModule_generic,
-        gens: _BasisData,
-        inner_product_matrix: ElementConstructorInput,
+        ambient: FreeQuadraticModule_generic[_Scalar],
+        gens: QuadraticModuleBasis[_Scalar],
+        inner_product_matrix: Matrix[_Scalar],
         check: bool = ...,
         already_echelonized: bool = ...,
     ) -> None: ...
 
 class FreeQuadraticModule_submodule_with_basis_field(
-    FreeModule_submodule_with_basis_field,
-    FreeQuadraticModule_generic_field,
-    FreeQuadraticModule_submodule_with_basis_pid,
+    FreeModule_submodule_with_basis_field[_FieldScalar],
+    FreeQuadraticModule_generic_field[_FieldScalar],
+    FreeQuadraticModule_submodule_with_basis_pid[_FieldScalar],
+    Generic[_FieldScalar],
 ):
     def __init__(
         self,
-        ambient: FreeQuadraticModule_generic,
-        basis: _BasisData,
-        inner_product_matrix: ElementConstructorInput,
+        ambient: FreeQuadraticModule_generic[_FieldScalar],
+        basis: QuadraticModuleBasis[_FieldScalar],
+        inner_product_matrix: Matrix[_FieldScalar],
         check: bool = ...,
         echelonize: bool = ...,
-        echelonized_basis: bool = ...,
+        echelonized_basis: Matrix[_FieldScalar] | None = ...,
         already_echelonized: bool = ...,
     ) -> None: ...
 
 class FreeQuadraticModule_submodule_field(
-    FreeModule_submodule_field, FreeQuadraticModule_submodule_with_basis_field
+    FreeModule_submodule_field[_FieldScalar],
+    FreeQuadraticModule_submodule_with_basis_field[_FieldScalar],
+    Generic[_FieldScalar],
 ):
     def __init__(
         self,
-        ambient: FreeQuadraticModule_generic,
-        gens: _BasisData,
-        inner_product_matrix: ElementConstructorInput,
+        ambient: FreeQuadraticModule_generic[_FieldScalar],
+        gens: QuadraticModuleBasis[_FieldScalar],
+        inner_product_matrix: Matrix[_FieldScalar],
         check: bool = ...,
         already_echelonized: bool = ...,
     ) -> None: ...

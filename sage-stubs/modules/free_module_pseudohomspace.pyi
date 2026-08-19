@@ -1,38 +1,69 @@
-from typing import Generic, TypeVar
+from typing import Generic, Literal, TypeVar
 
-from sage.categories.homset import Homset
+from sage.categories.homset import HomsetWithBase
 from sage.categories.map import Map
-from sage.matrix.matrix import Matrix
 from sage.matrix.matrix_space import MatrixSpace
 from sage.modules.free_module import FreeModule_generic
 from sage.modules.free_module_element import FreeModuleElement
-from sage.modules.free_module_pseudomorphism import FreeModulePseudoMorphism
+from sage.modules.free_module_morphism import FreeModuleMorphism
+from sage.modules.free_module_pseudomorphism import (
+    FreeModulePseudoMorphism,
+    PseudoMatrixData,
+)
+from sage.rings.derivation import RingDerivation
+from sage.rings.polynomial.ore_polynomial_ring import OrePolynomialRing
 from sage.structure.element import RingElement
+from sage.structure.sequence import Sequence_generic
+from sage.structure.unique_representation import UniqueRepresentation
 
-_DomainScalar = TypeVar("_DomainScalar", bound=RingElement)
-_CodomainScalar = TypeVar("_CodomainScalar", bound=RingElement)
+_Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
 
+type MatrixSide = Literal["left", "right"]
+type PseudoTwist[_Scalar: RingElement] = (
+    OrePolynomialRing
+    | Map[_Scalar, _Scalar]
+    | RingDerivation
+)
+type PseudoMorphismData[_Scalar: RingElement] = (
+    PseudoMatrixData[_Scalar]
+    | FreeModulePseudoMorphism[_Scalar, _Scalar]
+    | FreeModuleMorphism[_Scalar, _Scalar]
+)
 
 class FreeModulePseudoHomspace(
-    Homset[
-        FreeModulePseudoMorphism[_DomainScalar, _CodomainScalar],
-        FreeModuleElement[_DomainScalar],
-        FreeModuleElement[_CodomainScalar],
+    UniqueRepresentation,
+    HomsetWithBase[
+        FreeModulePseudoMorphism[_Scalar, _Scalar],
+        FreeModuleElement[_Scalar],
+        FreeModuleElement[_Scalar],
     ],
-    Generic[_DomainScalar, _CodomainScalar],
+    Generic[_Scalar],
 ):
+    Element: type[FreeModulePseudoMorphism[_Scalar, _Scalar]]
+    element_class: type[FreeModulePseudoMorphism[_Scalar, _Scalar]]
+
+    @staticmethod
+    def __classcall_private__(
+        cls: type[FreeModulePseudoHomspace[_Scalar]],
+        domain: FreeModule_generic[_Scalar],
+        codomain: FreeModule_generic[_Scalar],
+        twist: PseudoTwist[_Scalar],
+    ) -> FreeModulePseudoHomspace[_Scalar]: ...
     def __init__(
         self,
-        domain: FreeModule_generic[_DomainScalar],
-        codomain: FreeModule_generic[_CodomainScalar],
-        twisting_morphism: Map[_DomainScalar, _CodomainScalar],
+        domain: FreeModule_generic[_Scalar],
+        codomain: FreeModule_generic[_Scalar],
+        ore: OrePolynomialRing,
     ) -> None: ...
-    def domain(self) -> FreeModule_generic[_DomainScalar]: ...
-    def codomain(self) -> FreeModule_generic[_CodomainScalar]: ...
-    def twisting_morphism(self) -> Map[_DomainScalar, _CodomainScalar]: ...
-    def matrix_space(self) -> MatrixSpace[_CodomainScalar]: ...
+    def domain(self) -> FreeModule_generic[_Scalar]: ...
+    def codomain(self) -> FreeModule_generic[_Scalar]: ...
     def _element_constructor_(
         self,
-        matrix: Matrix[_CodomainScalar],
-        side: str = ...,
-    ) -> FreeModulePseudoMorphism[_DomainScalar, _CodomainScalar]: ...
+        f: PseudoMorphismData[_Scalar],
+        side: MatrixSide = ...,
+    ) -> FreeModulePseudoMorphism[_Scalar, _Scalar]: ...
+    def __reduce__(self) -> tuple[object, tuple[object, ...]]: ...
+    def _repr_(self) -> str: ...
+    def ore_ring(self, var: str = ...) -> OrePolynomialRing: ...
+    def matrix_space(self) -> MatrixSpace[_Scalar]: ...
+    def basis(self, side: MatrixSide = ...) -> Sequence_generic: ...
