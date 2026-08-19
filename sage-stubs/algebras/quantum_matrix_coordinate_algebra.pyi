@@ -9,19 +9,26 @@ from sage.monoids.indexed_free_monoid import (
 )
 from sage.modules.with_basis.indexed_element import IndexedFreeModuleElement
 from sage.rings.integer import Integer
-from sage.rings.ring import Ring
+from sage.rings.ring import CommutativeRing
 from sage.sets.family import AbstractFamily
-from sage.structure.element import RingElement
+from sage.structure.element import CommutativeRingElement
 
-_Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+_Scalar = TypeVar(
+    "_Scalar",
+    bound=CommutativeRingElement,
+    default=CommutativeRingElement,
+)
 
 type MatrixIndex = tuple[int | Integer, int | Integer]
 type QuantumGenerator = MatrixIndex | Literal["c"]
 type QuantumMonomial = IndexedFreeAbelianMonoidElement[QuantumGenerator]
-type QuantumTensorElement[_Scalar: RingElement] = IndexedFreeModuleElement[
+type QuantumTensorElement[
+    _Scalar: CommutativeRingElement,
+] = IndexedFreeModuleElement[
     tuple[QuantumMonomial, QuantumMonomial],
     _Scalar,
 ]
+
 
 class QuantumMatrixElement(
     IndexedFreeModuleElement[QuantumMonomial, _Scalar],
@@ -31,6 +38,7 @@ class QuantumMatrixElement(
         self,
     ) -> QuantumMatrixCoordinateAlgebra_abstract[_Scalar]: ...
     def bar(self) -> Self: ...
+
 
 class QuantumMatrixCoordinateAlgebra_abstract(
     CombinatorialFreeModule,
@@ -46,7 +54,7 @@ class QuantumMatrixCoordinateAlgebra_abstract(
         ],
         q: _Scalar | None = ...,
         bar: Callable[[_Scalar], _Scalar] | None = ...,
-        R: Ring | None = ...,
+        R: CommutativeRing | None = ...,
         **kwds: object,
     ) -> QuantumMatrixCoordinateAlgebra_abstract[_Scalar]: ...
     def __init__(
@@ -55,11 +63,11 @@ class QuantumMatrixCoordinateAlgebra_abstract(
         n: int | Integer,
         q: _Scalar,
         bar: Callable[[_Scalar], _Scalar] | None,
-        R: Ring,
+        R: CommutativeRing,
         category: Category,
-        indices_key: Callable[[QuantumGenerator], object] | None = ...,
+        indices_key: Callable[[QuantumGenerator], tuple[int, int]] | None = ...,
     ) -> None: ...
-    def base_ring(self) -> Ring: ...
+    def base_ring(self) -> CommutativeRing: ...
     def indices(self) -> IndexedFreeAbelianMonoid[QuantumGenerator]: ...
     def _repr_term(self, m: QuantumMonomial) -> str: ...
     def _latex_term(self, m: QuantumMonomial) -> str: ...
@@ -97,6 +105,7 @@ class QuantumMatrixCoordinateAlgebra_abstract(
     ) -> QuantumMatrixElement[_Scalar]: ...
     def counit_on_basis(self, x: QuantumMonomial) -> _Scalar: ...
 
+
 class QuantumMatrixCoordinateAlgebra(
     QuantumMatrixCoordinateAlgebra_abstract[_Scalar],
     Generic[_Scalar],
@@ -108,7 +117,7 @@ class QuantumMatrixCoordinateAlgebra(
         n: int | Integer | None = ...,
         q: _Scalar | None = ...,
         bar: Callable[[_Scalar], _Scalar] | None = ...,
-        R: Ring | None = ...,
+        R: CommutativeRing | None = ...,
     ) -> QuantumMatrixCoordinateAlgebra[_Scalar]: ...
     def __init__(
         self,
@@ -116,7 +125,7 @@ class QuantumMatrixCoordinateAlgebra(
         n: int | Integer,
         q: _Scalar,
         bar: Callable[[_Scalar], _Scalar] | None,
-        R: Ring,
+        R: CommutativeRing,
     ) -> None: ...
     def _repr_(self) -> str: ...
     def _latex_(self) -> str: ...
@@ -126,6 +135,7 @@ class QuantumMatrixCoordinateAlgebra(
         self,
         x: QuantumMonomial,
     ) -> QuantumTensorElement[_Scalar]: ...
+
 
 class QuantumGL(
     QuantumMatrixCoordinateAlgebra_abstract[_Scalar],
@@ -137,14 +147,14 @@ class QuantumGL(
         n: int | Integer,
         q: _Scalar | None = ...,
         bar: Callable[[_Scalar], _Scalar] | None = ...,
-        R: Ring | None = ...,
+        R: CommutativeRing | None = ...,
     ) -> QuantumGL[_Scalar]: ...
     def __init__(
         self,
         n: int | Integer,
         q: _Scalar,
         bar: Callable[[_Scalar], _Scalar] | None,
-        R: Ring,
+        R: CommutativeRing,
     ) -> None: ...
     def _repr_(self) -> str: ...
     def _latex_(self) -> str: ...
