@@ -1,26 +1,26 @@
 from collections.abc import Iterator
-
-from sage.algebras.clifford_algebra_element import (
-    CliffordAlgebraElement,
-    ExteriorAlgebraElement,
-)
+from typing import overload
 from sage.categories.poor_man_map import PoorManMap
-from sage.combinat.free_module import CombinatorialFreeModule
-from sage.data_structures.bitset import FrozenBitset
-from sage.homology.chain_complex import ChainComplex
-from sage.modules.free_module import FreeModule_generic
-from sage.modules.module import Module
-from sage.modules.with_basis.morphism import ModuleMorphismByLinearity
-from sage.quadratic_forms.quadratic_form import QuadraticForm
-from sage.rings.ideal import Ideal_nc
+
 from sage.rings.integer import Integer
-from sage.rings.ring import CommutativeRing
-from sage.sets.family import Family
-from sage.structure.element import Element, Matrix
+from sage.rings.ring import Ring, CommutativeRing
+from sage.structure.element import Element, ModuleElement, Matrix
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
+from sage.sets.family import Family
+from sage.algebras.clifford_algebra_element import CliffordAlgebraElement, ExteriorAlgebraElement
+from sage.modules.free_module_element import FreeModuleElement
+from sage.modules.module import Module
+from sage.combinat.free_module import CombinatorialFreeModule
+from sage.rings.ideal import Ideal_nc
+from sage.modules.with_basis.morphism import ModuleMorphismByLinearity
+from sage.modules.free_module import FreeModule_generic
+from sage.data_structures.bitset import FrozenBitset
 from sage.typeset.ascii_art import AsciiArt
 from sage.typeset.unicode_art import UnicodeArt
+from sage.quadratic_forms.quadratic_form import QuadraticForm
+from sage.homology.chain_complex import ChainComplex
+from typing_extensions import Self
 
 class CliffordAlgebraIndices(UniqueRepresentation, Parent):
     def __init__(self, Qdim: int, degree: int | None = None) -> None: ...
