@@ -1,13 +1,21 @@
 from typing import TypeVar
 
 from sage.matrix.matrix0 import Matrix
-from sage.structure.element import RingElement
+from sage.rings.integer import Integer
+from sage.structure.element import FieldElement
 
-_Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+_FieldScalar = TypeVar(
+    "_FieldScalar",
+    bound=FieldElement,
+    default=FieldElement,
+)
+
 
 def symplectic_basis_over_field(
-    M: Matrix[_Scalar],
-) -> tuple[Matrix[_Scalar], Matrix[_Scalar]]: ...
+    M: Matrix[_FieldScalar],
+) -> tuple[Matrix[_FieldScalar], Matrix[_FieldScalar]]: ...
+
+
 def symplectic_basis_over_ZZ(
-    M: Matrix[_Scalar],
-) -> tuple[Matrix[_Scalar], Matrix[_Scalar]]: ...
+    M: Matrix[Integer],
+) -> tuple[Matrix[Integer], Matrix[Integer]]: ...
