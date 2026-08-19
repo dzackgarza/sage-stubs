@@ -1,31 +1,90 @@
-from collections.abc import Sequence
-from typing import Self
+from collections.abc import Callable, Mapping, Sequence
+from typing import Generic, Literal, Self, TypeVar
 
 from sage.matrix.matrix_dense import Matrix_dense
+from sage.matrix.matrix_mod2_dense import Matrix_mod2_dense
+from sage.matrix.matrix_space import MatrixSpace
 from sage.modules.free_module_element import FreeModuleElement
-from sage.rings.finite_rings.element_ntl_gf2e import FiniteField_ntl_gf2eElement
-from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.structure.parent import ElementConstructorInput, Parent
+from sage.rings.finite_rings.element_base import FinitePolyExtElement
+from sage.structure.element import RingElement
+from sage.structure.parent import ElementConstructorInput
+
+_FieldElement = TypeVar(
+    "_FieldElement",
+    bound=FinitePolyExtElement,
+    default=FinitePolyExtElement,
+)
+
+type MatrixGF2EEntries = (
+    Sequence[ElementConstructorInput]
+    | Sequence[Sequence[ElementConstructorInput]]
+    | Mapping[tuple[int, int], ElementConstructorInput]
+    | Callable[[int, int], ElementConstructorInput]
+    | ElementConstructorInput
+    | None
+)
 
 
-class Matrix_gf2e_dense(Matrix_dense[FiniteField_ntl_gf2eElement]):
+class M4RIE_finite_field:
+    """Internal owner of an M4RIE finite-field representation."""
+
+
+class Matrix_gf2e_dense(
+    Matrix_dense[_FieldElement],
+    Generic[_FieldElement],
+):
     def __init__(
         self,
-        parent: Parent[Self],
-        entries: Sequence[ElementConstructorInput] | ElementConstructorInput = ...,
-        copy: bool = ...,
+        parent: MatrixSpace[_FieldElement],
+        entries: MatrixGF2EEntries = ...,
+        copy: bool | None = ...,
         coerce: bool = ...,
     ) -> None: ...
     def __copy__(self) -> Self: ...
-    def list(self) -> list[FiniteField_ntl_gf2eElement]: ...
-    def row(self, i: int, from_list: bool = ...) -> FreeModuleElement[FiniteField_ntl_gf2eElement]: ...
-    def column(self, j: int, from_list: bool = ...) -> FreeModuleElement[FiniteField_ntl_gf2eElement]: ...
-    def determinant(self, algorithm: str = ...) -> FiniteField_ntl_gf2eElement: ...
-    det = determinant
-    def rank(self, algorithm: str = ...) -> int: ...
-    def echelonize(self, algorithm: str = ..., **kwds: object) -> None: ...
-    def echelon_form(self, algorithm: str = ..., **kwds: object) -> Self: ...
-    def inverse(self) -> Self: ...
-    __invert__ = inverse
-    def characteristic_polynomial(self, var: str = ...) -> Polynomial: ...
-    charpoly = characteristic_polynomial
+    def __bool__(self) -> bool: ...
+    def _list(self) -> list[_FieldElement]: ...
+    def _add_(self, right: Self) -> Self: ...
+    def _sub_(self, right: Self) -> Self: ...
+    def _multiply_classical(self, right: Self) -> Self: ...
+    def _multiply_newton_john(self, right: Self) -> Self: ...
+    def _multiply_karatsuba(self, right: Self) -> Self: ...
+    def _multiply_strassen(self, right: Self, cutoff: int = ...) -> Self: ...
+    def _lmul_(self, right: _FieldElement) -> Self: ...
+    def __neg__(self) -> Self: ...
+    def randomize(
+        self,
+        density: float = ...,
+        nonzero: bool = ...,
+        *args: object,
+        **kwds: object,
+    ) -> None: ...
+    def echelonize(
+        self,
+        algorithm: Literal[
+            "heuristic",
+            "newton_john",
+            "ple",
+            "naive",
+            "builtin",
+        ] = ...,
+        reduced: bool = ...,
+        **kwds: object,
+    ) -> None | Self: ...
+    def _pivots(self) -> list[int]: ...
+    def rank(self) -> int: ...
+    def is_invertible(self) -> bool: ...
+    def __invert__(self) -> Self: ...
+    def augment(
+        self,
+        right: Self | FreeModuleElement[RingElement],
+    ) -> Self: ...
+    def submatrix(
+        self,
+        row: int = ...,
+        col: int = ...,
+        nrows: int = ...,
+        ncols: int = ...,
+    ) -> Self: ...
+    def slice(self) -> tuple[Matrix_mod2_dense, ...] | None: ...
+    def cling(self, *components: Matrix_mod2_dense) -> None: ...
+    def determinant(self) -> _FieldElement: ...
