@@ -5,72 +5,107 @@ from sage.matrix.matrix import Matrix
 from sage.matrix.matrix_space import MatrixSpace
 from sage.modules.free_module import FreeModule_generic
 from sage.modules.free_module_element import FreeModuleElement
+from sage.schemes.generic.homset import SchemeHomset_generic, SchemeHomset_points
 from sage.structure.element import RingElement
 from sage.structure.parent import Parent
 
-_Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
-_TargetScalar = TypeVar("_TargetScalar", bound=RingElement)
+_MatrixScalar = TypeVar("_MatrixScalar", bound=RingElement, default=RingElement)
+_ObjectScalar = TypeVar("_ObjectScalar", bound=RingElement, default=RingElement)
+_ResultScalar = TypeVar("_ResultScalar", bound=RingElement, default=RingElement)
+_SchemeMap = TypeVar("_SchemeMap", default=object)
+_SchemePoint = TypeVar("_SchemePoint", default=object)
 
 
-class MatrixAction(Action, Generic[_Scalar]):
-    def matrix_space(self) -> MatrixSpace[_Scalar]: ...
+class MatrixMulAction(Action, Generic[_ResultScalar]):
+    def __init__(self, G: MatrixSpace[RingElement], S: Parent, is_left: bool) -> None: ...
+    def codomain(self) -> Parent: ...
 
 
-class MatrixMatrixAction(MatrixAction[_Scalar], Generic[_Scalar]):
-    def __init__(
-        self,
-        left: MatrixSpace[_Scalar],
-        right: MatrixSpace[_Scalar],
-    ) -> None: ...
-    def _act_(
-        self,
-        left: Matrix[_Scalar],
-        right: Matrix[_Scalar],
-    ) -> Matrix[_Scalar]: ...
-    def codomain(self) -> MatrixSpace[_Scalar]: ...
-
-
-class MatrixVectorAction(MatrixAction[_Scalar], Generic[_Scalar]):
-    def __init__(
-        self,
-        matrix_space: MatrixSpace[_Scalar],
-        vector_space: FreeModule_generic[_Scalar],
-    ) -> None: ...
-    def _act_(
-        self,
-        matrix: Matrix[_Scalar],
-        vector: FreeModuleElement[_Scalar],
-    ) -> FreeModuleElement[_Scalar]: ...
-    def codomain(self) -> FreeModule_generic[_Scalar]: ...
-
-
-class VectorMatrixAction(MatrixAction[_Scalar], Generic[_Scalar]):
-    def __init__(
-        self,
-        vector_space: FreeModule_generic[_Scalar],
-        matrix_space: MatrixSpace[_Scalar],
-    ) -> None: ...
-    def _act_(
-        self,
-        vector: FreeModuleElement[_Scalar],
-        matrix: Matrix[_Scalar],
-    ) -> FreeModuleElement[_Scalar]: ...
-    def codomain(self) -> FreeModule_generic[_Scalar]: ...
-
-
-class MatrixScalarAction(
-    MatrixAction[_Scalar],
-    Generic[_Scalar, _TargetScalar],
+class MatrixMatrixAction(
+    MatrixMulAction[_ResultScalar],
+    Generic[_MatrixScalar, _ObjectScalar, _ResultScalar],
 ):
     def __init__(
         self,
-        scalar_parent: Parent[_TargetScalar],
-        matrix_space: MatrixSpace[_Scalar],
-        is_left: bool,
+        G: MatrixSpace[_MatrixScalar],
+        S: MatrixSpace[_ObjectScalar],
     ) -> None: ...
     def _act_(
         self,
-        scalar: _TargetScalar,
-        matrix: Matrix[_Scalar],
-    ) -> Matrix[_TargetScalar]: ...
-    def codomain(self) -> MatrixSpace[_TargetScalar]: ...
+        g: Matrix[_MatrixScalar],
+        s: Matrix[_ObjectScalar],
+    ) -> Matrix[_ResultScalar]: ...
+    def codomain(self) -> MatrixSpace[_ResultScalar]: ...
+
+
+class MatrixVectorAction(
+    MatrixMulAction[_ResultScalar],
+    Generic[_MatrixScalar, _ObjectScalar, _ResultScalar],
+):
+    def __init__(
+        self,
+        G: MatrixSpace[_MatrixScalar],
+        S: FreeModule_generic[_ObjectScalar],
+    ) -> None: ...
+    def _act_(
+        self,
+        g: Matrix[_MatrixScalar],
+        s: FreeModuleElement[_ObjectScalar],
+    ) -> FreeModuleElement[_ResultScalar]: ...
+    def codomain(self) -> FreeModule_generic[_ResultScalar]: ...
+
+
+class VectorMatrixAction(
+    MatrixMulAction[_ResultScalar],
+    Generic[_MatrixScalar, _ObjectScalar, _ResultScalar],
+):
+    def __init__(
+        self,
+        G: MatrixSpace[_MatrixScalar],
+        S: FreeModule_generic[_ObjectScalar],
+    ) -> None: ...
+    def _act_(
+        self,
+        g: Matrix[_MatrixScalar],
+        s: FreeModuleElement[_ObjectScalar],
+    ) -> FreeModuleElement[_ResultScalar]: ...
+    def codomain(self) -> FreeModule_generic[_ResultScalar]: ...
+
+
+class MatrixPolymapAction(
+    MatrixMulAction[_ResultScalar],
+    Generic[_MatrixScalar, _ResultScalar, _SchemeMap],
+):
+    def __init__(
+        self,
+        G: MatrixSpace[_MatrixScalar],
+        S: SchemeHomset_generic,
+    ) -> None: ...
+    def _act_(self, g: Matrix[_MatrixScalar], s: _SchemeMap) -> _SchemeMap: ...
+    def codomain(self) -> SchemeHomset_generic: ...
+
+
+class PolymapMatrixAction(
+    MatrixMulAction[_ResultScalar],
+    Generic[_MatrixScalar, _ResultScalar, _SchemeMap],
+):
+    def __init__(
+        self,
+        G: MatrixSpace[_MatrixScalar],
+        S: SchemeHomset_generic,
+    ) -> None: ...
+    def _act_(self, g: Matrix[_MatrixScalar], s: _SchemeMap) -> _SchemeMap: ...
+    def codomain(self) -> SchemeHomset_generic: ...
+
+
+class MatrixSchemePointAction(
+    MatrixMulAction[_ResultScalar],
+    Generic[_MatrixScalar, _ResultScalar, _SchemePoint],
+):
+    def __init__(
+        self,
+        G: MatrixSpace[_MatrixScalar],
+        S: SchemeHomset_points,
+    ) -> None: ...
+    def _act_(self, g: Matrix[_MatrixScalar], s: _SchemePoint) -> _SchemePoint: ...
+    def codomain(self) -> SchemeHomset_points: ...
