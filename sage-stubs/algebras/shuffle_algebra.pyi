@@ -1,4 +1,4 @@
-from collections.abc import Hashable, Iterable, Sequence
+from collections.abc import Hashable, Iterable
 from typing import Generic, TypeVar
 
 from sage.combinat.free_module import CombinatorialFreeModule

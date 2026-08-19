@@ -1,10 +1,10 @@
-from collections.abc import Callable, Hashable, Iterable, Iterator, Mapping
+from collections.abc import Callable, Iterable, Iterator, Mapping
 from typing import Generic, Self, TypeVar
 
 from sage.categories.action import Action
 from sage.categories.morphism import Morphism
-from sage.monoids.indexed_free_monoid import IndexedFreeAbelianMonoidElement
 from sage.modules.with_basis.indexed_element import IndexedFreeModuleElement
+from sage.monoids.indexed_free_monoid import IndexedFreeAbelianMonoidElement
 from sage.rings.infinity import PlusInfinity
 from sage.rings.integer import Integer
 from sage.rings.polynomial.infinite_polynomial_element import InfinitePolynomial

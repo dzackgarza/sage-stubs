@@ -3,11 +3,11 @@ from typing import Generic, Literal, Self, TypeVar
 
 from sage.categories.category import Category
 from sage.combinat.free_module import CombinatorialFreeModule
+from sage.modules.with_basis.indexed_element import IndexedFreeModuleElement
 from sage.monoids.indexed_free_monoid import (
     IndexedFreeAbelianMonoid,
     IndexedFreeAbelianMonoidElement,
 )
-from sage.modules.with_basis.indexed_element import IndexedFreeModuleElement
 from sage.rings.integer import Integer
 from sage.rings.ring import Ring
 from sage.sets.family import AbstractFamily

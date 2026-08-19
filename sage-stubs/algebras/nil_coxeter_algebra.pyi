@@ -1,17 +1,15 @@
-from __future__ import annotations
 
 from collections.abc import Sequence
 from typing import Generic, TypeVar
 
 from sage.algebras.iwahori_hecke_algebra import (
+    IwahoriHeckeAlgebra,
     _CoefficientRing,
     _CoxeterGroup,
     _CoxeterGroupElement,
     _HeckeElement,
-    IwahoriHeckeAlgebra,
 )
 from sage.combinat.partition import Partition
-from sage.combinat.root_system.coxeter_type import CoxeterIndex
 from sage.rings.integer import Integer
 from sage.structure.element import RingElement
 

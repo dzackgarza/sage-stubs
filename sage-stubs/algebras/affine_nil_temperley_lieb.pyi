@@ -2,13 +2,11 @@ from collections.abc import Iterable, Iterator
 from typing import Protocol
 
 from sage.combinat.free_module import CombinatorialFreeModule
-from sage.combinat.root_system.weyl_group import WeylGroupElement, WeylGroup_gens
+from sage.combinat.root_system.weyl_group import WeylGroup_gens, WeylGroupElement
 from sage.rings.integer import Integer
 from sage.rings.ring import Ring
 
-
 class AffineNilTemperleyLiebGeneratorFamily(Protocol):
-    """The finite family ``i ↦ a_i`` indexed by affine Dynkin vertices."""
 
     def __getitem__(self, i: int | Integer) -> CombinatorialFreeModule.Element: ...
     def __iter__(self) -> Iterator[CombinatorialFreeModule.Element]: ...
@@ -17,7 +15,6 @@ class AffineNilTemperleyLiebGeneratorFamily(Protocol):
 
 
 class AffineNilTemperleyLiebTypeA(CombinatorialFreeModule):
-    """The affine nilTemperley–Lieb algebra of type ``A_(n-1)^(1)``."""
 
     Element: type[CombinatorialFreeModule.Element]
 

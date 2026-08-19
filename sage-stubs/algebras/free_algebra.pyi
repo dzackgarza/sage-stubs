@@ -1,4 +1,3 @@
-from __future__ import annotations
 
 from collections.abc import Callable, Iterable, Iterator, Mapping, Sequence
 from typing import Generic, Literal, Protocol, Self, TypeVar, overload
@@ -91,10 +90,10 @@ class FreeAlgebraGeneratorFamily(Protocol[_GeneratorCoefficient]):
 class FreeAlgebraFactory(UniqueFactory):
     @overload
     def __call__[
-        _FactoryCoefficient: RingElement
+        FactoryCoefficient: RingElement
     ](
         self,
-        base_ring: Rings.ParentMethods[_FactoryCoefficient],
+        base_ring: Rings.ParentMethods[FactoryCoefficient],
         arg1: FreeAlgebraFactoryArgument = None,
         arg2: FreeAlgebraFactoryArgument = None,
         sparse: bool | None = None,
@@ -104,13 +103,13 @@ class FreeAlgebraFactory(UniqueFactory):
         name: str | None = None,
         implementation: Literal["generic"] | None = None,
         degrees: FreeAlgebraDegrees | None = None,
-    ) -> FreeAlgebra_generic[_FactoryCoefficient]: ...
+    ) -> FreeAlgebra_generic[FactoryCoefficient]: ...
     @overload
     def __call__[
-        _FactoryCoefficient: RingElement
+        FactoryCoefficient: RingElement
     ](
         self,
-        base_ring: Rings.ParentMethods[_FactoryCoefficient],
+        base_ring: Rings.ParentMethods[FactoryCoefficient],
         arg1: FreeAlgebraFactoryArgument = None,
         arg2: FreeAlgebraFactoryArgument = None,
         sparse: bool | None = None,

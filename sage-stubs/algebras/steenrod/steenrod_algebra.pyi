@@ -3,6 +3,7 @@ from typing import Literal, overload
 
 from sage.algebras.steenrod.steenrod_algebra_bases import SteenrodBasisKey
 from sage.combinat.free_module import CombinatorialFreeModule
+from sage.modules.fp_graded.steenrod.module import SteenrodFreeModule
 from sage.modules.with_basis.indexed_element import IndexedFreeModuleElement
 from sage.modules.with_basis.morphism import ModuleMorphism
 from sage.rings.finite_rings.element_base import FiniteRingElement
@@ -10,7 +11,6 @@ from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.infinity import PlusInfinity
 from sage.rings.integer import Integer
 from sage.sets.family import AbstractFamily
-
 
 type SteenrodTensorKey = tuple[SteenrodBasisKey, SteenrodBasisKey]
 type SteenrodTensorElement = IndexedFreeModuleElement[
@@ -279,4 +279,3 @@ class SteenrodAlgebra_mod_two(SteenrodAlgebra_generic):
 SteenrodAlgebraElement = SteenrodAlgebra_generic.Element
 
 
-from sage.modules.fp_graded.steenrod.module import SteenrodFreeModule
