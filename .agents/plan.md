@@ -64,7 +64,7 @@ first-level subtree.
 | 02 | [Core rings & arithmetic](phases/phase-02-core-rings.md) | 1 | 01 | ~80 | ✅ Complete |
 | 03 | [Polynomial rings](phases/phase-03-polynomial-rings.md) | 1 | 01 | ~95 | ✅ Complete |
 | 04 | [Number-theoretic rings](phases/phase-04-number-theory-rings.md) | 1 | 01 | ~130 | 🟡 In Progress |
-| 05 | [Linear algebra: matrices & modules](phases/phase-05-linear-algebra.md) | 1 | 01 | ~120 | ⬜ Not Started |
+| 05 | [Linear algebra: matrices & modules](phases/phase-05-linear-algebra.md) | 1 | 01 | ~120 | 🟡 In Progress |
 | 06 | [Algebras: associative & non-Lie](phases/phase-06-algebras-core.md) | 2 | 02, 05 | ~70 | 🟡 In Progress |
 | 07 | [Lie algebras & quantum groups](phases/phase-07-lie-quantum.md) | 2 | 02, 05 | ~50 | ⬜ Not Started |
 | 08 | [Groups](phases/phase-08-groups.md) | 2 | 02, 05 | ~92 | ⬜ Not Started |
@@ -152,13 +152,14 @@ See [feature.md](feature.md#measuring-progress) for the full workflow.
 > monoids, multivariate generating-function asymptotics, and construction
 > functors. T04.17 covers the full semiring subpackage.
 >
-> **Active first-level phases:** Phase 04 (number-theoretic rings) and Phase 06
-> (associative and non-Lie algebras). Phase 05 (linear algebra) remains an
-> unstarted dependency frontier for Phases 06–08, 12, 14, 15, and 17.
+> **Active first-level phases:** Phase 04 (number-theoretic rings), Phase 05
+> (linear algebra), and Phase 06 (associative and non-Lie algebras). Phase 05
+> tasks T05.1 and T05.2 are reconciling the matrix factory and abstract
+> matrix bases against the pinned Sage source.
 >
-> **Next valid work:** continue Phase 04 with T04.15 (valuations), number-field,
-> p-adic, or function-field tasks; alternatively continue a named Phase 06 task
-> or start Phase 05. Commits remain leaves beneath those task cards and must not
-> invent new phase numbers.
+> **Next valid work:** continue Phase 04 with T04.15 (valuations), continue a
+> named Phase 06 task, or advance Phase 05 through the remaining matrix-base
+> contracts. Commits remain leaves beneath those task cards and must not invent
+> new phase numbers.
 
 Update the frontier whenever a first-level phase or task status changes.
