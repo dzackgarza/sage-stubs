@@ -1,28 +1,51 @@
-from collections.abc import Sequence
+from collections.abc import Callable, Mapping, Sequence
 from typing import Literal, Self, overload
 
 from sage.matrix.matrix_dense import Matrix_dense
+from sage.matrix.matrix_space import MatrixSpace
 from sage.modules.free_module import FreeModule_generic
 from sage.modules.free_module_element import FreeModuleElement
 from sage.rings.fraction_field_element import FractionFieldElement
 from sage.rings.ideal import Ideal_generic
 from sage.rings.integer import Integer
 from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.structure.parent import ElementConstructorInput, Parent
+from sage.rings.rational import Rational
+from sage.structure.parent import ElementConstructorInput
+
+
+type _IntegerMatrixEntries = (
+    int
+    | Integer
+    | Sequence[int | Integer | ElementConstructorInput]
+    | Sequence[Sequence[int | Integer | ElementConstructorInput]]
+    | Mapping[tuple[int, int], int | Integer | ElementConstructorInput]
+    | Callable[[int, int], int | Integer | ElementConstructorInput]
+    | ElementConstructorInput
+    | None
+)
 
 
 class Matrix_integer_dense(Matrix_dense[Integer]):
     def __init__(
         self,
-        parent: Parent[Self],
-        entries: Sequence[int | Integer] | ElementConstructorInput = ...,
-        copy: bool = ...,
+        parent: MatrixSpace[Integer],
+        entries: _IntegerMatrixEntries = ...,
+        copy: bool | None = ...,
         coerce: bool = ...,
     ) -> None: ...
     def __copy__(self) -> Self: ...
+    def _list(self) -> list[Integer]: ...
     def list(self) -> list[Integer]: ...
-    def row(self, i: int, from_list: bool = ...) -> FreeModuleElement[Integer]: ...
-    def column(self, j: int, from_list: bool = ...) -> FreeModuleElement[Integer]: ...
+    def row(
+        self,
+        i: int,
+        from_list: bool = ...,
+    ) -> FreeModuleElement[Integer]: ...
+    def column(
+        self,
+        j: int,
+        from_list: bool = ...,
+    ) -> FreeModuleElement[Integer]: ...
     def transpose(self) -> Self: ...
     def antitranspose(self) -> Self: ...
     def trace(self) -> Integer: ...
@@ -145,7 +168,18 @@ class Matrix_integer_dense(Matrix_dense[Integer]):
     def inverse(self) -> Matrix_rational_dense: ...
     __invert__ = inverse
     def inverse_of_unit(self) -> Self: ...
-    def decomposition(self, **kwds: object) -> list[FreeModule_generic[Integer]]: ...
+    def solve_right(
+        self,
+        B: Self | FreeModuleElement[Integer],
+    ) -> Matrix_rational_dense | FreeModuleElement[Rational]: ...
+    def solve_left(
+        self,
+        B: Self | FreeModuleElement[Integer],
+    ) -> Matrix_rational_dense | FreeModuleElement[Rational]: ...
+    def decomposition(
+        self,
+        **kwds: object,
+    ) -> list[tuple[FreeModule_generic[Rational], bool]]: ...
     def randomize(
         self,
         density: float = ...,
