@@ -1,37 +1,69 @@
-from collections.abc import Mapping, Sequence
-from typing import Self
+from collections.abc import Callable
+from typing import Protocol, Self
 
 from sage.modules.free_module_element import FreeModuleElement_generic_sparse
-from sage.structure.parent import ElementConstructorInput
-from sage.symbolic.expression import Expression
+from sage.symbolic.expression import Expression, SymbolicInput
 
 
-class Vector_symbolic_sparse(FreeModuleElement_generic_sparse[Expression]):
-    def __init__(
+class SparseSymbolicVectorMethod(Protocol):
+    def __call__(
         self,
-        parent: object,
-        entries: Mapping[int, Expression | ElementConstructorInput]
-        | Sequence[Expression | ElementConstructorInput] = ...,
-        coerce: bool = ...,
-        copy: bool = ...,
-    ) -> None: ...
-    def __copy__(self) -> Self: ...
-    def dict(self, copy: bool = ...) -> dict[int, Expression]: ...
-    def dot_product(self, right: Vector_symbolic_sparse) -> Expression: ...
-    inner_product = dot_product
-    def pairwise_product(self, right: Vector_symbolic_sparse) -> Self: ...
-    def simplify(self, algorithm: str | None = ...) -> Self: ...
-    def expand(self) -> Self: ...
-    def factor(self) -> Self: ...
-    def subs(
+        vector: Vector_symbolic_sparse,
+        *args: SymbolicInput,
+        **kwds: SymbolicInput,
+    ) -> Vector_symbolic_sparse: ...
+
+
+def apply_map(
+    phi: Callable[..., Expression],
+) -> SparseSymbolicVectorMethod: ...
+
+
+class Vector_symbolic_sparse(
+    FreeModuleElement_generic_sparse[Expression]
+):
+    def simplify(
         self,
-        substitutions: Mapping[object, ElementConstructorInput] | None = ...,
-        **kwds: ElementConstructorInput,
+        *args: SymbolicInput,
+        **kwds: SymbolicInput,
     ) -> Self: ...
-    substitute = subs
-    def derivative(self, *args: object) -> Self: ...
-    diff = derivative
-    def dense_vector(self) -> Vector_symbolic_dense: ...
-
-
-from sage.modules.vector_symbolic_dense import Vector_symbolic_dense
+    def simplify_factorial(
+        self,
+        *args: SymbolicInput,
+        **kwds: SymbolicInput,
+    ) -> Self: ...
+    def simplify_log(
+        self,
+        *args: SymbolicInput,
+        **kwds: SymbolicInput,
+    ) -> Self: ...
+    def simplify_rational(
+        self,
+        *args: SymbolicInput,
+        **kwds: SymbolicInput,
+    ) -> Self: ...
+    def simplify_trig(
+        self,
+        *args: SymbolicInput,
+        **kwds: SymbolicInput,
+    ) -> Self: ...
+    def simplify_full(
+        self,
+        *args: SymbolicInput,
+        **kwds: SymbolicInput,
+    ) -> Self: ...
+    def trig_expand(
+        self,
+        *args: SymbolicInput,
+        **kwds: SymbolicInput,
+    ) -> Self: ...
+    def canonicalize_radical(
+        self,
+        *args: SymbolicInput,
+        **kwds: SymbolicInput,
+    ) -> Self: ...
+    def trig_reduce(
+        self,
+        *args: SymbolicInput,
+        **kwds: SymbolicInput,
+    ) -> Self: ...
