@@ -1,4 +1,4 @@
-from collections.abc import Callable, Hashable, Iterable, Sequence
+from collections.abc import Callable, Hashable, Sequence
 from typing import Generic, Literal, TypeVar
 
 from sage.categories.morphism import Morphism

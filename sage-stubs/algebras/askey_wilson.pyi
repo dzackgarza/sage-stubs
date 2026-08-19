@@ -1,4 +1,3 @@
-from __future__ import annotations
 
 from collections.abc import Iterable, Iterator, Sequence
 from typing import Generic, Literal, Protocol, Self, TypeVar, overload
@@ -48,7 +47,7 @@ _CodomainElement = TypeVar(
     "_CodomainElement",
     bound=MultiplicativeAlgebraElement,
 )
-_CodomainParent = TypeVar("_CodomainParent")
+_CodomainParent = TypeVar("_CodomainParent", bound=Parent)
 
 class _AskeyWilsonGeneratorFamily(Protocol[_Coefficient]):
     def __getitem__(

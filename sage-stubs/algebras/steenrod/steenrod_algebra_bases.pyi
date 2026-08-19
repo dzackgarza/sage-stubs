@@ -7,7 +7,6 @@ from sage.algebras.steenrod.steenrod_algebra_misc import (
     ModTwoProfile,
     OddPrimaryProfile,
     PairMonomial,
-    SteenrodBasisName,
     TruncationType,
 )
 from sage.matrix.matrix0 import Matrix

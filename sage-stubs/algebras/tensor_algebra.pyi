@@ -5,9 +5,9 @@ from sage.categories.category import Category
 from sage.categories.morphism import Morphism
 from sage.categories.pushout import ConstructionFunctor
 from sage.combinat.free_module import CombinatorialFreeModule
-from sage.monoids.indexed_free_monoid import IndexedFreeMonoidElement
 from sage.modules.with_basis.indexed_element import IndexedFreeModuleElement
 from sage.modules.with_basis.morphism import ModuleMorphism
+from sage.monoids.indexed_free_monoid import IndexedFreeMonoidElement
 from sage.rings.ring import CommutativeRing
 from sage.sets.family import AbstractFamily
 from sage.structure.element import CommutativeRingElement

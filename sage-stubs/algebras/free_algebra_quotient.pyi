@@ -1,4 +1,3 @@
-from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
 from typing import Generic, Protocol, TypeVar
@@ -8,10 +7,10 @@ from sage.algebras.free_algebra_element import FreeAlgebraElement
 from sage.algebras.free_algebra_quotient_element import FreeAlgebraQuotientElement
 from sage.categories.rings import Rings
 from sage.matrix.matrix0 import Matrix
-from sage.monoids.free_monoid import FreeMonoid
-from sage.monoids.free_monoid_element import FreeMonoidElement
 from sage.modules.free_module import FreeModule_generic
 from sage.modules.free_module_element import FreeModuleElement
+from sage.monoids.free_monoid import FreeMonoid
+from sage.monoids.free_monoid_element import FreeMonoidElement
 from sage.rings.integer import Integer
 from sage.structure.element import RingElement
 from sage.structure.parent import Parent
@@ -99,10 +98,10 @@ class FreeAlgebraQuotient(
 
 
 def hamilton_quatalg[
-    _HamiltonCoefficient: RingElement
+    HamiltonCoefficient: RingElement
 ](
-    R: Rings.ParentMethods[_HamiltonCoefficient],
+    R: Rings.ParentMethods[HamiltonCoefficient],
 ) -> tuple[
-    FreeAlgebraQuotient[_HamiltonCoefficient],
-    tuple[FreeAlgebraQuotientElement[_HamiltonCoefficient], ...],
+    FreeAlgebraQuotient[HamiltonCoefficient],
+    tuple[FreeAlgebraQuotientElement[HamiltonCoefficient], ...],
 ]: ...

@@ -1,4 +1,3 @@
-from __future__ import annotations
 
 from collections.abc import Hashable, Iterable, Iterator
 from typing import Generic, Protocol, Self, TypeVar

@@ -1,11 +1,14 @@
-from __future__ import annotations
 
 from collections.abc import Callable, Iterator, Sequence
 from typing import Generic, Self, TypeVar, overload
 
-from sage.algebras.free_algebra import FreeAlgebraElementInput, FreeAlgebra_generic, PBWBasisOfFreeAlgebra
-from sage.monoids.free_monoid_element import FreeMonoidElement
+from sage.algebras.free_algebra import (
+    FreeAlgebra_generic,
+    FreeAlgebraElementInput,
+    PBWBasisOfFreeAlgebra,
+)
 from sage.modules.with_basis.indexed_element import IndexedFreeModuleElement
+from sage.monoids.free_monoid_element import FreeMonoidElement
 from sage.rings.integer import Integer
 from sage.structure.element import AlgebraElement, Element, RingElement
 from sage.structure.factorization import Factorization
@@ -46,11 +49,11 @@ class FreeAlgebraElement(
         **kwds: FreeAlgebraElement[_Coefficient],
     ) -> FreeAlgebraElement[_Coefficient]: ...
     @overload
-    def __call__[_Evaluation](
+    def __call__[Evaluation](
         self,
-        *x: _Evaluation,
-        **kwds: _Evaluation,
-    ) -> _Evaluation | FreeAlgebraElement[_Coefficient]: ...
+        *x: Evaluation,
+        **kwds: Evaluation,
+    ) -> Evaluation | FreeAlgebraElement[_Coefficient]: ...
 
     def _mul_(self, y: Self) -> Self: ...
     def __invert__(self) -> Self: ...
