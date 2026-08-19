@@ -1,16 +1,52 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from typing import Generic, TypeVar, overload
 
-class _SageObject: ...
+from sage.categories.morphism import Morphism
+from sage.homology.homology_vector_space_with_basis import (
+    CohomologyRing,
+    HomologyVectorSpaceWithBasis,
+)
+from sage.matrix.matrix import Matrix
+from sage.structure.element import FieldElement
+from sage.structure.parent import Parent
+from sage.topology.simplicial_complex_morphism import SimplicialComplexMorphism
 
-class InducedHomologyMorphism:
-    def __init__(self, map: builtins.object, base_ring: builtins.object = ..., cohomology: builtins.bool = ...) -> None: ...
-    def base_ring(self) -> _SageObject: ...
-    def to_matrix(self, deg: builtins.object = ...) -> _SageObject: ...
-    def __call__(self, elt: builtins.object) -> _SageObject: ...
-    def __eq__(self, other: builtins.object) -> builtins.bool: ...
-    def is_identity(self) -> builtins.bool: ...
-    def is_surjective(self) -> builtins.bool: ...
-    def is_injective(self) -> builtins.bool: ...
+_FieldScalar = TypeVar(
+    "_FieldScalar",
+    bound=FieldElement,
+    default=FieldElement,
+)
+
+type HomologyModule[_FieldScalar: FieldElement] = (
+    HomologyVectorSpaceWithBasis[_FieldScalar]
+    | CohomologyRing[_FieldScalar]
+)
+type HomologyClass = (
+    HomologyVectorSpaceWithBasis.Element
+    | CohomologyRing.Element
+)
+
+
+class InducedHomologyMorphism(
+    Morphism[HomologyClass, HomologyClass],
+    Generic[_FieldScalar],
+):
+    def __init__(
+        self,
+        map: SimplicialComplexMorphism,
+        base_ring: Parent[_FieldScalar] | None = ...,
+        cohomology: bool = ...,
+    ) -> None: ...
+    def domain(self) -> HomologyModule[_FieldScalar]: ...
+    def codomain(self) -> HomologyModule[_FieldScalar]: ...
+    def base_ring(self) -> Parent[_FieldScalar]: ...
+
+    @overload
+    def to_matrix(self, deg: None = ...) -> Matrix[_FieldScalar]: ...
+    @overload
+    def to_matrix(self, deg: int) -> Matrix[_FieldScalar]: ...
+
+    def __call__(self, elt: HomologyClass) -> HomologyClass: ...
+    def __eq__(self, other: object) -> bool: ...
+    def is_identity(self) -> bool: ...
+    def is_surjective(self) -> bool: ...
+    def is_injective(self) -> bool: ...
