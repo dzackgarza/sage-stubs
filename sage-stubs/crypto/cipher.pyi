@@ -1,19 +1,60 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from __future__ import annotations
 
-class _SageObject: ...
+from typing import Generic, TypeVar
 
-class Cipher:
-    def __init__(self, parent: builtins.object, key: builtins.object) -> None: ...
-    def __eq__(self, right: builtins.object) -> builtins.bool: ...
-    def key(self) -> _SageObject: ...
-    def domain(self) -> _SageObject: ...
-    def codomain(self) -> _SageObject: ...
+from sage.structure.element import Element
+from sage.structure.parent import Parent
 
-class SymmetricKeyCipher:
-    def __init__(self, parent: builtins.object, key: builtins.object) -> None: ...
+_Plaintext = TypeVar("_Plaintext", bound=Element, default=Element)
+_Ciphertext = TypeVar("_Ciphertext", bound=Element, default=Element)
+_Key = TypeVar("_Key")
+_Message = TypeVar("_Message", bound=Element)
 
-class PublicKeyCipher:
-    def __init__(self, parent: builtins.object, key: builtins.object, public: builtins.bool = ...) -> None: ...
+
+class Cipher(
+    Element,
+    Generic[_Plaintext, _Ciphertext, _Key],
+):
+    def __init__(
+        self,
+        parent: Cryptosystem[_Plaintext, _Ciphertext, _Key],
+        key: _Key,
+    ) -> None: ...
+    def parent(self) -> Cryptosystem[_Plaintext, _Ciphertext, _Key]: ...
+    def __eq__(self, right: object) -> bool: ...
+    def _repr_(self) -> str: ...
+    def key(self) -> _Key: ...
+    def domain(self) -> Parent[_Plaintext]: ...
+    def codomain(self) -> Parent[_Ciphertext]: ...
+
+
+class SymmetricKeyCipher(
+    Cipher[_Message, _Message, _Key],
+    Generic[_Message, _Key],
+):
+    def __init__(
+        self,
+        parent: SymmetricKeyCryptosystem[_Message, _Key],
+        key: _Key,
+    ) -> None: ...
+    def parent(self) -> SymmetricKeyCryptosystem[_Message, _Key]: ...
+
+
+class PublicKeyCipher(
+    Cipher[_Plaintext, _Ciphertext, _Key],
+    Generic[_Plaintext, _Ciphertext, _Key],
+):
+    def __init__(
+        self,
+        parent: PublicKeyCryptosystem[_Plaintext, _Ciphertext, _Key],
+        key: _Key,
+        public: bool = ...,
+    ) -> None: ...
+    def parent(self) -> PublicKeyCryptosystem[_Plaintext, _Ciphertext, _Key]: ...
+
+
+from sage.crypto.cryptosystem import (
+    Cryptosystem,
+    PublicKeyCryptosystem,
+    SymmetricKeyCryptosystem,
+)
