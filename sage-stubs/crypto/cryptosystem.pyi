@@ -12,6 +12,8 @@ _Ciphertext = TypeVar("_Ciphertext", bound=Element, default=Element)
 _Key = TypeVar("_Key", default=object)
 _Message = TypeVar("_Message", bound=Element)
 
+type KeySpace = Parent | Set_generic | tuple[Parent, ...]
+
 
 class Cryptosystem(
     Set_generic[Cipher[_Plaintext, _Ciphertext, _Key]],
@@ -21,7 +23,7 @@ class Cryptosystem(
         self,
         plaintext_space: Parent[_Plaintext],
         ciphertext_space: Parent[_Ciphertext],
-        key_space: Parent | Set_generic,
+        key_space: KeySpace,
         block_length: int | Integer = ...,
         period: int | Integer | None = ...,
     ) -> None: ...
@@ -30,7 +32,7 @@ class Cryptosystem(
     def cipher_domain(self) -> Parent[_Plaintext]: ...
     def ciphertext_space(self) -> Parent[_Ciphertext]: ...
     def cipher_codomain(self) -> Parent[_Ciphertext]: ...
-    def key_space(self) -> Parent | Set_generic: ...
+    def key_space(self) -> KeySpace: ...
     def block_length(self) -> int | Integer: ...
     def period(self) -> int | Integer: ...
 
