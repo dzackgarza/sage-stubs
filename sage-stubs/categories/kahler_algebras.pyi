@@ -1,13 +1,20 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from sage.categories.category import Category
+from sage.categories.category_types import Category_over_base_ring
+from sage.quadratic_forms.quadratic_form import QuadraticForm
+from sage.structure.element import Element, RingElement
 
-class _SageObject: ...
 
-class KahlerAlgebras:
-    def super_categories(self) -> _SageObject: ...
+class KahlerAlgebras(Category_over_base_ring[RingElement]):
+    def super_categories(self) -> list[Category]: ...
+
     class ParentMethods:
-        def poincare_pairing(self, a: builtins.object, b: builtins.object) -> _SageObject: ...
-        def lefschetz_element(self) -> _SageObject: ...
-        def hodge_riemann_relations(self, k: builtins.int) -> _SageObject: ...
+        def poincare_pairing(
+            self,
+            a: Element,
+            b: Element,
+        ) -> RingElement: ...
+        def lefschetz_element(self) -> Element: ...
+        def hodge_riemann_relations(
+            self,
+            k: int,
+        ) -> QuadraticForm: ...
