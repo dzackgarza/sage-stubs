@@ -29,6 +29,44 @@ class Matrix_double_dense(
         p: int | float | str = ...,
     ) -> RealDoubleElement: ...
     condition_number = condition
+    def eigenvalues(
+        self,
+        algorithm: str = ...,
+    ) -> list[ComplexDoubleElement]: ...
+    def eigenmatrix_right(
+        self,
+        algorithm: str = ...,
+    ) -> tuple[
+        Matrix_double_dense[ComplexDoubleElement],
+        Matrix_double_dense[ComplexDoubleElement],
+    ]: ...
+    def eigenmatrix_left(
+        self,
+        algorithm: str = ...,
+    ) -> tuple[
+        Matrix_double_dense[ComplexDoubleElement],
+        Matrix_double_dense[ComplexDoubleElement],
+    ]: ...
+    def eigenvectors_right(
+        self,
+        algorithm: str = ...,
+    ) -> list[
+        tuple[
+            ComplexDoubleElement,
+            list[FreeModuleElement[ComplexDoubleElement]],
+            int,
+        ]
+    ]: ...
+    def eigenvectors_left(
+        self,
+        algorithm: str = ...,
+    ) -> list[
+        tuple[
+            ComplexDoubleElement,
+            list[FreeModuleElement[ComplexDoubleElement]],
+            int,
+        ]
+    ]: ...
     def singular_values(
         self,
         eps: float | None = ...,
@@ -41,9 +79,16 @@ class Matrix_double_dense(
         Self,
     ]: ...
     def QR(self) -> tuple[Self, Self]: ...
-    def schur(self) -> tuple[Self, Self]: ...
+    def schur(
+        self,
+    ) -> tuple[
+        Matrix_double_dense[ComplexDoubleElement],
+        Matrix_double_dense[ComplexDoubleElement],
+    ]: ...
     def exp(self) -> Self: ...
-    def logarithm(self) -> Self: ...
+    def logarithm(
+        self,
+    ) -> Matrix_double_dense[ComplexDoubleElement]: ...
     def pseudoinverse(
         self,
         eps: float | None = ...,
@@ -53,6 +98,10 @@ class Matrix_double_dense(
         B: Self | FreeModuleElement[_DoubleScalar],
     ) -> Self | FreeModuleElement[_DoubleScalar]: ...
     def solve_left(
+        self,
+        B: Self | FreeModuleElement[_DoubleScalar],
+    ) -> Self | FreeModuleElement[_DoubleScalar]: ...
+    def least_squares(
         self,
         B: Self | FreeModuleElement[_DoubleScalar],
     ) -> Self | FreeModuleElement[_DoubleScalar]: ...
