@@ -1,32 +1,137 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from collections.abc import Callable, Hashable, Iterable, Mapping, Sequence
+from numbers import Real
+from typing import NamedTuple, TypeVar
 
-class _SageObject: ...
+from sage.combinat.finite_state_machine import Automaton, Transducer
+from sage.rings.integer import Integer
+from sage.structure.element import Element, RingElement
+from sage.structure.parent import Parent
+from sage.symbolic.expression import Expression
+
+_Input = TypeVar("_Input", bound=Hashable)
+_Output = TypeVar("_Output")
+_Weight = TypeVar("_Weight", Real, RingElement)
+
+
+type Alphabet[_T: Hashable] = Iterable[_T]
+type RecursiveOutput = Element | int | Integer | float
+
+
+class RecursionRule(NamedTuple):
+    K: Integer
+    r: RingElement
+    k: Integer
+    s: RingElement
+    t: list[RecursiveOutput]
+
 
 class AutomatonGenerators:
-    def AnyLetter(self, input_alphabet: builtins.object) -> _SageObject: ...
-    def AnyWord(self, input_alphabet: builtins.object) -> _SageObject: ...
-    def EmptyWord(self, input_alphabet: builtins.object = ...) -> _SageObject: ...
-    def Word(self, word: builtins.object, input_alphabet: builtins.object = ...) -> _SageObject: ...
-    def ContainsWord(self, word: builtins.object, input_alphabet: builtins.object) -> _SageObject: ...
+    def AnyLetter(
+        self,
+        input_alphabet: Alphabet[_Input],
+    ) -> Automaton: ...
+    def AnyWord(
+        self,
+        input_alphabet: Alphabet[_Input],
+    ) -> Automaton: ...
+    def EmptyWord(
+        self,
+        input_alphabet: Alphabet[_Input] | None = ...,
+    ) -> Automaton: ...
+    def Word(
+        self,
+        word: Iterable[_Input],
+        input_alphabet: Alphabet[_Input] | None = ...,
+    ) -> Automaton: ...
+    def ContainsWord(
+        self,
+        word: Iterable[_Input],
+        input_alphabet: Alphabet[_Input],
+    ) -> Automaton: ...
+
 
 class TransducerGenerators:
-    def Identity(self, input_alphabet: builtins.object) -> _SageObject: ...
-    def CountSubblockOccurrences(self, block: builtins.object, input_alphabet: builtins.object) -> _SageObject: ...
-    def Wait(self, input_alphabet: builtins.object, threshold: builtins.int = ...) -> _SageObject: ...
-    def map(self, f: builtins.object, input_alphabet: builtins.object) -> _SageObject: ...
-    def operator(self, operator: builtins.object, input_alphabet: builtins.object, number_of_operands: builtins.int = ...) -> _SageObject: ...
-    def all(self, input_alphabet: builtins.object, number_of_operands: builtins.int = ...) -> _SageObject: ...
-    def any(self, input_alphabet: builtins.object, number_of_operands: builtins.int = ...) -> _SageObject: ...
-    def add(self, input_alphabet: builtins.object, number_of_operands: builtins.int = ...) -> _SageObject: ...
-    def sub(self, input_alphabet: builtins.object) -> _SageObject: ...
-    def weight(self, input_alphabet: builtins.object, zero: builtins.int = ...) -> _SageObject: ...
-    def abs(self, input_alphabet: builtins.object) -> _SageObject: ...
-    def GrayCode(self) -> _SageObject: ...
-    RecursionRule: _SageObject
-    def Recursion(self, recursions: builtins.object, base: builtins.object, function: builtins.object = ..., var: builtins.object = ..., input_alphabet: builtins.object = ..., word_function: builtins.object = ..., is_zero: builtins.object = ..., output_rings: builtins.list[_SageObject] = ...) -> _SageObject: ...
+    RecursionRule: type[RecursionRule]
 
-automata: _SageObject
-transducers: _SageObject
+    def Identity(
+        self,
+        input_alphabet: Alphabet[_Input],
+    ) -> Transducer: ...
+    def CountSubblockOccurrences(
+        self,
+        block: Iterable[_Input],
+        input_alphabet: Alphabet[_Input],
+    ) -> Transducer: ...
+    def Wait(
+        self,
+        input_alphabet: Alphabet[_Input],
+        threshold: int = ...,
+    ) -> Transducer: ...
+    def map(
+        self,
+        f: Callable[[_Input], _Output],
+        input_alphabet: Alphabet[_Input],
+    ) -> Transducer: ...
+    def operator(
+        self,
+        operator: Callable[..., _Output],
+        input_alphabet: Alphabet[_Input],
+        number_of_operands: int = ...,
+    ) -> Transducer: ...
+    def all(
+        self,
+        input_alphabet: Alphabet[_Input],
+        number_of_operands: int = ...,
+    ) -> Transducer: ...
+    def any(
+        self,
+        input_alphabet: Alphabet[_Input],
+        number_of_operands: int = ...,
+    ) -> Transducer: ...
+    def add(
+        self,
+        input_alphabet: Alphabet[_Input],
+        number_of_operands: int = ...,
+    ) -> Transducer: ...
+    def sub(
+        self,
+        input_alphabet: Alphabet[_Input],
+    ) -> Transducer: ...
+    def weight(
+        self,
+        input_alphabet: Alphabet[_Input],
+        zero: _Input | int = ...,
+    ) -> Transducer: ...
+    def abs(
+        self,
+        input_alphabet: Alphabet[_Input],
+    ) -> Transducer: ...
+    def GrayCode(self) -> Transducer: ...
+    def _parse_recursion_equation_(
+        self,
+        equation: Expression,
+        base: RingElement,
+        function: Callable[..., Expression],
+        var: Expression,
+        word_function: Callable[..., Expression] | None = ...,
+        output_rings: Sequence[Parent] = ...,
+    ) -> RecursionRule | dict[RingElement, list[RecursiveOutput]]: ...
+    def Recursion(
+        self,
+        recursions: Iterable[
+            Expression
+            | RecursionRule
+            | tuple[RingElement | int | Integer, Sequence[RecursiveOutput]]
+        ],
+        base: RingElement | int | Integer,
+        function: Callable[..., Expression] | None = ...,
+        var: Expression | None = ...,
+        input_alphabet: Iterable[RingElement | int | Integer] | None = ...,
+        word_function: Callable[..., Expression] | None = ...,
+        is_zero: Callable[[Sequence[RecursiveOutput]], bool] | None = ...,
+        output_rings: Sequence[Parent] = ...,
+    ) -> Transducer: ...
+
+
+automata: AutomatonGenerators
+transducers: TransducerGenerators
