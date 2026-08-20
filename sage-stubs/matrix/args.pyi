@@ -8,7 +8,8 @@ from sage.structure.element import RingElement
 from sage.structure.parent import ElementConstructorInput, Parent
 
 _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
-_Entry = TypeVar("_Entry", default=object)
+_Entry = TypeVar("_Entry", default=RingElement)
+
 
 type MatrixArgsEntries[_Scalar: RingElement] = (
     Matrix[_Scalar]
@@ -33,7 +34,7 @@ class SparseEntry(Generic[_Entry]):
 
 
 class MatrixArgs(Generic[_Scalar]):
-    space: Parent | None
+    space: MatrixSpace[_Scalar] | Parent | None
     base: Parent[_Scalar] | None
     nrows: int
     ncols: int
@@ -53,7 +54,7 @@ class MatrixArgs(Generic[_Scalar]):
         sparse: bool | None = ...,
         row_keys: MatrixIndexKeys | None = ...,
         column_keys: MatrixIndexKeys | None = ...,
-        space: Parent | None = ...,
+        space: MatrixSpace[_Scalar] | Parent | None = ...,
         **kwds: object,
     ) -> None: ...
     def __repr__(self) -> str: ...
@@ -93,7 +94,12 @@ class MatrixArgs(Generic[_Scalar]):
         self,
         convert: bool = ...,
         sparse: bool = ...,
-    ) -> Iterator[_Scalar | ElementConstructorInput | SparseEntry]: ...
+    ) -> Iterator[
+        _Scalar
+        | ElementConstructorInput
+        | SparseEntry[_Scalar]
+        | SparseEntry[ElementConstructorInput]
+    ]: ...
 
     def __len__(self) -> int: ...
 
@@ -125,11 +131,11 @@ class MatrixArgs(Generic[_Scalar]):
 
     def set_column_keys(self, column_keys: MatrixIndexKeys) -> int: ...
     def set_row_keys(self, row_keys: MatrixIndexKeys) -> int: ...
-    def set_space(self, space: Parent) -> int: ...
+    def set_space(self, space: MatrixSpace[_Scalar] | Parent) -> int: ...
     def finalized(self) -> Self: ...
 
 
 def MatrixArgs_init(
-    space: Parent,
+    space: MatrixSpace[_Scalar] | Parent,
     entries: MatrixArgsEntries[_Scalar],
 ) -> MatrixArgs[_Scalar]: ...
