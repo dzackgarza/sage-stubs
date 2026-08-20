@@ -1,20 +1,40 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from collections.abc import Sequence
 
-class _SageObject: ...
+from sage.monoids.string_monoid_element import StringMonoidElement
+from sage.rings.integer import Integer
 
-def ascii_integer(B: builtins.object) -> _SageObject: ...
 
-def ascii_to_bin(A: builtins.object) -> _SageObject: ...
+type Bit = int | Integer
+type BitBlock = str | StringMonoidElement | Sequence[Bit]
+type ASCIIInput = str | Sequence[str]
 
-def bin_to_ascii(B: builtins.object) -> _SageObject: ...
 
-def has_blum_prime(lbound: builtins.object, ubound: builtins.object) -> builtins.bool: ...
+def ascii_integer(B: BitBlock) -> int: ...
 
-def is_blum_prime(n: builtins.int) -> builtins.bool: ...
 
-def least_significant_bits(n: builtins.int, k: builtins.int) -> _SageObject: ...
+def ascii_to_bin(A: ASCIIInput) -> StringMonoidElement: ...
 
-def random_blum_prime(lbound: builtins.object, ubound: builtins.object, ntries: builtins.int = ...) -> _SageObject: ...
+
+def bin_to_ascii(B: BitBlock) -> str: ...
+
+
+def has_blum_prime(
+    lbound: int | Integer,
+    ubound: int | Integer,
+) -> bool: ...
+
+
+def is_blum_prime(n: int | Integer) -> bool: ...
+
+
+def least_significant_bits(
+    n: int | Integer,
+    k: int | Integer,
+) -> list[int]: ...
+
+
+def random_blum_prime(
+    lbound: int | Integer,
+    ubound: int | Integer,
+    ntries: int | Integer = ...,
+) -> Integer: ...
