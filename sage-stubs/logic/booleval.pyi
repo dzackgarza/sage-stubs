@@ -1,12 +1,15 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from collections.abc import Mapping
 
-class _SageObject: ...
+from sage.logic.logicparser import BooleanBranch, BooleanParseTree, BooleanOperator
 
-def eval_formula(tree: builtins.object, vdict: builtins.object) -> _SageObject: ...
 
-def eval_f(tree: builtins.object) -> _SageObject: ...
-
-def eval_op(op: builtins.object, lv: builtins.object, rv: builtins.object) -> _SageObject: ...
+def eval_formula(
+    tree: BooleanParseTree,
+    vdict: Mapping[str, bool],
+) -> bool: ...
+def eval_f(tree: BooleanBranch) -> bool: ...
+def eval_op(
+    op: BooleanOperator | str,
+    lv: str | bool | None,
+    rv: str | bool | None,
+) -> bool: ...
