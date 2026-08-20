@@ -1,9 +1,7 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from sage.categories.category import Category
+from sage.categories.category_types import Category_over_base_ring
+from sage.structure.element import RingElement
 
-class _SageObject: ...
 
-class MatrixAlgebras:
-    def super_categories(self) -> _SageObject: ...
+class MatrixAlgebras(Category_over_base_ring[RingElement]):
+    def super_categories(self) -> list[Category]: ...

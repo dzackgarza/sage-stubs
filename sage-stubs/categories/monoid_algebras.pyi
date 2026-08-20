@@ -1,8 +1,5 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from sage.categories.algebra_functor import AlgebrasCategory
+from sage.rings.ring import Ring
 
-class _SageObject: ...
 
-def MonoidAlgebras(base_ring: builtins.object) -> _SageObject: ...
+def MonoidAlgebras(base_ring: Ring) -> AlgebrasCategory: ...
