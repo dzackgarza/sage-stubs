@@ -1,17 +1,55 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from collections.abc import Sequence
 
-class _SageObject: ...
+from sage.crypto.cryptosystem import PublicKeyCryptosystem
+from sage.monoids.string_monoid_element import StringMonoidElement
+from sage.rings.integer import Integer
 
-floor: _SageObject
-IntegerModRing: _SageObject
-class BlumGoldwasser:
+
+type Bit = int | Integer
+type BitBlock = list[int]
+type BlumGoldwasserPlaintext = (
+    str
+    | StringMonoidElement
+    | Sequence[Bit]
+)
+type BlumGoldwasserCiphertext = tuple[list[BitBlock], Integer]
+type BlumGoldwasserPrivateKey = tuple[
+    int | Integer,
+    int | Integer,
+    int | Integer,
+    int | Integer,
+]
+type BlumGoldwasserPublicKey = int | Integer
+
+
+class BlumGoldwasser(PublicKeyCryptosystem):
     def __init__(self) -> None: ...
-    def __eq__(self, other: builtins.object) -> builtins.bool: ...
-    def decrypt(self, C: builtins.object, K: builtins.int) -> _SageObject: ...
-    def encrypt(self, P: builtins.int, K: builtins.int, seed: builtins.object = ...) -> _SageObject: ...
-    def private_key(self, p: builtins.int, q: builtins.int) -> _SageObject: ...
-    def public_key(self, p: builtins.int, q: builtins.int) -> _SageObject: ...
-    def random_key(self, lbound: builtins.object, ubound: builtins.object, ntries: builtins.int = ...) -> _SageObject: ...
+    def __eq__(self, other: object) -> bool: ...
+    def __repr__(self) -> str: ...
+    def decrypt(
+        self,
+        C: BlumGoldwasserCiphertext,
+        K: BlumGoldwasserPrivateKey,
+    ) -> list[BitBlock]: ...
+    def encrypt(
+        self,
+        P: BlumGoldwasserPlaintext,
+        K: BlumGoldwasserPublicKey,
+        seed: int | Integer | None = ...,
+    ) -> BlumGoldwasserCiphertext: ...
+    def private_key(
+        self,
+        p: int | Integer,
+        q: int | Integer,
+    ) -> BlumGoldwasserPrivateKey: ...
+    def public_key(
+        self,
+        p: int | Integer,
+        q: int | Integer,
+    ) -> BlumGoldwasserPublicKey: ...
+    def random_key(
+        self,
+        lbound: int | Integer,
+        ubound: int | Integer,
+        ntries: int | Integer = ...,
+    ) -> tuple[Integer, tuple[Integer, Integer, Integer, Integer]]: ...
