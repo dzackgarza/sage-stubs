@@ -1,13 +1,36 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from sage.crypto.public_key.key_exchange.key_exchange_base import (
+    CommutativeKeyExchangeBase,
+)
+from sage.rings.finite_rings.finite_field_prime_modn import (
+    FiniteField_prime_modn,
+)
+from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
+from sage.rings.integer import Integer
 
-class _SageObject: ...
 
-class FiniteFieldDiffieHellman:
-    def __init__(self, p: builtins.int, generator: builtins.object, proof: builtins.bool | None = ...) -> None: ...
-    def secret_key(self) -> _SageObject: ...
-    def public_key(self, secret_key: builtins.object) -> _SageObject: ...
-    def compute_shared_secret(self, secret_key: builtins.object, public_key: builtins.object) -> _SageObject: ...
-    def parameters(self) -> _SageObject: ...
+class FiniteFieldDiffieHellman(
+    CommutativeKeyExchangeBase[
+        IntegerMod_abstract,
+        IntegerMod_abstract,
+        IntegerMod_abstract,
+    ],
+):
+    def __init__(
+        self,
+        p: int | Integer,
+        generator: int | Integer | IntegerMod_abstract,
+        proof: bool | None = ...,
+    ) -> None: ...
+    def secret_key(self) -> IntegerMod_abstract: ...
+    def public_key(
+        self,
+        secret_key: int | Integer | IntegerMod_abstract,
+    ) -> IntegerMod_abstract: ...
+    def compute_shared_secret(
+        self,
+        secret_key: int | Integer | IntegerMod_abstract,
+        public_key: int | Integer | IntegerMod_abstract,
+    ) -> IntegerMod_abstract: ...
+    def parameters(
+        self,
+    ) -> tuple[FiniteField_prime_modn, IntegerMod_abstract]: ...
