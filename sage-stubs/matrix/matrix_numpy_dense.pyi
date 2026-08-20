@@ -1,6 +1,6 @@
 from collections.abc import Callable, Mapping, Sequence
 from types import ModuleType
-from typing import Generic, Self, TypeVar
+from typing import Generic, Self, TypeVar, overload
 
 import numpy as np
 from numpy.typing import NDArray
@@ -19,7 +19,9 @@ _NumpyScalar = TypeVar(
     default=RealDoubleElement,
 )
 
-type _NumpyArray = NDArray[np.float64] | NDArray[np.complex128]
+type _RealArray = NDArray[np.float64]
+type _ComplexArray = NDArray[np.complex128]
+type _NumpyArray = _RealArray | _ComplexArray
 type _NumpyMatrixEntries = (
     float
     | complex
@@ -65,6 +67,15 @@ class Matrix_numpy_dense(
     def transpose(self) -> Self: ...
     def is_symmetric(self, tol: float = ...) -> bool: ...
     def _is_lower_triangular(self, tol: float) -> bool: ...
+    @overload
+    def numpy(
+        self: Matrix_numpy_dense[RealDoubleElement],
+    ) -> _RealArray: ...
+    @overload
+    def numpy(
+        self: Matrix_numpy_dense[ComplexDoubleElement],
+    ) -> _ComplexArray: ...
+    @overload
     def numpy(self) -> _NumpyArray: ...
     def _replace_self_with_numpy(
         self,
