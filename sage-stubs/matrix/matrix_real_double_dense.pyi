@@ -61,6 +61,30 @@ class Matrix_real_double_dense(Matrix_double_dense[RealDoubleElement]):
         self,
         algorithm: str = ...,
     ) -> tuple[Matrix_complex_double_dense, Matrix_complex_double_dense]: ...
+    def eigenmatrix_left(
+        self,
+        algorithm: str = ...,
+    ) -> tuple[Matrix_complex_double_dense, Matrix_complex_double_dense]: ...
+    def eigenvectors_right(
+        self,
+        algorithm: str = ...,
+    ) -> list[
+        tuple[
+            ComplexDoubleElement,
+            list[FreeModuleElement[ComplexDoubleElement]],
+            int,
+        ]
+    ]: ...
+    def eigenvectors_left(
+        self,
+        algorithm: str = ...,
+    ) -> list[
+        tuple[
+            ComplexDoubleElement,
+            list[FreeModuleElement[ComplexDoubleElement]],
+            int,
+        ]
+    ]: ...
     def singular_values(
         self,
         eps: float | None = ...,
