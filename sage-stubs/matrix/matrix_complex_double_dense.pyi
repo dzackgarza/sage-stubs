@@ -67,6 +67,30 @@ class Matrix_complex_double_dense(Matrix_double_dense[ComplexDoubleElement]):
         self,
         algorithm: str = ...,
     ) -> tuple[Self, Self]: ...
+    def eigenmatrix_left(
+        self,
+        algorithm: str = ...,
+    ) -> tuple[Self, Self]: ...
+    def eigenvectors_right(
+        self,
+        algorithm: str = ...,
+    ) -> list[
+        tuple[
+            ComplexDoubleElement,
+            list[FreeModuleElement[ComplexDoubleElement]],
+            int,
+        ]
+    ]: ...
+    def eigenvectors_left(
+        self,
+        algorithm: str = ...,
+    ) -> list[
+        tuple[
+            ComplexDoubleElement,
+            list[FreeModuleElement[ComplexDoubleElement]],
+            int,
+        ]
+    ]: ...
     def singular_values(
         self,
         eps: float | None = ...,
