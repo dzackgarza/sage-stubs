@@ -6,8 +6,7 @@ from sage.matrix.matrix_mod2_dense import Matrix_mod2_dense
 from sage.matrix.matrix_space import MatrixSpace
 from sage.modules.free_module_element import FreeModuleElement
 from sage.rings.finite_rings.element_base import FinitePolyExtElement
-from sage.structure.element import RingElement
-from sage.structure.parent import ElementConstructorInput
+from sage.structure.parent import ElementConstructorInput, Parent
 
 _FieldElement = TypeVar(
     "_FieldElement",
@@ -22,6 +21,16 @@ type MatrixGF2EEntries = (
     | Callable[[int, int], ElementConstructorInput]
     | ElementConstructorInput
     | None
+)
+type GF2Slice = (
+    tuple[Matrix_mod2_dense, Matrix_mod2_dense]
+    | tuple[Matrix_mod2_dense, Matrix_mod2_dense, Matrix_mod2_dense]
+    | tuple[
+        Matrix_mod2_dense,
+        Matrix_mod2_dense,
+        Matrix_mod2_dense,
+        Matrix_mod2_dense,
+    ]
 )
 
 
@@ -42,7 +51,19 @@ class Matrix_gf2e_dense(
     ) -> None: ...
     def __copy__(self) -> Self: ...
     def __bool__(self) -> bool: ...
+    def _richcmp_(self, right: Self, op: int) -> bool: ...
     def _list(self) -> list[_FieldElement]: ...
+    def list(self) -> list[_FieldElement]: ...
+    def row(
+        self,
+        i: int,
+        from_list: bool = ...,
+    ) -> FreeModuleElement[_FieldElement]: ...
+    def column(
+        self,
+        j: int,
+        from_list: bool = ...,
+    ) -> FreeModuleElement[_FieldElement]: ...
     def _add_(self, right: Self) -> Self: ...
     def _sub_(self, right: Self) -> Self: ...
     def _multiply_classical(self, right: Self) -> Self: ...
@@ -74,9 +95,10 @@ class Matrix_gf2e_dense(
     def rank(self) -> int: ...
     def is_invertible(self) -> bool: ...
     def __invert__(self) -> Self: ...
+    inverse = __invert__
     def augment(
         self,
-        right: Self | FreeModuleElement[RingElement],
+        right: Self | FreeModuleElement[_FieldElement],
     ) -> Self: ...
     def submatrix(
         self,
@@ -85,6 +107,26 @@ class Matrix_gf2e_dense(
         nrows: int = ...,
         ncols: int = ...,
     ) -> Self: ...
-    def slice(self) -> tuple[Matrix_mod2_dense, ...] | None: ...
+    def __reduce__(
+        self,
+    ) -> tuple[
+        Callable[..., Matrix_gf2e_dense[_FieldElement]],
+        tuple[
+            Matrix_mod2_dense | None,
+            Parent[_FieldElement],
+            int,
+            int,
+        ],
+    ]: ...
+    def slice(self) -> GF2Slice: ...
     def cling(self, *components: Matrix_mod2_dense) -> None: ...
     def determinant(self) -> _FieldElement: ...
+    det = determinant
+
+
+def unpickle_matrix_gf2e_dense_v0(
+    data: Matrix_mod2_dense | None,
+    base_ring: Parent[_FieldElement],
+    nrows: int,
+    ncols: int,
+) -> Matrix_gf2e_dense[_FieldElement]: ...
