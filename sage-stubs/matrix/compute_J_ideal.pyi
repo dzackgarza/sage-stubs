@@ -1,6 +1,6 @@
 from collections.abc import Sequence
 
-from sage.matrix.matrix import Matrix
+from sage.matrix.matrix_integer_dense import Matrix_integer_dense
 from sage.rings.fraction_field_element import FractionFieldElement
 from sage.rings.ideal import Ideal_generic
 from sage.rings.integer import Integer
@@ -11,9 +11,9 @@ from sage.structure.sage_object import SageObject
 def lifting(
     p: Integer,
     t: int | Integer,
-    A: Matrix[Polynomial],
-    G: Matrix[Polynomial] | None,
-) -> Matrix[Polynomial]: ...
+    A: Matrix_polynomial_dense,
+    G: Matrix_polynomial_dense | None,
+) -> Matrix_polynomial_dense: ...
 
 
 def p_part(
@@ -23,10 +23,11 @@ def p_part(
 
 
 class ComputeMinimalPolynomials(SageObject):
+    B: Matrix_integer_dense
     chi_B: Polynomial
     mu_B: Polynomial
 
-    def __init__(self, B: Matrix[Integer]) -> None: ...
+    def __init__(self, B: Matrix_integer_dense) -> None: ...
     def find_monic_replacements(
         self,
         p: Integer,
@@ -46,7 +47,7 @@ class ComputeMinimalPolynomials(SageObject):
         p: Integer,
         t: int | Integer,
         nu: Polynomial,
-    ) -> Matrix[Polynomial]: ...
+    ) -> Matrix_polynomial_dense: ...
     def p_minimal_polynomials(
         self,
         p: Integer,
@@ -63,3 +64,6 @@ class ComputeMinimalPolynomials(SageObject):
         Polynomial,
         list[Polynomial | FractionFieldElement],
     ]: ...
+
+
+from sage.matrix.matrix_polynomial_dense import Matrix_polynomial_dense
