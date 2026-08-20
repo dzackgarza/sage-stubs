@@ -1,12 +1,31 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from collections.abc import Sequence
+from typing import TypeVar
 
-class _SageObject: ...
+from sage.rings.finite_rings.element_base import FiniteRingElement
+from sage.rings.integer import Integer
+from sage.rings.polynomial.polynomial_element import Polynomial
+from sage.rings.rational import Rational
 
-def lfsr_sequence(key: builtins.object, fill: builtins.object, n: builtins.int) -> _SageObject: ...
+_FiniteElement = TypeVar(
+    "_FiniteElement",
+    bound=FiniteRingElement,
+)
 
-def lfsr_autocorrelation(L: builtins.object, p: builtins.int, k: builtins.int) -> _SageObject: ...
 
-def lfsr_connection_polynomial(s: builtins.object) -> _SageObject: ...
+def lfsr_sequence(
+    key: list[_FiniteElement],
+    fill: list[_FiniteElement],
+    n: int | Integer,
+) -> list[_FiniteElement]: ...
+
+
+def lfsr_autocorrelation(
+    L: list[int | Integer | FiniteRingElement],
+    p: int | Integer,
+    k: int | Integer,
+) -> Rational: ...
+
+
+def lfsr_connection_polynomial(
+    s: Sequence[_FiniteElement],
+) -> Polynomial: ...
