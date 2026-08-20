@@ -1,43 +1,108 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from __future__ import annotations
 
-class _SageObject: ...
+from collections.abc import Sequence
+from typing import Literal
 
-class StringMonoid_class:
-    def __init__(self, n: builtins.int, alphabet: builtins.tuple[_SageObject, ...] = ...) -> None: ...
-    def __contains__(self, x: builtins.object) -> builtins.bool: ...
-    def alphabet(self) -> builtins.tuple[_SageObject, ...]: ...
-    def one(self) -> _SageObject: ...
-    def gen(self, i: builtins.int = ...) -> _SageObject: ...
+from sage.monoids.free_monoid import FreeMonoid
+from sage.monoids.string_monoid_element import StringMonoidData, StringMonoidElement
+from sage.rings.integer import Integer
+from sage.rings.real_mpfr import RealNumber
 
-class BinaryStringMonoid:
+
+type CharacteristicFrequencyTable = Literal["beker_piper", "lewand"]
+
+
+class StringMonoid_class(FreeMonoid):
+    Element: type[StringMonoidElement]
+    element_class: type[StringMonoidElement]
+
+    def __init__(
+        self,
+        n: int | Integer,
+        alphabet: Sequence[str] = ...,
+    ) -> None: ...
+    def __contains__(self, x: object) -> bool: ...
+    def alphabet(self) -> tuple[str, ...]: ...
+    def one(self) -> StringMonoidElement: ...
+    def gen(self, i: int | Integer = ...) -> StringMonoidElement: ...
+    def gens(self) -> tuple[StringMonoidElement, ...]: ...
+
+
+class BinaryStringMonoid(StringMonoid_class):
     def __init__(self) -> None: ...
-    def __call__(self, x: builtins.object, check: builtins.bool = ...) -> _SageObject: ...
-    def encoding(self, S: builtins.object, padic: builtins.bool = ...) -> _SageObject: ...
+    def __repr__(self) -> str: ...
+    def __call__(
+        self,
+        x: StringMonoidData | StringMonoidElement,
+        check: bool = ...,
+    ) -> StringMonoidElement: ...
+    def encoding(
+        self,
+        S: str,
+        padic: bool = ...,
+    ) -> StringMonoidElement: ...
 
-BinaryStrings: _SageObject
-class OctalStringMonoid:
+
+BinaryStrings = BinaryStringMonoid
+
+
+class OctalStringMonoid(StringMonoid_class):
     def __init__(self) -> None: ...
-    def __call__(self, x: builtins.object, check: builtins.bool = ...) -> _SageObject: ...
+    def __repr__(self) -> str: ...
+    def __call__(
+        self,
+        x: StringMonoidData | StringMonoidElement,
+        check: bool = ...,
+    ) -> StringMonoidElement: ...
 
-OctalStrings: _SageObject
-class HexadecimalStringMonoid:
+
+OctalStrings = OctalStringMonoid
+
+
+class HexadecimalStringMonoid(StringMonoid_class):
     def __init__(self) -> None: ...
-    def __call__(self, x: builtins.object, check: builtins.bool = ...) -> _SageObject: ...
-    def encoding(self, S: builtins.object, padic: builtins.bool = ...) -> _SageObject: ...
+    def __repr__(self) -> str: ...
+    def __call__(
+        self,
+        x: StringMonoidData | StringMonoidElement,
+        check: bool = ...,
+    ) -> StringMonoidElement: ...
+    def encoding(
+        self,
+        S: str,
+        padic: bool = ...,
+    ) -> StringMonoidElement: ...
 
-HexadecimalStrings: _SageObject
-class Radix64StringMonoid:
+
+HexadecimalStrings = HexadecimalStringMonoid
+
+
+class Radix64StringMonoid(StringMonoid_class):
     def __init__(self) -> None: ...
-    def __call__(self, x: builtins.object, check: builtins.bool = ...) -> _SageObject: ...
+    def __repr__(self) -> str: ...
+    def __call__(
+        self,
+        x: StringMonoidData | StringMonoidElement,
+        check: bool = ...,
+    ) -> StringMonoidElement: ...
 
-Radix64Strings: _SageObject
-class AlphabeticStringMonoid:
+
+Radix64Strings = Radix64StringMonoid
+
+
+class AlphabeticStringMonoid(StringMonoid_class):
     def __init__(self) -> None: ...
-    def __call__(self, x: builtins.object, check: builtins.bool = ...) -> _SageObject: ...
-    def characteristic_frequency(self, table_name: builtins.str = ...) -> _SageObject: ...
-    def encoding(self, S: builtins.object) -> _SageObject: ...
+    def __repr__(self) -> str: ...
+    def __call__(
+        self,
+        x: StringMonoidData | StringMonoidElement,
+        check: bool = ...,
+    ) -> StringMonoidElement: ...
+    def characteristic_frequency(
+        self,
+        table_name: CharacteristicFrequencyTable = ...,
+    ) -> dict[str, RealNumber]: ...
+    def encoding(self, S: str) -> StringMonoidElement: ...
 
-AlphabeticStrings: _SageObject
+
+AlphabeticStrings = AlphabeticStringMonoid
