@@ -1,15 +1,48 @@
-# Generated from the pinned Sage 10.7 source tree.
-import builtins
-from collections.abc import AsyncIterator as _AsyncIterator, Iterable as _Iterable, Iterator as _Iterator
-from typing import Self
+from collections import defaultdict
+from collections.abc import Hashable, Iterable, Mapping
+from numbers import Real
+from typing import Generic, TypeVar
 
-class _SageObject: ...
+from sage.graphs.digraph import DiGraph
+from sage.structure.sage_object import SageObject
 
-def frequency_table(string: builtins.object) -> _SageObject: ...
+_Symbol = TypeVar("_Symbol", bound=Hashable, default=str)
 
-class Huffman:
-    def __init__(self, source: builtins.object) -> None: ...
-    def encode(self, string: builtins.object) -> _SageObject: ...
-    def decode(self, string: builtins.object) -> _SageObject: ...
-    def encoding_table(self) -> _SageObject: ...
-    def tree(self) -> _SageObject: ...
+type HuffmanTree = int | tuple[HuffmanTree, HuffmanTree]
+type HuffmanEdge = tuple[str, str]
+type WeightTable[_T: Hashable] = Mapping[_T, Real]
+
+
+def frequency_table(
+    string: Iterable[_Symbol],
+) -> defaultdict[_Symbol, int]: ...
+
+
+class Huffman(SageObject, Generic[_Symbol]):
+    def __init__(
+        self,
+        source: str | WeightTable[_Symbol],
+    ) -> None: ...
+    def _build_code_from_tree(
+        self,
+        tree: HuffmanTree,
+        code_by_index: dict[int, str],
+        prefix: str,
+    ) -> None: ...
+    def _build_code(
+        self,
+        weights: WeightTable[_Symbol],
+    ) -> None: ...
+    def encode(
+        self,
+        string: Iterable[_Symbol],
+    ) -> str: ...
+    def decode(self, string: str) -> str: ...
+    def encoding_table(self) -> dict[_Symbol, str]: ...
+    def tree(self) -> DiGraph: ...
+    def _generate_edges(
+        self,
+        tree: HuffmanTree,
+        parent: str = ...,
+        bit: str = ...,
+    ) -> list[HuffmanEdge]: ...
