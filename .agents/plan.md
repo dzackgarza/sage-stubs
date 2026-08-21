@@ -65,7 +65,7 @@ first-level subtree.
 | 03 | [Polynomial rings](phases/phase-03-polynomial-rings.md) | 1 | 01 | ~95 | ✅ Complete |
 | 04 | [Number-theoretic rings](phases/phase-04-number-theory-rings.md) | 1 | 01 | ~130 | 🟡 In Progress |
 | 05 | [Linear algebra: matrices & modules](phases/phase-05-linear-algebra.md) | 1 | 01 | ~120 | ⬜ Not Started |
-| 06 | [Algebras: associative & non-Lie](phases/phase-06-algebras-core.md) | 2 | 02, 05 | ~70 | 🟡 In Progress |
+| 06 | [Algebras: associative & non-Lie](phases/phase-06-algebras-core.md) | 2 | 02, 05 | ~70 | ✅ Complete |
 | 07 | [Lie algebras & quantum groups](phases/phase-07-lie-quantum.md) | 2 | 02, 05 | ~50 | ⬜ Not Started |
 | 08 | [Groups](phases/phase-08-groups.md) | 2 | 02, 05 | ~92 | ⬜ Not Started |
 | 09 | [Combinatorics: leaves & foundations](phases/phase-09-combinat-leaves.md) | 2 | 02 | ~135 | ⬜ Not Started |
