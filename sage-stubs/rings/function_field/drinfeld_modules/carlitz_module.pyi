@@ -1,3 +1,5 @@
+from typing import overload
+
 from sage.rings.function_field.drinfeld_modules.drinfeld_module import DrinfeldModule
 from sage.rings.infinity import PlusInfinity
 from sage.rings.integer import Integer
@@ -12,28 +14,36 @@ type CarlitzBase = Parent[RingElement] | RingElement | str | None
 type SeriesPrecision = int | Integer | PlusInfinity
 type CarlitzSeries = LazyPowerSeries | PowerSeries
 
-def CarlitzModule(
-    A: PolynomialRing_generic,
-    base: CarlitzBase = ...,
-) -> DrinfeldModule: ...
+def CarlitzModule(A: PolynomialRing_generic, base: CarlitzBase = ...) -> DrinfeldModule: ...
+
+@overload
 def carlitz_exponential(
     A: PolynomialRing_generic,
-    prec: SeriesPrecision = ...,
+    prec: PlusInfinity = ...,
     name: str = ...,
-) -> CarlitzSeries: ...
+) -> LazyPowerSeries: ...
+@overload
+def carlitz_exponential(
+    A: PolynomialRing_generic,
+    prec: int | Integer,
+    name: str = ...,
+) -> PowerSeries: ...
+
+@overload
 def carlitz_logarithm(
     A: PolynomialRing_generic,
-    prec: SeriesPrecision = ...,
+    prec: PlusInfinity = ...,
     name: str = ...,
-) -> CarlitzSeries: ...
-def carlitz_factorial(
+) -> LazyPowerSeries: ...
+@overload
+def carlitz_logarithm(
     A: PolynomialRing_generic,
-    n: int | Integer,
-) -> Polynomial: ...
+    prec: int | Integer,
+    name: str = ...,
+) -> PowerSeries: ...
+
+def carlitz_factorial(A: PolynomialRing_generic, n: int | Integer) -> Polynomial: ...
 
 carlitz_series: dict[Integer, LazyPowerSeries]
 
-def carlitz_bernoulli(
-    A: PolynomialRing_generic,
-    n: int | Integer,
-) -> Polynomial: ...
+def carlitz_bernoulli(A: PolynomialRing_generic, n: int | Integer) -> Polynomial: ...
