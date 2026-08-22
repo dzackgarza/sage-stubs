@@ -222,7 +222,7 @@ class Matrix(MatrixElement[_Scalar], Generic[_Scalar]):
         i: _MatrixAxisIndex,
         j: _MatrixAxisIndex,
         s: ElementConstructorInput,
-        start_row: _MatrixAxisIndex = ....,
+        start_row: _MatrixAxisIndex = ...,
         end_row: _MatrixAxisIndex = ...,
     ) -> None: ...
     def with_added_multiple_of_column(
@@ -237,7 +237,7 @@ class Matrix(MatrixElement[_Scalar], Generic[_Scalar]):
         self,
         i: _MatrixAxisIndex,
         s: ElementConstructorInput,
-        start_col: _MatrixAxisIndex = ..,
+        start_col: _MatrixAxisIndex = ...,
     ) -> None: ...
     def with_rescaled_row(
         self,
