@@ -4,27 +4,28 @@ from typing import Literal, Self, overload
 from sage.matrix.matrix import Matrix
 from sage.matrix.matrix_generic_dense import Matrix_generic_dense
 from sage.matrix.matrix_integer_dense import Matrix_integer_dense
-from sage.matrix.matrix_space import MatrixData, MatrixSpace
 from sage.modules.free_module_element import FreeModuleElement
 from sage.rings.integer import Integer
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.structure.element import RingElement
 
 type Degree = int | Integer
-type DegreeData = Degree | Sequence[Degree]
+type DegreeData = Degree | list[Degree]
 type ShiftData = Sequence[Degree] | FreeModuleElement[Integer] | None
-type OrderData = Degree | Sequence[Degree]
-type InterpolationPoints = Sequence[Sequence[RingElement]]
+type OrderData = Degree | list[Degree]
+type InterpolationPoint = RingElement | int | Integer
+type InterpolationPoints = (
+    list[InterpolationPoint]
+    | list[list[InterpolationPoint]]
+)
 type PolynomialVector = FreeModuleElement[Polynomial]
 
 
 class Matrix_polynomial_dense(Matrix_generic_dense[Polynomial]):
-    def __init__(
+    def _check_shift_dimension(
         self,
-        parent: MatrixSpace[Polynomial],
-        entries: MatrixData[Polynomial] = ...,
-        copy: bool | None = ...,
-        coerce: bool = ...,
+        shifts: ShiftData,
+        row_wise: bool = ...,
     ) -> None: ...
 
     # Polynomial degree and coefficient structure
@@ -101,6 +102,11 @@ class Matrix_polynomial_dense(Matrix_generic_dense[Polynomial]):
         shifts: ShiftData = ...,
         row_wise: bool = ...,
     ) -> Matrix[RingElement]: ...
+    def _is_empty_popov(
+        self,
+        row_wise: bool = ...,
+        include_zero_vectors: bool = ...,
+    ) -> bool: ...
     def is_reduced(
         self,
         shifts: ShiftData = ...,
@@ -122,6 +128,13 @@ class Matrix_polynomial_dense(Matrix_generic_dense[Polynomial]):
         row_wise: bool,
         return_degree: Literal[True],
     ) -> tuple[list[int], list[int | Integer]]: ...
+    @overload
+    def leading_positions(
+        self,
+        shifts: ShiftData = ...,
+        row_wise: bool = ...,
+        return_degree: bool = ...,
+    ) -> list[int] | tuple[list[int], list[int | Integer]]: ...
 
     def is_weak_popov(
         self,
@@ -163,6 +176,34 @@ class Matrix_polynomial_dense(Matrix_generic_dense[Polynomial]):
         ordered: bool = ...,
         include_zero_vectors: bool = ...,
     ) -> tuple[Self, Self]: ...
+    @overload
+    def weak_popov_form(
+        self,
+        transformation: bool = ...,
+        shifts: ShiftData = ...,
+        row_wise: bool = ...,
+        ordered: bool = ...,
+        include_zero_vectors: bool = ...,
+    ) -> Self | tuple[Self, Self]: ...
+
+    @overload
+    def _weak_popov_form(
+        self,
+        transformation: Literal[False] = ...,
+        shifts: ShiftData = ...,
+    ) -> None: ...
+    @overload
+    def _weak_popov_form(
+        self,
+        transformation: Literal[True],
+        shifts: ShiftData = ...,
+    ) -> Self: ...
+    @overload
+    def _weak_popov_form(
+        self,
+        transformation: bool = ...,
+        shifts: ShiftData = ...,
+    ) -> Self | None: ...
 
     @overload
     def popov_form(
@@ -180,6 +221,14 @@ class Matrix_polynomial_dense(Matrix_generic_dense[Polynomial]):
         row_wise: bool = ...,
         include_zero_vectors: bool = ...,
     ) -> tuple[Self, Self]: ...
+    @overload
+    def popov_form(
+        self,
+        transformation: bool = ...,
+        shifts: ShiftData = ...,
+        row_wise: bool = ...,
+        include_zero_vectors: bool = ...,
+    ) -> Self | tuple[Self, Self]: ...
 
     @overload
     def reduced_form(
@@ -197,6 +246,14 @@ class Matrix_polynomial_dense(Matrix_generic_dense[Polynomial]):
         row_wise: bool = ...,
         include_zero_vectors: bool = ...,
     ) -> tuple[Self, Self]: ...
+    @overload
+    def reduced_form(
+        self,
+        transformation: bool | None = ...,
+        shifts: ShiftData = ...,
+        row_wise: bool = ...,
+        include_zero_vectors: bool = ...,
+    ) -> Self | tuple[Self, Self]: ...
 
     @overload
     def hermite_form(
@@ -210,10 +267,24 @@ class Matrix_polynomial_dense(Matrix_generic_dense[Polynomial]):
         include_zero_rows: bool,
         transformation: Literal[True],
     ) -> tuple[Self, Self]: ...
+    @overload
+    def hermite_form(
+        self,
+        include_zero_rows: bool = ...,
+        transformation: bool = ...,
+    ) -> Self | tuple[Self, Self]: ...
 
     # Polynomial matrix quotient, remainder, and normal form
     def left_quo_rem(self, B: Self) -> tuple[Self, Self]: ...
     def right_quo_rem(self, B: Self) -> tuple[Self, Self]: ...
+    def _right_quo_rem_reduced(
+        self,
+        B: Self,
+    ) -> tuple[Self, Self]: ...
+    def _right_quo_rem_solve(
+        self,
+        B: Self,
+    ) -> tuple[Self, Self]: ...
 
     @overload
     def reduce(
@@ -231,6 +302,14 @@ class Matrix_polynomial_dense(Matrix_generic_dense[Polynomial]):
         row_wise: bool,
         return_quotient: Literal[True],
     ) -> tuple[Self, Self]: ...
+    @overload
+    def reduce(
+        self,
+        B: Self,
+        shifts: ShiftData = ...,
+        row_wise: bool = ...,
+        return_quotient: bool = ...,
+    ) -> Self | tuple[Self, Self]: ...
 
     # Approximant and interpolant bases
     def is_minimal_approximant_basis(
@@ -248,6 +327,11 @@ class Matrix_polynomial_dense(Matrix_generic_dense[Polynomial]):
         row_wise: bool = ...,
         normal_form: bool = ...,
     ) -> Self: ...
+    def _approximant_basis_iterative(
+        self,
+        order: list[Degree],
+        shifts: Sequence[Degree],
+    ) -> tuple[Self, list[int | Integer]]: ...
     def minimal_interpolant_basis(
         self,
         points: InterpolationPoints,
@@ -255,6 +339,11 @@ class Matrix_polynomial_dense(Matrix_generic_dense[Polynomial]):
         row_wise: bool = ...,
         normal_form: bool = ...,
     ) -> Self: ...
+    def _interpolant_basis_iterative(
+        self,
+        points: list[list[InterpolationPoint]],
+        shifts: Sequence[Degree],
+    ) -> tuple[Self, list[int | Integer]]: ...
 
     # Minimal kernel and relation bases
     def is_minimal_kernel_basis(
@@ -280,8 +369,14 @@ class Matrix_polynomial_dense(Matrix_generic_dense[Polynomial]):
     ) -> Self: ...
 
     # Smith-form-preserving completion
+    def _basis_completion_via_reversed_approx(self) -> Self: ...
     def basis_completion(
         self,
         row_wise: bool = ...,
         algorithm: Literal["approximant", "smith"] = ...,
     ) -> Self: ...
+    def _is_basis_completion(
+        self,
+        mat: Self,
+        row_wise: bool = ...,
+    ) -> bool: ...

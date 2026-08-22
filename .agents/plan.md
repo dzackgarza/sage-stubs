@@ -147,21 +147,21 @@ See [feature.md](feature.md#measuring-progress) for the full workflow.
 > 03 (polynomial rings), 04 (number-theoretic rings), and 16 (symbolic,
 > calculus, and functions) are complete.
 >
-> **Latest completed workstreams:** Phase 04 task T04.14 now covers the full
-> public Drinfeld-module surface, including category-injected parent methods,
-> precision-dependent Carlitz and characteristic-zero series, finite Frobenius
-> algorithms, homsets, morphisms, and isogenies. T04.18 reconciles the residual
-> root-ring names to their completed Phase 02 owners, leaving no unassigned
-> Phase 04 implementation work.
+> **Latest completed workstreams:** Phase 05 tasks T05.1–T05.4 now cover the
+> matrix factory and abstract matrix hierarchy; integer, rational, and modular
+> backends; double-precision numerical linear algebra; certified complex-ball
+> matrices; and univariate, multivariate, and Laurent polynomial matrix
+> algorithms.
 >
 > **Active first-level phases:** Phase 05 (linear algebra) and Phase 06
-> (associative and non-Lie algebras). Phase 05 tasks T05.1 and T05.2 are
-> reconciling the matrix factory and abstract matrix bases against the pinned
-> Sage source.
+> (associative and non-Lie algebras). Phase 05's remaining work begins with
+> specialized sparse, symbolic, GAP, and finite-field matrices, followed by
+> matrix utility modules and the free-module and vector workstreams.
 >
-> **Next valid work:** advance Phase 05 through the remaining matrix and module
-> contracts, or continue a named Phase 06 task whose dependency surface is
-> already available. Phases 13, 14, and 17 have their Phase 04 dependency
-> satisfied but remain gated by Phase 12 or Phase 05 as specified above.
+> **Next valid work:** advance Phase 05 through T05.5 or T05.6, begin T05.7
+> and then its dependent module tasks, or continue a named Phase 06 task whose
+> dependency surface is already available. Phases 13, 14, and 17 have their
+> Phase 04 dependency satisfied but remain gated by Phase 12 or Phase 05 as
+> specified above.
 
 Update the frontier whenever a first-level phase or task status changes.
