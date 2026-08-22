@@ -1,6 +1,9 @@
-from collections.abc import Callable, Mapping, Sequence
+from collections.abc import Callable, Iterable, Mapping, Sequence
 from typing import Literal, Self, overload
 
+from sage.interfaces.singular import Singular, SingularElement
+from sage.libs.pari.gen import gen
+from sage.matrix.matrix import Matrix
 from sage.matrix.matrix_dense import Matrix_dense
 from sage.matrix.matrix_space import MatrixSpace
 from sage.modules.free_module import FreeModule_generic
@@ -10,6 +13,7 @@ from sage.rings.ideal import Ideal_generic
 from sage.rings.integer import Integer
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.rational import Rational
+from sage.structure.element import Expression
 from sage.structure.parent import ElementConstructorInput
 
 
@@ -23,6 +27,10 @@ type _IntegerMatrixEntries = (
     | ElementConstructorInput
     | None
 )
+type _IntegerDecompositionFactor = tuple[
+    FreeModule_generic[Integer],
+    bool,
+]
 
 
 class Matrix_integer_dense(Matrix_dense[Integer]):
@@ -34,6 +42,8 @@ class Matrix_integer_dense(Matrix_dense[Integer]):
         coerce: bool = ...,
     ) -> None: ...
     def __copy__(self) -> Self: ...
+    def __bool__(self) -> bool: ...
+    def is_one(self) -> bool: ...
     def _list(self) -> list[Integer]: ...
     def list(self) -> list[Integer]: ...
     def row(
@@ -48,6 +58,36 @@ class Matrix_integer_dense(Matrix_dense[Integer]):
     ) -> FreeModuleElement[Integer]: ...
     def transpose(self) -> Self: ...
     def antitranspose(self) -> Self: ...
+    def stack(
+        self,
+        bottom: Self | FreeModuleElement[Integer],
+        subdivide: bool = ...,
+    ) -> Self: ...
+    def augment(
+        self,
+        right: Self | FreeModuleElement[Integer],
+        subdivide: bool = ...,
+    ) -> Self: ...
+    def insert_row(
+        self,
+        index: int | Integer,
+        row: Sequence[int | Integer] | FreeModuleElement[Integer],
+    ) -> Self: ...
+
+    def __neg__(self) -> Self: ...
+    @overload
+    def __pow__(
+        self,
+        n: int | Integer,
+        dummy: None = ...,
+    ) -> Self | Matrix_rational_dense: ...
+    @overload
+    def __pow__(
+        self,
+        n: Expression,
+        dummy: None = ...,
+    ) -> Matrix[Expression]: ...
+
     def trace(self) -> Integer: ...
     def determinant(
         self,
@@ -73,51 +113,101 @@ class Matrix_integer_dense(Matrix_dense[Integer]):
     ) -> Polynomial: ...
     minpoly = minimal_polynomial
     def elementary_divisors(self, algorithm: str = ...) -> list[Integer]: ...
+    def pivots(self) -> tuple[int, ...]: ...
+    def prod_of_row_sums(
+        self,
+        cols: Iterable[int | Integer],
+    ) -> Integer: ...
 
     @overload
-    def hermite_form(
+    def echelon_form(
         self,
         algorithm: str = ...,
         proof: bool | None = ...,
         include_zero_rows: bool = ...,
         transformation: Literal[False] = ...,
-        **kwds: object,
+        D: int | Integer | None = ...,
     ) -> Self: ...
     @overload
-    def hermite_form(
+    def echelon_form(
         self,
         algorithm: str,
         proof: bool | None,
         include_zero_rows: bool,
         transformation: Literal[True],
-        **kwds: object,
+        D: int | Integer | None = ...,
     ) -> tuple[Self, Self]: ...
+    @overload
+    def echelon_form(
+        self,
+        algorithm: str = ...,
+        proof: bool | None = ...,
+       include_zero_rows: bool = ...,
+        transformation: bool = ...,
+        D: int | Integer | None = ...,
+    ) -> Self | tuple[Self, Self]: ...
+    hermite_form = echelon_form
 
     @overload
     def smith_form(
         self,
-        transformation: Literal[False] = ...,
+        transformation: Literal[True] = ...,
+        integral: bool | None = ...,
+    ) -> tuple[Self, Self, Self]: ...
+    @overload
+    def smith_form(
+        self,
+        transformation: Literal[False],
         integral: bool | None = ...,
     ) -> Self: ...
     @overload
     def smith_form(
         self,
-        transformation: Literal[True],
+        transformation: bool,
         integral: bool | None = ...,
-    ) -> tuple[Self, Self, Self]: ...
+    ) -> Self | tuple[Self, Self, Self]: ...
+
+    @overload
+    def frobenius_form(
+        self,
+        flag: Literal[0] = ...,
+        var: str = ..,
+    ) -> Self: ...
+    @overload
+    def frobenius_form(
+        self,
+        flag: Literal[1],
+        var: str = ..,
+    ) -> list[Polynomial]: ...
+    @overload
+    def frobenius_form(
+        self,
+        flag: Literal[2],
+        var: str = ..,
+    ) -> tuple[Matrix_rational_dense, Matrix_rational_dense]: ..
+    @overload
+    def frobenius_form(
+        self,
+        flag: int | Integer = ...,
+        var: str = ...,
+    ) -> (
+        Self
+        | list[Polynomial]
+        | tuple[Matrix_rational_dense, Matrix_rational_dense]
+    ): ...
 
     def saturation(
         self,
-        p: int | Integer = ...,
-        proof: bool | None = ...,
+        p: int | Integer = ..,
+        proof: bool | None = ..,
         max_dets: int = ...,
     ) -> Self: ...
     def index_in_saturation(self, proof: bool | None = ...) -> Integer: ...
     def is_primitive(self) -> bool: ...
-    def symplectic_form(self) -> Self: ...
+    def symplectic_form(self) -> tuple[Self, Self]: ...
 
     @overload
-    def LLL(
+    def LLL\(
         self,
         delta: float | None = ...,
         eta: float | None = ...,
@@ -144,6 +234,20 @@ class Matrix_integer_dense(Matrix_dense[Integer]):
         transformation: Literal[True],
         **kwds: object,
     ) -> tuple[Self, Self]: ...
+    @overload
+    def LLL(
+        self,
+        delta: float | None = ...,
+        eta: float | None = ...,
+        algorithm: str = ...,
+        fp: str | None = ...,
+        prec: int = ...,
+        early_red: bool = ...,
+        use_givens: bool = ...,
+        use_siegel: bool = ...,
+        transformation: bool = ...,
+        **kwds: object,
+    ) -> Self | tuple[Self, Self]: ...
     def BKZ(
         self,
         delta: float | None = ...,
@@ -152,7 +256,9 @@ class Matrix_integer_dense(Matrix_dense[Integer]):
         block_size: int = ...,
         prune: int = ...,
         use_givens: bool = ...,
+        precision: int = ...,
         proof: bool | None = ...,
+        **kwds: object,
     ) -> Self: ...
     def is_LLL_reduced(
         self,
@@ -161,11 +267,30 @@ class Matrix_integer_dense(Matrix_dense[Integer]):
         algorithm: str = ...,
     ) -> bool: ...
 
-    def right_kernel_matrix(self) -> Self: ...
-    def left_kernel_matrix(self) -> Self: ...
-    def right_kernel(self) -> FreeModule_generic[Integer]: ...
-    kernel = right_kernel
-    def left_kernel(self) -> FreeModule_generic[Integer]: ...
+    def _right_kernel_matrix(
+        self,
+        **kwds: object,
+    ) -> tuple[str, Self]: ...
+    def right_kernel_matrix(
+        self,
+        *args: object,
+        **kwds: object,
+    ) -> Self: ...
+    def left_kernel_matrix(
+        self,
+        *args: object,
+        **kwds: object,
+    ) -> Self: ...
+    def right_kernel(
+        self,
+        *args: object,
+        **kwds: object,
+    ) -> FreeModule_generic[Integer]: ...
+    def left_kernel(
+        self,
+        *args: object,
+        **kwds: object,
+    ) -> FreeModule_generic[Integer]: ...
     def row_space(self) -> FreeModule_generic[Integer]: ...
     def column_space(self) -> FreeModule_generic[Integer]: ...
     def image(self) -> FreeModule_generic[Integer]: ...
@@ -177,26 +302,87 @@ class Matrix_integer_dense(Matrix_dense[Integer]):
     def inverse(self) -> Matrix_rational_dense: ...
     __invert__ = inverse
     def inverse_of_unit(self) -> Self: ...
+    @overload
     def solve_right(
         self,
-        B: Self | FreeModuleElement[Integer],
-    ) -> Matrix_rational_dense | FreeModuleElement[Rational]: ...
+        B: Self,
+        check: bool = ...,
+        *,
+        extend: bool = ...,
+    ) -> Matrix_rational_dense: ...
+    @overload
+    def solve_right(
+        self,
+        B: FreeModuleElement[Integer],
+        check: bool = ...,
+        *,
+        extend: bool = ...,
+    ) -> FreeModuleElement[Rational]: ...
+    @overload
     def solve_left(
         self,
-        B: Self | FreeModuleElement[Integer],
-    ) -> Matrix_rational_dense | FreeModuleElement[Rational]: ...
+        B: Self,
+        check: bool = ...,
+        *,
+        extend: bool = ...,
+    ) -> Matrix_rational_dense: ...
+    @overload
+    def solve_left(
+        self,
+        B: FreeModuleElement[Integer],
+        check: bool = ...,
+        *,
+        extend: bool = ...,
+    ) -> FreeModuleElement[Rational]: ...
+
+    @overload
     def decomposition(
         self,
+        *,
+        dual: Literal[False] = ...,
         **kwds: object,
-    ) -> list[tuple[FreeModule_generic[Rational], bool]]: ...
+    ) -> list[_IntegerDecompositionFactor]: ...
+    @overload
+    def decomposition(
+        self,
+        *,
+        dual: Literal[True],
+        **kwds: object,
+    ) -> (
+        list[_IntegerDecompositionFactor]
+        | tuple[
+            list[_IntegerDecompositionFactor],
+            list[_IntegerDecompositionFactor],
+        ]
+    ): ...
+    @overload
+    def decomposition(
+        self,
+        *,
+        dual: bool = ...,
+        **kwds: object,
+    ) -> (
+        list[_IntegerDecompositionFactor]
+        | tuple[
+            list[_IntegerDecompositionFactor],
+            list[_IntegerDecompositionFactor],
+        ]
+    ): ...
+
     def randomize(
         self,
         density: float = ...,
-        x: int | None = ...,
-        y: int | None = ...,
+        x: int | Integer | None = ...,
+        y: int | Integer | None = ...,
         distribution: str | None = ...,
-        **kwds: object,
+        nonzero: bool = ...,
     ) -> None: ...
+    def __pari__(self) -> gen: ...
+    def _singular_(
+        self,
+        singular: Singular | None = ...,
+    ) -> SingularElement: ...
+
     def p_minimal_polynomials(
         self,
         p: int | Integer,
