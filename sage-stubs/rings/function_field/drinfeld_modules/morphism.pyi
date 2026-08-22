@@ -8,7 +8,7 @@ from sage.rings.ideal import Ideal_generic
 from sage.rings.integer import Integer
 from sage.rings.polynomial.ore_polynomial_element import OrePolynomial
 from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.structure.parent import ElementConstructorInput
+from sage.structure.element import RingElement
 from sage.structure.unique_representation import UniqueRepresentation
 
 class DrinfeldModuleMorphism(Morphism, UniqueRepresentation):
@@ -16,7 +16,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation):
     def __classcall_private__(
         class_: type[DrinfeldModuleMorphism],
         parent: DrinfeldModuleHomset,
-        x: DrinfeldModuleMorphism | OrePolynomial | ElementConstructorInput,
+        x: DrinfeldModuleMorphism | OrePolynomial | RingElement,
     ) -> DrinfeldModuleMorphism: ...
     def __init__(
         self,
@@ -35,7 +35,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation):
     def degree(self) -> Integer: ...
     def __add__(
         self,
-        other: DrinfeldModuleMorphism | OrePolynomial,
+        other: DrinfeldModuleMorphism | RingElement,
     ) -> DrinfeldModuleMorphism: ...
     def _composition_(
         self,
@@ -57,6 +57,8 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation):
     def norm(self, ideal: Literal[True] = ...) -> Ideal_generic: ...
     @overload
     def norm(self, ideal: Literal[False]) -> Polynomial: ...
+    @overload
+    def norm(self, ideal: bool = ...) -> Ideal_generic | Polynomial: ...
     def dual_isogeny(self) -> DrinfeldModuleMorphism: ...
     def characteristic_polynomial(self, var: str = ...) -> Polynomial: ...
     def charpoly(self, var: str = ...) -> Polynomial: ...
