@@ -1,12 +1,14 @@
+from collections.abc import Mapping, Sequence
 from typing import Literal, Self
 
+from sage.matrix.matrix import Matrix
 from sage.matrix.matrix_integer_sparse import Matrix_integer_sparse
 from sage.matrix.matrix_rational_dense import Matrix_rational_dense
 from sage.matrix.matrix_space import MatrixData, MatrixSpace
 from sage.matrix.matrix_sparse import Matrix_sparse
-from sage.modules.free_module_element import FreeModuleElement
 from sage.rings.integer import Integer
 from sage.rings.rational import Rational
+from sage.structure.element import RingElement
 
 type RationalSparseKernelAlgorithm = Literal[
     "default",
@@ -27,32 +29,17 @@ class Matrix_rational_sparse(Matrix_sparse[Rational]):
         copy: bool | None = ...,
         coerce: bool = ...,
     ) -> None: ...
-    def __copy__(self) -> Self: ...
     def add_to_entry(
         self,
         i: int,
         j: int,
         elt: int | Integer | Rational,
     ) -> None: ...
-    def _dict(self) -> dict[tuple[int, int], Rational]: ...
-    def dict(
-        self,
-        copy: bool = ...,
-    ) -> dict[tuple[int, int], Rational]: ...
-    def row(
-        self,
-        i: int,
-        from_list: bool = ...,
-    ) -> FreeModuleElement[Rational]: ...
-    def column(
-        self,
-        j: int,
-        from_list: bool = ...,
-    ) -> FreeModuleElement[Rational]: ...
     def _matrix_times_matrix_dense(
         self,
-        right: Matrix_rational_sparse,
+        right: Self,
     ) -> Matrix_rational_dense: ...
+    def _dict(self) -> dict[tuple[int, int], Rational]: ...
     def _nonzero_positions_by_row(
         self,
         copy: bool = ...,
@@ -74,7 +61,7 @@ class Matrix_rational_sparse(Matrix_sparse[Rational]):
     ) -> None: ...
     def echelon_form(
         self,
-        algorithm: Literal["default"] = ...,
+        algorithm: str = ...,
         height_guess: int | Integer | None = ...,
         proof: bool = ...,
         **kwds: object,
@@ -94,9 +81,17 @@ class Matrix_rational_sparse(Matrix_sparse[Rational]):
         self,
         i: int,
         j: int,
-        scalar: int | Integer | Rational,
+        s: int | Integer | Rational,
     ) -> None: ...
     def dense_matrix(self) -> Matrix_rational_dense: ...
+    def _set_row_to_negative_of_row_of_A_using_subset_of_columns(
+        self,
+        i: int,
+        A: Matrix[RingElement],
+        r: int,
+        cols: Sequence[int],
+        cols_index: Mapping[int, int] | None = ...,
+    ) -> None: ...
 
     # Rational kernel bases
     def _right_kernel_matrix(
