@@ -10,11 +10,9 @@ from sage.rings.power_series_ring_element import PowerSeries
 from sage.structure.element import RingElement
 from sage.structure.parent import Parent
 
-type CarlitzBase = Parent[RingElement] | RingElement | str | None
-type SeriesPrecision = int | Integer | PlusInfinity
-type CarlitzSeries = LazyPowerSeries | PowerSeries
+type _CarlitzBase = Parent[RingElement] | RingElement | str | None
 
-def CarlitzModule(A: PolynomialRing_generic, base: CarlitzBase = ...) -> DrinfeldModule: ...
+def CarlitzModule(A: PolynomialRing_generic, base: _CarlitzBase = ...) -> DrinfeldModule: ...
 
 @overload
 def carlitz_exponential(

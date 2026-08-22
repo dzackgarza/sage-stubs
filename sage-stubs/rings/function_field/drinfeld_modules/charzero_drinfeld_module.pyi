@@ -9,9 +9,6 @@ from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
 from sage.rings.power_series_ring_element import PowerSeries
 from sage.structure.element import RingElement
 
-type SeriesPrecision = int | Integer | PlusInfinity
-type DrinfeldSeries = LazyPowerSeries | PowerSeries
-
 class DrinfeldModule_charzero(DrinfeldModule):
     def _compute_coefficient_exp(self, k: int | Integer) -> RingElement: ...
     @overload

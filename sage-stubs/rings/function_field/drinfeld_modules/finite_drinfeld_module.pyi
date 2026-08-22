@@ -7,7 +7,7 @@ from sage.rings.function_field.drinfeld_modules.morphism import DrinfeldModuleMo
 from sage.rings.polynomial.ore_polynomial_element import OrePolynomial
 from sage.rings.polynomial.polynomial_element import Polynomial
 
-type FrobeniusAlgorithm = Literal["CSA", "crystalline", "gekeler", "motive"]
+type _FrobeniusAlgorithm = Literal["CSA", "crystalline", "gekeler", "motive"]
 
 class DrinfeldModule_finite(DrinfeldModule):
     def __init__(
@@ -20,7 +20,7 @@ class DrinfeldModule_finite(DrinfeldModule):
     def frobenius_charpoly(
         self,
         var: str = ...,
-        algorithm: FrobeniusAlgorithm | None = ...,
+        algorithm: _FrobeniusAlgorithm | None = ...,
     ) -> Polynomial: ...
     def _frobenius_charpoly_CSA(self) -> Polynomial: ...
     def _frobenius_charpoly_crystalline(self) -> Polynomial: ...
@@ -29,7 +29,7 @@ class DrinfeldModule_finite(DrinfeldModule):
     def frobenius_norm(self) -> Polynomial: ...
     def frobenius_trace(
         self,
-        algorithm: FrobeniusAlgorithm | None = ...,
+        algorithm: _FrobeniusAlgorithm | None = ...,
     ) -> Polynomial: ...
     def invert(self, ore_pol: OrePolynomial) -> Polynomial: ...
     def is_isogenous(self, psi: DrinfeldModule) -> bool: ...

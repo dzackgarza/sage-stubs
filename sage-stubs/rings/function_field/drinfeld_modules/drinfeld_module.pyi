@@ -9,31 +9,32 @@ from sage.rings.polynomial.ore_polynomial_element import OrePolynomial
 from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
 from sage.rings.ring_extension import RingExtension_generic
 from sage.structure.element import RingElement
-from sage.structure.parent import ElementConstructorInput, Parent
+from sage.structure.parent import Parent
+from sage.structure.sage_object import SageCoercionAtom
 from sage.structure.unique_representation import UniqueRepresentation
 
-type DrinfeldGeneratorInput = (
+type _DrinfeldGeneratorInput = (
     OrePolynomial
-    | list[ElementConstructorInput]
-    | tuple[ElementConstructorInput, ...]
+    | list[SageCoercionAtom]
+    | tuple[SageCoercionAtom, ...]
 )
-type JIndex = int | Integer
-type JParameterComponent = list[JIndex] | tuple[JIndex, ...]
-type BasicJParameter = tuple[tuple[JIndex, ...], tuple[JIndex, ...]]
-type JInvariantCompositeParameter = (
-    list[JParameterComponent]
-    | tuple[JParameterComponent, JParameterComponent]
+type _JIndex = int | Integer
+type _JParameterComponent = list[_JIndex] | tuple[_JIndex, ...]
+type _BasicJParameter = tuple[tuple[_JIndex, ...], tuple[_JIndex, ...]]
+type _JInvariantCompositeParameter = (
+    list[_JParameterComponent]
+    | tuple[_JParameterComponent, _JParameterComponent]
 )
-type JInvariantParameter = JInvariantCompositeParameter | JIndex | None
-type AField = Parent[RingElement] | RingExtension_generic
+type _JInvariantParameter = _JInvariantCompositeParameter | _JIndex | None
+type _AField = Parent[RingElement] | RingExtension_generic
 
 class DrinfeldModule(DrinfeldModules.ParentMethods, UniqueRepresentation):
     @staticmethod
     def __classcall_private__(
         class_: type[DrinfeldModule],
         function_ring: PolynomialRing_generic,
-        gen: DrinfeldGeneratorInput,
-        A_field: AField | None = ...,
+        gen: _DrinfeldGeneratorInput,
+        A_field: _AField | None = ...,
         name: str = ...,
     ) -> DrinfeldModule: ...
     def __init__(self, gen: OrePolynomial, category: DrinfeldModules) -> None: ...
@@ -43,20 +44,23 @@ class DrinfeldModule(DrinfeldModules.ParentMethods, UniqueRepresentation):
     def action(self) -> DrinfeldModuleAction: ...
     def basic_j_invariant_parameters(
         self,
-        coeff_indices: list[JIndex] | tuple[JIndex, ...] | None = ...,
+        coeff_indices: list[_JIndex] | tuple[_JIndex, ...] | None = ...,
         nonzero: bool = ...,
-    ) -> list[BasicJParameter]: ...
-    def basic_j_invariants(self, nonzero: bool = ...) -> dict[BasicJParameter, RingElement]: ...
+    ) -> list[_BasicJParameter]: ...
+    def basic_j_invariants(
+        self,
+        nonzero: bool = ...,
+    ) -> dict[_BasicJParameter, RingElement]: ...
     def coefficient(self, n: int | Integer) -> RingElement: ...
     def coefficients(self, sparse: bool = ...) -> list[RingElement]: ...
-    def change_A_field(self, A_field: AField) -> DrinfeldModule: ...
+    def change_A_field(self, A_field: _AField) -> DrinfeldModule: ...
     def gen(self) -> OrePolynomial: ...
     def height(self) -> Integer: ...
     def is_isomorphic(self, other: DrinfeldModule, absolutely: bool = ...) -> bool: ...
     def is_finite(self) -> bool: ...
     def j_invariant(
         self,
-        parameter: JInvariantParameter = ...,
+        parameter: _JInvariantParameter = ...,
         check: bool = ...,
     ) -> RingElement: ...
     def jk_invariants(self) -> dict[int, RingElement]: ...

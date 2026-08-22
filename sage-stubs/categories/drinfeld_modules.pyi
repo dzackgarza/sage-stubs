@@ -10,7 +10,8 @@ from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
 from sage.rings.ring_extension import RingExtension_generic
 from sage.structure.element import RingElement
-from sage.structure.parent import ElementConstructorInput, Parent
+from sage.structure.parent import Parent
+from sage.structure.sage_object import SageCoercionAtom
 
 class DrinfeldModules(Category_over_base_ring):
     def __init__(self, base_morphism: RingHomomorphism, name: str = ...) -> None: ...
@@ -30,8 +31,8 @@ class DrinfeldModules(Category_over_base_ring):
     def object(
         self,
         gen: OrePolynomial
-        | list[ElementConstructorInput]
-        | tuple[ElementConstructorInput, ...],
+        | list[SageCoercionAtom]
+        | tuple[SageCoercionAtom, ...],
     ) -> DrinfeldModule: ...
     def random_object(self, rank: int | Integer) -> DrinfeldModule: ...
     def super_categories(self) -> list[Category]: ...
