@@ -215,7 +215,18 @@ class Matrix(ModuleElement, Protocol[_Scalar]):
     @overload
     def __mul__(self, other: int | _Scalar) -> Matrix[_Scalar]: ...
     def __rmul__(self, other: int | _Scalar) -> Matrix[_Scalar]: ...
-    def __pow__(self, n: int | Integer) -> Matrix[_Scalar]: ...
+    @overload
+    def __pow__(
+        self,
+        n: int | Integer,
+        ignored: None = ...,
+    ) -> Matrix[RingElement]: ...
+    @overload
+    def __pow__(
+        self,
+        n: Expression,
+        ignored: None = ...,
+    ) -> Matrix[Expression]: ...
     def __getitem__(self, key: tuple[int | Integer, int | Integer]) -> _Scalar: ...
     def __setitem__(
         self,
