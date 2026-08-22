@@ -6,19 +6,39 @@ from sage.matrix.matrix_space import MatrixSpace
 from sage.modules.free_module import FreeModule_generic
 from sage.modules.free_module_element import FreeModuleElement
 from sage.schemes.generic.homset import SchemeHomset_generic, SchemeHomset_points
+from sage.schemes.generic.morphism import (
+    SchemeMorphism_point,
+    SchemeMorphism_polynomial,
+)
 from sage.structure.element import RingElement
 from sage.structure.parent import Parent
 
 _MatrixScalar = TypeVar("_MatrixScalar", bound=RingElement, default=RingElement)
 _ObjectScalar = TypeVar("_ObjectScalar", bound=RingElement, default=RingElement)
 _ResultScalar = TypeVar("_ResultScalar", bound=RingElement, default=RingElement)
-_SchemeMap = TypeVar("_SchemeMap", default=object)
-_SchemePoint = TypeVar("_SchemePoint", default=object)
+_SchemeMap = TypeVar(
+    "_SchemeMap",
+    bound=SchemeMorphism_polynomial,
+    default=SchemeMorphism_polynomial,
+)
+_SchemePoint = TypeVar(
+    "_SchemePoint",
+    bound=SchemeMorphism_point,
+    default=SchemeMorphism_point,
+)
+
+type _ActedUpon = Parent | SchemeHomset_generic | SchemeHomset_points
+type _ActionCodomain = Parent | SchemeHomset_generic | SchemeHomset_points
 
 
 class MatrixMulAction(Action, Generic[_ResultScalar]):
-    def __init__(self, G: MatrixSpace[RingElement], S: Parent, is_left: bool) -> None: ...
-    def codomain(self) -> Parent: ...
+    def __init__(
+        self,
+        G: MatrixSpace[RingElement],
+        S: _ActedUpon,
+        is_left: bool,
+    ) -> None: ...
+    def codomain(self) -> _ActionCodomain: ...
 
 
 class MatrixMatrixAction(
@@ -30,6 +50,10 @@ class MatrixMatrixAction(
         G: MatrixSpace[_MatrixScalar],
         S: MatrixSpace[_ObjectScalar],
     ) -> None: ...
+    def _create_codomain(
+        self,
+        base: Parent[_ResultScalar],
+    ) -> MatrixSpace[_ResultScalar]: ...
     def _act_(
         self,
         g: Matrix[_MatrixScalar],
@@ -47,6 +71,10 @@ class MatrixVectorAction(
         G: MatrixSpace[_MatrixScalar],
         S: FreeModule_generic[_ObjectScalar],
     ) -> None: ...
+    def _create_codomain(
+        self,
+        base: Parent[_ResultScalar],
+    ) -> FreeModule_generic[_ResultScalar]: ...
     def _act_(
         self,
         g: Matrix[_MatrixScalar],
@@ -64,6 +92,10 @@ class VectorMatrixAction(
         G: MatrixSpace[_MatrixScalar],
         S: FreeModule_generic[_ObjectScalar],
     ) -> None: ...
+    def _create_codomain(
+        self,
+        base: Parent[_ResultScalar],
+    ) -> FreeModule_generic[_ResultScalar]: ...
     def _act_(
         self,
         g: Matrix[_MatrixScalar],
@@ -81,7 +113,15 @@ class MatrixPolymapAction(
         G: MatrixSpace[_MatrixScalar],
         S: SchemeHomset_generic,
     ) -> None: ...
-    def _act_(self, g: Matrix[_MatrixScalar], s: _SchemeMap) -> _SchemeMap: ...
+    def _create_codomain(
+        self,
+        base: Parent[_ResultScalar],
+    ) -> SchemeHomset_generic: ...
+    def _act_(
+        self,
+        mat: Matrix[_MatrixScalar],
+        f: _SchemeMap,
+    ) -> _SchemeMap: ...
     def codomain(self) -> SchemeHomset_generic: ...
 
 
@@ -94,7 +134,15 @@ class PolymapMatrixAction(
         G: MatrixSpace[_MatrixScalar],
         S: SchemeHomset_generic,
     ) -> None: ...
-    def _act_(self, g: Matrix[_MatrixScalar], s: _SchemeMap) -> _SchemeMap: ...
+    def _create_codomain(
+        self,
+        base: Parent[_ResultScalar],
+    ) -> SchemeHomset_generic: ...
+    def _act_(
+        self,
+        mat: Matrix[_MatrixScalar],
+        f: _SchemeMap,
+    ) -> _SchemeMap: ...
     def codomain(self) -> SchemeHomset_generic: ...
 
 
@@ -107,5 +155,13 @@ class MatrixSchemePointAction(
         G: MatrixSpace[_MatrixScalar],
         S: SchemeHomset_points,
     ) -> None: ...
-    def _act_(self, g: Matrix[_MatrixScalar], s: _SchemePoint) -> _SchemePoint: ...
+    def _create_codomain(
+        self,
+        base: Parent[_ResultScalar],
+    ) -> SchemeHomset_points: ...
+    def _act_(
+        self,
+        mat: Matrix[_MatrixScalar],
+        P: _SchemePoint,
+    ) -> _SchemePoint: ...
     def codomain(self) -> SchemeHomset_points: ...
