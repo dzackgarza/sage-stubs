@@ -147,21 +147,20 @@ See [feature.md](feature.md#measuring-progress) for the full workflow.
 > 03 (polynomial rings), 04 (number-theoretic rings), and 16 (symbolic,
 > calculus, and functions) are complete.
 >
-> **Latest completed workstreams:** Phase 05 tasks T05.1–T05.4 now cover the
-> matrix factory and abstract matrix hierarchy; integer, rational, and modular
-> backends; double-precision numerical linear algebra; certified complex-ball
-> matrices; and univariate, multivariate, and Laurent polynomial matrix
-> algorithms.
+> **Latest completed workstreams:** Phase 05 tasks T05.1–T05.6 now cover the
+> complete matrix hierarchy: factories and abstract bases; exact, modular,
+> numerical, polynomial, sparse, symbolic, GAP, MeatAxe, characteristic-two,
+> and cyclotomic backends; matrix windows and coercion actions; permanental
+> helpers, special constructors, and operation tables.
 >
 > **Active first-level phases:** Phase 05 (linear algebra) and Phase 06
-> (associative and non-Lie algebras). Phase 05's remaining work begins with
-> specialized sparse, symbolic, GAP, and finite-field matrices, followed by
-> matrix utility modules and the free-module and vector workstreams.
+> (associative and non-Lie algebras). The Phase 05 frontier is T05.7, the
+> free-module and morphism foundation required by the remaining quotient,
+> finitely-generated, torsion, vector, and miscellaneous module workstreams.
 >
-> **Next valid work:** advance Phase 05 through T05.5 or T05.6, begin T05.7
-> and then its dependent module tasks, or continue a named Phase 06 task whose
-> dependency surface is already available. Phases 13, 14, and 17 have their
-> Phase 04 dependency satisfied but remain gated by Phase 12 or Phase 05 as
-> specified above.
+> **Next valid work:** complete T05.7 and then advance T05.8–T05.11, or
+> continue a named Phase 06 task whose dependency surface is already
+> available. Phases 12, 14, 15, and 17 remain gated by completion of Phase 05;
+> Phase 13 remains additionally gated by Phase 12.
 
 Update the frontier whenever a first-level phase or task status changes.
