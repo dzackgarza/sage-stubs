@@ -1,29 +1,20 @@
-from collections.abc import Callable, Mapping, Sequence
-from os import PathLike
-from typing import Generic, Self, TypeVar, overload
+from collections.abc import Callable
+from typing import Generic, Literal, Self, TypeVar, overload
 
 from sage.matrix.matrix_dense import Matrix_dense
-from sage.matrix.matrix_space import MatrixSpace
-from sage.modules.free_module_element import FreeModuleElement
-from sage.rings.finite_rings.element_base import FinitePolyExtElement, FiniteRingElement
+from sage.matrix.matrix_space import MatrixData, MatrixSpace
+from sage.rings.finite_rings.element_base import FiniteRingElement
 from sage.rings.finite_rings.integer_mod import IntegerMod_int
+from sage.rings.integer import Integer
 from sage.structure.parent import ElementConstructorInput, Parent
 
 _FieldElement = TypeVar(
     "_FieldElement",
     bound=FiniteRingElement,
-    default=FinitePolyExtElement,
+    default=FiniteRingElement,
 )
 
-type MatrixGFPNEntries = (
-    Sequence[ElementConstructorInput]
-    | Sequence[Sequence[ElementConstructorInput]]
-    | Mapping[tuple[int, int], ElementConstructorInput]
-    | Callable[[int, int], ElementConstructorInput]
-    | ElementConstructorInput
-    | None
-)
-type MeatAxePickleParent[_T: FiniteRingElement] = MatrixSpace[_T] | int
+type MeatAxePickleParent[_T: FiniteRingElement] = MatrixSpace[_T] | Literal[0]
 
 
 class FieldConverter_class(Generic[_FieldElement]):
@@ -52,7 +43,7 @@ class Matrix_gfpn_dense(
     def __init__(
         self,
         parent: MatrixSpace[_FieldElement],
-        entries: MatrixGFPNEntries = ...,
+        entries: MatrixData[_FieldElement] = ...,
         copy: bool | None = ...,
         coerce: bool = ...,
         *,
@@ -60,7 +51,7 @@ class Matrix_gfpn_dense(
     ) -> None: ...
     @staticmethod
     def from_filename(
-        filename: str | bytes | PathLike[str],
+        filename: str | bytes,
     ) -> Matrix_gfpn_dense[FiniteRingElement]: ...
     def __copy__(self) -> Self: ...
     def __reduce__(
@@ -82,35 +73,39 @@ class Matrix_gfpn_dense(
         *args: object,
         **kwds: object,
     ) -> None: ...
-    def get_slice(self, i: int, j: int) -> Self: ...
-    def _rowlist_(self, i: int, j: int = ...) -> list[int]: ...
+    def get_slice(
+        self,
+        i: int | Integer,
+        j: int | Integer,
+    ) -> Self: ...
+    def _rowlist_(
+        self,
+        i: int | Integer,
+        j: int | Integer = ...,
+    ) -> list[int]: ...
     def _list(self) -> list[_FieldElement]: ...
-    def list(self) -> list[_FieldElement]: ...
-    def row(
-        self,
-        i: int,
-        from_list: bool = ...,
-    ) -> FreeModuleElement[_FieldElement]: ...
-    def column(
-        self,
-        j: int,
-        from_list: bool = ...,
-    ) -> FreeModuleElement[_FieldElement]: ...
     def _richcmp_(self, right: Self, op: int) -> bool: ...
     def _add_(self, right: Self) -> Self: ...
     def _sub_(self, right: Self) -> Self: ...
     def __neg__(self) -> Self: ...
     def _lmul_(self, right: _FieldElement) -> Self: ...
-    def _multiply_classical(self, right: Self) -> Self: ...
-    def _multiply_strassen(self, right: Self, cutoff: int = ...) -> Self: ...
-    def __truediv__(self, scalar: ElementConstructorInput) -> Self: ...
+    def _multiply_strassen(
+        self,
+        right: Self,
+        cutoff: int | Integer = ...,
+    ) -> Self: ...
+    def __truediv__(
+        self,
+        scalar: ElementConstructorInput,
+    ) -> Self: ...
     def __invert__(self) -> Self: ...
-    inverse = __invert__
     def transpose(self) -> Self: ...
     def order(self) -> int: ...
-    multiplicative_order = order
     def left_kernel_matrix(self) -> Self: ...
-    def _echelon_in_place(self, algorithm: str) -> tuple[int, ...]: ...
+    def _echelon_in_place(
+        self,
+        algorithm: str,
+    ) -> tuple[int, ...]: ...
     def _echelon_in_place_classical(
         self,
         reduced: bool = ...,
@@ -119,18 +114,20 @@ class Matrix_gfpn_dense(
 
 
 @overload
-def mtx_unpickle(
-    field_or_space: MatrixSpace[_FieldElement],
-    nrows: int,
-    ncols: int,
+def mtx_unpickle[
+    _T: FiniteRingElement,
+](
+    field_or_space: MatrixSpace[_T],
+    nrows: int | Integer,
+    ncols: int | Integer,
     data: bytes | str,
     mutable: bool,
-) -> Matrix_gfpn_dense[_FieldElement]: ...
+) -> Matrix_gfpn_dense[_T]: ...
 @overload
 def mtx_unpickle(
-    field_or_space: int,
-    nrows: int,
-    ncols: int,
+    field_or_space: int | Integer,
+    nrows: int | Integer,
+    ncols: int | Integer,
     data: bytes | str,
     mutable: bool,
 ) -> Matrix_gfpn_dense[FiniteRingElement]: ...
