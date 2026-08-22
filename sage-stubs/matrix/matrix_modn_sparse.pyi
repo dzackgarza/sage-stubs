@@ -1,57 +1,39 @@
-from collections.abc import Iterable
+from collections.abc import Iterable, Mapping
 from typing import Literal, Self
 
 from sage.matrix.matrix_dense import Matrix_dense
 from sage.matrix.matrix_space import MatrixData, MatrixSpace
 from sage.matrix.matrix_sparse import Matrix_sparse
-from sage.modules.free_module_element import FreeModuleElement
-from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
+from sage.rings.finite_rings.integer_mod import IntegerMod_int
 from sage.rings.rational import Rational
 
+MAX_MODULUS: int
+
 type ModularSparseAlgorithm = Literal["linbox", "generic"] | None
+type _SparseEntries = Mapping[tuple[int, int], IntegerMod_int]
 
 
-class Matrix_modn_sparse(Matrix_sparse[IntegerMod_abstract]):
+class Matrix_modn_sparse(Matrix_sparse[IntegerMod_int]):
     def __init__(
         self,
-        parent: MatrixSpace[IntegerMod_abstract],
-        entries: MatrixData[IntegerMod_abstract] = ...,
+        parent: MatrixSpace[IntegerMod_int],
+        entries: MatrixData[IntegerMod_int] = ...,
         copy: bool | None = ...,
         coerce: bool = ...,
     ) -> None: ...
-    def __copy__(self) -> Self: ...
-    def _dict(
-        self,
-    ) -> dict[tuple[int, int], IntegerMod_abstract]: ...
-    def dict(
-        self,
-        copy: bool = ...,
-    ) -> dict[tuple[int, int], IntegerMod_abstract]: ...
-    def row(
-        self,
-        i: int,
-        from_list: bool = ...,
-    ) -> FreeModuleElement[IntegerMod_abstract]: ...
-    def column(
-        self,
-        j: int,
-        from_list: bool = ...,
-    ) -> FreeModuleElement[IntegerMod_abstract]: ...
+    def _dict(self) -> dict[tuple[int, int], IntegerMod_int]: ...
     def _pickle(
         self,
-    ) -> tuple[
-        dict[tuple[int, int], IntegerMod_abstract],
-        Literal[1],
-    ]: ...
+    ) -> tuple[dict[tuple[int, int], IntegerMod_int], Literal[1]]: ...
     def _unpickle(
         self,
-        data: dict[tuple[int, int], IntegerMod_abstract],
-        version: Literal[1],
+        data: _SparseEntries,
+        version: int,
     ) -> None: ...
     def _matrix_times_matrix_dense(
         self,
         right: Self,
-    ) -> Matrix_dense[IntegerMod_abstract]: ...
+    ) -> Matrix_dense[IntegerMod_int]: ...
     def swap_rows(
         self,
         r1: int,
@@ -77,7 +59,7 @@ class Matrix_modn_sparse(Matrix_sparse[IntegerMod_abstract]):
     ) -> Self: ...
     def _rank_det_linbox(
         self,
-    ) -> tuple[int, IntegerMod_abstract]: ...
+    ) -> tuple[int, IntegerMod_int]: ...
     def rank(
         self,
         algorithm: ModularSparseAlgorithm = ...,
@@ -85,5 +67,4 @@ class Matrix_modn_sparse(Matrix_sparse[IntegerMod_abstract]):
     def determinant(
         self,
         algorithm: ModularSparseAlgorithm = ...,
-    ) -> IntegerMod_abstract: ...
-    det = determinant
+    ) -> IntegerMod_int: ...
