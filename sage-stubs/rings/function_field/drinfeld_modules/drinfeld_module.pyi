@@ -7,9 +7,9 @@ from sage.rings.integer import Integer
 from sage.rings.morphism import RingHomomorphism
 from sage.rings.polynomial.ore_polynomial_element import OrePolynomial
 from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
+from sage.rings.ring import Field
 from sage.rings.ring_extension import RingExtension_generic
 from sage.structure.element import RingElement
-from sage.structure.parent import Parent
 from sage.structure.sage_object import SageCoercionAtom
 from sage.structure.unique_representation import UniqueRepresentation
 
@@ -26,7 +26,7 @@ type _JInvariantCompositeParameter = (
     | tuple[_JParameterComponent, _JParameterComponent]
 )
 type _JInvariantParameter = _JInvariantCompositeParameter | _JIndex | None
-type _AField = Parent[RingElement] | RingExtension_generic
+type _AField = Field | RingExtension_generic
 
 class DrinfeldModule(DrinfeldModules.ParentMethods, UniqueRepresentation):
     @staticmethod

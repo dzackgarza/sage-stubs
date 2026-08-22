@@ -11,7 +11,9 @@ from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.structure.element import RingElement
 from sage.structure.unique_representation import UniqueRepresentation
 
-class DrinfeldModuleMorphism(Morphism, UniqueRepresentation):
+class DrinfeldModuleMorphism(
+    Morphism[OrePolynomial, OrePolynomial], UniqueRepresentation
+):
     @staticmethod
     def __classcall_private__(
         class_: type[DrinfeldModuleMorphism],

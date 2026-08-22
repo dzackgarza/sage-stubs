@@ -9,7 +9,6 @@ from sage.rings.integer import Integer
 from sage.rings.polynomial.ore_polynomial_element import OrePolynomial
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
-from sage.structure.element import RingElement
 
 class DrinfeldModuleMorphismAction(Action):
     def __init__(
@@ -25,7 +24,9 @@ class DrinfeldModuleMorphismAction(Action):
         f: DrinfeldModuleMorphism,
     ) -> DrinfeldModuleMorphism: ...
 
-class DrinfeldModuleHomset(Homset):
+class DrinfeldModuleHomset(
+    Homset[DrinfeldModuleMorphism, OrePolynomial, OrePolynomial]
+):
     Element: type[DrinfeldModuleMorphism]
     element_class: type[DrinfeldModuleMorphism]
     def __init__(
@@ -40,7 +41,8 @@ class DrinfeldModuleHomset(Homset):
     def __contains__(self, x: object) -> bool: ...
     def _element_constructor_(
         self,
-        x: DrinfeldModuleMorphism | OrePolynomial | RingElement,
+        *args: object,
+        **kwds: object,
     ) -> DrinfeldModuleMorphism: ...
     def an_element(
         self,
