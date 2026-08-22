@@ -2,6 +2,7 @@ from collections.abc import Callable, Iterable, Mapping, Sequence
 from typing import Generic, Literal, TypeVar, overload
 
 from sage.categories.morphism import Morphism
+from sage.combinat.free_module import CombinatorialFreeModule
 from sage.geometry.abc import ConvexRationalPolyhedralCone
 from sage.graphs.graph import Graph
 from sage.groups.perm_gps.permgroup_element import PermutationGroupElement
@@ -10,6 +11,8 @@ from sage.matrix.matrix_window import MatrixWindow
 from sage.modules.free_module import FreeModule_generic
 from sage.modules.free_module_element import FreeModuleElement
 from sage.plot.graphics import Graphics
+from sage.repl.image import Image
+from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
 from sage.rings.ideal import Ideal_generic
 from sage.rings.integer import Integer
 from sage.rings.polynomial.polynomial_element import Polynomial
@@ -305,6 +308,26 @@ class Matrix(
         self,
         v: FreeModuleElement[_Scalar],
     ) -> list[FreeModuleElement[_Scalar]]: ...
+    def wiedemann(
+        self,
+        i: int | Integer,
+        t: int | Integer = ...,
+    ) -> Polynomial: ...
+
+    @overload
+    def cyclic_subspace(
+        self,
+        v: FreeModuleElement[_Scalar],
+        var: None = ...,
+        basis: Literal["echelon", "iterates"] = ...,
+    ) -> FreeModule_generic[RingElement]: ...
+    @overload
+    def cyclic_subspace(
+        self,
+        v: FreeModuleElement[_Scalar],
+        var: str | Polynomial,
+        basis: Literal["echelon", "iterates"] = ...,
+    ) -> tuple[Polynomial, FreeModule_generic[RingElement]]: ...
 
     # Eigenvalue and singular-value data
     @overload
@@ -402,15 +425,35 @@ class Matrix(
     @overload
     def smith_form(
         self,
-        transformation: Literal[False] = ...,
-        **kwds: _MatrixOption,
+        transformation: Literal[True] = ...,
+        integral: Parent | bool | None = ...,
+        exact: bool = ...,
+    ) -> tuple[
+        Matrix[_Scalar],
+        Matrix[RingElement],
+        Matrix[RingElement],
+    ]: ...
+    @overload
+    def smith_form(
+        self,
+        transformation: Literal[False],
+        integral: Parent | bool | None = ...,
+        exact: bool = ...,
     ) -> Matrix[_Scalar]: ...
     @overload
     def smith_form(
         self,
-        transformation: Literal[True],
-        **kwds: _MatrixOption,
-    ) -> tuple[Matrix[_Scalar], Matrix[_Scalar], Matrix[_Scalar]]: ...
+        transformation: bool,
+        integral: Parent | bool | None = ...,
+        exact: bool = ...,
+    ) -> (
+        Matrix[_Scalar]
+        | tuple[
+            Matrix[_Scalar],
+            Matrix[RingElement],
+            Matrix[RingElement],
+        ]
+    ): ...
 
     @overload
     def hermite_form(
@@ -534,6 +577,11 @@ class Matrix(
         col: int,
         block: Matrix[_OtherScalar],
     ) -> None: ...
+    def subdivide(
+        self,
+        row_lines: Iterable[int | Integer] | None = ...,
+        col_lines: Iterable[int | Integer] | None = ...,
+    ) -> None: ...
     def subdivision(
         self,
         i: int,
@@ -568,19 +616,32 @@ class Matrix(
         a: _Scalar | int | Integer | None = ...,
     ) -> bool: ...
     def is_diagonal(self) -> bool: ...
+    def is_triangular(
+        self,
+        side: Literal["lower", "upper"] = ...,
+    ) -> bool: ...
     def is_unitary(self) -> bool: ...
     def is_bistochastic(self, normalized: bool = ...) -> bool: ...
     def is_normal(self) -> bool: ...
     def is_nilpotent(self) -> bool: ...
     def is_semisimple(self) -> bool: ...
+    def as_sum_of_permutations(self) -> CombinatorialFreeModule.Element: ...
+    def visualize_structure(
+        self,
+        maxsize: int | Integer | None = ...,
+    ) -> Image: ...
     def is_positive_semidefinite(self) -> bool: ...
     def is_positive_definite(self) -> bool: ...
-    def density(self) -> Rational: ...
+    def principal_square_root(
+        self,
+        check_positivity: bool = ...,
+    ) -> Matrix[RingElement]: ...
+    def density(self) -> Rational | int: ...
     def inverse(self) -> Matrix[RingElement]: ...
     def adjugate(self) -> Matrix[_Scalar]: ...
+    adjoint_classical = adjugate
     def conjugate(self) -> Matrix[RingElement]: ...
     def conjugate_transpose(self) -> Matrix[RingElement]: ...
-    H = conjugate_transpose
     def norm(
         self,
         p: int | float | str = ...,
@@ -617,11 +678,37 @@ class Matrix(
         extended: bool = ...,
     ) -> Matrix[RingElement]: ...
     def inverse_positive_definite(self) -> Matrix[RingElement]: ...
+
+    @overload
+    def LU(
+        self,
+        pivot: str | None = ...,
+        format: Literal["plu"] = ...,
+    ) -> tuple[
+        Matrix[RingElement],
+        Matrix[RingElement],
+        Matrix[RingElement],
+    ]: ...
+    @overload
+    def LU(
+        self,
+        pivot: str | None,
+        format: Literal["compact"],
+    ) -> tuple[tuple[int, ...], Matrix[RingElement]]: ...
+    @overload
     def LU(
         self,
         pivot: str | None = ...,
         format: str = ...,
-    ) -> tuple[Matrix[RingElement], ...]: ...
+    ) -> (
+        tuple[
+            Matrix[RingElement],
+            Matrix[RingElement],
+            Matrix[RingElement],
+        ]
+        | tuple[tuple[int, ...], Matrix[RingElement]]
+    ): ...
+
     def indefinite_factorization(
         self,
         algorithm: str = ...,
@@ -678,13 +765,19 @@ class Matrix(
         self,
         f: Callable[[_Scalar], bool],
         indices: Literal[False] = ...,
-    ) -> list[_Scalar]: ...
+    ) -> Matrix[IntegerMod_abstract]: ...
     @overload
     def find(
         self,
         f: Callable[[_Scalar], bool],
         indices: Literal[True],
     ) -> dict[tuple[int, int], _Scalar]: ...
+    @overload
+    def find(
+        self,
+        f: Callable[[_Scalar], bool],
+        indices: bool,
+    ) -> Matrix[IntegerMod_abstract] | dict[tuple[int, int], _Scalar]: ...
     def hadamard_bound(self) -> Integer: ...
 
     # Krylov matrices and polynomial-kernel bases
