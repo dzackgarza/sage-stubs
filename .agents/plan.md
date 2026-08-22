@@ -63,7 +63,7 @@ first-level subtree.
 | 01 | [Foundation completion](phases/phase-01-foundation.md) | 0 | — | ~145 | ✅ Complete |
 | 02 | [Core rings & arithmetic](phases/phase-02-core-rings.md) | 1 | 01 | ~80 | ✅ Complete |
 | 03 | [Polynomial rings](phases/phase-03-polynomial-rings.md) | 1 | 01 | ~95 | ✅ Complete |
-| 04 | [Number-theoretic rings](phases/phase-04-number-theory-rings.md) | 1 | 01 | ~130 | 🟡 In Progress |
+| 04 | [Number-theoretic rings](phases/phase-04-number-theory-rings.md) | 1 | 01 | ~130 | ✅ Complete |
 | 05 | [Linear algebra: matrices & modules](phases/phase-05-linear-algebra.md) | 1 | 01 | ~120 | 🟡 In Progress |
 | 06 | [Algebras: associative & non-Lie](phases/phase-06-algebras-core.md) | 2 | 02, 05 | ~70 | 🟡 In Progress |
 | 07 | [Lie algebras & quantum groups](phases/phase-07-lie-quantum.md) | 2 | 02, 05 | ~50 | ⬜ Not Started |
@@ -143,23 +143,25 @@ See [feature.md](feature.md#measuring-progress) for the full workflow.
 
 ## Current work frontier
 
-> **Completed first-level subtree:** Phase 16 (symbolic, calculus, and
-> functions) is complete: 56 in-scope Sage modules, six Cython-fragment support
-> stubs, five package initializers, and two documented harness exemptions.
+> **Completed first-level subtrees:** Phases 01 (foundation), 02 (core rings),
+> 03 (polynomial rings), 04 (number-theoretic rings), and 16 (symbolic,
+> calculus, and functions) are complete.
 >
-> **Latest completed workstreams:** Phase 04 task T04.16 now covers the full
-> asymptotic-ring subpackage—expansions, growth groups, Cartesian products, term
-> monoids, multivariate generating-function asymptotics, and construction
-> functors. T04.17 covers the full semiring subpackage.
+> **Latest completed workstreams:** Phase 04 task T04.14 now covers the full
+> public Drinfeld-module surface, including category-injected parent methods,
+> precision-dependent Carlitz and characteristic-zero series, finite Frobenius
+> algorithms, homsets, morphisms, and isogenies. T04.18 reconciles the residual
+> root-ring names to their completed Phase 02 owners, leaving no unassigned
+> Phase 04 implementation work.
 >
-> **Active first-level phases:** Phase 04 (number-theoretic rings), Phase 05
-> (linear algebra), and Phase 06 (associative and non-Lie algebras). Phase 05
-> tasks T05.1 and T05.2 are reconciling the matrix factory and abstract
-> matrix bases against the pinned Sage source.
+> **Active first-level phases:** Phase 05 (linear algebra) and Phase 06
+> (associative and non-Lie algebras). Phase 05 tasks T05.1 and T05.2 are
+> reconciling the matrix factory and abstract matrix bases against the pinned
+> Sage source.
 >
-> **Next valid work:** continue Phase 04 with T04.15 (valuations), continue a
-> named Phase 06 task, or advance Phase 05 through the remaining matrix-base
-> contracts. Commits remain leaves beneath those task cards and must not invent
-> new phase numbers.
+> **Next valid work:** advance Phase 05 through the remaining matrix and module
+> contracts, or continue a named Phase 06 task whose dependency surface is
+> already available. Phases 13, 14, and 17 have their Phase 04 dependency
+> satisfied but remain gated by Phase 12 or Phase 05 as specified above.
 
 Update the frontier whenever a first-level phase or task status changes.
