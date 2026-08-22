@@ -1,8 +1,7 @@
 from collections.abc import Callable, Sequence
 from typing import Generic, Literal, TypeVar
 
-from sage.categories.category import Category
-from sage.categories.homset import Homset
+from sage.categories.homset import HomsetWithBase
 from sage.matrix.matrix0 import Matrix
 from sage.matrix.matrix_space import MatrixSpace
 from sage.modules.free_module import FreeModule_generic
@@ -39,8 +38,9 @@ type FreeModuleMorphismRule[
     ]
 )
 
+
 class FreeModuleHomspace(
-    Homset[
+    HomsetWithBase[
         FreeModuleMorphism[_DomainScalar, _CodomainScalar],
         FreeModuleElement[_DomainScalar],
         FreeModuleElement[_CodomainScalar],
@@ -51,14 +51,6 @@ class FreeModuleHomspace(
         FreeModuleMorphism[_DomainScalar, _CodomainScalar]
     ]
 
-    def __init__(
-        self,
-        domain: FreeModule_generic[_DomainScalar],
-        codomain: FreeModule_generic[_CodomainScalar],
-        category: Category | None = ...,
-    ) -> None: ...
-    def domain(self) -> FreeModule_generic[_DomainScalar]: ...
-    def codomain(self) -> FreeModule_generic[_CodomainScalar]: ...
     def __call__(
         self,
         A: FreeModuleMorphism[
@@ -68,7 +60,7 @@ class FreeModuleHomspace(
             _DomainScalar,
             _CodomainScalar,
         ],
-        **kwds: object,
+        **kwds: bool | str,
     ) -> FreeModuleMorphism[_DomainScalar, _CodomainScalar]: ...
     def zero(
         self,
@@ -88,8 +80,4 @@ class FreeModuleHomspace(
     def identity(
         self,
         side: MatrixSide = ...,
-    ) -> FreeModuleMorphism[_DomainScalar, _CodomainScalar]: ...
-    one = identity
-    def natural_map(
-        self,
     ) -> FreeModuleMorphism[_DomainScalar, _CodomainScalar]: ...

@@ -5,7 +5,6 @@ from sage.categories.homset import Homset
 from sage.categories.map import Map
 from sage.categories.morphism import Morphism
 from sage.matrix.matrix0 import Matrix
-from sage.modules.free_module import FreeModule_generic
 from sage.modules.free_module_element import FreeModuleElement
 from sage.rings.derivation import RingDerivation
 from sage.structure.element import RingElement
@@ -29,6 +28,7 @@ type PseudoMatrixData[_Scalar: RingElement] = (
     | Sequence[Sequence[ElementConstructorInput]]
 )
 
+
 class FreeModulePseudoMorphism(
     Morphism[
         FreeModuleElement[_DomainScalar],
@@ -41,15 +41,9 @@ class FreeModulePseudoMorphism(
         parent: FreeModulePseudoHomspace[_DomainScalar],
         f: PseudoMatrixData[_CodomainScalar]
         | FreeModulePseudoMorphism[_DomainScalar, _CodomainScalar]
-        | Morphism[
-            FreeModuleElement[_DomainScalar],
-            FreeModuleElement[_CodomainScalar],
-        ],
+        | FreeModuleMorphism[_DomainScalar, _CodomainScalar],
         side: MatrixSide,
     ) -> None: ...
-    def parent(self) -> FreeModulePseudoHomspace[_DomainScalar]: ...
-    def domain(self) -> FreeModule_generic[_DomainScalar]: ...
-    def codomain(self) -> FreeModule_generic[_CodomainScalar]: ...
     def _call_(
         self,
         x: FreeModuleElement[_DomainScalar],
@@ -74,11 +68,15 @@ class FreeModulePseudoMorphism(
         self,
         right: Morphism,
         homset: Homset,
-    ) -> Morphism: ...
+    ) -> FreeModulePseudoMorphism[_DomainScalar, _CodomainScalar] | Morphism: ...
     def ore_module(
         self,
         names: OreModuleNames = ...,
     ) -> OreModule[_CodomainScalar]: ...
+    def _test_nonzero_equal(self, tester: object) -> None: ...
 
+
+from sage.modules.free_module_homspace import FreeModuleHomspace
+from sage.modules.free_module_morphism import FreeModuleMorphism
 from sage.modules.free_module_pseudohomspace import FreeModulePseudoHomspace
 from sage.modules.ore_module import OreModule
