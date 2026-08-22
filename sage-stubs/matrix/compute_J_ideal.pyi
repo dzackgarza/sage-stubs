@@ -9,7 +9,7 @@ from sage.structure.sage_object import SageObject
 
 
 def lifting(
-    p: Integer,
+    p: int | Integer,
     t: int | Integer,
     A: Matrix_polynomial_dense,
     G: Matrix_polynomial_dense | None,
@@ -18,39 +18,38 @@ def lifting(
 
 def p_part(
     f: Polynomial,
-    p: Integer,
+    p: int | Integer,
 ) -> Polynomial: ...
 
 
 class ComputeMinimalPolynomials(SageObject):
-    B: Matrix_integer_dense
     chi_B: Polynomial
     mu_B: Polynomial
 
     def __init__(self, B: Matrix_integer_dense) -> None: ...
     def find_monic_replacements(
         self,
-        p: Integer,
+        p: int | Integer,
         t: int | Integer,
         pt_generators: Sequence[Polynomial],
         prev_nu: Polynomial,
     ) -> list[Polynomial]: ...
     def current_nu(
         self,
-        p: Integer,
+        p: int | Integer,
         t: int | Integer,
         pt_generators: Sequence[Polynomial],
         prev_nu: Polynomial,
     ) -> Polynomial: ...
     def mccoy_column(
         self,
-        p: Integer,
+        p: int | Integer,
         t: int | Integer,
         nu: Polynomial,
     ) -> Matrix_polynomial_dense: ...
     def p_minimal_polynomials(
         self,
-        p: Integer,
+        p: int | Integer,
         s_max: int | Integer | None = ...,
     ) -> dict[int, Polynomial]: ...
     def null_ideal(
