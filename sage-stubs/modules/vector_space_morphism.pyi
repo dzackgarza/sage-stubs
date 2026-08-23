@@ -5,6 +5,7 @@ from sage.matrix.matrix0 import Matrix
 from sage.modules.free_module import FreeModule_generic_field
 from sage.modules.free_module_element import FreeModuleElement
 from sage.modules.free_module_morphism import FreeModuleMorphism
+from sage.modules.vector_space_homspace import VectorSpaceHomspace
 from sage.structure.element import FieldElement, RingElement
 from sage.structure.parent import ElementConstructorInput
 
@@ -25,6 +26,7 @@ type LinearTransformationRule[_Scalar: FieldElement] = (
     ]
 )
 
+
 @overload
 def linear_transformation(
     arg0: Matrix[_RingScalar],
@@ -40,6 +42,7 @@ def linear_transformation(
     side: MatrixSide = ...,
 ) -> VectorSpaceMorphism[_Scalar]: ...
 
+
 class VectorSpaceMorphism(
     FreeModuleMorphism[_Scalar, _Scalar],
     Generic[_Scalar],
@@ -50,11 +53,6 @@ class VectorSpaceMorphism(
         A: Matrix[_Scalar],
         side: MatrixSide = ...,
     ) -> None: ...
-    def parent(self) -> VectorSpaceHomspace[_Scalar]: ...
-    def domain(self) -> FreeModule_generic_field[_Scalar]: ...
-    def codomain(self) -> FreeModule_generic_field[_Scalar]: ...
     def is_invertible(self) -> bool: ...
     def _latex_(self) -> str: ...
     def _repr_(self) -> str: ...
-
-from sage.modules.vector_space_homspace import VectorSpaceHomspace
