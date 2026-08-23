@@ -1,11 +1,9 @@
 from typing import Generic, Literal, Self, TypeVar, overload
 
-import numpy as np
-
 from sage.modules.vector_numpy_dense import Vector_numpy_dense
 from sage.rings.infinity import MinusInfinity, PlusInfinity
-from sage.structure.element import FieldElement
-from sage.structure.parent import ElementConstructorInput
+from sage.rings.real_double import RealDoubleElement
+from sage.structure.element import Element, FieldElement, RingElement
 
 _DoubleScalar = TypeVar(
     "_DoubleScalar",
@@ -13,7 +11,8 @@ _DoubleScalar = TypeVar(
     default=FieldElement,
 )
 
-type NormOrder = int | float | Literal["frob"] | PlusInfinity | MinusInfinity
+type NormOrder = int | float | RingElement | PlusInfinity | MinusInfinity
+type FourierDirection = Literal["forward", "backward"]
 
 
 class Vector_double_dense(
@@ -24,38 +23,54 @@ class Vector_double_dense(
     def _sub_(self, right: Self) -> Self: ...
     def _dot_product_(self, right: Self) -> _DoubleScalar: ...
     def _pairwise_product_(self, right: Self) -> Self: ...
-    def _rmul_(self, left: ElementConstructorInput) -> Self: ...
-    def _lmul_(self, right: ElementConstructorInput) -> Self: ...
-    def inv_fft(self) -> Vector_complex_double_dense: ...
+    def _rmul_(self, left: Element) -> Self: ...
+    def _lmul_(self, right: Element) -> Self: ...
     @overload
-    def fft(
+    def inv_fft(
         self,
-        direction: Literal["forward", "backward"] = ...,
+        algorithm: str = ...,
         inplace: Literal[False] = ...,
-    ) -> Self: ...
+    ) -> Vector_complex_double_dense | Self: ...
     @overload
-    def fft(
+    def inv_fft(
         self,
-        direction: Literal["forward", "backward"] = ...,
+        algorithm: str = ...,
         inplace: Literal[True] = ...,
-    ) -> None: ...
+    ) -> Self | None: ...
+    @overload
+    def inv_fft(
+        self,
+        algorithm: str = ...,
+        inplace: bool = ...,
+    ) -> Vector_complex_double_dense | Self | None: ...
     @overload
     def fft(
         self,
-        direction: Literal["forward", "backward"] = ...,
-        inplace: bool = ...,
+        direction: FourierDirection = ...,
+        algorithm: str = ...,
+        inplace: Literal[False] = ...,
+    ) -> Vector_complex_double_dense | Self: ...
+    @overload
+    def fft(
+        self,
+        direction: FourierDirection = ...,
+        algorithm: str = ...,
+        inplace: Literal[True] = ...,
     ) -> Self | None: ...
+    @overload
+    def fft(
+        self,
+        direction: FourierDirection = ...,
+        algorithm: str = ...,
+        inplace: bool = ...,
+    ) -> Vector_complex_double_dense | Self | None: ...
     def complex_vector(self) -> Vector_complex_double_dense: ...
-    def zero_at(self, eps: float = ...) -> None: ...
-    def norm(self, p: NormOrder = ...) -> _DoubleScalar | np.float64: ...
+    def zero_at(self, eps: float | RingElement) -> Self: ...
+    def norm(self, p: NormOrder = ...) -> RealDoubleElement: ...
     def mean(self) -> _DoubleScalar: ...
     def variance(self, population: bool = ...) -> _DoubleScalar: ...
     def standard_deviation(self, population: bool = ...) -> _DoubleScalar: ...
-    def stats_kurtosis(
-        self,
-        fisher: bool = ...,
-        bias: bool = ...,
-    ) -> _DoubleScalar: ...
+    def stats_kurtosis(self) -> _DoubleScalar: ...
     def prod(self) -> _DoubleScalar: ...
     def sum(self) -> _DoubleScalar: ...
 

@@ -7,7 +7,7 @@ from sage.structure.parent import ElementConstructorInput
 
 
 class Vector_real_double_dense(Vector_double_dense[RealDoubleElement]):
-    def stats_skew(self, bias: bool = ...) -> RealDoubleElement: ...
+    def stats_skew(self) -> RealDoubleElement: ...
     def __reduce__(
         self,
     ) -> tuple[

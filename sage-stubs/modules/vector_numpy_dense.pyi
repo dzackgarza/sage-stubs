@@ -1,3 +1,4 @@
+from collections.abc import Sequence
 from typing import Generic, Self, TypeVar
 
 import numpy as np
@@ -10,12 +11,19 @@ from sage.structure.parent import ElementConstructorInput
 
 _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
 
+type NumpyVectorInput = (
+    NDArray[np.generic]
+    | Sequence[ElementConstructorInput]
+    | ElementConstructorInput
+    | None
+)
+
 
 class Vector_numpy_dense(FreeModuleElement[_Scalar], Generic[_Scalar]):
     def __init__(
         self,
         parent: FreeModule_generic[_Scalar],
-        entries: NDArray[np.generic] | ElementConstructorInput | None,
+        entries: NumpyVectorInput,
         coerce: bool = ...,
         copy: bool = ...,
     ) -> None: ...
