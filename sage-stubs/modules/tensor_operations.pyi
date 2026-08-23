@@ -1,4 +1,4 @@
-from collections.abc import Iterable, KeysView, Sequence, ValuesView
+from collections.abc import Collection, Iterable, KeysView, Sequence, ValuesView
 from typing import Generic, Literal, TypeVar
 
 from sage.modules.free_module import FreeModule_ambient_field
@@ -29,7 +29,7 @@ class VectorCollection(
 ):
     def __init__(
         self,
-        vector_collection: Iterable[VectorInput],
+        vector_collection: Collection[VectorInput],
         base_ring: Parent[_Scalar],
         dim: int | Integer,
     ) -> None: ...
@@ -42,6 +42,18 @@ class TensorOperation(VectorCollection[_Scalar], Generic[_Scalar]):
         vector_collections: Sequence[VectorCollection[_Scalar]],
         operation: TensorOperationKind = ...,
     ) -> None: ...
+    def _init_product_vectors(
+        self,
+        indices: Sequence[int | Integer],
+    ) -> int: ...
+    def _init_power_operation_vectors(
+        self,
+        indices: Sequence[int | Integer],
+        linear_combinations: Iterable[FormalSum],
+    ) -> int | None: ...
+    def _init_product(self) -> None: ...
+    def _init_symmetric(self) -> None: ...
+    def _init_antisymmetric(self) -> None: ...
     def index_map(
         self,
         *indices: int | Integer | Sequence[int | Integer],
