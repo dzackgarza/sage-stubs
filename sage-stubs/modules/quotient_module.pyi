@@ -1,4 +1,3 @@
-from collections.abc import Iterable, Sequence
 from typing import Generic, Self, TypeVar
 
 from sage.categories.morphism import Morphism
@@ -11,9 +10,17 @@ from sage.modules.free_module import (
 )
 from sage.modules.free_module_element import FreeModuleElement
 from sage.modules.free_module_morphism import FreeModuleMorphism
-from sage.structure.element import ElementConstructorInput, RingElement
+from sage.structure.element import Element, FieldElement, RingElement
+from sage.structure.parent import ElementConstructorInput, Parent
 
 _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+_FieldScalar = TypeVar(
+    "_FieldScalar",
+    bound=FieldElement,
+    default=FieldElement,
+)
+_SourceElement = TypeVar("_SourceElement", bound=Element)
+
 
 class QuotientModule_free_ambient(
     Module_free_ambient[_Scalar],
@@ -30,8 +37,8 @@ class QuotientModule_free_ambient(
     def gen(self, i: int = ...) -> FreeModuleElement[_Scalar]: ...
     def _coerce_map_from_(
         self,
-        M: FreeModule_generic[_Scalar],
-    ) -> bool | Morphism | None: ...
+        M: Parent[_SourceElement],
+    ) -> bool | None: ...
     def ambient_module(self) -> Self: ...
     def cover(
         self,
@@ -42,40 +49,46 @@ class QuotientModule_free_ambient(
     def free_cover(self) -> FreeModule_ambient[_Scalar]: ...
     def free_relations(self) -> Submodule_free_ambient[_Scalar]: ...
 
+
 class FreeModule_ambient_field_quotient(
-    FreeModule_ambient_field[_Scalar],
-    Generic[_Scalar],
+    FreeModule_ambient_field[_FieldScalar],
+    Generic[_FieldScalar],
 ):
     def __init__(
         self,
-        domain: FreeModule_ambient_field[_Scalar],
-        sub: FreeModule_generic[_Scalar],
-        quotient_matrix: Matrix[_Scalar],
-        lift_matrix: Matrix[_Scalar],
-        inner_product_matrix: Matrix[_Scalar] | None = ...,
+        domain: FreeModule_ambient_field[_FieldScalar],
+        sub: FreeModule_generic[_FieldScalar],
+        quotient_matrix: Matrix[_FieldScalar],
+        lift_matrix: Matrix[_FieldScalar],
+        inner_product_matrix: Matrix[_FieldScalar] | None = ...,
     ) -> None: ...
     def _repr_(self) -> str: ...
     def __hash__(self) -> int: ...
     def _element_constructor_(
         self,
-        x: FreeModuleElement[_Scalar]
-        | Sequence[ElementConstructorInput],
-    ) -> FreeModuleElement[_Scalar]: ...
+        x: ElementConstructorInput,
+    ) -> FreeModuleElement[_FieldScalar]: ...
     def _coerce_map_from_(
         self,
-        M: FreeModule_generic[_Scalar],
-    ) -> Morphism | None: ...
-    def quotient_map(self) -> FreeModuleMorphism[_Scalar]: ...
-    def lift_map(self) -> FreeModuleMorphism[_Scalar]: ...
+        M: Parent[_SourceElement],
+    ) -> Morphism[_SourceElement, FreeModuleElement[_FieldScalar]] | None: ...
+    def quotient_map(
+        self,
+    ) -> FreeModuleMorphism[_FieldScalar, _FieldScalar]: ...
+    def lift_map(
+        self,
+    ) -> FreeModuleMorphism[_FieldScalar, _FieldScalar]: ...
     def lift(
         self,
-        x: FreeModuleElement[_Scalar],
-    ) -> FreeModuleElement[_Scalar]: ...
-    def cover(self) -> FreeModule_ambient_field[_Scalar]: ...
+        x: FreeModuleElement[_FieldScalar],
+    ) -> FreeModuleElement[_FieldScalar]: ...
+    def cover(self) -> FreeModule_ambient_field[_FieldScalar]: ...
     V = cover
-    def relations(self) -> FreeModule_generic[_Scalar]: ...
+    def relations(self) -> FreeModule_generic[_FieldScalar]: ...
     W = relations
 
+
 FreeModule_quotient = FreeModule_ambient_field_quotient
+
 
 from sage.modules.submodule import Submodule_free_ambient
