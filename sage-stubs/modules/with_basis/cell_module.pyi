@@ -9,7 +9,8 @@ from sage.modules.with_basis.subquotient import (
     QuotientModuleWithBasis,
     SubmoduleWithBasis,
 )
-from sage.structure.element import ElementConstructorInput, RingElement
+from sage.structure.element import RingElement
+from sage.structure.parent import ElementConstructorInput
 
 _CellIndex = TypeVar("_CellIndex", bound=Hashable, default=Hashable)
 _BasisIndex = TypeVar("_BasisIndex", bound=Hashable, default=Hashable)

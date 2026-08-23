@@ -6,8 +6,8 @@ from sage.combinat.free_module import CombinatorialFreeModule
 from sage.matrix.matrix0 import Matrix
 from sage.modules.with_basis.indexed_element import IndexedFreeModuleElement
 from sage.modules.with_basis.subquotient import SubmoduleWithBasis
-from sage.structure.element import Element, ElementConstructorInput, RingElement
-from sage.structure.parent import Parent
+from sage.structure.element import Element, RingElement
+from sage.structure.parent import ElementConstructorInput, Parent
 
 _Actor = TypeVar("_Actor", bound=Element, default=Element)
 _Index = TypeVar("_Index", bound=Hashable, default=Hashable)

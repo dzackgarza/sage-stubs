@@ -23,7 +23,6 @@ from sage.modules.with_basis.representation import (
 from sage.modules.with_basis.subquotient import (
     QuotientModuleWithBasis,
     SubmoduleWithBasis,
-    SubquotientModuleWithBasis,
 )
 
 __all__ = [
@@ -42,7 +41,6 @@ __all__ = [
     "Representation_abstract",
     "SimpleModule",
     "SubmoduleWithBasis",
-    "SubquotientModuleWithBasis",
     "Subrepresentation",
     "TriangularModuleMorphism",
     "TriangularModuleMorphismByLinearity",

@@ -7,7 +7,7 @@ from sage.modules.filtered_vector_space import (
 )
 from sage.modules.free_module import (
     FreeModule_ambient_field,
-    FreeModule_submodule,
+    FreeModule_submodule_field,
 )
 from sage.modules.quotient_module import FreeModule_ambient_field_quotient
 from sage.rings.infinity import MinusInfinity, PlusInfinity
@@ -19,12 +19,15 @@ from sage.structure.parent import Parent
 _Key = TypeVar("_Key", bound=Hashable, default=Hashable)
 _Scalar = TypeVar("_Scalar", bound=FieldElement, default=FieldElement)
 _NewScalar = TypeVar("_NewScalar", bound=FieldElement)
+_OtherScalar = TypeVar("_OtherScalar", bound=FieldElement)
+
 
 def MultiFilteredVectorSpace(
     arg: int | Integer | Mapping[_Key, FilteredVectorSpace_class[_Scalar]],
     base_ring: Parent[_Scalar] | None = ...,
     check: bool = ...,
 ) -> MultiFilteredVectorSpace_class[_Key, _Scalar]: ...
+
 
 class MultiFilteredVectorSpace_class(
     FreeModule_ambient_field[_Scalar],
@@ -47,8 +50,8 @@ class MultiFilteredVectorSpace_class(
     def is_exhaustive(self) -> bool: ...
     def is_separating(self) -> bool: ...
     def support(self) -> tuple[Integer | PlusInfinity, ...]: ...
-    def min_degree(self) -> Integer | PlusInfinity | MinusInfinity: ...
-    def max_degree(self) -> Integer | PlusInfinity | MinusInfinity: ...
+    def min_degree(self) -> Integer | PlusInfinity: ...
+    def max_degree(self) -> Integer | MinusInfinity: ...
     def get_filtration(
         self,
         key: _Key,
@@ -57,7 +60,7 @@ class MultiFilteredVectorSpace_class(
         self,
         key: _Key,
         deg: FiltrationDegree,
-    ) -> FreeModule_submodule[_Scalar]: ...
+    ) -> FreeModule_submodule_field[_Scalar]: ...
     def graded(
         self,
         key: _Key,
@@ -68,13 +71,13 @@ class MultiFilteredVectorSpace_class(
     def __ne__(self, other: object) -> bool: ...
     def direct_sum(
         self,
-        other: MultiFilteredVectorSpace_class[_Key, _Scalar],
-    ) -> MultiFilteredVectorSpace_class[_Key, _Scalar]: ...
+        other: MultiFilteredVectorSpace_class[_Key, _OtherScalar],
+    ) -> MultiFilteredVectorSpace_class[_Key, FieldElement]: ...
     __add__ = direct_sum
     def tensor_product(
         self,
-        other: MultiFilteredVectorSpace_class[_Key, _Scalar],
-    ) -> MultiFilteredVectorSpace_class[_Key, _Scalar]: ...
+        other: MultiFilteredVectorSpace_class[_Key, _OtherScalar],
+    ) -> MultiFilteredVectorSpace_class[_Key, FieldElement]: ...
     __mul__ = tensor_product
     def exterior_power(
         self,
@@ -92,5 +95,5 @@ class MultiFilteredVectorSpace_class(
     ) -> MultiFilteredVectorSpace_class[_Key, _Scalar]: ...
     def random_deformation(
         self,
-        epsilon: float | None = ...,
+        epsilon: _Scalar | None = ...,
     ) -> MultiFilteredVectorSpace_class[_Key, _Scalar]: ...
