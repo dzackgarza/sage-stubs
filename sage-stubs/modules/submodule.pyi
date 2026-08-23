@@ -8,15 +8,14 @@ from sage.modules.free_module import (
     Module_free_ambient,
 )
 from sage.modules.free_module_element import FreeModuleElement
+from sage.modules.quotient_module import QuotientModule_free_ambient
 from sage.structure.element import RingElement
 
 _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
 
 type AmbientFreeModule[_Scalar: RingElement] = (
-    FreeModule_ambient[_Scalar]
-    | QuotientModule_free_ambient[_Scalar]
+    FreeModule_ambient[_Scalar] | QuotientModule_free_ambient[_Scalar]
 )
-
 
 class Submodule_free_ambient(
     Module_free_ambient[_Scalar],
@@ -45,8 +44,4 @@ class Submodule_free_ambient(
     def gen(self, i: int = ...) -> FreeModuleElement[_Scalar]: ...
     def ambient_module(self) -> AmbientFreeModule[_Scalar]: ...
 
-
 Submodule = Submodule_free_ambient
-
-
-from sage.modules.quotient_module import QuotientModule_free_ambient

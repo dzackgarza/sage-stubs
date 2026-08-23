@@ -9,7 +9,6 @@ from sage.structure.element import ModuleElement, RingElement
 _Element = TypeVar("_Element", bound=ModuleElement, default=ModuleElement)
 _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
 
-
 class FiniteZZsubmodule_iterator(
     Iterator[_Element],
     Generic[_Element],
@@ -23,8 +22,6 @@ class FiniteZZsubmodule_iterator(
     ) -> None: ...
     def __iter__(self) -> Self: ...
     def __next__(self) -> _Element: ...
-    def __repr__(self) -> str: ...
-
 
 class FiniteFieldsubspace_iterator(
     FiniteZZsubmodule_iterator[FreeModuleElement[_Scalar]],
@@ -36,7 +33,6 @@ class FiniteFieldsubspace_iterator(
         coset_rep: FreeModuleElement[_Scalar] | None = ...,
         immutable: bool = ...,
     ) -> None: ...
-
 
 class FiniteFieldsubspace_projPoint_iterator(
     Iterator[FreeModuleElement[_Scalar]],
@@ -50,4 +46,3 @@ class FiniteFieldsubspace_projPoint_iterator(
     ) -> None: ...
     def __iter__(self) -> Self: ...
     def __next__(self) -> FreeModuleElement[_Scalar]: ...
-    def __repr__(self) -> str: ...

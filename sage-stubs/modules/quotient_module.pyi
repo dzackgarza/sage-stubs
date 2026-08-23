@@ -10,6 +10,7 @@ from sage.modules.free_module import (
 )
 from sage.modules.free_module_element import FreeModuleElement
 from sage.modules.free_module_morphism import FreeModuleMorphism
+from sage.modules.submodule import Submodule_free_ambient
 from sage.structure.element import Element, FieldElement, RingElement
 from sage.structure.parent import ElementConstructorInput, Parent
 
@@ -20,7 +21,6 @@ _FieldScalar = TypeVar(
     default=FieldElement,
 )
 _SourceElement = TypeVar("_SourceElement", bound=Element)
-
 
 class QuotientModule_free_ambient(
     Module_free_ambient[_Scalar],
@@ -48,7 +48,6 @@ class QuotientModule_free_ambient(
     W = relations
     def free_cover(self) -> FreeModule_ambient[_Scalar]: ...
     def free_relations(self) -> Submodule_free_ambient[_Scalar]: ...
-
 
 class FreeModule_ambient_field_quotient(
     FreeModule_ambient_field[_FieldScalar],
@@ -87,8 +86,4 @@ class FreeModule_ambient_field_quotient(
     def relations(self) -> FreeModule_generic[_FieldScalar]: ...
     W = relations
 
-
 FreeModule_quotient = FreeModule_ambient_field_quotient
-
-
-from sage.modules.submodule import Submodule_free_ambient

@@ -1,13 +1,14 @@
-from typing import Generic, Self, TypeVar, overload
+from typing import Generic, TypeVar, overload
 
 from sage.categories.category import Category
 from sage.categories.homset import Homset
 from sage.categories.morphism import Morphism
 from sage.modules.fg_pid.fgp_element import FGP_Element
-from sage.modules.fg_pid.fgp_module import FGPElementInput, FGP_Module_class
+from sage.modules.fg_pid.fgp_module import FGP_Module_class, FGPElementInput
 from sage.modules.free_module_element import FreeModuleElement
 from sage.rings.integer import Integer
 from sage.structure.element import RingElement
+from sage.structure.parent import Parent
 
 _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
 
@@ -17,12 +18,10 @@ type FGPUnderlyingMorphism[_Scalar: RingElement] = (
     | FGPScalarInput[_Scalar]
 )
 
-
 def FGP_Homset(
     X: FGP_Module_class[_Scalar],
     Y: FGP_Module_class[_Scalar],
 ) -> FGP_Homset_class[_Scalar]: ...
-
 
 class FGP_Morphism(
     Morphism[FGP_Element[_Scalar], FGP_Element[_Scalar]],
@@ -40,12 +39,12 @@ class FGP_Morphism(
     def __add__(
         self,
         right: FGP_Morphism[_Scalar] | FGPScalarInput[_Scalar],
-    ) -> Self: ...
+    ) -> FGP_Morphism[_Scalar]: ...
     def __sub__(
         self,
         right: FGP_Morphism[_Scalar] | FGPScalarInput[_Scalar],
-    ) -> Self: ...
-    def __neg__(self) -> Self: ...
+    ) -> FGP_Morphism[_Scalar]: ...
+    def __neg__(self) -> FGP_Morphism[_Scalar]: ...
     @overload
     def __call__(
         self,
@@ -67,7 +66,6 @@ class FGP_Morphism(
         x: FGPElementInput[_Scalar],
     ) -> FGP_Element[_Scalar]: ...
 
-
 class FGP_Homset_class(
     Homset[
         FGP_Morphism[_Scalar],
@@ -84,7 +82,10 @@ class FGP_Homset_class(
         Y: FGP_Module_class[_Scalar],
         category: Category | None = ...,
     ) -> None: ...
-    def _coerce_map_from_(self, S: object) -> bool: ...
+    def _coerce_map_from_(
+        self,
+        S: FGP_Homset_class[_Scalar] | Parent,
+    ) -> bool: ...
     def __call__(
         self,
         x: FGP_Morphism[_Scalar] | FGPUnderlyingMorphism[_Scalar],

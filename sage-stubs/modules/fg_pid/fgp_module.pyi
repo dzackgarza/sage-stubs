@@ -6,6 +6,7 @@ from sage.categories.homset import Homset
 from sage.categories.morphism import Morphism
 from sage.matrix.matrix0 import Matrix
 from sage.modules.fg_pid.fgp_element import FGP_Element
+from sage.modules.fg_pid.fgp_morphism import FGP_Homset_class, FGP_Morphism
 from sage.modules.free_module import (
     FreeModule_generic,
     FreeModuleInput,
@@ -22,21 +23,16 @@ from sage.structure.parent import ElementConstructorInput, Parent
 _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
 
 type FGPElementInput[_Scalar: RingElement] = (
-    FGP_Element[_Scalar]
-    | FreeModuleInput[_Scalar]
-    | int
-    | Integer
+    FGP_Element[_Scalar] | FreeModuleInput[_Scalar] | int | Integer
 )
 
 DEBUG: bool
-
 
 def FGP_Module(
     V: FreeModule_generic[_Scalar],
     W: FreeModule_generic[_Scalar],
     check: bool = ...,
 ) -> FGP_Module_class[_Scalar]: ...
-
 
 class FGP_Module_class(
     Module[_Scalar, FGP_Element[_Scalar]],
@@ -170,7 +166,6 @@ class FGP_Module_class(
         self,
     ) -> Morphism[FreeModuleElement[_Scalar], FGP_Element[_Scalar]]: ...
 
-
 def random_fgp_module(
     n: int | Integer,
     R: Parent[_Scalar] = ...,
@@ -186,9 +181,3 @@ def _test_morphism_0(
     R: Parent[_Scalar] = ...,
     finite: bool = ...,
 ) -> None: ...
-
-
-from sage.modules.fg_pid.fgp_morphism import (
-    FGP_Homset_class,
-    FGP_Morphism,
-)

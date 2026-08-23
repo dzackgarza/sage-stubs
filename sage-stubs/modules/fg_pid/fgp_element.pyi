@@ -1,5 +1,6 @@
 from typing import Generic, Self, TypeVar, overload
 
+from sage.modules.fg_pid.fgp_module import FGP_Module_class
 from sage.modules.free_module_element import FreeModuleElement
 from sage.rings.infinity import PlusInfinity
 from sage.rings.integer import Integer
@@ -10,7 +11,6 @@ _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
 _NewScalar = TypeVar("_NewScalar", bound=RingElement)
 
 DEBUG: bool
-
 
 class FGP_Element(ModuleElement, Generic[_Scalar]):
     def __init__(
@@ -45,6 +45,3 @@ class FGP_Element(ModuleElement, Generic[_Scalar]):
     def _richcmp_(self, other: FGP_Element[_Scalar], op: int) -> bool: ...
     def additive_order(self) -> Integer | PlusInfinity: ...
     order = additive_order
-
-
-from sage.modules.fg_pid.fgp_module import FGP_Module_class
