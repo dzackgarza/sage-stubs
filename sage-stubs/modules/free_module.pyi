@@ -587,7 +587,9 @@ class FreeModule_submodule_with_basis_pid(
         basis: Matrix[RingElement] | GeneratorFamily[RingElement],
         check: bool = ...,
         echelonize: bool = ...,
-        echelonized_basis: Matrix[RingElement] | GeneratorFamily[RingElement] | None = ...,
+        echelonized_basis: (
+            Matrix[RingElement] | GeneratorFamily[RingElement] | None
+        ) = ...,
         already_echelonized: bool = ...,
         category: Category | None = ...,
     ) -> None: ...
@@ -715,7 +717,9 @@ class FreeModule_submodule_with_basis_field(
         basis: Matrix[_FieldScalar] | GeneratorFamily[_FieldScalar],
         check: bool = ...,
         echelonize: bool = ...,
-        echelonized_basis: Matrix[_FieldScalar] | GeneratorFamily[_FieldScalar] | None = ...,
+        echelonized_basis: (
+            Matrix[_FieldScalar] | GeneratorFamily[_FieldScalar] | None
+        ) = ...,
         already_echelonized: bool = ...,
         category: Category | None = ...,
     ) -> None: ...
