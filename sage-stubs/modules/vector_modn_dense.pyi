@@ -1,23 +1,69 @@
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
 from typing import Self
 
-from sage.modules.free_module_element import FreeModuleElement_generic_dense
+from sage.modules.free_module import FreeModule_generic, ModuleRank
+from sage.modules.free_module_element import FreeModuleElement
 from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
+from sage.rings.integer import Integer
 from sage.structure.parent import ElementConstructorInput
 
+MAX_MODULUS: int
 
-class Vector_modn_dense(
-    FreeModuleElement_generic_dense[IntegerMod_abstract]
-):
+
+class Vector_modn_dense(FreeModuleElement[IntegerMod_abstract]):
     def __init__(
         self,
-        parent: object,
-        entries: Sequence[IntegerMod_abstract | ElementConstructorInput] = ...,
+        parent: FreeModule_generic[IntegerMod_abstract],
+        x: (
+            Sequence[ElementConstructorInput]
+            | int
+            | Integer
+            | IntegerMod_abstract
+        ),
         coerce: bool = ...,
         copy: bool = ...,
     ) -> None: ...
     def __copy__(self) -> Self: ...
-    def list(self, copy: bool = ...) -> list[IntegerMod_abstract]: ...
-    def dot_product(self, right: Vector_modn_dense) -> IntegerMod_abstract: ...
-    inner_product = dot_product
-    def pairwise_product(self, right: Vector_modn_dense) -> Self: ...
+    def _richcmp_(self, right: Self, op: int) -> bool: ...
+    def __reduce__(
+        self,
+    ) -> tuple[
+        Callable[
+            [
+                FreeModule_generic[IntegerMod_abstract],
+                Sequence[ElementConstructorInput],
+                ModuleRank,
+                int,
+                bool,
+            ],
+            Vector_modn_dense,
+        ],
+        tuple[
+            FreeModule_generic[IntegerMod_abstract],
+            list[IntegerMod_abstract],
+            int,
+            int,
+            bool,
+        ],
+    ]: ...
+    def _add_(self, right: Self) -> Self: ...
+    def _sub_(self, right: Self) -> Self: ...
+    def _dot_product_(self, right: Self) -> IntegerMod_abstract: ...
+    def _pairwise_product_(self, right: Self) -> Self: ...
+    def _lmul_(self, left: IntegerMod_abstract) -> Self: ...
+    def _neg_(self) -> Self: ...
+
+
+def unpickle_v0(
+    parent: FreeModule_generic[IntegerMod_abstract],
+    entries: Sequence[ElementConstructorInput],
+    degree: ModuleRank,
+    p: int,
+) -> Vector_modn_dense: ...
+def unpickle_v1(
+    parent: FreeModule_generic[IntegerMod_abstract],
+    entries: Sequence[ElementConstructorInput],
+    degree: ModuleRank,
+    p: int,
+    immutable: bool,
+) -> Vector_modn_dense: ...
