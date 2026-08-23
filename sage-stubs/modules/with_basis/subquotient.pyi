@@ -1,8 +1,9 @@
-from collections.abc import Hashable, Iterable, Sequence
+from collections.abc import Callable, Hashable, Iterable, Sequence
 from typing import Generic, TypeVar
 
 from sage.categories.category import Category
 from sage.combinat.free_module import CombinatorialFreeModule
+from sage.modules.free_module import FreeModule_generic
 from sage.modules.with_basis.indexed_element import IndexedFreeModuleElement
 from sage.modules.with_basis.morphism import (
     ModuleMorphism,
@@ -17,10 +18,40 @@ _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
 type AmbientElement[_Scalar: RingElement] = IndexedFreeModuleElement[Hashable, _Scalar]
 type SubquotientElement[_Index: Hashable, _Scalar: RingElement] = IndexedFreeModuleElement[_Index, _Scalar]
 
+
+class QuotientModuleWithBasis(
+    CombinatorialFreeModule,
+    Generic[_Index, _Scalar],
+):
+    @staticmethod
+    def __classcall_private__(
+        class_: type[QuotientModuleWithBasis[_Index, _Scalar]],
+        submodule: SubmoduleWithBasis[Hashable, _Scalar],
+        category: Category | None = ...,
+    ) -> QuotientModuleWithBasis[_Index, _Scalar]: ...
+    def __init__(
+        self,
+        submodule: SubmoduleWithBasis[Hashable, _Scalar],
+        category: Category,
+        *args: object,
+        **opts: object,
+    ) -> None: ...
+    def ambient(self) -> CombinatorialFreeModule: ...
+    def lift(
+        self,
+        x: SubquotientElement[_Index, _Scalar],
+    ) -> AmbientElement[_Scalar]: ...
+    def retract(
+        self,
+        x: AmbientElement[_Scalar],
+    ) -> SubquotientElement[_Index, _Scalar]: ...
+
+
 class SubmoduleWithBasis(
     CombinatorialFreeModule,
     Generic[_Index, _Scalar],
 ):
+    lift_on_basis: Callable[[_Index], AmbientElement[_Scalar]]
     lift: TriangularModuleMorphism[_Index, Hashable, _Scalar]
     reduce: ModuleMorphism[Hashable, Hashable, _Scalar]
     retract: ModuleMorphism[Hashable, _Index, _Scalar]
@@ -47,48 +78,33 @@ class SubmoduleWithBasis(
         **opts: object,
     ) -> None: ...
     def ambient(self) -> CombinatorialFreeModule: ...
-    def basis(self) -> AbstractFamily: ...
-    def lift_on_basis(self, index: _Index) -> AmbientElement[_Scalar]: ...
+    def _support_key(self, x: Hashable) -> int: ...
     def is_submodule(
         self,
         other: CombinatorialFreeModule | SubmoduleWithBasis[Hashable, _Scalar],
     ) -> bool: ...
-
-class QuotientModuleWithBasis(
-    CombinatorialFreeModule,
-    Generic[_Index, _Scalar],
-):
-    @staticmethod
-    def __classcall_private__(
-        class_: type[QuotientModuleWithBasis[_Index, _Scalar]],
-        submodule: SubmoduleWithBasis[Hashable, _Scalar],
-        category: Category | None = ...,
-    ) -> QuotientModuleWithBasis[_Index, _Scalar]: ...
-    def __init__(
+    def _common_submodules(
         self,
-        submodule: SubmoduleWithBasis[Hashable, _Scalar],
-        category: Category,
+        other: SubmoduleWithBasis[Hashable, _Scalar],
+    ) -> tuple[FreeModule_generic[_Scalar], FreeModule_generic[_Scalar]]: ...
+    def is_equal_subspace(
+        self,
+        other: CombinatorialFreeModule | SubmoduleWithBasis[Hashable, _Scalar],
+    ) -> bool: ...
+    def __add__(
+        self,
+        other: SubmoduleWithBasis[Hashable, _Scalar],
+    ) -> SubmoduleWithBasis[Hashable, _Scalar]: ...
+    subspace_sum = __add__
+    def __and__(
+        self,
+        other: CombinatorialFreeModule | SubmoduleWithBasis[Hashable, _Scalar],
+    ) -> SubmoduleWithBasis[Hashable, _Scalar]: ...
+    intersection = __and__
+    __rand__ = __and__
+    def subspace(
+        self,
+        gens: Iterable[SubquotientElement[_Index, _Scalar]],
         *args: object,
         **opts: object,
-    ) -> None: ...
-    def ambient(self) -> CombinatorialFreeModule: ...
-    def relations(self) -> SubmoduleWithBasis[Hashable, _Scalar]: ...
-    def lift(
-        self,
-        x: SubquotientElement[_Index, _Scalar],
-    ) -> AmbientElement[_Scalar]: ...
-    def retract(
-        self,
-        x: AmbientElement[_Scalar],
-    ) -> SubquotientElement[_Index, _Scalar]: ...
-
-class SubquotientModuleWithBasis(
-    QuotientModuleWithBasis[_Index, _Scalar],
-    Generic[_Index, _Scalar],
-):
-    def __init__(
-        self,
-        submodule: SubmoduleWithBasis[Hashable, _Scalar],
-        relations: SubmoduleWithBasis[Hashable, _Scalar],
-        category: Category | None = ...,
-    ) -> None: ...
+    ) -> SubmoduleWithBasis[Hashable, _Scalar]: ...
