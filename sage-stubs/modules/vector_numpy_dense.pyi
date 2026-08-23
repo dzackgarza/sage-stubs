@@ -1,29 +1,25 @@
-from collections.abc import Sequence
 from typing import Generic, Self, TypeVar
 
-from numpy import ndarray
+import numpy as np
+from numpy.typing import DTypeLike, NDArray
 
-from sage.modules.free_module_element import FreeModuleElement_generic_dense
+from sage.modules.free_module import FreeModule_generic
+from sage.modules.free_module_element import FreeModuleElement
 from sage.structure.element import RingElement
 from sage.structure.parent import ElementConstructorInput
 
 _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
 
 
-class Vector_numpy_dense(
-    FreeModuleElement_generic_dense[_Scalar],
-    Generic[_Scalar],
-):
+class Vector_numpy_dense(FreeModuleElement[_Scalar], Generic[_Scalar]):
     def __init__(
         self,
-        parent: object,
-        entries: ndarray | Sequence[ElementConstructorInput] = ...,
+        parent: FreeModule_generic[_Scalar],
+        entries: NDArray[np.generic] | ElementConstructorInput | None,
         coerce: bool = ...,
         copy: bool = ...,
     ) -> None: ...
-    def __copy__(self) -> Self: ...
-    def numpy(self, copy: bool = ...) -> ndarray: ...
-    def list(self, copy: bool = ...) -> list[_Scalar]: ...
-    def dot_product(self, right: Vector_numpy_dense[_Scalar]) -> _Scalar: ...
-    inner_product = dot_product
-    def pairwise_product(self, right: Vector_numpy_dense[_Scalar]) -> Self: ...
+    def __create_vector__(self) -> None: ...
+    def __copy__(self, copy: bool = ...) -> Self: ...
+    def __len__(self) -> int: ...
+    def numpy(self, dtype: DTypeLike | None = ...) -> NDArray[np.generic]: ...
