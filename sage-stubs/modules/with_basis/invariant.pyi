@@ -1,12 +1,12 @@
 from collections.abc import Callable, Hashable, Sequence
-from typing import Generic, Literal, TypeVar
+from typing import Generic, Literal, Self, TypeVar
 
 from sage.categories.pushout import ConstructionFunctor
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.matrix.matrix0 import Matrix
 from sage.modules.with_basis.indexed_element import IndexedFreeModuleElement
 from sage.modules.with_basis.subquotient import SubmoduleWithBasis
-from sage.structure.element import Element, RingElement
+from sage.structure.element import Element, ElementConstructorInput, RingElement
 from sage.structure.parent import Parent
 
 _Actor = TypeVar("_Actor", bound=Element, default=Element)
@@ -20,6 +20,7 @@ type InvariantAction[_Actor: Element, _Index: Hashable, _Scalar: RingElement] = 
     AmbientElement[_Index, _Scalar],
 ]
 type CharacterInput[_Scalar: RingElement] = Sequence[_Scalar] | Callable[[Element], RingElement]
+
 
 class FiniteDimensionalInvariantModule(
     SubmoduleWithBasis[_Index, _Scalar],
@@ -39,8 +40,18 @@ class FiniteDimensionalInvariantModule(
     ) -> tuple[ConstructionFunctor, CombinatorialFreeModule]: ...
     def _repr_(self) -> str: ...
     def _latex_(self) -> str: ...
+    def _test_invariant(self, **options: object) -> None: ...
     def semigroup(self) -> Parent[_Actor]: ...
-    def semigroup_representation(self) -> CombinatorialFreeModule: ...
+    semigroup_representation = SubmoduleWithBasis.ambient
+
+    class Element(SubmoduleWithBasis.Element):
+        def _mul_(self, other: Self) -> Self: ...
+        def _acted_upon_(
+            self,
+            scalar: ElementConstructorInput,
+            self_on_left: bool = ...,
+        ) -> Self | None: ...
+
 
 class FiniteDimensionalTwistedInvariantModule(
     SubmoduleWithBasis[_Index, _Scalar],
@@ -75,3 +86,10 @@ class FiniteDimensionalTwistedInvariantModule(
         x: AmbientElement[_Index, _Scalar],
     ) -> AmbientElement[_Index, _Scalar]: ...
     def projection_matrix(self) -> Matrix[_Scalar]: ...
+
+    class Element(SubmoduleWithBasis.Element):
+        def _acted_upon_(
+            self,
+            scalar: ElementConstructorInput,
+            self_on_left: bool = ...,
+        ) -> Self | None: ...
