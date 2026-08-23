@@ -3,7 +3,6 @@ from typing import Generic, Literal, Self, TypeVar, overload
 import numpy as np
 
 from sage.modules.vector_numpy_dense import Vector_numpy_dense
-from sage.rings.complex_double import ComplexDoubleElement
 from sage.rings.infinity import MinusInfinity, PlusInfinity
 from sage.structure.element import FieldElement
 from sage.structure.parent import ElementConstructorInput
