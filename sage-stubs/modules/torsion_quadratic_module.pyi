@@ -20,6 +20,10 @@ type QuadraticGenerator = FreeModuleElement[RingElement] | Sequence[RingElement]
 
 
 def TorsionQuadraticForm(q: Matrix[Rational]) -> TorsionQuadraticModule: ...
+def _brown_indecomposable(
+    q: Matrix[Rational],
+    p: int | Integer,
+) -> IntegerMod_abstract: ...
 
 
 class TorsionQuadraticModuleElement(FGP_Element[RingElement]):
