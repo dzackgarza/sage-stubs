@@ -1,5 +1,5 @@
 from collections.abc import Iterable, Sequence
-from typing import Literal
+from typing import Literal, overload
 
 from sage.geometry.polyhedron.base import Polyhedron_base
 from sage.matrix.matrix0 import Matrix
@@ -12,6 +12,7 @@ from sage.modules.free_module_element import FreeModuleElement
 from sage.rings.integer import Integer
 from sage.rings.number_field.number_field_element import OrderElement_absolute
 from sage.rings.rational import Rational
+from sage.rings.real_mpfr import RealNumber
 from sage.structure.element import RingElement
 from sage.symbolic.expression import Expression
 
@@ -22,14 +23,23 @@ type IntegerLatticeBasis = (
     | FreeModule_ambient_pid[Integer]
     | OrderElement_absolute
 )
-type ClosestVectorTarget = Sequence[RingElement | int] | FreeModuleElement[RingElement]
+type ClosestVectorTarget = (
+    Sequence[RingElement | int]
+    | FreeModuleElement[RingElement]
+)
 type LatticeReductionAlgorithm = Literal["fplll", "pari"]
-type ApproximationAlgorithm = Literal["embedding", "nearest_plane", "rounding_off"]
+type ApproximationAlgorithm = Literal[
+    "embedding",
+    "nearest_plane",
+    "rounding_off",
+]
+
 
 def IntegerLattice(
     basis: IntegerLatticeBasis,
     lll_reduce: bool = ...,
 ) -> FreeModule_submodule_with_basis_integer: ...
+
 
 class FreeModule_submodule_with_basis_integer(
     FreeModule_submodule_with_basis_pid[Integer],
@@ -44,8 +54,10 @@ class FreeModule_submodule_with_basis_integer(
         already_echelonized: bool = ...,
         lll_reduce: bool = ...,
     ) -> None: ...
+
     @property
     def reduced_basis(self) -> Matrix_integer_dense: ...
+
     def LLL(self, *args: object, **kwds: object) -> Matrix_integer_dense: ...
     def BKZ(self, *args: object, **kwds: object) -> Matrix_integer_dense: ...
     def HKZ(self, *args: object, **kwds: object) -> Matrix_integer_dense: ...
@@ -82,6 +94,31 @@ class FreeModule_submodule_with_basis_integer(
         *args: object,
         **kwargs: object,
     ) -> FreeModuleElement[Integer]: ...
-    babai = approximate_closest_vector
-    def hadamard_ratio(self, use_reduced_basis: bool = ...) -> Expression: ...
-    def gaussian_heuristic(self, exact_form: bool = ...) -> Expression: ...
+    def babai(
+        self,
+        t: ClosestVectorTarget,
+        delta: Rational | float | None = ...,
+        algorithm: ApproximationAlgorithm = ...,
+        *args: object,
+        **kwargs: object,
+    ) -> FreeModuleElement[Integer]: ...
+    def hadamard_ratio(
+        self,
+        use_reduced_basis: bool = ...,
+    ) -> RingElement: ...
+
+    @overload
+    def gaussian_heuristic(
+        self,
+        exact_form: Literal[False] = ...,
+    ) -> RealNumber: ...
+    @overload
+    def gaussian_heuristic(
+        self,
+        exact_form: Literal[True],
+    ) -> Expression: ...
+    @overload
+    def gaussian_heuristic(
+        self,
+        exact_form: bool = ...,
+    ) -> RealNumber | Expression: ...
