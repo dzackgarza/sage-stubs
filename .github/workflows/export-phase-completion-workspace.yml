@@ -6,6 +6,8 @@ on:
     branches: [phase-completion-export]
     paths:
       - .github/workflows/export-phase-completion-workspace.yml
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 
 permissions:
