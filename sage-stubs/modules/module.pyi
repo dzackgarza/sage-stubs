@@ -1,43 +1,43 @@
-from collections.abc import Iterable
 from typing import Generic, TypeVar
 
-from sage.modules.free_module_element import FreeModuleElement
+from sage.categories.category import Category
+from sage.categories.homset import Homset
+from sage.categories.map import Map
+from sage.categories.morphism import Morphism
 from sage.structure.element import ModuleElement, RingElement
-from sage.structure.parent import ElementConstructorInput, Parent
+from sage.structure.parent import Parent
 
 _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+_NewScalar = TypeVar("_NewScalar", bound=RingElement)
 _Element = TypeVar("_Element", bound=ModuleElement, default=ModuleElement)
+_SourceElement = TypeVar("_SourceElement", bound=ModuleElement)
 
 
 class Module(Parent[_Element], Generic[_Scalar, _Element]):
     Element: type[_Element]
+
     def __init__(
         self,
-        base_ring: Parent[_Scalar],
-        category: object | None = ...,
+        base: Parent[_Scalar],
+        category: Category | None = ...,
+        names: str | tuple[str, ...] | None = ...,
     ) -> None: ...
-    def base_ring(self) -> Parent[_Scalar]: ...
-    def zero(self) -> _Element: ...
-    def an_element(self) -> _Element: ...
-    def _element_constructor_(
+    def _coerce_map_from_(
         self,
-        x: ElementConstructorInput,
-    ) -> _Element: ...
-    def submodule(
+        M: Module[RingElement, _SourceElement],
+    ) -> Morphism[_SourceElement, _Element] | None: ...
+    def change_ring(
         self,
-        generators: Iterable[_Element],
-        **kwds: object,
-    ) -> Module[_Scalar, _Element]: ...
-    def quotient(
+        R: Parent[_NewScalar],
+    ) -> Module[_NewScalar, ModuleElement]: ...
+    def base_extend(
         self,
-        submodule: Module[_Scalar, _Element],
-        **kwds: object,
-    ) -> Module[_Scalar, _Element]: ...
-    def tensor_product(
+        R: Parent[_NewScalar],
+    ) -> Module[_NewScalar, ModuleElement]: ...
+    def endomorphism_ring(
         self,
-        other: Module[_Scalar, ModuleElement],
-    ) -> Module[_Scalar, ModuleElement]: ...
-    def direct_sum(
-        self,
-        other: Module[_Scalar, ModuleElement],
-    ) -> Module[_Scalar, ModuleElement]: ...
+    ) -> Homset[Map, _Element, _Element]: ...
+
+
+def is_Module(x: object) -> bool: ...
+def is_VectorSpace(x: object) -> bool: ...
