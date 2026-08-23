@@ -3,26 +3,40 @@ from typing import Generic, TypeVar
 
 from sage.categories.category import Category
 from sage.categories.homset import Homset
-from sage.categories.map import Map
+from sage.categories.morphism import Morphism
 from sage.matrix.matrix0 import Matrix
 from sage.modules.fg_pid.fgp_element import FGP_Element
-from sage.modules.free_module import FreeModule_generic
+from sage.modules.free_module import (
+    FreeModule_generic,
+    FreeModuleInput,
+)
 from sage.modules.free_module_element import FreeModuleElement
 from sage.modules.module import Module
 from sage.modules.module_functors import QuotientModuleFunctor
 from sage.rings.ideal import Ideal_generic
 from sage.rings.infinity import PlusInfinity
 from sage.rings.integer import Integer
-from sage.structure.element import ElementConstructorInput, RingElement
-from sage.structure.parent import Parent
+from sage.structure.element import RingElement
+from sage.structure.parent import ElementConstructorInput, Parent
 
 _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+
+type FGPElementInput[_Scalar: RingElement] = (
+    FGP_Element[_Scalar]
+    | FreeModuleInput[_Scalar]
+    | int
+    | Integer
+)
+
+DEBUG: bool
+
 
 def FGP_Module(
     V: FreeModule_generic[_Scalar],
     W: FreeModule_generic[_Scalar],
     check: bool = ...,
 ) -> FGP_Module_class[_Scalar]: ...
+
 
 class FGP_Module_class(
     Module[_Scalar, FGP_Element[_Scalar]],
@@ -42,10 +56,7 @@ class FGP_Module_class(
         W: FreeModule_generic[_Scalar],
         check: bool = ...,
     ) -> FGP_Module_class[_Scalar]: ...
-    def _coerce_map_from_(
-        self,
-        S: Parent | FGP_Module_class[_Scalar],
-    ) -> bool | Map | None: ...
+    def _coerce_map_from_(self, S: Parent) -> bool: ...
     def _mul_(
         self,
         other: _Scalar,
@@ -54,19 +65,16 @@ class FGP_Module_class(
     def _repr_(self) -> str: ...
     def __truediv__(
         self,
-        other: FGP_Module_class[_Scalar],
+        other: FGP_Module_class[_Scalar] | FreeModule_generic[_Scalar],
     ) -> FGP_Module_class[_Scalar]: ...
     def __eq__(self, other: object) -> bool: ...
     def __ne__(self, other: object) -> bool: ...
     def __lt__(self, other: FGP_Module_class[_Scalar]) -> bool: ...
-    def __le__(self, other: FGP_Module_class[_Scalar]) -> bool: ...
     def __gt__(self, other: FGP_Module_class[_Scalar]) -> bool: ...
     def __ge__(self, other: FGP_Module_class[_Scalar]) -> bool: ...
     def _element_constructor_(
         self,
-        x: FGP_Element[_Scalar]
-        | FreeModuleElement[_Scalar]
-        | Iterable[ElementConstructorInput],
+        x: FGPElementInput[_Scalar],
         check: bool = ...,
     ) -> FGP_Element[_Scalar]: ...
     def linear_combination_of_smith_form_gens(
@@ -76,7 +84,8 @@ class FGP_Module_class(
     def __contains__(self, x: object) -> bool: ...
     def submodule(
         self,
-        x: Iterable[FGP_Element[_Scalar] | FreeModuleElement[_Scalar]],
+        x: FGP_Module_class[_Scalar]
+        | Sequence[FGP_Element[_Scalar] | FreeModuleInput[_Scalar]],
     ) -> FGP_Module_class[_Scalar]: ...
     def has_canonical_map_to(
         self,
@@ -86,6 +95,7 @@ class FGP_Module_class(
         self,
         A: FGP_Module_class[_Scalar],
     ) -> bool: ...
+    __le__ = is_submodule
     def V(self) -> FreeModule_generic[_Scalar]: ...
     def cover(self) -> FreeModule_generic[_Scalar]: ...
     def W(self) -> FreeModule_generic[_Scalar]: ...
@@ -118,11 +128,21 @@ class FGP_Module_class(
     def smith_form_gen(self, i: int | Integer) -> FGP_Element[_Scalar]: ...
     def optimized(
         self,
-    ) -> tuple[FGP_Module_class[_Scalar], Matrix[_Scalar]]: ...
+    ) -> tuple[FGP_Module_class[_Scalar], Matrix[_Scalar] | None]: ...
     def hom(
         self,
+        im_gens: Sequence[FGPElementInput[_Scalar]],
+        codomain: FGP_Module_class[_Scalar] | FreeModule_generic[_Scalar] | None = ...,
+        check: bool = ...,
+    ) -> FGP_Morphism[_Scalar]: ...
+    def _hom_general(
+        self,
         im_gens: Sequence[FGP_Element[_Scalar]],
-        codomain: FGP_Module_class[_Scalar] | None = ...,
+        check: bool = ...,
+    ) -> FGP_Morphism[_Scalar]: ...
+    def _hom_from_smith(
+        self,
+        im_gens: Sequence[FGP_Element[_Scalar]],
         check: bool = ...,
     ) -> FGP_Morphism[_Scalar]: ...
     def _Hom_(
@@ -141,14 +161,15 @@ class FGP_Module_class(
     def __iter__(self) -> Iterator[FGP_Element[_Scalar]]: ...
     def construction(
         self,
-    ) -> tuple[QuotientModuleFunctor, FreeModule_generic[_Scalar]]: ...
+    ) -> tuple[QuotientModuleFunctor[_Scalar], FreeModule_generic[_Scalar]]: ...
     def is_finite(self) -> bool: ...
     def annihilator(self) -> Ideal_generic: ...
     def ngens(self) -> int: ...
     def __hash__(self) -> int: ...
     def quotient_map(
         self,
-    ) -> Map[FreeModuleElement[_Scalar], FGP_Element[_Scalar]]: ...
+    ) -> Morphism[FreeModuleElement[_Scalar], FGP_Element[_Scalar]]: ...
+
 
 def random_fgp_module(
     n: int | Integer,
@@ -156,9 +177,16 @@ def random_fgp_module(
     finite: bool = ...,
 ) -> FGP_Module_class[_Scalar]: ...
 def random_fgp_morphism_0(
-    *args: object,
-    **kwds: object,
-) -> FGP_Morphism[RingElement]: ...
+    n: int | Integer,
+    R: Parent[_Scalar] = ...,
+    finite: bool = ...,
+) -> FGP_Morphism[_Scalar]: ...
+def _test_morphism_0(
+    n: int | Integer,
+    R: Parent[_Scalar] = ...,
+    finite: bool = ...,
+) -> None: ...
+
 
 from sage.modules.fg_pid.fgp_morphism import (
     FGP_Homset_class,

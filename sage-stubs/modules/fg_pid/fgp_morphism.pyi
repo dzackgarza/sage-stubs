@@ -4,21 +4,25 @@ from sage.categories.category import Category
 from sage.categories.homset import Homset
 from sage.categories.morphism import Morphism
 from sage.modules.fg_pid.fgp_element import FGP_Element
-from sage.modules.fg_pid.fgp_module import FGP_Module_class
+from sage.modules.fg_pid.fgp_module import FGPElementInput, FGP_Module_class
 from sage.modules.free_module_element import FreeModuleElement
+from sage.rings.integer import Integer
 from sage.structure.element import RingElement
 
 _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
 
+type FGPScalarInput[_Scalar: RingElement] = _Scalar | int | Integer
 type FGPUnderlyingMorphism[_Scalar: RingElement] = (
     Morphism[FreeModuleElement[_Scalar], FreeModuleElement[_Scalar]]
-    | _Scalar
+    | FGPScalarInput[_Scalar]
 )
+
 
 def FGP_Homset(
     X: FGP_Module_class[_Scalar],
     Y: FGP_Module_class[_Scalar],
 ) -> FGP_Homset_class[_Scalar]: ...
+
 
 class FGP_Morphism(
     Morphism[FGP_Element[_Scalar], FGP_Element[_Scalar]],
@@ -33,8 +37,14 @@ class FGP_Morphism(
     def _repr_(self) -> str: ...
     def im_gens(self) -> tuple[FGP_Element[_Scalar], ...]: ...
     def _richcmp_(self, other: FGP_Morphism[_Scalar], op: int) -> bool: ...
-    def __add__(self, right: FGP_Morphism[_Scalar] | _Scalar) -> Self: ...
-    def __sub__(self, right: FGP_Morphism[_Scalar] | _Scalar) -> Self: ...
+    def __add__(
+        self,
+        right: FGP_Morphism[_Scalar] | FGPScalarInput[_Scalar],
+    ) -> Self: ...
+    def __sub__(
+        self,
+        right: FGP_Morphism[_Scalar] | FGPScalarInput[_Scalar],
+    ) -> Self: ...
     def __neg__(self) -> Self: ...
     @overload
     def __call__(
@@ -44,7 +54,7 @@ class FGP_Morphism(
     @overload
     def __call__(
         self,
-        x: FGP_Element[_Scalar] | FreeModuleElement[_Scalar],
+        x: FGPElementInput[_Scalar],
     ) -> FGP_Element[_Scalar]: ...
     def kernel(self) -> FGP_Module_class[_Scalar]: ...
     def inverse_image(
@@ -54,8 +64,9 @@ class FGP_Morphism(
     def image(self) -> FGP_Module_class[_Scalar]: ...
     def lift(
         self,
-        x: FGP_Element[_Scalar] | FreeModuleElement[_Scalar],
+        x: FGPElementInput[_Scalar],
     ) -> FGP_Element[_Scalar]: ...
+
 
 class FGP_Homset_class(
     Homset[
