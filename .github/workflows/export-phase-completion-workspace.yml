@@ -1,5 +1,6 @@
 name: Export phase-completion workspace
 
+# Refreshed for the Phase 05 completion audit on 2026-08-24.
 on:
   push:
     branches: [phase-completion-export]
