@@ -1,29 +1,63 @@
-from typing import Generic, Self, TypeVar
+from typing import Generic, Literal, Self, TypeVar, overload
 
-from numpy import ndarray
+import numpy as np
 
-from sage.modules.free_module_element import FreeModuleElement_generic_dense
-from sage.structure.element import RingElement
+from sage.modules.vector_numpy_dense import Vector_numpy_dense
+from sage.rings.infinity import MinusInfinity, PlusInfinity
+from sage.structure.element import FieldElement
+from sage.structure.parent import ElementConstructorInput
 
 _DoubleScalar = TypeVar(
     "_DoubleScalar",
-    bound=RingElement,
-    default=RingElement,
+    bound=FieldElement,
+    default=FieldElement,
 )
+
+type NormOrder = int | float | Literal["frob"] | PlusInfinity | MinusInfinity
 
 
 class Vector_double_dense(
-    FreeModuleElement_generic_dense[_DoubleScalar],
+    Vector_numpy_dense[_DoubleScalar],
     Generic[_DoubleScalar],
 ):
-    def numpy(self) -> ndarray: ...
-    def norm(self, p: int | float | str = ...) -> float: ...
-    def dot_product(
+    def _add_(self, right: Self) -> Self: ...
+    def _sub_(self, right: Self) -> Self: ...
+    def _dot_product_(self, right: Self) -> _DoubleScalar: ...
+    def _pairwise_product_(self, right: Self) -> Self: ...
+    def _rmul_(self, left: ElementConstructorInput) -> Self: ...
+    def _lmul_(self, right: ElementConstructorInput) -> Self: ...
+    def inv_fft(self) -> Vector_complex_double_dense: ...
+    @overload
+    def fft(
         self,
-        right: Vector_double_dense[_DoubleScalar],
-    ) -> _DoubleScalar: ...
-    inner_product = dot_product
-    def pairwise_product(
-        self,
-        right: Vector_double_dense[_DoubleScalar],
+        direction: Literal["forward", "backward"] = ...,
+        inplace: Literal[False] = ...,
     ) -> Self: ...
+    @overload
+    def fft(
+        self,
+        direction: Literal["forward", "backward"] = ...,
+        inplace: Literal[True] = ...,
+    ) -> None: ...
+    @overload
+    def fft(
+        self,
+        direction: Literal["forward", "backward"] = ...,
+        inplace: bool = ...,
+    ) -> Self | None: ...
+    def complex_vector(self) -> Vector_complex_double_dense: ...
+    def zero_at(self, eps: float = ...) -> None: ...
+    def norm(self, p: NormOrder = ...) -> _DoubleScalar | np.float64: ...
+    def mean(self) -> _DoubleScalar: ...
+    def variance(self, population: bool = ...) -> _DoubleScalar: ...
+    def standard_deviation(self, population: bool = ...) -> _DoubleScalar: ...
+    def stats_kurtosis(
+        self,
+        fisher: bool = ...,
+        bias: bool = ...,
+    ) -> _DoubleScalar: ...
+    def prod(self) -> _DoubleScalar: ...
+    def sum(self) -> _DoubleScalar: ...
+
+
+from sage.modules.vector_complex_double_dense import Vector_complex_double_dense
