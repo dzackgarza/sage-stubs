@@ -1,18 +1,22 @@
-from collections.abc import Callable, Hashable, Iterable
+from collections.abc import Callable, Hashable, Iterable, Sequence
 
 from sage.categories.category import Category
+from sage.categories.morphism import Morphism
 from sage.categories.pushout import VectorFunctor
 from sage.modules.free_module_element import FreeModuleElement
 from sage.modules.module import Module
 from sage.rings.infinity import PlusInfinity
 from sage.rings.ring import CommutativeRing, Ring
+from sage.sets.family import AbstractFamily
 from sage.structure.element import (
     CommutativeRingElement,
     ModuleElement,
 )
 from sage.structure.indexed_generators import IndexedGenerators
+from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.sets.family import AbstractFamily
+from sage.typeset.ascii_art import AsciiArt
+from sage.typeset.unicode_art import UnicodeArt
 
 class CombinatorialFreeModule(
     UniqueRepresentation,
@@ -72,3 +76,38 @@ class CombinatorialFreeModule(
         distinct: bool = ...,
     ) -> Element: ...
     def zero(self) -> Element: ...
+
+
+class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
+    @staticmethod
+    def __classcall_private__(
+        class_: type[CombinatorialFreeModule_Tensor],
+        modules: Sequence[CombinatorialFreeModule],
+        **options: object,
+    ) -> CombinatorialFreeModule_Tensor: ...
+    def __init__(
+        self,
+        modules: tuple[CombinatorialFreeModule, ...],
+        **options: object,
+    ) -> None: ...
+    def _repr_(self) -> str: ...
+    def tensor_factors(self) -> tuple[CombinatorialFreeModule, ...]: ...
+    def _ascii_art_(self, term: Sequence[Hashable]) -> AsciiArt: ...
+    _ascii_art_term = _ascii_art_
+    def _unicode_art_(self, term: Sequence[Hashable]) -> UnicodeArt: ...
+    _unicode_art_term = _unicode_art_
+    def _latex_(self) -> str: ...
+    def _repr_term(self, term: Sequence[Hashable]) -> str: ...
+    def _latex_term(self, term: Sequence[Hashable]) -> str: ...
+    def tensor_constructor(
+        self,
+        modules: Sequence[CombinatorialFreeModule],
+    ) -> Callable[..., CombinatorialFreeModule.Element]: ...
+    def _tensor_of_elements(
+        self,
+        elements: Sequence[CombinatorialFreeModule.Element],
+    ) -> CombinatorialFreeModule.Element: ...
+    def _coerce_map_from_(
+        self,
+        R: Parent | CombinatorialFreeModule,
+    ) -> Morphism[ModuleElement, ModuleElement] | bool | None: ...
