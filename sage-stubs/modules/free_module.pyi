@@ -1,11 +1,14 @@
 from collections.abc import Hashable, Iterable, Iterator, Sequence
+from types import NotImplementedType
 from typing import Generic, Literal, Self, TypeVar, overload
 
 from sage.categories.category import Category
-from sage.categories.pushout import VectorFunctor
+from sage.categories.morphism import Morphism
+from sage.categories.pushout import ConstructionFunctor, SubspaceFunctor
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.interfaces.expect import Expect, ExpectElement
 from sage.matrix.matrix0 import Matrix
+from sage.matrix.matrix_space import MatrixSpace
 from sage.modules.free_module_element import FreeModuleElement
 from sage.modules.module import Module
 from sage.rings.infinity import PlusInfinity
@@ -234,7 +237,7 @@ class FreeModule_generic(
         coordinate_ring: Parent | None = ...,
         category: Category | None = ...,
     ) -> None: ...
-    def construction(self) -> tuple[VectorFunctor, Parent[_Scalar]]: ...
+    def construction(self) -> tuple[ConstructionFunctor, Parent]: ...
     def _Hom_(
         self,
         codomain: FreeModule_generic[_CodomainScalar],
@@ -581,25 +584,103 @@ class FreeModule_submodule_with_basis_pid(
     def __init__(
         self,
         ambient: FreeModule_ambient_pid[_Scalar],
-        basis: Matrix[_Scalar] | GeneratorFamily[_Scalar],
+        basis: Matrix[RingElement] | GeneratorFamily[RingElement],
         check: bool = ...,
         echelonize: bool = ...,
-        echelonized_basis: Matrix[_Scalar] | None = ...,
+        echelonized_basis: Matrix[RingElement] | GeneratorFamily[RingElement] | None = ...,
         already_echelonized: bool = ...,
         category: Category | None = ...,
     ) -> None: ...
-    def ambient_module(self) -> FreeModule_ambient_pid[_Scalar]: ...
-    def ambient(self) -> FreeModule_generic[_Scalar]: ...
-    def basis(self) -> Sequence[FreeModuleElement[_Scalar]]: ...
-    def basis_matrix(self, ring: Parent | None = ...) -> Matrix[RingElement]: ...
-    def echelonized_basis(self) -> Sequence[FreeModuleElement[_Scalar]]: ...
+    def __hash__(self) -> int: ...
+    def _echelon_matrix_richcmp(
+        self,
+        other: object,
+        op: int,
+    ) -> bool | NotImplementedType: ...
+    def construction(
+        self,
+    ) -> tuple[SubspaceFunctor, FreeModule_ambient_pid[_Scalar]]: ...
     def echelonized_basis_matrix(self) -> Matrix[RingElement]: ...
+    @overload
+    def _matrix_space(
+        self,
+        nrows: ModuleRank,
+        ring: None = ...,
+    ) -> MatrixSpace[_Scalar]: ...
+    @overload
+    def _matrix_space(
+        self,
+        nrows: ModuleRank,
+        ring: Parent[_NewScalar],
+    ) -> MatrixSpace[_NewScalar]: ...
+    def _echelonized_basis(
+        self,
+        ambient: FreeModule_ambient_pid[_Scalar],
+        basis: Sequence[FreeModuleElement[RingElement]],
+    ) -> Sequence[FreeModuleElement[RingElement]]: ...
+    @staticmethod
+    def _denominator(
+        B: Iterable[FreeModuleElement[RingElement] | RingElement],
+    ) -> int | RingElement: ...
+    def _repr_(self) -> str: ...
+    def _latex_(self) -> str: ...
+    def ambient_module(self) -> FreeModule_ambient_pid[_Scalar]: ...
+    def ambient(
+        self,
+    ) -> FreeModule_ambient_pid[_Scalar] | FreeModule_ambient_field[FieldElement]: ...
+    @property
+    def lift(
+        self,
+    ) -> Morphism[
+        FreeModuleElement[_Scalar],
+        FreeModuleElement[RingElement],
+    ]: ...
+    @property
+    def retract(
+        self,
+    ) -> Morphism[
+        FreeModuleElement[RingElement],
+        FreeModuleElement[_Scalar],
+    ]: ...
+    def relations(self) -> Module_free_ambient[_Scalar]: ...
+    def echelon_coordinates(
+        self,
+        v: FreeModuleInput[_Scalar],
+        check: bool = ...,
+    ) -> list[RingElement]: ...
     def user_to_echelon_matrix(self) -> Matrix[RingElement]: ...
     def echelon_to_user_matrix(self) -> Matrix[RingElement]: ...
+    def _user_to_rref_matrix(self) -> Matrix[RingElement]: ...
+    def _rref_to_user_matrix(self) -> Matrix[RingElement]: ...
+    def _echelon_to_rref_matrix(self) -> Matrix[RingElement]: ...
+    def _rref_to_echelon_matrix(self) -> Matrix[RingElement]: ...
+    def vector_space(
+        self,
+        base_field: Parent[_FieldScalar] | None = ...,
+    ) -> FreeModule_generic_field[_FieldScalar | FieldElement]: ...
+    def ambient_vector_space(self) -> FreeModule_ambient_field[FieldElement]: ...
+    def basis(self) -> Sequence[FreeModuleElement[_Scalar]]: ...
+    def basis_matrix(self, ring: Parent | None = ...) -> Matrix[RingElement]: ...
     def change_ring(
         self,
         R: Parent[_NewScalar],
     ) -> FreeModule_generic[_NewScalar]: ...
+    def coordinate_vector(
+        self,
+        v: FreeModuleInput[_Scalar],
+        check: bool = ...,
+    ) -> FreeModuleElement[RingElement]: ...
+    def echelonized_basis(self) -> Sequence[FreeModuleElement[_Scalar]]: ...
+    def echelon_coordinate_vector(
+        self,
+        v: FreeModuleInput[_Scalar],
+        check: bool = ...,
+    ) -> FreeModuleElement[RingElement]: ...
+    def has_user_basis(self) -> bool: ...
+    def linear_combination_of_basis(
+        self,
+        coefficients: Sequence[ElementConstructorInput],
+    ) -> FreeModuleElement[_Scalar]: ...
 
 
 class FreeModule_submodule_pid(
@@ -614,6 +695,13 @@ class FreeModule_submodule_pid(
         already_echelonized: bool = ...,
         category: Category | None = ...,
     ) -> None: ...
+    def _repr_(self) -> str: ...
+    def coordinate_vector(
+        self,
+        v: FreeModuleInput[_Scalar],
+        check: bool = ...,
+    ) -> FreeModuleElement[RingElement]: ...
+    def has_user_basis(self) -> bool: ...
 
 
 class FreeModule_submodule_with_basis_field(
@@ -627,10 +715,21 @@ class FreeModule_submodule_with_basis_field(
         basis: Matrix[_FieldScalar] | GeneratorFamily[_FieldScalar],
         check: bool = ...,
         echelonize: bool = ...,
-        echelonized_basis: Matrix[_FieldScalar] | None = ...,
+        echelonized_basis: Matrix[_FieldScalar] | GeneratorFamily[_FieldScalar] | None = ...,
         already_echelonized: bool = ...,
         category: Category | None = ...,
     ) -> None: ...
+    def _repr_(self) -> str: ...
+    def _denominator(
+        self,
+        B: Iterable[FreeModuleElement[RingElement] | RingElement],
+    ) -> int: ...
+    def _echelonized_basis(
+        self,
+        ambient: FreeModule_ambient_pid[_FieldScalar],
+        basis: Sequence[FreeModuleElement[RingElement]],
+    ) -> Sequence[FreeModuleElement[RingElement]]: ...
+    def is_ambient(self) -> bool: ...
 
 
 class FreeModule_submodule_field(
@@ -640,11 +739,23 @@ class FreeModule_submodule_field(
     def __init__(
         self,
         ambient: FreeModule_ambient_field[_FieldScalar],
-        gens: GeneratorFamily[_FieldScalar],
+        gens: GeneratorFamily[_FieldScalar] | FreeModule_generic[_FieldScalar],
         check: bool = ...,
         already_echelonized: bool = ...,
         category: Category | None = ...,
     ) -> None: ...
+    def _repr_(self) -> str: ...
+    def echelon_coordinates(
+        self,
+        v: FreeModuleInput[_FieldScalar],
+        check: bool = ...,
+    ) -> list[RingElement]: ...
+    def coordinate_vector(
+        self,
+        v: FreeModuleInput[_FieldScalar],
+        check: bool = ...,
+    ) -> FreeModuleElement[RingElement]: ...
+    def has_user_basis(self) -> bool: ...
 
 
 from sage.homology.free_resolution import FreeResolution
