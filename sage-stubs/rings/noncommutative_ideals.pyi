@@ -1,5 +1,5 @@
 from collections.abc import Sequence
-from typing import Literal, TypeAlias
+from typing import Literal
 
 from sage.rings.ideal import Ideal_generic
 from sage.rings.ideal_monoid import IdealMonoid_c
