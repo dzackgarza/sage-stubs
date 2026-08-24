@@ -7,7 +7,7 @@ from sage.categories.pushout import ConstructionFunctor
 from sage.modules.free_module_element import FreeModuleElement
 from sage.modules.module import Module
 from sage.rings.infinity import PlusInfinity
-from sage.rings.ring import CommutativeRing, Ring
+from sage.rings.ring import CommutativeRing
 from sage.sets.family import AbstractFamily
 from sage.structure.element import (
     CommutativeRingElement,
@@ -21,6 +21,8 @@ from sage.typeset.ascii_art import AsciiArt
 from sage.typeset.unicode_art import UnicodeArt
 
 _SourceElement = TypeVar("_SourceElement", bound=ModuleElement)
+_NewScalar = TypeVar("_NewScalar", bound=RingElement)
+
 
 class CombinatorialFreeModule(
     UniqueRepresentation,
@@ -48,7 +50,10 @@ class CombinatorialFreeModule(
     def construction(
         self,
     ) -> tuple[ConstructionFunctor, Parent] | None: ...
-    def change_ring(self, R: Ring) -> CombinatorialFreeModule: ...
+    def change_ring(
+        self,
+        R: Parent[_NewScalar],
+    ) -> CombinatorialFreeModule: ...
     def dimension(self) -> int | PlusInfinity: ...
     def is_exact(self) -> bool: ...
     def set_order(self, order: Iterable[Hashable]) -> None: ...
