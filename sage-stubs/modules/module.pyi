@@ -1,3 +1,4 @@
+from collections.abc import Callable
 from typing import Generic, TypeVar
 
 from sage.categories.category import Category
@@ -10,8 +11,13 @@ from sage.structure.parent import Parent
 _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
 _NewScalar = TypeVar("_NewScalar", bound=RingElement)
 _Element = TypeVar("_Element", bound=ModuleElement, default=ModuleElement)
-_SourceElement = TypeVar("_SourceElement", bound=ModuleElement)
 
+type ModuleCoercionResult = (
+    Callable[[Parent, ModuleElement], ModuleElement]
+    | Morphism[ModuleElement, ModuleElement]
+    | bool
+    | None
+)
 
 class Module(Parent[_Element], Generic[_Scalar, _Element]):
     Element: type[_Element]
@@ -24,8 +30,9 @@ class Module(Parent[_Element], Generic[_Scalar, _Element]):
     ) -> None: ...
     def _coerce_map_from_(
         self,
-        M: Module[RingElement, _SourceElement],
-    ) -> Morphism[_SourceElement, _Element] | None: ...
+        R: Parent | type,
+        /,
+    ) -> ModuleCoercionResult: ...
     def change_ring(
         self,
         R: Parent[_NewScalar],
@@ -37,7 +44,6 @@ class Module(Parent[_Element], Generic[_Scalar, _Element]):
     def endomorphism_ring(
         self,
     ) -> Homset[Map, _Element, _Element]: ...
-
 
 def is_Module(x: object) -> bool: ...
 def is_VectorSpace(x: object) -> bool: ...

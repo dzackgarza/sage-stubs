@@ -1,7 +1,6 @@
-from __future__ import annotations
-
 from typing import Generic, Literal, TypeVar, overload
 
+from sage.algebras.clifford_algebra import ExteriorAlgebraIdeal
 from sage.algebras.clifford_algebra_element import CliffordAlgebraElement
 from sage.data_structures.bitset import FrozenBitset
 from sage.rings.integer import Integer
@@ -12,7 +11,6 @@ _Scalar = TypeVar(
     bound=RingElement,
     default=RingElement,
 )
-
 
 class GBElement(Generic[_Scalar]):
     def __init__(
@@ -27,7 +25,6 @@ class GBElement(Generic[_Scalar]):
         other: GBElement[_Scalar],
         op: int,
     ) -> bool: ...
-
 
 class GroebnerStrategy(Generic[_Scalar]):
     groebner_basis: tuple[CliffordAlgebraElement[_Scalar] | None, ...]
@@ -61,17 +58,11 @@ class GroebnerStrategy(Generic[_Scalar]):
         self,
     ) -> dict[CliffordAlgebraElement[_Scalar], Integer]: ...
 
-
 class GroebnerStrategyNegLex(GroebnerStrategy[_Scalar], Generic[_Scalar]): ...
-
 
 class GroebnerStrategyDegRevLex(
     GroebnerStrategy[_Scalar],
     Generic[_Scalar],
 ): ...
 
-
 class GroebnerStrategyDegLex(GroebnerStrategy[_Scalar], Generic[_Scalar]): ...
-
-
-from sage.algebras.clifford_algebra import ExteriorAlgebraIdeal

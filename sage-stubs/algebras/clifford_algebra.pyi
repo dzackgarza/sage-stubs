@@ -1,11 +1,13 @@
-from __future__ import annotations
-
 from collections.abc import Callable, Hashable, Iterable, Iterator, Mapping, Sequence
 from types import NotImplementedType
 from typing import Generic, Literal, Protocol, TypeVar, overload
 
+from sage.algebras.clifford_algebra_element import (
+    CliffordAlgebraElement,
+    ExteriorAlgebraElement,
+)
 from sage.categories.category import Category
-from sage.categories.map import Map
+from sage.categories.morphism import Morphism
 from sage.categories.poor_man_map import PoorManMap
 from sage.categories.rings import Rings
 from sage.combinat.free_module import CombinatorialFreeModule
@@ -24,6 +26,7 @@ from sage.modules.with_basis.subquotient import SubmoduleWithBasis
 from sage.quadratic_forms.quadratic_form import QuadraticForm
 from sage.rings.integer import Integer
 from sage.rings.noncommutative_ideals import IdealSide, Ideal_nc
+from sage.rings.ring import Ring
 from sage.sets.family import Family
 from sage.structure.element import ModuleElement, RingElement
 from sage.structure.parent import ElementConstructorInput, Parent
@@ -70,19 +73,11 @@ type ExteriorTensorElement[_Coefficient: RingElement] = IndexedFreeModuleElement
     tuple[FrozenBitset, FrozenBitset],
     _Coefficient,
 ]
-type ExteriorIdealProduct[_Coefficient: RingElement] = (
-    ExteriorAlgebraIdeal[_Coefficient]
-    | Ideal_nc
-    | SubmoduleWithBasis[Hashable, _Coefficient]
-)
-
-
 class _CliffordGeneratorFamily(Protocol[_Coefficient]):
     def __getitem__(self, name: str) -> CliffordAlgebraElement[_Coefficient]: ...
     def __iter__(self) -> Iterator[CliffordAlgebraElement[_Coefficient]]: ...
     def keys(self) -> Iterable[str]: ...
     def values(self) -> Iterable[CliffordAlgebraElement[_Coefficient]]: ...
-
 
 class CliffordAlgebraIndices(
     UniqueRepresentation,
@@ -94,7 +89,12 @@ class CliffordAlgebraIndices(
         degree: int | Integer | None = ...,
     ) -> None: ...
     def _element_constructor_(self, x: CliffordIndexInput) -> FrozenBitset: ...
-    def __call__(self, el: CliffordIndexInput) -> FrozenBitset: ...
+    def __call__(
+        self,
+        x: CliffordIndexInput | ElementConstructorInput = ...,
+        *args: object,
+        **kwds: object,
+    ) -> FrozenBitset: ...
     def cardinality(self) -> int | Integer: ...
     def __len__(self) -> int: ...
     def _repr_(self) -> str: ...
@@ -103,23 +103,14 @@ class CliffordAlgebraIndices(
     def __contains__(self, elt: object) -> bool: ...
     def _an_element_(self) -> FrozenBitset: ...
 
-
 class CliffordAlgebra(
     CombinatorialFreeModule,
     Generic[_Coefficient],
 ):
-    Element: type[CliffordAlgebraElement[_Coefficient]]
-
-    @staticmethod
-    def __classcall_private__(
-        cls: type[CliffordAlgebra[_Coefficient]],
-        Q: QuadraticForm,
-        names: CliffordGeneratorNames | None = ...,
-    ) -> CliffordAlgebra[_Coefficient]: ...
     def __init__(
         self,
         Q: QuadraticForm,
-        names: tuple[str, ...],
+        names: CliffordGeneratorNames | None = ...,
         category: Category | None = ...,
     ) -> None: ...
     def _repr_(self) -> str: ...
@@ -127,11 +118,11 @@ class CliffordAlgebra(
     def _latex_term(self, m: CliffordBasisIndex) -> str: ...
     def _coerce_map_from_(
         self,
-        V: Parent | type,
+        R: Parent | type,
+        /,
     ) -> (
-        Callable[[Parent, ModuleElement], CliffordAlgebraElement[_Coefficient]]
-        | Map
-        | bool
+        Callable[[Parent, ModuleElement], ModuleElement]
+        | Morphism[ModuleElement, ModuleElement]
         | None
     ): ...
     def _element_constructor_(
@@ -170,24 +161,15 @@ class CliffordAlgebra(
         self,
     ) -> tuple[CliffordAlgebraElement[_Coefficient], ...]: ...
 
-
 class ExteriorAlgebra(
     CliffordAlgebra[_Coefficient],
     Generic[_Coefficient],
 ):
-    Element: type[ExteriorAlgebraElement[_Coefficient]]
-
-    @staticmethod
-    def __classcall_private__(
-        cls: type[ExteriorAlgebra[_Coefficient]],
+    def __init__(
+        self,
         R: Rings.ParentMethods[_Coefficient] | FreeModule_generic[_Coefficient],
         names: CliffordGeneratorNames | int | Integer | None = ...,
         n: int | Integer | None = ...,
-    ) -> ExteriorAlgebra[_Coefficient]: ...
-    def __init__(
-        self,
-        R: Rings.ParentMethods[_Coefficient],
-        names: tuple[str, ...],
     ) -> None: ...
     def _repr_(self) -> str: ...
     def _repr_term(self, m: CliffordBasisIndex) -> str: ...
@@ -232,18 +214,11 @@ class ExteriorAlgebra(
         n: int | Integer = ...,
     ) -> type[ExteriorAlgebraIdeal[_Coefficient]]: ...
 
-
 class ExteriorAlgebraDifferential(
     ModuleMorphismByLinearity[FrozenBitset, FrozenBitset, _Coefficient],
     UniqueRepresentation,
     Generic[_Coefficient],
 ):
-    @staticmethod
-    def __classcall__(
-        cls: type[ExteriorAlgebraDifferential[_Coefficient]],
-        E: ExteriorAlgebra[_Coefficient],
-        s_coeff: ExteriorStructureCoefficients[_Coefficient],
-    ) -> ExteriorAlgebraDifferential[_Coefficient]: ...
     def __init__(
         self,
         E: ExteriorAlgebra[_Coefficient],
@@ -331,7 +306,6 @@ class ExteriorAlgebraDifferential(
         algorithm: str = ...,
     ) -> list[HomologyGenerator[int, _HomologyCoefficient]]: ...
 
-
 class ExteriorAlgebraBoundary(
     ExteriorAlgebraDifferential[_Coefficient],
     Generic[_Coefficient],
@@ -351,7 +325,6 @@ class ExteriorAlgebraBoundary(
         self,
         R: Parent[_NewCoefficient],
     ) -> ChainComplex_class[int, _NewCoefficient]: ...
-
 
 class ExteriorAlgebraCoboundary(
     ExteriorAlgebraDifferential[_Coefficient],
@@ -377,7 +350,6 @@ class ExteriorAlgebraCoboundary(
         self,
         R: Parent[_NewCoefficient],
     ) -> ChainComplex_class[int, _NewCoefficient]: ...
-
 
 class ExteriorAlgebraIdeal(
     Ideal_nc,
@@ -405,16 +377,11 @@ class ExteriorAlgebraIdeal(
     ) -> bool | NotImplementedType: ...
     def __mul__(
         self,
-        other: ExteriorAlgebraIdeal[_Coefficient] | Parent,
-    ) -> ExteriorIdealProduct[_Coefficient]: ...
+        other: Ideal_nc | Ring,
+    ) -> Ideal_nc | SubmoduleWithBasis[Hashable, _Coefficient]: ...
     def groebner_basis(
         self,
         term_order: Literal["neglex", "degrevlex", "deglex"] | None = ...,
         reduced: bool = ...,
     ) -> tuple[ExteriorAlgebraElement[_Coefficient], ...]: ...
 
-
-from sage.algebras.clifford_algebra_element import (
-    CliffordAlgebraElement,
-    ExteriorAlgebraElement,
-)
