@@ -1,46 +1,290 @@
-name: Export phase-completion workspace
+name: Apply final Phase 05 Ore repair
 
-# Export the current Phase 05 completion branch with the pinned Sage source.
 on:
   push:
     branches: [phase-completion-export]
     paths:
       - .github/workflows/export-phase-completion-workspace.yml
-  pull_request:
-    branches: [main]
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
-  export:
+  repair:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 15
     steps:
-      - name: Check out Phase 05 branch and pinned Sage source
+      - name: Check out Phase 05 completion branch
         uses: actions/checkout@v4
         with:
           ref: phase-05-completion
-          fetch-depth: 1
-          submodules: recursive
+          fetch-depth: 0
 
-      - name: Build source-and-stub workspace archive
+      - name: Reconcile Ore and generic free-module contracts
         run: |
           set -euo pipefail
-          tar -czf phase-05-completion-workspace.tar.gz \
-            AGENTS.md \
-            pyproject.toml \
-            justfile \
-            scripts \
-            .agents \
-            sage-stubs \
-            sage-src/src/sage
+          python - <<'PY'
+          from pathlib import Path
 
-      - name: Upload workspace
-        uses: actions/upload-artifact@v4
-        with:
-          name: phase-05-completion-workspace
-          path: phase-05-completion-workspace.tar.gz
-          retention-days: 1
-          if-no-files-found: error
+          free = Path('sage-stubs/modules/free_module.pyi')
+          text = free.read_text()
+          old = '    def gens(self) -> tuple[FreeModuleElement[_Scalar], ...]: ...\n'
+          if old not in text:
+              raise SystemExit('free-module gens signature no longer matches expected source')
+          free.write_text(text.replace(
+              old,
+              '    def gens(self) -> Sequence[FreeModuleElement[_Scalar]]: ...\n',
+          ))
+
+          ore = Path('sage-stubs/modules/ore_module.pyi')
+          text = ore.read_text()
+          replacements = [
+              (
+                  'from typing import Generic, Self, TypeVar\n',
+                  'from typing import Generic, Self, TypeVar, overload\n',
+              ),
+              (
+                  'from sage.modules.free_module import FreeModule_ambient\n',
+                  'from sage.modules.free_module import (\n'
+                  '    FreeModule_ambient,\n'
+                  '    FreeModule_generic,\n'
+                  '    FreeModuleInput,\n'
+                  '    GeneratorFamily,\n'
+                  '    MatrixSide,\n'
+                  '    Module_free_ambient,\n'
+                  ')\n',
+              ),
+              (
+                  'from sage.rings.infinity import PlusInfinity\n',
+                  'from sage.rings.infinity import PlusInfinity\n'
+                  'from sage.rings.integer import Integer\n',
+              ),
+              (
+                  '_Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)\n',
+                  '_Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)\n'
+                  '_CodomainScalar = TypeVar("_CodomainScalar", bound=RingElement)\n',
+              ),
+              (
+                  '    def gens(self) -> list[OreModuleElement[_Scalar]]: ...\n',
+                  '    def gens(self) -> Sequence[OreModuleElement[_Scalar]]: ...\n',
+              ),
+              (
+                  '    def gen(self, i: int) -> OreModuleElement[_Scalar]: ...\n',
+                  '    def gen(self, i: int | Integer = ...) -> OreModuleElement[_Scalar]: ...\n',
+              ),
+              (
+                  '''    def _Hom_(
+                  self,
+                  codomain: OreModule[_Scalar],
+                  category: Category,
+              ) -> OreModule_homspace[_Scalar]: ...
+          ''',
+                  '''    @overload
+              def _Hom_(
+                  self,
+                  codomain: OreModule[_Scalar],
+                  category: Category | None = ...,
+              ) -> OreModule_homspace[_Scalar]: ...
+              @overload
+              def _Hom_(
+                  self,
+                  codomain: FreeModule_generic[_CodomainScalar],
+                  category: Category | None = ...,
+              ) -> FreeModuleHomspace[_Scalar, _CodomainScalar]: ...
+          ''',
+              ),
+              (
+                  '''    def hom(
+                  self,
+                  im_gens: OreModuleMorphismData[_Scalar],
+                  codomain: OreModule[_Scalar] | None = ...,
+              ) -> OreModuleMorphism[_Scalar]: ...
+          ''',
+                  '''    @overload
+              def hom(
+                  self,
+                  images: OreModuleMorphismData[_Scalar],
+                  codomain: OreModule[_Scalar] | None = ...,
+                  side: MatrixSide = ...,
+              ) -> OreModuleMorphism[_Scalar]: ...
+              @overload
+              def hom(
+                  self,
+                  images: Sequence[FreeModuleInput[_Scalar]] | Matrix[_Scalar],
+                  codomain: None = ...,
+                  side: MatrixSide = ...,
+              ) -> FreeModuleMorphism[_Scalar, _Scalar]: ...
+              @overload
+              def hom(
+                  self,
+                  images: Sequence[FreeModuleInput[_CodomainScalar]] | Matrix[_CodomainScalar],
+                  codomain: FreeModule_generic[_CodomainScalar],
+                  side: MatrixSide = ...,
+              ) -> FreeModuleMorphism[_Scalar, _CodomainScalar]: ...
+          ''',
+              ),
+              (
+                  '''    def span(
+                  self,
+                  gens: OreModuleGenerators[_Scalar],
+                  saturate: bool = ...,
+                  names: OreModuleNames = ...,
+                  check: bool = ...,
+              ) -> OreSubmodule[_Scalar]: ...
+              submodule = span
+          ''',
+                  '''    @overload
+              def span(
+                  self,
+                  gens: OreModuleGenerators[_Scalar],
+                  saturate: bool = ...,
+                  names: OreModuleNames = ...,
+                  check: bool = ...,
+              ) -> OreSubmodule[_Scalar]: ...
+              @overload
+              def span(
+                  self,
+                  gens: GeneratorFamily[_Scalar] | Module_free_ambient[_Scalar],
+                  base_ring: Parent[_Scalar] | None = ...,
+                  check: bool = ...,
+                  already_echelonized: bool = ...,
+              ) -> Module_free_ambient[_Scalar]: ...
+              @overload
+              def submodule(
+                  self,
+                  gens: OreModuleGenerators[_Scalar],
+                  saturate: bool = ...,
+                  names: OreModuleNames = ...,
+                  check: bool = ...,
+              ) -> OreSubmodule[_Scalar]: ...
+              @overload
+              def submodule(
+                  self,
+                  gens: GeneratorFamily[_Scalar] | Module_free_ambient[_Scalar],
+                  check: bool = ...,
+                  already_echelonized: bool = ...,
+              ) -> Module_free_ambient[_Scalar]: ...
+          ''',
+              ),
+              (
+                  '''    ) -> OreQuotientModule[_Scalar]: ...
+              quo = quotient
+          ''',
+                  '''    ) -> OreQuotientModule[_Scalar]: ...
+              def quo(
+                  self,
+                  sub: OreModuleGenerators[_Scalar],
+                  remove_torsion: bool = ...,
+                  names: OreModuleNames = ...,
+                  check: bool = ...,
+              ) -> OreQuotientModule[_Scalar]: ...
+          ''',
+              ),
+              (
+                  '    def is_submodule(self, other: OreModule[_Scalar]) -> bool: ...\n',
+                  '    def is_submodule(self, other: Module_free_ambient[_Scalar]) -> bool: ...\n',
+              ),
+              (
+                  '''    @staticmethod
+              def __classcall_private__(
+                  cls: type[OreSubmodule[_Scalar]],
+                  ambient: OreModule[_Scalar],
+                  gens: OreSubmoduleData[_Scalar],
+                  saturate: bool,
+                  names: OreModuleNames,
+              ) -> OreSubmodule[_Scalar]: ...
+          ''',
+                  '',
+              ),
+              (
+                  '''    @staticmethod
+              def __classcall_private__(
+                  cls: type[OreQuotientModule[_Scalar]],
+                  cover: OreModule[_Scalar],
+                  gens: OreSubmoduleData[_Scalar],
+                  remove_torsion: bool,
+                  names: OreModuleNames,
+              ) -> OreQuotientModule[_Scalar]: ...
+          ''',
+                  '',
+              ),
+              (
+                  '    def __reduce__(self) -> tuple[object, tuple[object, ...]]: ...\n',
+                  '    def __reduce__(self) -> tuple[type, tuple[object, ...]]: ...\n',
+              ),
+              (
+                  '''    _hom_change_domain = morphism_restriction
+              _hom_change_codomain = morphism_corestriction
+          ''',
+                  '''    def _hom_change_domain(
+                  self,
+                  f: OreModuleMorphism[_Scalar],
+              ) -> OreModuleMorphism[_Scalar]: ...
+              def _hom_change_codomain(
+                  self,
+                  f: OreModuleMorphism[_Scalar],
+              ) -> OreModuleMorphism[_Scalar]: ...
+          ''',
+              ),
+              (
+                  '''    _hom_change_domain = morphism_quotient
+              _hom_change_codomain = morphism_modulo
+          ''',
+                  '''    def _hom_change_domain(
+                  self,
+                  f: OreModuleMorphism[_Scalar],
+              ) -> OreModuleMorphism[_Scalar]: ...
+              def _hom_change_codomain(
+                  self,
+                  f: OreModuleMorphism[_Scalar],
+              ) -> OreModuleMorphism[_Scalar]: ...
+          ''',
+              ),
+              (
+                  '''from sage.modules.ore_module_homspace import OreModule_homspace
+          from sage.modules.ore_module_morphism import OreModuleMorphism
+          ''',
+                  '''from sage.modules.free_module_homspace import FreeModuleHomspace
+          from sage.modules.free_module_morphism import FreeModuleMorphism
+          from sage.modules.ore_module_homspace import OreModule_homspace
+          from sage.modules.ore_module_morphism import OreModuleMorphism
+          ''',
+              ),
+          ]
+          for old, new in replacements:
+              if old not in text:
+                  raise SystemExit(f'Ore source no longer matches expected block:\n{old}')
+              text = text.replace(old, new)
+          ore.write_text(text)
+          PY
+
+      - name: Validate touched stubs
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import ast
+          from pathlib import Path
+          for path in (
+              Path('sage-stubs/modules/free_module.pyi'),
+              Path('sage-stubs/modules/ore_module.pyi'),
+          ):
+              ast.parse(path.read_text(), filename=str(path))
+          PY
+          python scripts/check_stubs.py \
+            sage-stubs/modules/free_module.pyi \
+            sage-stubs/modules/ore_module.pyi
+          git diff --check
+
+      - name: Commit and push repair
+        run: |
+          set -euo pipefail
+          git config user.name 'D. Zack Garza'
+          git config user.email 'dzackgarza@gmail.com'
+          git add sage-stubs/modules/free_module.pyi sage-stubs/modules/ore_module.pyi
+          if git diff --cached --quiet; then
+            echo 'No repair required.'
+            exit 0
+          fi
+          git commit -m 'fix(stubs): reconcile Ore free-module contracts'
+          git push origin HEAD:phase-05-completion
