@@ -12,9 +12,11 @@ from sage.modules.free_module import (
     GeneratorFamily,
     MatrixSide,
     Module_free_ambient,
+    PseudoMorphismData,
+    PseudoTwist,
 )
-from sage.modules.free_module_element import FreeModuleElement
 from sage.modules.free_module_pseudomorphism import FreeModulePseudoMorphism
+from sage.modules.module import Module
 from sage.modules.ore_module_element import OreModuleElement
 from sage.modules.submodule_helper import SubmoduleHelper
 from sage.rings.derivation import RingDerivation
@@ -22,13 +24,14 @@ from sage.rings.infinity import PlusInfinity
 from sage.rings.integer import Integer
 from sage.rings.polynomial.ore_polynomial_element import OrePolynomial
 from sage.rings.polynomial.ore_polynomial_ring import OrePolynomialRing
-from sage.structure.element import RingElement
+from sage.structure.element import Element, ModuleElement, RingElement
 from sage.structure.factorization import Factorization
 from sage.structure.parent import ElementConstructorInput, Parent
 from sage.structure.unique_representation import UniqueRepresentation
 
 _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
 _CodomainScalar = TypeVar("_CodomainScalar", bound=RingElement)
+_SourceElement = TypeVar("_SourceElement", bound=ModuleElement)
 
 type OreModuleNames = str | Sequence[str] | None
 type OreTwist[_Scalar: RingElement] = (
@@ -62,35 +65,37 @@ type OreModuleMorphismData[_Scalar: RingElement] = (
     | Mapping[OreModuleElement[_Scalar], OreModuleElement[_Scalar]]
 )
 
+
 class ScalarAction(Action):
     def _act_(
         self,
-        a: _Scalar,
-        x: OreModuleElement[_Scalar],
+        g: Element,
+        x: Element,
     ) -> OreModuleElement[_Scalar]: ...
+
 
 class OreAction(Action):
     def _act_(
         self,
-        P: OrePolynomial,
-        x: OreModuleElement[_Scalar],
+        g: Element,
+        x: Element,
     ) -> OreModuleElement[_Scalar]: ...
+
 
 def normalize_names(
     names: OreModuleNames,
     rank: int,
 ) -> tuple[str, ...] | None: ...
 
+
 class OreModule(
     UniqueRepresentation,
     FreeModule_ambient[_Scalar],
     Generic[_Scalar],
 ):
-    Element: type[OreModuleElement[_Scalar]]
-
     @staticmethod
     def __classcall_private__(
-        cls: type[OreModule[_Scalar]],
+        class_: type[OreModule[_Scalar]],
         mat: Matrix[_Scalar],
         twist: OreTwist[_Scalar],
         denominator: _Scalar | Factorization | None = ...,
@@ -105,24 +110,43 @@ class OreModule(
         names: tuple[str, ...] | None,
         category: Category,
     ) -> None: ...
+    @overload
     def _element_constructor_(
         self,
         x: OreModuleElementInput[_Scalar],
+    ) -> OreModuleElement[_Scalar]: ...
+    @overload
+    def _element_constructor_(
+        self,
+        x: FreeModuleInput[_Scalar] | int | Integer = ...,
+        coerce: bool = ...,
+        copy: bool = ...,
+        check: bool = ...,
     ) -> OreModuleElement[_Scalar]: ...
     def _repr_(self) -> str: ...
     def _latex_(self) -> str: ...
     def _repr_element(self, x: OreModuleElement[_Scalar]) -> str: ...
     def _latex_element(self, x: OreModuleElement[_Scalar]) -> str: ...
-    def _coerce_map_from_(self, S: Parent) -> None: ...
+    def _coerce_map_from_(
+        self,
+        M: Module[RingElement, _SourceElement],
+    ) -> None: ...
     def is_zero(self) -> bool: ...
     def rename_basis(
         self,
         names: OreModuleNames,
         coerce: bool = ...,
     ) -> Self: ...
+    @overload
+    def pseudohom(self) -> FreeModulePseudoMorphism[_Scalar, _Scalar]: ...
+    @overload
     def pseudohom(
         self,
-    ) -> FreeModulePseudoMorphism[RingElement, RingElement]: ...
+        f: PseudoMorphismData[_Scalar],
+        twist: PseudoTwist[_Scalar],
+        codomain: FreeModule_generic[_Scalar] | None = ...,
+        side: MatrixSide = ...,
+    ) -> FreeModulePseudoMorphism[_Scalar, _Scalar]: ...
     def ore_ring(
         self,
         names: str = ...,
@@ -133,7 +157,7 @@ class OreModule(
     def matrix(self) -> Matrix[RingElement]: ...
     def over_fraction_field(self) -> OreModule[RingElement]: ...
     def basis(self) -> list[OreModuleElement[_Scalar]]: ...
-    def gens(self) -> Sequence[OreModuleElement[_Scalar]]: ...
+    def gens(self) -> list[OreModuleElement[_Scalar]]: ...
     def gen(self, i: int | Integer = ...) -> OreModuleElement[_Scalar]: ...
     def _an_element_(self) -> OreModuleElement[_Scalar]: ...
     def random_element(
@@ -244,6 +268,7 @@ class OreModule(
     def __eq__(self, other: object) -> bool: ...
     def __hash__(self) -> int: ...
 
+
 class OreSubmodule(OreModule[_Scalar], Generic[_Scalar]):
     def __init__(
         self,
@@ -286,6 +311,7 @@ class OreSubmodule(OreModule[_Scalar], Generic[_Scalar]):
         f: OreModuleMorphism[_Scalar],
     ) -> OreModuleMorphism[_Scalar]: ...
 
+
 class OreQuotientModule(OreModule[_Scalar], Generic[_Scalar]):
     def __init__(
         self,
@@ -325,6 +351,7 @@ class OreQuotientModule(OreModule[_Scalar], Generic[_Scalar]):
         self,
         f: OreModuleMorphism[_Scalar],
     ) -> OreModuleMorphism[_Scalar]: ...
+
 
 from sage.modules.free_module_homspace import FreeModuleHomspace
 from sage.modules.free_module_morphism import FreeModuleMorphism
