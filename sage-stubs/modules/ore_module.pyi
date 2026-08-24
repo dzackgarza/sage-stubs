@@ -1,17 +1,25 @@
 from collections.abc import Iterable, Mapping, Sequence
-from typing import Generic, Self, TypeVar
+from typing import Generic, Self, TypeVar, overload
 
 from sage.categories.action import Action
 from sage.categories.category import Category
 from sage.categories.map import Map
 from sage.matrix.matrix0 import Matrix
-from sage.modules.free_module import FreeModule_ambient
+from sage.modules.free_module import (
+    FreeModule_ambient,
+    FreeModule_generic,
+    FreeModuleInput,
+    GeneratorFamily,
+    MatrixSide,
+    Module_free_ambient,
+)
 from sage.modules.free_module_element import FreeModuleElement
 from sage.modules.free_module_pseudomorphism import FreeModulePseudoMorphism
 from sage.modules.ore_module_element import OreModuleElement
 from sage.modules.submodule_helper import SubmoduleHelper
 from sage.rings.derivation import RingDerivation
 from sage.rings.infinity import PlusInfinity
+from sage.rings.integer import Integer
 from sage.rings.polynomial.ore_polynomial_element import OrePolynomial
 from sage.rings.polynomial.ore_polynomial_ring import OrePolynomialRing
 from sage.structure.element import RingElement
@@ -20,6 +28,7 @@ from sage.structure.parent import ElementConstructorInput, Parent
 from sage.structure.unique_representation import UniqueRepresentation
 
 _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+_CodomainScalar = TypeVar("_CodomainScalar", bound=RingElement)
 
 type OreModuleNames = str | Sequence[str] | None
 type OreTwist[_Scalar: RingElement] = (
@@ -124,8 +133,8 @@ class OreModule(
     def matrix(self) -> Matrix[RingElement]: ...
     def over_fraction_field(self) -> OreModule[RingElement]: ...
     def basis(self) -> list[OreModuleElement[_Scalar]]: ...
-    def gens(self) -> list[OreModuleElement[_Scalar]]: ...
-    def gen(self, i: int) -> OreModuleElement[_Scalar]: ...
+    def gens(self) -> Sequence[OreModuleElement[_Scalar]]: ...
+    def gen(self, i: int | Integer = ...) -> OreModuleElement[_Scalar]: ...
     def _an_element_(self) -> OreModuleElement[_Scalar]: ...
     def random_element(
         self,
@@ -133,16 +142,39 @@ class OreModule(
         **kwds: object,
     ) -> OreModuleElement[_Scalar]: ...
     def module(self) -> FreeModule_ambient[_Scalar]: ...
+    @overload
     def _Hom_(
         self,
         codomain: OreModule[_Scalar],
-        category: Category,
+        category: Category | None = ...,
     ) -> OreModule_homspace[_Scalar]: ...
+    @overload
+    def _Hom_(
+        self,
+        codomain: FreeModule_generic[_CodomainScalar],
+        category: Category | None = ...,
+    ) -> FreeModuleHomspace[_Scalar, _CodomainScalar]: ...
+    @overload
     def hom(
         self,
-        im_gens: OreModuleMorphismData[_Scalar],
+        images: OreModuleMorphismData[_Scalar],
         codomain: OreModule[_Scalar] | None = ...,
+        side: MatrixSide = ...,
     ) -> OreModuleMorphism[_Scalar]: ...
+    @overload
+    def hom(
+        self,
+        images: Sequence[FreeModuleInput[_Scalar]] | Matrix[_Scalar],
+        codomain: None = ...,
+        side: MatrixSide = ...,
+    ) -> FreeModuleMorphism[_Scalar, _Scalar]: ...
+    @overload
+    def hom(
+        self,
+        images: Sequence[FreeModuleInput[_CodomainScalar]] | Matrix[_CodomainScalar],
+        codomain: FreeModule_generic[_CodomainScalar],
+        side: MatrixSide = ...,
+    ) -> FreeModuleMorphism[_Scalar, _CodomainScalar]: ...
     def multiplication_map(
         self,
         P: OrePolynomial | ElementConstructorInput,
@@ -152,6 +184,7 @@ class OreModule(
         self,
         gens: OreModuleGenerators[_Scalar],
     ) -> Matrix[_Scalar]: ...
+    @overload
     def span(
         self,
         gens: OreModuleGenerators[_Scalar],
@@ -159,7 +192,29 @@ class OreModule(
         names: OreModuleNames = ...,
         check: bool = ...,
     ) -> OreSubmodule[_Scalar]: ...
-    submodule = span
+    @overload
+    def span(
+        self,
+        gens: GeneratorFamily[_Scalar] | Module_free_ambient[_Scalar],
+        base_ring: Parent[_Scalar] | None = ...,
+        check: bool = ...,
+        already_echelonized: bool = ...,
+    ) -> Module_free_ambient[_Scalar]: ...
+    @overload
+    def submodule(
+        self,
+        gens: OreModuleGenerators[_Scalar],
+        saturate: bool = ...,
+        names: OreModuleNames = ...,
+        check: bool = ...,
+    ) -> OreSubmodule[_Scalar]: ...
+    @overload
+    def submodule(
+        self,
+        gens: GeneratorFamily[_Scalar] | Module_free_ambient[_Scalar],
+        check: bool = ...,
+        already_echelonized: bool = ...,
+    ) -> Module_free_ambient[_Scalar]: ...
     def quotient(
         self,
         sub: OreModuleGenerators[_Scalar],
@@ -167,13 +222,19 @@ class OreModule(
         names: OreModuleNames = ...,
         check: bool = ...,
     ) -> OreQuotientModule[_Scalar]: ...
-    quo = quotient
+    def quo(
+        self,
+        sub: OreModuleGenerators[_Scalar],
+        remove_torsion: bool = ...,
+        names: OreModuleNames = ...,
+        check: bool = ...,
+    ) -> OreQuotientModule[_Scalar]: ...
     def ambient_modules(self) -> list[OreModule[_Scalar]]: ...
     def _pushout_(
         self,
         other: OreModule[_Scalar],
     ) -> OreModule[_Scalar] | None: ...
-    def is_submodule(self, other: OreModule[_Scalar]) -> bool: ...
+    def is_submodule(self, other: Module_free_ambient[_Scalar]) -> bool: ...
     def _fitting_index(self) -> _Scalar: ...
     def fitting_index(
         self,
@@ -184,21 +245,13 @@ class OreModule(
     def __hash__(self) -> int: ...
 
 class OreSubmodule(OreModule[_Scalar], Generic[_Scalar]):
-    @staticmethod
-    def __classcall_private__(
-        cls: type[OreSubmodule[_Scalar]],
-        ambient: OreModule[_Scalar],
-        gens: OreSubmoduleData[_Scalar],
-        saturate: bool,
-        names: OreModuleNames,
-    ) -> OreSubmodule[_Scalar]: ...
     def __init__(
         self,
         ambient: OreModule[_Scalar],
         submodule: SubmoduleHelper[_Scalar],
         names: tuple[str, ...] | None,
     ) -> None: ...
-    def __reduce__(self) -> tuple[object, tuple[object, ...]]: ...
+    def __reduce__(self) -> tuple[type, tuple[object, ...]]: ...
     def _repr_element(self, x: OreModuleElement[_Scalar]) -> str: ...
     def _latex_element(self, x: OreModuleElement[_Scalar]) -> str: ...
     def ambient_module(self) -> OreModule[_Scalar]: ...
@@ -224,25 +277,23 @@ class OreSubmodule(OreModule[_Scalar], Generic[_Scalar]):
         self,
         f: OreModuleMorphism[_Scalar],
     ) -> OreModuleMorphism[_Scalar]: ...
-    _hom_change_domain = morphism_restriction
-    _hom_change_codomain = morphism_corestriction
+    def _hom_change_domain(
+        self,
+        f: OreModuleMorphism[_Scalar],
+    ) -> OreModuleMorphism[_Scalar]: ...
+    def _hom_change_codomain(
+        self,
+        f: OreModuleMorphism[_Scalar],
+    ) -> OreModuleMorphism[_Scalar]: ...
 
 class OreQuotientModule(OreModule[_Scalar], Generic[_Scalar]):
-    @staticmethod
-    def __classcall_private__(
-        cls: type[OreQuotientModule[_Scalar]],
-        cover: OreModule[_Scalar],
-        gens: OreSubmoduleData[_Scalar],
-        remove_torsion: bool,
-        names: OreModuleNames,
-    ) -> OreQuotientModule[_Scalar]: ...
     def __init__(
         self,
         cover: OreModule[_Scalar],
         submodule: SubmoduleHelper[_Scalar],
         names: tuple[str, ...] | None,
     ) -> None: ...
-    def __reduce__(self) -> tuple[object, tuple[object, ...]]: ...
+    def __reduce__(self) -> tuple[type, tuple[object, ...]]: ...
     def _repr_element(self, x: OreModuleElement[_Scalar]) -> str: ...
     def _latex_element(self, x: OreModuleElement[_Scalar]) -> str: ...
     def over_fraction_field(self) -> OreQuotientModule[RingElement]: ...
@@ -266,8 +317,16 @@ class OreQuotientModule(OreModule[_Scalar], Generic[_Scalar]):
         self,
         f: OreModuleMorphism[_Scalar],
     ) -> OreModuleMorphism[_Scalar]: ...
-    _hom_change_domain = morphism_quotient
-    _hom_change_codomain = morphism_modulo
+    def _hom_change_domain(
+        self,
+        f: OreModuleMorphism[_Scalar],
+    ) -> OreModuleMorphism[_Scalar]: ...
+    def _hom_change_codomain(
+        self,
+        f: OreModuleMorphism[_Scalar],
+    ) -> OreModuleMorphism[_Scalar]: ...
 
+from sage.modules.free_module_homspace import FreeModuleHomspace
+from sage.modules.free_module_morphism import FreeModuleMorphism
 from sage.modules.ore_module_homspace import OreModule_homspace
 from sage.modules.ore_module_morphism import OreModuleMorphism
