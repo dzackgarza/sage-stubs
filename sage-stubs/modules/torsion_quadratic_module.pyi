@@ -31,28 +31,22 @@ class TorsionQuadraticModuleElement(FGP_Element[RingElement]):
         self,
         other: TorsionQuadraticModuleElement,
     ) -> QmodnZ_Element: ...
-    inner_product = _mul_
-    b = _mul_
+    def inner_product(
+        self,
+        other: TorsionQuadraticModuleElement,
+    ) -> QmodnZ_Element: ...
+    def b(
+        self,
+        other: TorsionQuadraticModuleElement,
+    ) -> QmodnZ_Element: ...
     def quadratic_product(self) -> QmodnZ_Element: ...
-    q = quadratic_product
+    def q(self) -> QmodnZ_Element: ...
 
 
 class TorsionQuadraticModule(
     FGP_Module_class[RingElement],
     CachedRepresentation,
 ):
-    Element: type[TorsionQuadraticModuleElement]
-
-    @staticmethod
-    def __classcall__(
-        class_: type[TorsionQuadraticModule],
-        V: FreeModule_generic[RingElement],
-        W: FreeModule_generic[RingElement],
-        gens: Iterable[QuadraticGenerator] | None = ...,
-        modulus: int | Integer | Rational | None = ...,
-        modulus_qf: int | Integer | Rational | None = ...,
-        check: bool = ...,
-    ) -> TorsionQuadraticModule: ...
     def __init__(
         self,
         V: FreeModule_generic[RingElement],
