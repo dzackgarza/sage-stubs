@@ -1,5 +1,5 @@
 from collections.abc import Hashable, Mapping
-from typing import Generic, TypeVar
+from typing import Generic, TypeVar, overload
 
 from sage.modules.filtered_vector_space import (
     FiltrationDegree,
@@ -7,6 +7,7 @@ from sage.modules.filtered_vector_space import (
 )
 from sage.modules.free_module import (
     FreeModule_ambient_field,
+    FreeModule_generic,
     FreeModule_submodule_field,
 )
 from sage.modules.quotient_module import FreeModule_ambient_field_quotient
@@ -19,7 +20,6 @@ from sage.structure.parent import Parent
 _Key = TypeVar("_Key", bound=Hashable, default=Hashable)
 _Scalar = TypeVar("_Scalar", bound=FieldElement, default=FieldElement)
 _NewScalar = TypeVar("_NewScalar", bound=FieldElement)
-_OtherScalar = TypeVar("_OtherScalar", bound=FieldElement)
 
 
 def MultiFilteredVectorSpace(
@@ -69,21 +69,42 @@ class MultiFilteredVectorSpace_class(
     def _repr_(self) -> str: ...
     def __eq__(self, other: object) -> bool: ...
     def __ne__(self, other: object) -> bool: ...
+    @overload
     def direct_sum(
         self,
-        other: MultiFilteredVectorSpace_class[_Key, _OtherScalar],
-    ) -> MultiFilteredVectorSpace_class[_Key, FieldElement]: ...
-    __add__ = direct_sum
+        other: MultiFilteredVectorSpace_class[_Key, _Scalar],
+    ) -> MultiFilteredVectorSpace_class[_Key, _Scalar]: ...
+    @overload
+    def direct_sum(
+        self,
+        other: FreeModule_generic[_Scalar],
+    ) -> FreeModule_generic[_Scalar]: ...
+    @overload
+    def __add__(
+        self,
+        other: MultiFilteredVectorSpace_class[_Key, _Scalar],
+    ) -> MultiFilteredVectorSpace_class[_Key, _Scalar]: ...
+    @overload
+    def __add__(
+        self,
+        other: FreeModule_generic[_Scalar],
+    ) -> FreeModule_generic[_Scalar]: ...
     def tensor_product(
         self,
-        other: MultiFilteredVectorSpace_class[_Key, _OtherScalar],
-    ) -> MultiFilteredVectorSpace_class[_Key, FieldElement]: ...
-    __mul__ = tensor_product
+        other: MultiFilteredVectorSpace_class[_Key, _Scalar],
+    ) -> MultiFilteredVectorSpace_class[_Key, _Scalar]: ...
+    def __mul__(
+        self,
+        other: MultiFilteredVectorSpace_class[_Key, _Scalar],
+    ) -> MultiFilteredVectorSpace_class[_Key, _Scalar]: ...
     def exterior_power(
         self,
         n: int | Integer,
     ) -> MultiFilteredVectorSpace_class[_Key, _Scalar]: ...
-    wedge = exterior_power
+    def wedge(
+        self,
+        n: int | Integer,
+    ) -> MultiFilteredVectorSpace_class[_Key, _Scalar]: ...
     def symmetric_power(
         self,
         n: int | Integer,

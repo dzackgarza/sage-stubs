@@ -157,11 +157,7 @@ class TriangularModuleMorphismByLinearity(
     ) -> None: ...
     def _richcmp_(
         self,
-        other: TriangularModuleMorphismByLinearity[
-            _DomainIndex,
-            _CodomainIndex,
-            _Scalar,
-        ],
+        other: ModuleMorphism[_DomainIndex, _CodomainIndex, _Scalar],
         op: int,
     ) -> bool | NotImplementedType: ...
 
@@ -198,7 +194,7 @@ class ModuleMorphismFromMatrix(
     ) -> None: ...
     def _richcmp_(
         self,
-        other: ModuleMorphismFromMatrix[
+        other: ModuleMorphismByLinearity[
             _DomainIndex,
             _CodomainIndex,
             _Scalar,
@@ -220,7 +216,11 @@ class DiagonalModuleMorphism(
     ) -> None: ...
     def _richcmp_(
         self,
-        other: DiagonalModuleMorphism[_DomainIndex, _Scalar],
+        other: ModuleMorphismByLinearity[
+            _DomainIndex,
+            _DomainIndex,
+            _Scalar,
+        ],
         op: int,
     ) -> bool | NotImplementedType: ...
     def _on_basis(

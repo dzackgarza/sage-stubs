@@ -1,8 +1,9 @@
 from collections.abc import Iterable, Mapping, Sequence
-from typing import Generic, TypeVar
+from typing import Generic, TypeVar, overload
 
 from sage.modules.free_module import (
     FreeModule_ambient_field,
+    FreeModule_generic,
     FreeModule_submodule_field,
 )
 from sage.modules.free_module_element import FreeModuleElement
@@ -14,7 +15,6 @@ from sage.structure.parent import ElementConstructorInput, Parent
 
 _Scalar = TypeVar("_Scalar", bound=FieldElement, default=FieldElement)
 _NewScalar = TypeVar("_NewScalar", bound=FieldElement)
-_OtherScalar = TypeVar("_OtherScalar", bound=FieldElement)
 
 type FiltrationDegree = int | Integer | PlusInfinity | MinusInfinity
 type FiltrationGenerator[_Scalar: FieldElement] = (
@@ -108,16 +108,34 @@ class FilteredVectorSpace_class(
     def _repr_(self) -> str: ...
     def __eq__(self, other: object) -> bool: ...
     def __ne__(self, other: object) -> bool: ...
+    @overload
     def direct_sum(
         self,
-        other: FilteredVectorSpace_class[_OtherScalar],
-    ) -> FilteredVectorSpace_class[FieldElement]: ...
-    __add__ = direct_sum
+        other: FilteredVectorSpace_class[_Scalar],
+    ) -> FilteredVectorSpace_class[_Scalar]: ...
+    @overload
+    def direct_sum(
+        self,
+        other: FreeModule_generic[_Scalar],
+    ) -> FreeModule_generic[_Scalar]: ...
+    @overload
+    def __add__(
+        self,
+        other: FilteredVectorSpace_class[_Scalar],
+    ) -> FilteredVectorSpace_class[_Scalar]: ...
+    @overload
+    def __add__(
+        self,
+        other: FreeModule_generic[_Scalar],
+    ) -> FreeModule_generic[_Scalar]: ...
     def tensor_product(
         self,
-        other: FilteredVectorSpace_class[_OtherScalar],
-    ) -> FilteredVectorSpace_class[FieldElement]: ...
-    __mul__ = tensor_product
+        other: FilteredVectorSpace_class[_Scalar],
+    ) -> FilteredVectorSpace_class[_Scalar]: ...
+    def __mul__(
+        self,
+        other: FilteredVectorSpace_class[_Scalar],
+    ) -> FilteredVectorSpace_class[_Scalar]: ...
     def _power_operation(
         self,
         n: int | Integer,
@@ -127,7 +145,10 @@ class FilteredVectorSpace_class(
         self,
         n: int | Integer,
     ) -> FilteredVectorSpace_class[_Scalar]: ...
-    wedge = exterior_power
+    def wedge(
+        self,
+        n: int | Integer,
+    ) -> FilteredVectorSpace_class[_Scalar]: ...
     def symmetric_power(
         self,
         n: int | Integer,
