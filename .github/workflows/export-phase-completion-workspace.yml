@@ -44,20 +44,19 @@ jobs:
       - name: Format touched stubs
         run: |
           set -euo pipefail
-          ruff format \
-            sage-stubs/algebras/clifford_algebra.pyi \
-            sage-stubs/algebras/clifford_algebra_element.pyi \
-            sage-stubs/algebras/exterior_algebra_groebner.pyi \
-            sage-stubs/combinat/free_module.pyi \
-            sage-stubs/modules/module.pyi \
+          files=(
+            sage-stubs/algebras/clifford_algebra.pyi
+            sage-stubs/algebras/clifford_algebra_element.pyi
+            sage-stubs/algebras/exterior_algebra_groebner.pyi
+            sage-stubs/combinat/free_module.pyi
+            sage-stubs/modules/module.pyi
             sage-stubs/rings/noncommutative_ideals.pyi
-          ruff check \
-            sage-stubs/algebras/clifford_algebra.pyi \
-            sage-stubs/algebras/clifford_algebra_element.pyi \
-            sage-stubs/algebras/exterior_algebra_groebner.pyi \
-            sage-stubs/combinat/free_module.pyi \
-            sage-stubs/modules/module.pyi \
-            sage-stubs/rings/noncommutative_ideals.pyi
+          )
+          ruff format "${files[@]}"
+          ruff check --select I001,UP040 --fix "${files[@]}"
+          ruff format "${files[@]}"
+          ruff format --check "${files[@]}"
+          ruff check --select I001,UP040 "${files[@]}"
 
       - name: Validate touched stubs
         run: |
