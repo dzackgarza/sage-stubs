@@ -6,6 +6,9 @@ from typing import Generic, Protocol, TypeVar
 from sage.algebras.free_algebra import FreeAlgebra_generic
 from sage.algebras.free_algebra_element import FreeAlgebraElement
 from sage.algebras.free_algebra_quotient_element import FreeAlgebraQuotientElement
+from sage.algebras.letterplace.free_algebra_letterplace import (
+    FreeAlgebra_letterplace,
+)
 from sage.categories.rings import Rings
 from sage.matrix.matrix0 import Matrix
 from sage.monoids.free_monoid import FreeMonoid
@@ -28,11 +31,20 @@ _AmbientCoefficient = TypeVar(
     covariant=True,
 )
 
+type FreeAlgebraQuotientSource[_Coefficient: RingElement] = (
+    FreeAlgebra_generic[_Coefficient]
+    | FreeAlgebra_letterplace[_Coefficient]
+)
 
-class AmbientQuotientAlgebraElement(Protocol[_AmbientCoefficient]):
+
+class AmbientQuotientParent(Protocol[_AmbientCoefficient]):
     def ambient_algebra(
         self,
     ) -> FreeAlgebraQuotient[_AmbientCoefficient]: ...
+
+
+class AmbientQuotientAlgebraElement(Protocol[_AmbientCoefficient]):
+    def parent(self) -> AmbientQuotientParent[_AmbientCoefficient]: ...
     def ambient_algebra_element(
         self,
     ) -> FreeAlgebraQuotientElement[_AmbientCoefficient]: ...
@@ -46,7 +58,7 @@ type FreeAlgebraQuotientElementInput[_InputCoefficient: RingElement] = (
     | _InputCoefficient
     | int
     | Integer
-    | Sequence[_InputCoefficient | int | Integer]
+    | list[_InputCoefficient | int | Integer]
     | Mapping[FreeMonoidElement, _InputCoefficient | int | Integer]
     | AmbientQuotientAlgebraElement[_InputCoefficient]
 )
@@ -58,44 +70,41 @@ class FreeAlgebraQuotient(
     Generic[_Coefficient],
 ):
     Element: type[FreeAlgebraQuotientElement[_Coefficient]]
-    element_class: type[FreeAlgebraQuotientElement[_Coefficient]]
 
     @staticmethod
     def __classcall__(
         cls: type[FreeAlgebraQuotient[_Coefficient]],
-        A: FreeAlgebra_generic[_Coefficient],
+        A: FreeAlgebraQuotientSource[_Coefficient],
         mons: Sequence[FreeMonoidElement],
         mats: Sequence[Matrix[_Coefficient]],
         names: Sequence[str],
     ) -> FreeAlgebraQuotient[_Coefficient]: ...
     def __init__(
         self,
-        A: FreeAlgebra_generic[_Coefficient],
-        mons: Sequence[FreeMonoidElement],
-        mats: Sequence[Matrix[_Coefficient]],
-        names: Sequence[str],
+        A: FreeAlgebraQuotientSource[_Coefficient],
+        mons: tuple[FreeMonoidElement, ...],
+        mats: tuple[Matrix[_Coefficient], ...],
+        names: tuple[str, ...],
     ) -> None: ...
-    def base_ring(self) -> Rings.ParentMethods[_Coefficient]: ...
     def _element_constructor_(
         self,
         x: FreeAlgebraQuotientElementInput[_Coefficient],
     ) -> FreeAlgebraQuotientElement[_Coefficient]: ...
-    def __call__(
-        self,
-        x: FreeAlgebraQuotientElementInput[_Coefficient] = 0,
-    ) -> FreeAlgebraQuotientElement[_Coefficient]: ...
     def _coerce_map_from_(self, S: Parent | type) -> bool: ...
     def _repr_(self) -> str: ...
-    def gen(self, i: int | Integer) -> FreeAlgebraQuotientElement[_Coefficient]: ...
+    def gen(
+        self,
+        i: int | Integer,
+    ) -> FreeAlgebraQuotientElement[_Coefficient]: ...
     def gens(self) -> tuple[FreeAlgebraQuotientElement[_Coefficient], ...]: ...
     def ngens(self) -> int: ...
     def dimension(self) -> int: ...
     def matrix_action(self) -> tuple[Matrix[_Coefficient], ...]: ...
     def monomial_basis(self) -> tuple[FreeMonoidElement, ...]: ...
-    def rank(self) -> int: ...
+    def rank(self) -> int: ....
     def module(self) -> FreeModule_generic[_Coefficient]: ...
     def monoid(self) -> FreeMonoid: ...
-    def free_algebra(self) -> FreeAlgebra_generic[_Coefficient]: ...
+    def free_algebra(self) -> FreeAlgebraQuotientSource[_Coefficient]: ...
 
 
 def hamilton_quatalg[
