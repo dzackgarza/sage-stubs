@@ -6,21 +6,22 @@ from sage.modules.filtered_vector_space import (
     FilteredVectorSpace_class,
 )
 from sage.modules.free_module import (
+    FreeModule_ambient,
     FreeModule_ambient_field,
     FreeModule_generic,
-    FreeModule_generic_domain,
     FreeModule_submodule_field,
 )
 from sage.modules.quotient_module import FreeModule_ambient_field_quotient
 from sage.rings.infinity import MinusInfinity, PlusInfinity
 from sage.rings.integer import Integer
 from sage.sets.set import Set_generic
-from sage.structure.element import FieldElement
+from sage.structure.element import FieldElement, RingElement
 from sage.structure.parent import Parent
 
 _Key = TypeVar("_Key", bound=Hashable, default=Hashable)
 _Scalar = TypeVar("_Scalar", bound=FieldElement, default=FieldElement)
 _NewScalar = TypeVar("_NewScalar", bound=FieldElement)
+_NewRingScalar = TypeVar("_NewRingScalar", bound=RingElement)
 
 
 def MultiFilteredVectorSpace(
@@ -42,10 +43,16 @@ class MultiFilteredVectorSpace_class(
         check: bool = ...,
     ) -> None: ...
     def index_set(self) -> Set_generic[_Key]: ...
+    @overload
     def change_ring(
         self,
         R: Parent[_NewScalar],
     ) -> MultiFilteredVectorSpace_class[_Key, _NewScalar]: ...
+    @overload
+    def change_ring(
+        self,
+        R: Parent[_NewRingScalar],
+    ) -> FreeModule_ambient[_NewRingScalar]: ...
     def ambient_vector_space(self) -> FreeModule_ambient_field[_Scalar]: ...
     def is_constant(self) -> bool: ...
     def is_exhaustive(self) -> bool: ...
@@ -80,16 +87,6 @@ class MultiFilteredVectorSpace_class(
         self,
         other: FreeModule_generic[_Scalar],
     ) -> FreeModule_generic[_Scalar]: ...
-    @overload
-    def __add__(
-        self,
-        other: MultiFilteredVectorSpace_class[_Key, _Scalar],
-    ) -> MultiFilteredVectorSpace_class[_Key, _Scalar]: ...
-    @overload
-    def __add__(
-        self,
-        other: FreeModule_generic_domain[_Scalar],
-    ) -> FreeModule_generic_domain[_Scalar]: ...
     def tensor_product(
         self,
         other: MultiFilteredVectorSpace_class[_Key, _Scalar],
