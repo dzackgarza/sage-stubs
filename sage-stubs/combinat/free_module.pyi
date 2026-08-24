@@ -1,5 +1,4 @@
 from collections.abc import Callable, Hashable, Iterable, Sequence
-from typing import TypeVar
 
 from sage.categories.category import Category
 from sage.categories.morphism import Morphism
@@ -7,12 +6,12 @@ from sage.categories.pushout import ConstructionFunctor
 from sage.modules.free_module_element import FreeModuleElement
 from sage.modules.module import Module
 from sage.rings.infinity import PlusInfinity
-from sage.rings.ring import CommutativeRing, Ring
+from sage.rings.integer import Integer
+from sage.rings.ring import CommutativeRing
 from sage.sets.family import AbstractFamily
 from sage.structure.element import (
     CommutativeRingElement,
     ModuleElement,
-    RingElement,
 )
 from sage.structure.indexed_generators import IndexedGenerators
 from sage.structure.parent import Parent
@@ -20,8 +19,11 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.typeset.ascii_art import AsciiArt
 from sage.typeset.unicode_art import UnicodeArt
 
-_SourceElement = TypeVar("_SourceElement", bound=ModuleElement)
-
+type CombinatorialCoercionResult = (
+    Callable[[Parent, ModuleElement], ModuleElement]
+    | Morphism[ModuleElement, ModuleElement]
+    | None
+)
 
 class CombinatorialFreeModule(
     UniqueRepresentation,
@@ -41,6 +43,11 @@ class CombinatorialFreeModule(
         **kwds: object,
     ) -> None: ...
     def base_ring(self) -> CommutativeRing: ...
+    def _coerce_map_from_(
+        self,
+        R: Parent | type,
+        /,
+    ) -> CombinatorialCoercionResult: ...
     def basis(self) -> AbstractFamily: ...
     def an_element(self) -> Element: ...
     def some_elements(self) -> list[Element]: ...
@@ -49,8 +56,8 @@ class CombinatorialFreeModule(
     def construction(
         self,
     ) -> tuple[ConstructionFunctor, Parent] | None: ...
-    def change_ring(self, R: Ring) -> CombinatorialFreeModule: ...
-    def dimension(self) -> int | PlusInfinity: ...
+    def change_ring(self, R: Parent) -> CombinatorialFreeModule: ...
+    def dimension(self) -> int | Integer | PlusInfinity: ...
     def is_exact(self) -> bool: ...
     def set_order(self, order: Iterable[Hashable]) -> None: ...
     def get_order(self) -> list[Hashable]: ...
@@ -64,9 +71,7 @@ class CombinatorialFreeModule(
     def sum(self, iter_of_elements: Iterable[Element]) -> Element: ...
     def linear_combination(
         self,
-        iter_of_elements_coeff: Iterable[
-            tuple[Element, CommutativeRingElement]
-        ],
+        iter_of_elements_coeff: Iterable[tuple[Element, CommutativeRingElement]],
         factor_on_left: bool = ...,
     ) -> Element: ...
     def term(
@@ -81,7 +86,6 @@ class CombinatorialFreeModule(
         distinct: bool = ...,
     ) -> Element: ...
     def zero(self) -> Element: ...
-
 
 class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
     @staticmethod
@@ -112,5 +116,6 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
     ) -> CombinatorialFreeModule.Element: ...
     def _coerce_map_from_(
         self,
-        M: Module[RingElement, _SourceElement],
-    ) -> Morphism[_SourceElement, ModuleElement] | None: ...
+        R: Parent | type,
+        /,
+    ) -> CombinatorialCoercionResult: ...
