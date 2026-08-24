@@ -1,5 +1,6 @@
 name: Export phase-completion workspace
 
+# Export the current Phase 05 completion branch with the pinned Sage source.
 on:
   push:
     branches: [phase-completion-export]
