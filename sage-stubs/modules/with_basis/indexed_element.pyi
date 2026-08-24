@@ -4,8 +4,8 @@ from typing import Generic, Self, TypeVar, overload
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.interfaces.expect import Expect
 from sage.modules.free_module_element import FreeModuleElement
-from sage.structure.element import Element, ModuleElement, RingElement
-from sage.structure.parent import ElementConstructorInput, Parent
+from sage.structure.element import RingElement
+from sage.structure.parent import Parent
 from sage.typeset.ascii_art import AsciiArt
 from sage.typeset.unicode_art import UnicodeArt
 
@@ -19,7 +19,7 @@ type IndexedElementStateValue[_Index: Hashable, _Scalar: RingElement] = (
 
 
 class IndexedFreeModuleElement(
-    ModuleElement,
+    CombinatorialFreeModule.Element,
     Generic[_Index, _Scalar],
 ):
     def __init__(
@@ -95,14 +95,6 @@ class IndexedFreeModuleElement(
         order: Sequence[_Index] | Mapping[_Index, int] | None = ...,
         sparse: bool = ...,
     ) -> FreeModuleElement[_NewScalar]: ...
-    def _acted_upon_(
-        self,
-        scalar: ElementConstructorInput,
-        self_on_left: bool,
-    ) -> Self | None: ...
-    def _lmul_(self, right: Element) -> Self: ...
-    def _rmul_(self, left: Element) -> Self: ...
-    def __truediv__(self, x: ElementConstructorInput) -> Self: ...
     def _magma_init_(self, magma: Expect) -> str: ...
 
 
