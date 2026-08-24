@@ -1,13 +1,10 @@
 name: Export phase-completion workspace
 
-# Refreshed for the Phase 05 completion audit on 2026-08-24.
 on:
   push:
     branches: [phase-completion-export]
     paths:
       - .github/workflows/export-phase-completion-workspace.yml
-  pull_request:
-    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -18,16 +15,17 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - name: Check out repository and pinned Sage source
+      - name: Check out Phase 05 branch and pinned Sage source
         uses: actions/checkout@v4
         with:
+          ref: phase-05-completion
           fetch-depth: 1
           submodules: recursive
 
       - name: Build source-and-stub workspace archive
         run: |
           set -euo pipefail
-          tar -czf phase-completion-workspace.tar.gz \
+          tar -czf phase-05-completion-workspace.tar.gz \
             AGENTS.md \
             pyproject.toml \
             justfile \
@@ -39,7 +37,7 @@ jobs:
       - name: Upload workspace
         uses: actions/upload-artifact@v4
         with:
-          name: phase-completion-workspace
-          path: phase-completion-workspace.tar.gz
+          name: phase-05-completion-workspace
+          path: phase-05-completion-workspace.tar.gz
           retention-days: 1
           if-no-files-found: error
