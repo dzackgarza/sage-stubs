@@ -1,4 +1,4 @@
-from collections.abc import Callable, Hashable, Iterable, Sequence
+from collections.abc import Callable, Hashable, Iterable
 from typing import Generic, TypeVar
 
 from sage.categories.category import Category
@@ -23,12 +23,6 @@ class QuotientModuleWithBasis(
     CombinatorialFreeModule,
     Generic[_Index, _Scalar],
 ):
-    @staticmethod
-    def __classcall_private__(
-        class_: type[QuotientModuleWithBasis[_Index, _Scalar]],
-        submodule: SubmoduleWithBasis[Hashable, _Scalar],
-        category: Category | None = ...,
-    ) -> QuotientModuleWithBasis[_Index, _Scalar]: ...
     def __init__(
         self,
         submodule: SubmoduleWithBasis[Hashable, _Scalar],
@@ -56,17 +50,6 @@ class SubmoduleWithBasis(
     reduce: ModuleMorphism[Hashable, Hashable, _Scalar]
     retract: ModuleMorphism[Hashable, _Index, _Scalar]
 
-    @staticmethod
-    def __classcall_private__(
-        class_: type[SubmoduleWithBasis[_Index, _Scalar]],
-        basis: AbstractFamily | Iterable[AmbientElement[_Scalar]],
-        support_order: Sequence[Hashable],
-        ambient: CombinatorialFreeModule | None = ...,
-        unitriangular: bool = ...,
-        category: Category | None = ...,
-        *args: object,
-        **opts: object,
-    ) -> SubmoduleWithBasis[_Index, _Scalar]: ...
     def __init__(
         self,
         basis: AbstractFamily,
