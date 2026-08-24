@@ -2,20 +2,21 @@ from collections.abc import Iterable, Mapping, Sequence
 from typing import Generic, TypeVar, overload
 
 from sage.modules.free_module import (
+    FreeModule_ambient,
     FreeModule_ambient_field,
     FreeModule_generic,
-    FreeModule_generic_domain,
     FreeModule_submodule_field,
 )
 from sage.modules.free_module_element import FreeModuleElement
 from sage.modules.quotient_module import FreeModule_ambient_field_quotient
 from sage.rings.infinity import MinusInfinity, PlusInfinity
 from sage.rings.integer import Integer
-from sage.structure.element import FieldElement
+from sage.structure.element import FieldElement, RingElement
 from sage.structure.parent import ElementConstructorInput, Parent
 
 _Scalar = TypeVar("_Scalar", bound=FieldElement, default=FieldElement)
 _NewScalar = TypeVar("_NewScalar", bound=FieldElement)
+_NewRingScalar = TypeVar("_NewRingScalar", bound=RingElement)
 
 type FiltrationDegree = int | Integer | PlusInfinity | MinusInfinity
 type FiltrationGenerator[_Scalar: FieldElement] = (
@@ -74,10 +75,16 @@ class FilteredVectorSpace_class(
         filtration: Mapping[FiltrationDegree, Iterable[int | Integer]],
         check: bool = ...,
     ) -> None: ...
+    @overload
     def change_ring(
         self,
         R: Parent[_NewScalar],
     ) -> FilteredVectorSpace_class[_NewScalar]: ...
+    @overload
+    def change_ring(
+        self,
+        R: Parent[_NewRingScalar],
+    ) -> FreeModule_ambient[_NewRingScalar]: ...
     def ambient_vector_space(self) -> FreeModule_ambient_field[_Scalar]: ...
     def is_constant(self) -> bool: ...
     def is_exhaustive(self) -> bool: ...
@@ -119,16 +126,6 @@ class FilteredVectorSpace_class(
         self,
         other: FreeModule_generic[_Scalar],
     ) -> FreeModule_generic[_Scalar]: ...
-    @overload
-    def __add__(
-        self,
-        other: FilteredVectorSpace_class[_Scalar],
-    ) -> FilteredVectorSpace_class[_Scalar]: ...
-    @overload
-    def __add__(
-        self,
-        other: FreeModule_generic_domain[_Scalar],
-    ) -> FreeModule_generic_domain[_Scalar]: ...
     def tensor_product(
         self,
         other: FilteredVectorSpace_class[_Scalar],
