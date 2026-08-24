@@ -27,6 +27,8 @@ def _brown_indecomposable(
 
 
 class TorsionQuadraticModuleElement(FGP_Element[RingElement]):
+    def _repr_(self) -> str: ...
+    def _latex_(self) -> str: ...
     def _mul_(
         self,
         other: TorsionQuadraticModuleElement,
