@@ -3,22 +3,23 @@ from typing import Self
 
 from sage.interfaces.singular import Singular, SingularElement
 from sage.modules.free_module import FreeModule_generic
-from sage.modules.free_module_element import FreeModuleElement_generic_dense
+from sage.modules.free_module_element import FreeModuleElement
 from sage.rings.integer import Integer
 from sage.structure.parent import ElementConstructorInput
 
-class Vector_integer_dense(FreeModuleElement_generic_dense[Integer]):
+
+class Vector_integer_dense(FreeModuleElement[Integer]):
     def __init__(
         self,
         parent: FreeModule_generic[Integer],
-        x: Sequence[ElementConstructorInput] | int,
+        x: Sequence[ElementConstructorInput] | int | Integer,
         coerce: bool = ...,
         copy: bool = ...,
     ) -> None: ...
     def __copy__(self) -> Self: ...
     def _richcmp_(
         self,
-        right: Vector_integer_dense,
+        right: FreeModuleElement[Integer],
         op: int,
     ) -> bool: ...
     def list(self, copy: bool = ...) -> list[Integer]: ...
@@ -41,6 +42,7 @@ class Vector_integer_dense(FreeModuleElement_generic_dense[Integer]):
     def _lmul_(self, right: Integer) -> Self: ...
     def _neg_(self) -> Self: ...
     def _singular_(self, singular: Singular | None = ...) -> SingularElement: ...
+
 
 def unpickle_v0(
     parent: FreeModule_generic[Integer],

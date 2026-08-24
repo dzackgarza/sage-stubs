@@ -2,23 +2,24 @@ from collections.abc import Callable, Sequence
 from typing import Self
 
 from sage.modules.free_module import FreeModule_generic
-from sage.modules.free_module_element import FreeModuleElement_generic_dense
+from sage.modules.free_module_element import FreeModuleElement
 from sage.rings.integer import Integer
 from sage.rings.rational import Rational
 from sage.structure.parent import ElementConstructorInput
 
-class Vector_rational_dense(FreeModuleElement_generic_dense[Rational]):
+
+class Vector_rational_dense(FreeModuleElement[Rational]):
     def __init__(
         self,
         parent: FreeModule_generic[Rational],
-        x: Sequence[ElementConstructorInput] | int,
+        x: Sequence[ElementConstructorInput] | int | Integer | Rational,
         coerce: bool = ...,
         copy: bool = ...,
     ) -> None: ...
     def __copy__(self) -> Self: ...
     def _richcmp_(
         self,
-        right: Vector_rational_dense,
+        right: FreeModuleElement[Rational],
         op: int,
     ) -> bool: ...
     def list(self, copy: bool = ...) -> list[Rational]: ...
@@ -40,6 +41,7 @@ class Vector_rational_dense(FreeModuleElement_generic_dense[Rational]):
     def _rmul_(self, left: Integer | Rational) -> Self: ...
     def _lmul_(self, right: Integer | Rational) -> Self: ...
     def _neg_(self) -> Self: ...
+
 
 def unpickle_v0(
     parent: FreeModule_generic[Rational],

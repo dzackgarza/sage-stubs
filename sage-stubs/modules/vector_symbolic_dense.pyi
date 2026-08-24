@@ -1,22 +1,13 @@
 from collections.abc import Callable
-from typing import Protocol, Self
+from typing import Self
 
 from sage.modules.free_module_element import FreeModuleElement_generic_dense
 from sage.symbolic.expression import Expression, SymbolicInput
 
 
-class SymbolicVectorMethod(Protocol):
-    def __call__(
-        self,
-        vector: Vector_symbolic_dense,
-        *args: SymbolicInput,
-        **kwds: SymbolicInput,
-    ) -> Vector_symbolic_dense: ...
-
-
 def apply_map(
     phi: Callable[..., Expression],
-) -> SymbolicVectorMethod: ...
+) -> Callable[..., Vector_symbolic_dense]: ...
 
 
 class Vector_symbolic_dense(

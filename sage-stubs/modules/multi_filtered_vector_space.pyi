@@ -1,30 +1,35 @@
 from collections.abc import Hashable, Mapping
-from typing import Generic, TypeVar
+from typing import Generic, TypeVar, overload
 
 from sage.modules.filtered_vector_space import (
     FiltrationDegree,
     FilteredVectorSpace_class,
 )
 from sage.modules.free_module import (
+    FreeModule_ambient,
     FreeModule_ambient_field,
-    FreeModule_submodule,
+    FreeModule_generic,
+    FreeModule_submodule_field,
 )
 from sage.modules.quotient_module import FreeModule_ambient_field_quotient
 from sage.rings.infinity import MinusInfinity, PlusInfinity
 from sage.rings.integer import Integer
 from sage.sets.set import Set_generic
-from sage.structure.element import FieldElement
+from sage.structure.element import FieldElement, RingElement
 from sage.structure.parent import Parent
 
 _Key = TypeVar("_Key", bound=Hashable, default=Hashable)
 _Scalar = TypeVar("_Scalar", bound=FieldElement, default=FieldElement)
 _NewScalar = TypeVar("_NewScalar", bound=FieldElement)
+_NewRingScalar = TypeVar("_NewRingScalar", bound=RingElement)
+
 
 def MultiFilteredVectorSpace(
     arg: int | Integer | Mapping[_Key, FilteredVectorSpace_class[_Scalar]],
     base_ring: Parent[_Scalar] | None = ...,
     check: bool = ...,
 ) -> MultiFilteredVectorSpace_class[_Key, _Scalar]: ...
+
 
 class MultiFilteredVectorSpace_class(
     FreeModule_ambient_field[_Scalar],
@@ -38,17 +43,23 @@ class MultiFilteredVectorSpace_class(
         check: bool = ...,
     ) -> None: ...
     def index_set(self) -> Set_generic[_Key]: ...
+    @overload
     def change_ring(
         self,
-        base_ring: Parent[_NewScalar],
+        R: Parent[_NewScalar],
     ) -> MultiFilteredVectorSpace_class[_Key, _NewScalar]: ...
+    @overload
+    def change_ring(
+        self,
+        R: Parent[_NewRingScalar],
+    ) -> FreeModule_ambient[_NewRingScalar]: ...
     def ambient_vector_space(self) -> FreeModule_ambient_field[_Scalar]: ...
     def is_constant(self) -> bool: ...
     def is_exhaustive(self) -> bool: ...
     def is_separating(self) -> bool: ...
     def support(self) -> tuple[Integer | PlusInfinity, ...]: ...
-    def min_degree(self) -> Integer | PlusInfinity | MinusInfinity: ...
-    def max_degree(self) -> Integer | PlusInfinity | MinusInfinity: ...
+    def min_degree(self) -> Integer | PlusInfinity: ...
+    def max_degree(self) -> Integer | MinusInfinity: ...
     def get_filtration(
         self,
         key: _Key,
@@ -57,7 +68,7 @@ class MultiFilteredVectorSpace_class(
         self,
         key: _Key,
         deg: FiltrationDegree,
-    ) -> FreeModule_submodule[_Scalar]: ...
+    ) -> FreeModule_submodule_field[_Scalar]: ...
     def graded(
         self,
         key: _Key,
@@ -66,21 +77,32 @@ class MultiFilteredVectorSpace_class(
     def _repr_(self) -> str: ...
     def __eq__(self, other: object) -> bool: ...
     def __ne__(self, other: object) -> bool: ...
+    @overload
     def direct_sum(
         self,
         other: MultiFilteredVectorSpace_class[_Key, _Scalar],
     ) -> MultiFilteredVectorSpace_class[_Key, _Scalar]: ...
-    __add__ = direct_sum
+    @overload
+    def direct_sum(
+        self,
+        other: FreeModule_generic[_Scalar],
+    ) -> FreeModule_generic[_Scalar]: ...
     def tensor_product(
         self,
         other: MultiFilteredVectorSpace_class[_Key, _Scalar],
     ) -> MultiFilteredVectorSpace_class[_Key, _Scalar]: ...
-    __mul__ = tensor_product
+    def __mul__(
+        self,
+        other: MultiFilteredVectorSpace_class[_Key, _Scalar],
+    ) -> MultiFilteredVectorSpace_class[_Key, _Scalar]: ...
     def exterior_power(
         self,
         n: int | Integer,
     ) -> MultiFilteredVectorSpace_class[_Key, _Scalar]: ...
-    wedge = exterior_power
+    def wedge(
+        self,
+        n: int | Integer,
+    ) -> MultiFilteredVectorSpace_class[_Key, _Scalar]: ...
     def symmetric_power(
         self,
         n: int | Integer,
@@ -92,5 +114,5 @@ class MultiFilteredVectorSpace_class(
     ) -> MultiFilteredVectorSpace_class[_Key, _Scalar]: ...
     def random_deformation(
         self,
-        epsilon: float | None = ...,
+        epsilon: _Scalar | None = ...,
     ) -> MultiFilteredVectorSpace_class[_Key, _Scalar]: ...
