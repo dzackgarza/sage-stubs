@@ -95,13 +95,22 @@ class SubmoduleWithBasis(
         self,
         other: SubmoduleWithBasis[Hashable, _Scalar],
     ) -> SubmoduleWithBasis[Hashable, _Scalar]: ...
-    subspace_sum = __add__
+    def subspace_sum(
+        self,
+        other: SubmoduleWithBasis[Hashable, _Scalar],
+    ) -> SubmoduleWithBasis[Hashable, _Scalar]: ...
     def __and__(
         self,
         other: CombinatorialFreeModule | SubmoduleWithBasis[Hashable, _Scalar],
     ) -> SubmoduleWithBasis[Hashable, _Scalar]: ...
-    intersection = __and__
-    __rand__ = __and__
+    def intersection(
+        self,
+        other: CombinatorialFreeModule | SubmoduleWithBasis[Hashable, _Scalar],
+    ) -> SubmoduleWithBasis[Hashable, _Scalar]: ...
+    def __rand__(
+        self,
+        other: CombinatorialFreeModule | SubmoduleWithBasis[Hashable, _Scalar],
+    ) -> SubmoduleWithBasis[Hashable, _Scalar]: ...
     def subspace(
         self,
         gens: Iterable[SubquotientElement[_Index, _Scalar]],

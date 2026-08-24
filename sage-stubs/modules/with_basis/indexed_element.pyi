@@ -4,7 +4,7 @@ from typing import Generic, Self, TypeVar, overload
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.interfaces.expect import Expect
 from sage.modules.free_module_element import FreeModuleElement
-from sage.structure.element import Element, ModuleElement, RingElement
+from sage.structure.element import Element, RingElement
 from sage.structure.parent import ElementConstructorInput, Parent
 from sage.typeset.ascii_art import AsciiArt
 from sage.typeset.unicode_art import UnicodeArt
@@ -13,8 +13,13 @@ _Index = TypeVar("_Index", bound=Hashable, default=Hashable)
 _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
 _NewScalar = TypeVar("_NewScalar", bound=RingElement)
 
+type IndexedElementStateValue[_Index: Hashable, _Scalar: RingElement] = (
+    Mapping[_Index, _Scalar] | bool | int
+)
+
+
 class IndexedFreeModuleElement(
-    ModuleElement,
+    CombinatorialFreeModule.Element,
     Generic[_Index, _Scalar],
 ):
     def __init__(
@@ -23,20 +28,26 @@ class IndexedFreeModuleElement(
         x: Mapping[_Index, _Scalar],
     ) -> None: ...
     def __iter__(self) -> Iterator[tuple[_Index, _Scalar]]: ...
-    def __contains__(self, x: object) -> bool: ...
+    def __contains__(self, x: _Index) -> bool: ...
     def __hash__(self) -> int: ...
     def __reduce__(
         self,
     ) -> tuple[
-        Callable[..., IndexedFreeModuleElement[_Index, _Scalar]],
+        Callable[
+            [CombinatorialFreeModule, Mapping[_Index, _Scalar]],
+            IndexedFreeModuleElement[_Index, _Scalar],
+        ],
         tuple[CombinatorialFreeModule, Mapping[_Index, _Scalar]],
     ]: ...
     def __setstate__(
         self,
-        state: tuple[Parent, Mapping[str, object]],
+        state: tuple[
+            Parent[Self],
+            Mapping[str, IndexedElementStateValue[_Index, _Scalar]],
+        ],
     ) -> None: ...
     def __copy__(self) -> Self: ...
-    def __deepcopy__(self, memo: object | None = ...) -> Self: ...
+    def __deepcopy__(self, memo: dict[int, Self] | None = ...) -> Self: ...
     def monomial_coefficients(
         self,
         copy: bool = ...,
@@ -69,16 +80,30 @@ class IndexedFreeModuleElement(
         order: Sequence[_Index] | Mapping[_Index, int] | None = ...,
         sparse: bool = ...,
     ) -> FreeModuleElement[_NewScalar]: ...
-    to_vector = _vector_
+    @overload
+    def to_vector(
+        self,
+        new_base_ring: None = ...,
+        order: Sequence[_Index] | Mapping[_Index, int] | None = ...,
+        sparse: bool = ...,
+    ) -> FreeModuleElement[_Scalar]: ...
+    @overload
+    def to_vector(
+        self,
+        new_base_ring: Parent[_NewScalar],
+        order: Sequence[_Index] | Mapping[_Index, int] | None = ...,
+        sparse: bool = ...,
+    ) -> FreeModuleElement[_NewScalar]: ...
     def _acted_upon_(
         self,
         scalar: ElementConstructorInput,
         self_on_left: bool,
     ) -> Self | None: ...
-    def _lmul_(self, right: Element) -> Self: ...
-    def _rmul_(self, left: Element) -> Self: ...
+    def _lmul_(self, a: Element) -> Self: ...
+    def _rmul_(self, a: Element) -> Self: ...
     def __truediv__(self, x: ElementConstructorInput) -> Self: ...
     def _magma_init_(self, magma: Expect) -> str: ...
+
 
 def _unpickle_element(
     C: CombinatorialFreeModule,

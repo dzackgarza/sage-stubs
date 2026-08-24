@@ -1,20 +1,22 @@
 from collections.abc import Hashable, Sequence
 from typing import Generic, Self, TypeVar
 
+from sage.categories.morphism import Morphism
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.matrix.matrix0 import Matrix
+from sage.modules.module import Module
 from sage.modules.with_basis.indexed_element import IndexedFreeModuleElement
-from sage.modules.with_basis.morphism import ModuleMorphism
 from sage.modules.with_basis.subquotient import (
     QuotientModuleWithBasis,
     SubmoduleWithBasis,
 )
-from sage.structure.element import RingElement
+from sage.structure.element import ModuleElement, RingElement
 from sage.structure.parent import ElementConstructorInput
 
 _CellIndex = TypeVar("_CellIndex", bound=Hashable, default=Hashable)
 _BasisIndex = TypeVar("_BasisIndex", bound=Hashable, default=Hashable)
 _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+_SourceElement = TypeVar("_SourceElement", bound=ModuleElement)
 
 type CellElement[_BasisIndex: Hashable, _Scalar: RingElement] = IndexedFreeModuleElement[_BasisIndex, _Scalar]
 
@@ -73,8 +75,8 @@ class CellModule(
             scalar: ElementConstructorInput,
             self_on_left: bool = ...,
         ) -> Self | None: ...
-        _lmul_ = _acted_upon_
-        _rmul_ = _acted_upon_
+        def _lmul_(self, scalar: ElementConstructorInput) -> Self | None: ...
+        def _rmul_(self, scalar: ElementConstructorInput) -> Self | None: ...
 
 
 class SimpleModule(
@@ -88,8 +90,8 @@ class SimpleModule(
     def _repr_(self) -> str: ...
     def _coerce_map_from_(
         self,
-        A: CellModule[_CellIndex, _BasisIndex, _Scalar],
-    ) -> ModuleMorphism[_BasisIndex, _BasisIndex, _Scalar] | bool | None: ...
+        M: Module[RingElement, _SourceElement],
+    ) -> Morphism[_SourceElement, ModuleElement] | None: ...
 
     class Element(QuotientModuleWithBasis.Element):
         def _acted_upon_(
@@ -97,5 +99,5 @@ class SimpleModule(
             scalar: ElementConstructorInput,
             self_on_left: bool = ...,
         ) -> Self | None: ...
-        _lmul_ = _acted_upon_
-        _rmul_ = _acted_upon_
+        def _lmul_(self, scalar: ElementConstructorInput) -> Self | None: ...
+        def _rmul_(self, scalar: ElementConstructorInput) -> Self | None: ...

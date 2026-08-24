@@ -42,7 +42,7 @@ class FiniteDimensionalInvariantModule(
     def _latex_(self) -> str: ...
     def _test_invariant(self, **options: object) -> None: ...
     def semigroup(self) -> Parent[_Actor]: ...
-    semigroup_representation = SubmoduleWithBasis.ambient
+    def semigroup_representation(self) -> CombinatorialFreeModule: ...
 
     class Element(SubmoduleWithBasis.Element):
         def _mul_(self, other: Self) -> Self: ...
@@ -57,16 +57,6 @@ class FiniteDimensionalTwistedInvariantModule(
     SubmoduleWithBasis[_Index, _Scalar],
     Generic[_Actor, _Index, _Scalar],
 ):
-    @staticmethod
-    def __classcall_private__(
-        class_: type[FiniteDimensionalTwistedInvariantModule[_Actor, _Index, _Scalar]],
-        M: CombinatorialFreeModule,
-        G: Parent[_Actor],
-        chi: CharacterInput[_Scalar],
-        action: InvariantAction[_Actor, _Index, _Scalar] | None = ...,
-        side: InvariantSide = ...,
-        **kwargs: object,
-    ) -> FiniteDimensionalInvariantModule[_Actor, _Index, _Scalar] | FiniteDimensionalTwistedInvariantModule[_Actor, _Index, _Scalar]: ...
     def __init__(
         self,
         M: CombinatorialFreeModule,

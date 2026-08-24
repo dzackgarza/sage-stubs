@@ -170,8 +170,6 @@ class Subrepresentation(
     SubmoduleWithBasis[_Index, _Scalar],
     Generic[_Actor, _Index, _Scalar],
 ):
-    __classcall_private__ = SubmoduleWithBasis.__classcall_private__
-
     def __init__(
         self,
         basis: AbstractFamily,
@@ -182,7 +180,7 @@ class Subrepresentation(
     ) -> None: ...
     def _repr_(self) -> str: ...
 
-    class Element(SubmoduleWithBasis.Element):
+    class Element(Representation_abstract.Element):
         def _acted_upon_(
             self,
             scalar: ElementConstructorInput,
@@ -195,11 +193,9 @@ class QuotientRepresentation(
     QuotientModuleWithBasis[_Index, _Scalar],
     Generic[_Actor, _Index, _Scalar],
 ):
-    __classcall_private__ = QuotientModuleWithBasis.__classcall_private__
-
     def __init__(self, *args: object, **kwds: object) -> None: ...
     def _repr_(self) -> str: ...
-    Element = Subrepresentation.Element
+    class Element(Subrepresentation.Element): ...
 
 
 class Representation_Tensor(
@@ -207,12 +203,6 @@ class Representation_Tensor(
     CombinatorialFreeModule_Tensor,
     Generic[_Actor, _Scalar],
 ):
-    @staticmethod
-    def __classcall_private__(
-        class_: type[Representation_Tensor[_Actor, _Scalar]],
-        reps: Sequence[Representation_abstract[_Actor, Hashable, _Scalar]],
-        **options: object,
-    ) -> Representation_abstract[_Actor, Hashable, _Scalar] | Representation_Tensor[_Actor, _Scalar]: ...
     def __init__(
         self,
         reps: tuple[Representation_abstract[_Actor, Hashable, _Scalar], ...],
@@ -477,7 +467,6 @@ class SchurFunctorRepresentation(
     ) -> None: ...
     def _repr_(self) -> str: ...
     def _latex_(self) -> str: ...
-    Element = Subrepresentation.Element
 
 
 from sage.modules.with_basis.invariant import (

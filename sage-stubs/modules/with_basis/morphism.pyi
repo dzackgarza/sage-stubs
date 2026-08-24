@@ -1,6 +1,6 @@
 from collections.abc import Callable, Hashable
 from types import NotImplementedType
-from typing import Generic, Literal, TypeVar, overload
+from typing import Generic, Literal, TypeVar
 
 from sage.categories.category import Category
 from sage.categories.morphism import Morphism, SetMorphism
@@ -18,8 +18,14 @@ _Value = TypeVar("_Value", bound=RingElement, default=RingElement)
 
 type ModuleSide = Literal["left", "right"]
 type TriangularDirection = Literal["upper", "lower"]
-type DomainElement[_DomainIndex: Hashable, _Scalar: RingElement] = IndexedFreeModuleElement[_DomainIndex, _Scalar]
-type CodomainElement[_CodomainIndex: Hashable, _Scalar: RingElement] = IndexedFreeModuleElement[_CodomainIndex, _Scalar]
+type TesterOption = bool | int | str | None
+type DomainElement[_DomainIndex: Hashable, _Scalar: RingElement] = (
+    IndexedFreeModuleElement[_DomainIndex, _Scalar]
+)
+type CodomainElement[_CodomainIndex: Hashable, _Scalar: RingElement] = (
+    IndexedFreeModuleElement[_CodomainIndex, _Scalar]
+)
+
 
 class ModuleMorphism(
     Morphism[
@@ -35,6 +41,7 @@ class ModuleMorphism(
         category: Category | None = ...,
         affine: bool = ...,
     ) -> None: ...
+
 
 class ModuleMorphismFromFunction(
     ModuleMorphism[_DomainIndex, _CodomainIndex, _Scalar],
@@ -55,6 +62,7 @@ class ModuleMorphismFromFunction(
         category: Category | None = ...,
     ) -> None: ...
 
+
 class ModuleMorphismByLinearity(
     ModuleMorphism[_DomainIndex, _CodomainIndex, _Scalar],
     Generic[_DomainIndex, _CodomainIndex, _Scalar],
@@ -70,17 +78,17 @@ class ModuleMorphismByLinearity(
     ) -> None: ...
     def _richcmp_(
         self,
-        other: object,
+        other: ModuleMorphismByLinearity[
+            _DomainIndex,
+            _CodomainIndex,
+            _Scalar,
+        ],
         op: int,
     ) -> bool | NotImplementedType: ...
     def on_basis(
         self,
     ) -> Callable[..., CodomainElement[_CodomainIndex, _Scalar]]: ...
-    def __call__(
-        self,
-        *args: object,
-    ) -> CodomainElement[_CodomainIndex, _Scalar]: ...
-    _call_ = __call__
+
 
 class TriangularModuleMorphism(
     ModuleMorphism[_DomainIndex, _CodomainIndex, _Scalar],
@@ -90,7 +98,7 @@ class TriangularModuleMorphism(
         self,
         triangular: TriangularDirection = ...,
         unitriangular: bool = ...,
-        key: Callable[[_CodomainIndex], object] | None = ...,
+        key: Callable[[_CodomainIndex], Hashable] | None = ...,
         inverse: ModuleMorphism[_CodomainIndex, _DomainIndex, _Scalar] | None = ...,
         inverse_on_support: Callable[[_CodomainIndex], _DomainIndex | None]
         | Literal["compute"] = ...,
@@ -98,10 +106,14 @@ class TriangularModuleMorphism(
     ) -> None: ...
     def _richcmp_(
         self,
-        other: object,
+        other: TriangularModuleMorphism[
+            _DomainIndex,
+            _CodomainIndex,
+            _Scalar,
+        ],
         op: int,
     ) -> bool | NotImplementedType: ...
-    def _test_triangular(self, **options: object) -> None: ...
+    def _test_triangular(self, **options: TesterOption) -> None: ...
     def __invert__(
         self,
     ) -> ModuleMorphism[_CodomainIndex, _DomainIndex, _Scalar]: ...
@@ -129,6 +141,7 @@ class TriangularModuleMorphism(
         category: Category | None = ...,
     ) -> ModuleMorphism[_CodomainIndex, _CodomainIndex, _Scalar]: ...
 
+
 class TriangularModuleMorphismByLinearity(
     ModuleMorphismByLinearity[_DomainIndex, _CodomainIndex, _Scalar],
     TriangularModuleMorphism[_DomainIndex, _CodomainIndex, _Scalar],
@@ -144,9 +157,14 @@ class TriangularModuleMorphismByLinearity(
     ) -> None: ...
     def _richcmp_(
         self,
-        other: object,
+        other: TriangularModuleMorphismByLinearity[
+            _DomainIndex,
+            _CodomainIndex,
+            _Scalar,
+        ],
         op: int,
     ) -> bool | NotImplementedType: ...
+
 
 class TriangularModuleMorphismFromFunction(
     ModuleMorphismFromFunction[_DomainIndex, _CodomainIndex, _Scalar],
@@ -165,6 +183,7 @@ class TriangularModuleMorphismFromFunction(
         **keywords: object,
     ) -> None: ...
 
+
 class ModuleMorphismFromMatrix(
     ModuleMorphismByLinearity[_DomainIndex, _CodomainIndex, _Scalar],
     Generic[_DomainIndex, _CodomainIndex, _Scalar],
@@ -179,9 +198,14 @@ class ModuleMorphismFromMatrix(
     ) -> None: ...
     def _richcmp_(
         self,
-        other: object,
+        other: ModuleMorphismFromMatrix[
+            _DomainIndex,
+            _CodomainIndex,
+            _Scalar,
+        ],
         op: int,
     ) -> bool | NotImplementedType: ...
+
 
 class DiagonalModuleMorphism(
     ModuleMorphismByLinearity[_DomainIndex, _DomainIndex, _Scalar],
@@ -196,7 +220,7 @@ class DiagonalModuleMorphism(
     ) -> None: ...
     def _richcmp_(
         self,
-        other: object,
+        other: DiagonalModuleMorphism[_DomainIndex, _Scalar],
         op: int,
     ) -> bool | NotImplementedType: ...
     def _on_basis(
@@ -207,18 +231,13 @@ class DiagonalModuleMorphism(
         self,
     ) -> ModuleMorphism[_DomainIndex, _DomainIndex, _Scalar]: ...
 
-@overload
-def pointwise_inverse_function(
-    f: PointwiseInverseFunction[_Value],
-) -> Callable[..., _Value]: ...
-@overload
+
 def pointwise_inverse_function(
     f: Callable[..., _Value],
-) -> PointwiseInverseFunction[_Value]: ...
+) -> Callable[..., _Value]: ...
+
 
 class PointwiseInverseFunction(SageObject, Generic[_Value]):
     def __init__(self, f: Callable[..., _Value]) -> None: ...
-    def __eq__(self, other: object) -> bool: ...
-    def __ne__(self, other: object) -> bool: ...
-    def __call__(self, *args: object) -> RingElement: ...
+    def __call__(self, *args: object) -> _Value: ...
     def pointwise_inverse(self) -> Callable[..., _Value]: ...
