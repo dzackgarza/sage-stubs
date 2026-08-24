@@ -64,7 +64,7 @@ first-level subtree.
 | 02 | [Core rings & arithmetic](phases/phase-02-core-rings.md) | 1 | 01 | ~80 | ✅ Complete |
 | 03 | [Polynomial rings](phases/phase-03-polynomial-rings.md) | 1 | 01 | ~95 | ✅ Complete |
 | 04 | [Number-theoretic rings](phases/phase-04-number-theory-rings.md) | 1 | 01 | ~130 | ✅ Complete |
-| 05 | [Linear algebra: matrices & modules](phases/phase-05-linear-algebra.md) | 1 | 01 | ~120 | 🟡 In Progress |
+| 05 | [Linear algebra: matrices & modules](phases/phase-05-linear-algebra.md) | 1 | 01 | ~120 | ✅ Complete |
 | 06 | [Algebras: associative & non-Lie](phases/phase-06-algebras-core.md) | 2 | 02, 05 | ~70 | 🟡 In Progress |
 | 07 | [Lie algebras & quantum groups](phases/phase-07-lie-quantum.md) | 2 | 02, 05 | ~50 | ⬜ Not Started |
 | 08 | [Groups](phases/phase-08-groups.md) | 2 | 02, 05 | ~92 | ⬜ Not Started |
@@ -144,21 +144,20 @@ See [feature.md](feature.md#measuring-progress) for the full workflow.
 ## Current work frontier
 
 > **Completed first-level subtrees:** Phases 01 (foundation), 02 (core rings),
-> 03 (polynomial rings), 04 (number-theoretic rings), and 16 (symbolic,
-> calculus, and functions) are complete.
+> 03 (polynomial rings), 04 (number-theoretic rings), 05 (linear algebra), and
+> 16 (symbolic, calculus, and functions) are complete.
 >
-> **Latest completed workstreams:** Phase 05 tasks T05.1–T05.8 now cover the
-> complete matrix hierarchy and the free, embedded, quotient, and finitely
-> generated PID module foundations, including ordinary and twisted morphisms.
+> **Latest completed workstream:** Phase 05 now covers the complete matrix and
+> module hierarchy, including exact and numerical matrix backends, free and
+> finitely generated modules, concrete vectors, filtered spaces, with-basis
+> constructions, and Ore modules.
 >
-> **Active first-level phases:** Phase 05 (linear algebra) and Phase 06
-> (associative and non-Lie algebras). The remaining Phase 05 frontier is
-> T05.9–T05.11: torsion and finitely presented modules, concrete vector
-> implementations, and the miscellaneous module algorithms.
+> **Active first-level phase:** Phase 06 (associative and non-Lie algebras).
+> Its completed foundational tasks are the current dependency surface for the
+> remaining algebra workstreams.
 >
-> **Next valid work:** advance T05.9–T05.11, or continue a named Phase 06 task
-> whose dependency surface is already available. Phases 12, 14, 15, and 17
-> remain gated by completion of Phase 05; Phase 13 remains additionally gated
-> by Phase 12.
+> **Next valid work:** advance a named Phase 06 task. Phases 07, 08, 09, 12,
+> 14, 15, and 17 are now dependency-ready; Phase 13 remains additionally gated
+> by Phase 12, and Phases 10–11 remain gated by Phase 09.
 
 Update the frontier whenever a first-level phase or task status changes.
