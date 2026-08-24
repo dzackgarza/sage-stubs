@@ -7,8 +7,8 @@ from sage.rings.ring import Ring
 from sage.structure.element import RingElement
 from sage.structure.parent import Parent
 
-IdealSide: TypeAlias = Literal["left", "right", "twosided"]
-IdealGeneratorInput: TypeAlias = Sequence[RingElement]
+type IdealSide = Literal["left", "right", "twosided"]
+type IdealGeneratorInput = Sequence[RingElement]
 
 class IdealMonoid_nc(IdealMonoid_c):
     def __init__(self, R: Ring) -> None: ...

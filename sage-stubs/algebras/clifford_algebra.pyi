@@ -25,7 +25,7 @@ from sage.modules.with_basis.morphism import ModuleMorphismByLinearity
 from sage.modules.with_basis.subquotient import SubmoduleWithBasis
 from sage.quadratic_forms.quadratic_form import QuadraticForm
 from sage.rings.integer import Integer
-from sage.rings.noncommutative_ideals import IdealSide, Ideal_nc
+from sage.rings.noncommutative_ideals import Ideal_nc, IdealSide
 from sage.rings.ring import Ring
 from sage.sets.family import Family
 from sage.structure.element import ModuleElement, RingElement
@@ -73,6 +73,7 @@ type ExteriorTensorElement[_Coefficient: RingElement] = IndexedFreeModuleElement
     tuple[FrozenBitset, FrozenBitset],
     _Coefficient,
 ]
+
 class _CliffordGeneratorFamily(Protocol[_Coefficient]):
     def __getitem__(self, name: str) -> CliffordAlgebraElement[_Coefficient]: ...
     def __iter__(self) -> Iterator[CliffordAlgebraElement[_Coefficient]]: ...
@@ -224,7 +225,6 @@ class ExteriorAlgebraDifferential(
         E: ExteriorAlgebra[_Coefficient],
         s_coeff: Family,
     ) -> None: ...
-
     @overload
     def homology(
         self,
@@ -384,4 +384,3 @@ class ExteriorAlgebraIdeal(
         term_order: Literal["neglex", "degrevlex", "deglex"] | None = ...,
         reduced: bool = ...,
     ) -> tuple[ExteriorAlgebraElement[_Coefficient], ...]: ...
-

@@ -1,5 +1,4 @@
 from collections.abc import Callable, Hashable, Iterable, Sequence
-from typing import TypeVar
 
 from sage.categories.category import Category
 from sage.categories.morphism import Morphism
@@ -72,9 +71,7 @@ class CombinatorialFreeModule(
     def sum(self, iter_of_elements: Iterable[Element]) -> Element: ...
     def linear_combination(
         self,
-        iter_of_elements_coeff: Iterable[
-            tuple[Element, CommutativeRingElement]
-        ],
+        iter_of_elements_coeff: Iterable[tuple[Element, CommutativeRingElement]],
         factor_on_left: bool = ...,
     ) -> Element: ...
     def term(
