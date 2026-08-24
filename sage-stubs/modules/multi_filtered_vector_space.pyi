@@ -8,6 +8,7 @@ from sage.modules.filtered_vector_space import (
 from sage.modules.free_module import (
     FreeModule_ambient_field,
     FreeModule_generic,
+    FreeModule_generic_domain,
     FreeModule_submodule_field,
 )
 from sage.modules.quotient_module import FreeModule_ambient_field_quotient
@@ -43,7 +44,7 @@ class MultiFilteredVectorSpace_class(
     def index_set(self) -> Set_generic[_Key]: ...
     def change_ring(
         self,
-        base_ring: Parent[_NewScalar],
+        R: Parent[_NewScalar],
     ) -> MultiFilteredVectorSpace_class[_Key, _NewScalar]: ...
     def ambient_vector_space(self) -> FreeModule_ambient_field[_Scalar]: ...
     def is_constant(self) -> bool: ...
@@ -87,8 +88,8 @@ class MultiFilteredVectorSpace_class(
     @overload
     def __add__(
         self,
-        other: FreeModule_generic[_Scalar],
-    ) -> FreeModule_generic[_Scalar]: ...
+        other: FreeModule_generic_domain[_Scalar],
+    ) -> FreeModule_generic_domain[_Scalar]: ...
     def tensor_product(
         self,
         other: MultiFilteredVectorSpace_class[_Key, _Scalar],
