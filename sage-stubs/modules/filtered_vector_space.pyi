@@ -4,6 +4,7 @@ from typing import Generic, TypeVar, overload
 from sage.modules.free_module import (
     FreeModule_ambient_field,
     FreeModule_generic,
+    FreeModule_generic_domain,
     FreeModule_submodule_field,
 )
 from sage.modules.free_module_element import FreeModuleElement
@@ -75,7 +76,7 @@ class FilteredVectorSpace_class(
     ) -> None: ...
     def change_ring(
         self,
-        base_ring: Parent[_NewScalar],
+        R: Parent[_NewScalar],
     ) -> FilteredVectorSpace_class[_NewScalar]: ...
     def ambient_vector_space(self) -> FreeModule_ambient_field[_Scalar]: ...
     def is_constant(self) -> bool: ...
@@ -126,8 +127,8 @@ class FilteredVectorSpace_class(
     @overload
     def __add__(
         self,
-        other: FreeModule_generic[_Scalar],
-    ) -> FreeModule_generic[_Scalar]: ...
+        other: FreeModule_generic_domain[_Scalar],
+    ) -> FreeModule_generic_domain[_Scalar]: ...
     def tensor_product(
         self,
         other: FilteredVectorSpace_class[_Scalar],
