@@ -1,4 +1,4 @@
-name: Reconcile Phase 06 T06.2 free algebras
+name: Validate Phase 06 T06.2 free algebras
 
 on:
   push:
@@ -12,10 +12,10 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
-  reconcile-task:
+  validate-task:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -32,141 +32,6 @@ jobs:
 
       - name: Install analyzers
         run: python -m pip install --upgrade ruff mypy basedpyright
-
-      - name: Reconcile protocol variance and morphism overloads
-        run: |
-          set -euo pipefail
-          python - <<'PY'
-          from pathlib import Path
-
-          free = Path('sage-stubs/algebras/free_algebra.pyi')
-          text = free.read_text()
-          old = '''_GeneratorCoefficient = TypeVar(
-              "_GeneratorCoefficient",
-              bound=RingElement,
-          )
-          '''
-          new = '''_GeneratorCoefficient = TypeVar(
-              "_GeneratorCoefficient",
-              bound=RingElement,
-              covariant=True,
-          )
-          '''
-          if old not in text:
-              raise SystemExit('free-algebra generator protocol no longer matches expected text')
-          text = text.replace(old, new)
-          old = '''    @overload
-              def _apply_functor_to_morphism(
-                  self,
-                  f: Morphism[Element, Element],
-              ) -> Morphism[Element, Element]: ...
-              @overload
-              def _apply_functor_to_morphism(
-                  self,
-                  f: Morphism[_SourceCoefficient, _TargetCoefficient],
-              ) -> Morphism[
-                  FreeAlgebraElement[_SourceCoefficient],
-                  FreeAlgebraElement[_TargetCoefficient],
-              ]: ...
-          '''
-          new = '''    @overload
-              def _apply_functor_to_morphism(
-                  self,
-                  f: Morphism[_SourceCoefficient, _TargetCoefficient],
-              ) -> Morphism[
-                  FreeAlgebraElement[_SourceCoefficient],
-                  FreeAlgebraElement[_TargetCoefficient],
-              ]: ...
-              @overload
-              def _apply_functor_to_morphism(
-                  self,
-                  f: Morphism[Element, Element],
-              ) -> Morphism[Element, Element]: ...
-          '''
-          if old not in text:
-              raise SystemExit('associative morphism overloads no longer match expected text')
-          free.write_text(text.replace(old, new))
-
-          quotient = Path('sage-stubs/algebras/free_algebra_quotient.pyi')
-          text = quotient.read_text()
-          old = '''_AmbientCoefficient = TypeVar(
-              "_AmbientCoefficient",
-              bound=RingElement,
-          )
-          '''
-          new = '''_AmbientCoefficient = TypeVar(
-              "_AmbientCoefficient",
-              bound=RingElement,
-              covariant=True,
-          )
-          '''
-          if old not in text:
-              raise SystemExit('quotient ambient protocol no longer matches expected text')
-          quotient.write_text(text.replace(old, new))
-
-          zinbiel = Path('sage-stubs/algebras/free_zinbiel_algebra.pyi')
-          text = zinbiel.read_text()
-          old = '''    @overload
-              def _apply_functor_to_morphism(
-                  self,
-                  f: Morphism[Element, Element],
-              ) -> Morphism[Element, Element]: ...
-              @overload
-              def _apply_functor_to_morphism(
-                  self,
-                  f: Morphism[_SourceScalar, _TargetScalar],
-              ) -> ModuleMorphism[
-                  ZinbielWord[_Letter],
-                  ZinbielWord[_Letter],
-                  RingElement,
-              ]: ...
-          '''
-          new = '''    @overload
-              def _apply_functor_to_morphism(
-                  self,
-                  f: Morphism[_SourceScalar, _TargetScalar],
-              ) -> ModuleMorphism[
-                  ZinbielWord[_Letter],
-                  ZinbielWord[_Letter],
-                  RingElement,
-              ]: ...
-              @overload
-              def _apply_functor_to_morphism(
-                  self,
-                  f: Morphism[Element, Element],
-              ) -> Morphism[Element, Element]: ...
-          '''
-          if old not in text:
-              raise SystemExit('Zinbiel morphism overloads no longer match expected text')
-          zinbiel.write_text(text.replace(old, new))
-          PY
-
-          files=(
-            sage-stubs/algebras/free_algebra.pyi
-            sage-stubs/algebras/free_algebra_quotient.pyi
-            sage-stubs/algebras/free_zinbiel_algebra.pyi
-          )
-          ruff check --fix --select I "${files[@]}"
-          ruff format "${files[@]}"
-          ruff check "${files[@]}"
-          python scripts/check_stubs.py "${files[@]}"
-          git diff --check
-
-      - name: Commit and push protocol repair
-        run: |
-          set -euo pipefail
-          git config user.name 'D. Zack Garza'
-          git config user.email 'dzackgarza@gmail.com'
-          git add \
-            sage-stubs/algebras/free_algebra.pyi \
-            sage-stubs/algebras/free_algebra_quotient.pyi \
-            sage-stubs/algebras/free_zinbiel_algebra.pyi
-          if git diff --cached --quiet; then
-            echo 'Protocol repair already present.'
-          else
-            git commit -m 'fix(stubs): reconcile free algebra protocol variance'
-            git push origin HEAD:phase-06-t06-2-free-algebras
-          fi
 
       - name: Check task structure and formatting
         run: |
