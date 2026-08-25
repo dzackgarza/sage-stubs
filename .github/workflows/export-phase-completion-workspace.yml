@@ -1,4 +1,4 @@
-name: Validate Phase 06 T06.2 free algebras
+name: Reconcile Phase 06 T06.2 protocol objects
 
 on:
   push:
@@ -12,10 +12,10 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
-  validate-task:
+  reconcile-task:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -32,6 +32,120 @@ jobs:
 
       - name: Install analyzers
         run: python -m pip install --upgrade ruff mypy basedpyright
+
+      - name: Parameterize protocols by returned objects
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+
+          free = Path('sage-stubs/algebras/free_algebra.pyi')
+          text = free.read_text()
+          old = '''_GeneratorCoefficient = TypeVar(
+              "_GeneratorCoefficient",
+              bound=RingElement,
+              covariant=True,
+          )
+          '''
+          new = '''_GeneratorElement = TypeVar(
+              "_GeneratorElement",
+              covariant=True,
+          )
+          '''
+          if old in text:
+              text = text.replace(old, new)
+              text = text.replace(
+                  'class FreeAlgebraGeneratorFamily(Protocol[_GeneratorCoefficient]):',
+                  'class FreeAlgebraGeneratorFamily(Protocol[_GeneratorElement]):',
+              )
+              text = text.replace(
+                  'FreeAlgebraElement[_GeneratorCoefficient]',
+                  '_GeneratorElement',
+              )
+              text = text.replace(
+                  'FreeAlgebraGeneratorFamily[_Coefficient]',
+                  'FreeAlgebraGeneratorFamily[FreeAlgebraElement[_Coefficient]]',
+              )
+          elif new not in text:
+              raise SystemExit('free-algebra generator protocol no longer matches expected text')
+          free.write_text(text)
+
+          quotient = Path('sage-stubs/algebras/free_algebra_quotient.pyi')
+          text = quotient.read_text()
+          old = '''_AmbientCoefficient = TypeVar(
+              "_AmbientCoefficient",
+              bound=RingElement,
+              covariant=True,
+          )
+          '''
+          new = '''_AmbientAlgebra = TypeVar("_AmbientAlgebra", covariant=True)
+          _AmbientParent = TypeVar("_AmbientParent", covariant=True)
+          _AmbientElement = TypeVar("_AmbientElement", covariant=True)
+          '''
+          if old in text:
+              text = text.replace(old, new)
+              old_protocols = '''class AmbientQuotientParent(Protocol[_AmbientCoefficient]):
+              def ambient_algebra(
+                  self,
+              ) -> FreeAlgebraQuotient[_AmbientCoefficient]: ...
+          
+          class AmbientQuotientAlgebraElement(Protocol[_AmbientCoefficient]):
+              def parent(self) -> AmbientQuotientParent[_AmbientCoefficient]: ...
+              def ambient_algebra_element(
+                  self,
+              ) -> FreeAlgebraQuotientElement[_AmbientCoefficient]: ...
+          '''
+              new_protocols = '''class AmbientQuotientParent(Protocol[_AmbientAlgebra]):
+              def ambient_algebra(self) -> _AmbientAlgebra: ...
+          
+          class AmbientQuotientAlgebraElement(
+              Protocol[_AmbientParent, _AmbientElement]
+          ):
+              def parent(self) -> _AmbientParent: ...
+              def ambient_algebra_element(self) -> _AmbientElement: ...
+          '''
+              if old_protocols not in text:
+                  raise SystemExit('quotient protocols no longer match expected text')
+              text = text.replace(old_protocols, new_protocols)
+              text = text.replace(
+                  '    | AmbientQuotientAlgebraElement[_InputCoefficient]\n',
+                  '''    | AmbientQuotientAlgebraElement[
+                      AmbientQuotientParent[
+                          FreeAlgebraQuotient[_InputCoefficient]
+                      ],
+                      FreeAlgebraQuotientElement[_InputCoefficient],
+                  ]
+          ''',
+              )
+          elif new not in text:
+              raise SystemExit('quotient object protocols no longer match expected text')
+          quotient.write_text(text)
+          PY
+
+          files=(
+            sage-stubs/algebras/free_algebra.pyi
+            sage-stubs/algebras/free_algebra_quotient.pyi
+          )
+          ruff check --fix --select I "${files[@]}"
+          ruff format "${files[@]}"
+          ruff check "${files[@]}"
+          python scripts/check_stubs.py "${files[@]}"
+          git diff --check
+
+      - name: Commit and push protocol-object repair
+        run: |
+          set -euo pipefail
+          git config user.name 'D. Zack Garza'
+          git config user.email 'dzackgarza@gmail.com'
+          git add \
+            sage-stubs/algebras/free_algebra.pyi \
+            sage-stubs/algebras/free_algebra_quotient.pyi
+          if git diff --cached --quiet; then
+            echo 'Protocol-object repair already present.'
+          else
+            git commit -m 'fix(stubs): parameterize free algebra protocols by objects'
+            git push origin HEAD:phase-06-t06-2-free-algebras
+          fi
 
       - name: Check task structure and formatting
         run: |
