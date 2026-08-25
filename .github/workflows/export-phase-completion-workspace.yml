@@ -1,8 +1,8 @@
-name: Close Phase 06 T06.1 plan task
+name: Validate Phase 06 T06.2 free algebras
 
 on:
-  pull_request:
-    branches: [main]
+  push:
+    branches: [phase-completion-export]
     paths:
       - .github/workflows/export-phase-completion-workspace.yml
   workflow_dispatch:
@@ -11,76 +11,117 @@ permissions:
   contents: write
 
 jobs:
-  close-task:
+  validate-task:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
     steps:
-      - name: Check out T06.1 branch
+      - name: Check out T06.2 branch
         uses: actions/checkout@v4
         with:
-          ref: phase-06-t06-1-clifford-exterior
+          ref: phase-06-t06-2-free-algebras
           fetch-depth: 0
 
-      - name: Record completed task and advance frontier
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install analyzers
+        run: python -m pip install --upgrade ruff mypy basedpyright
+
+      - name: Canonicalize task files
         run: |
           set -euo pipefail
-          python - <<'PY'
-          from pathlib import Path
-
-          phase = Path('.agents/phases/phase-06-algebras-core.md')
-          text = phase.read_text()
-          old = '| T06.1 | **Clifford & exterior** — `clifford_algebra`, `clifford_algebra_element`, `exterior_algebra_groebner`. | 3 | — | ⬜ Not Started | Existing stubs still require a complete source audit. |'
-          new = '| T06.1 | **Clifford & exterior** — `clifford_algebra`, `clifford_algebra_element`, `exterior_algebra_groebner`. | 3 | — | ✅ Complete | Parent, element, differential, ideal, and Gröbner surfaces are source-grounded against the pinned Sage revision; frozen-bitset bases, coefficient rings, lifted morphisms, Hopf operations, homology codomains, involutions, scalar pairings, and term-order-dependent outputs are preserved. The obsolete duplicate `exterior_algebra` stub was removed. |'
-          if old not in text:
-              raise SystemExit('T06.1 task row no longer matches expected plan state')
-          text = text.replace(old, new)
-          anchor = '| #18 | T06.8, plus Phase 09 support | Finite graded-commutative algebra and weighted exponent vectors. |'
-          addition = anchor + '\n| #27 | T06.1, plus shared module/ideal contracts | Clifford and exterior parents, elements, Lie differentials, ideals, Gröbner strategies, and the required coercion and noncommutative-ideal owner repairs. |'
-          if anchor not in text:
-              raise SystemExit('Phase 06 landed-commit table anchor is missing')
-          text = text.replace(anchor, addition)
-          phase.write_text(text)
-
-          plan = Path('.agents/plan.md')
-          text = plan.read_text()
-          old = '''> **Latest completed workstream:** Phase 05 now covers the complete matrix and
-          > module hierarchy, including exact and numerical matrix backends, free and
-          > finitely generated modules, concrete vectors, filtered spaces, with-basis
-          > constructions, and Ore modules.
-          >
-          > **Active first-level phase:** Phase 06 (associative and non-Lie algebras).
-          > Its completed foundational tasks are the current dependency surface for the
-          > remaining algebra workstreams.
-          >
-          > **Next valid work:** advance a named Phase 06 task. Phases 07, 08, 09, 12,
-          > 14, 15, and 17 are now dependency-ready; Phase 13 remains additionally gated
-          > by Phase 12, and Phases 10–11 remain gated by Phase 09.
-          '''
-          new = '''> **Latest completed workstream:** Phase 06 task T06.1 now covers the complete
-          > Clifford/exterior parent, element, differential, ideal, and Gröbner surface,
-          > including the shared coercion and noncommutative-ideal contracts required by
-          > those algebras.
-          >
-          > **Active first-level phase:** Phase 06 (associative and non-Lie algebras).
-          > T06.1 is complete; the remaining Phase 06 tasks retain their recorded partial
-          > or not-started states.
-          >
-          > **Next valid work:** complete T06.2 (free algebras and quotients) or another
-          > named Phase 06 task. Phases 07, 08, 09, 12, 14, 15, and 17 are dependency-ready;
-          > Phase 13 remains additionally gated by Phase 12, and Phases 10–11 remain gated
-          > by Phase 09.
-          '''
-          if old not in text:
-              raise SystemExit('Master frontier no longer matches expected state')
-          plan.write_text(text.replace(old, new))
-          PY
+          files=(
+            sage-stubs/algebras/free_algebra.pyi
+            sage-stubs/algebras/free_algebra_element.pyi
+            sage-stubs/algebras/free_algebra_quotient.pyi
+            sage-stubs/algebras/free_algebra_quotient_element.pyi
+            sage-stubs/algebras/free_zinbiel_algebra.pyi
+            sage-stubs/algebras/letterplace/free_algebra_element_letterplace.pyi
+            sage-stubs/algebras/letterplace/free_algebra_letterplace.pyi
+            sage-stubs/algebras/letterplace/letterplace_ideal.pyi
+          )
+          ruff check --fix --select I "${files[@]}"
+          ruff format "${files[@]}"
+          ruff check "${files[@]}"
+          python scripts/check_stubs.py "${files[@]}"
           git diff --check
 
-      - name: Commit and push task closure
+      - name: Commit canonical formatting
         run: |
           set -euo pipefail
           git config user.name 'D. Zack Garza'
           git config user.email 'dzackgarza@gmail.com'
-          git add .agents/phases/phase-06-algebras-core.md .agents/plan.md
-          git commit -m 'docs(plan): complete Phase 06 Clifford task'
-          git push origin HEAD:phase-06-t06-1-clifford-exterior
+          git add \
+            sage-stubs/algebras/free_algebra.pyi \
+            sage-stubs/algebras/free_algebra_element.pyi \
+            sage-stubs/algebras/free_algebra_quotient.pyi \
+            sage-stubs/algebras/free_algebra_quotient_element.pyi \
+            sage-stubs/algebras/free_zinbiel_algebra.pyi \
+            sage-stubs/algebras/letterplace/free_algebra_element_letterplace.pyi \
+            sage-stubs/algebras/letterplace/free_algebra_letterplace.pyi \
+            sage-stubs/algebras/letterplace/letterplace_ideal.pyi
+          if git diff --cached --quiet; then
+            echo 'Task files already use canonical formatting.'
+          else
+            git commit -m 'style(stubs): format free algebra task surface'
+            git push origin HEAD:phase-06-t06-2-free-algebras
+          fi
+
+      - name: Check task files with basedpyright
+        run: |
+          set -euo pipefail
+          basedpyright --project pyrightconfig.json --outputjson > /tmp/basedpyright.json || true
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          targets = {
+              'sage-stubs/algebras/free_algebra.pyi',
+              'sage-stubs/algebras/free_algebra_element.pyi',
+              'sage-stubs/algebras/free_algebra_quotient.pyi',
+              'sage-stubs/algebras/free_algebra_quotient_element.pyi',
+              'sage-stubs/algebras/free_zinbiel_algebra.pyi',
+              'sage-stubs/algebras/letterplace/free_algebra_element_letterplace.pyi',
+              'sage-stubs/algebras/letterplace/free_algebra_letterplace.pyi',
+              'sage-stubs/algebras/letterplace/letterplace_ideal.pyi',
+          }
+          report = json.loads(Path('/tmp/basedpyright.json').read_text())
+          diagnostics = []
+          for item in report.get('generalDiagnostics', []):
+              path = item.get('file', '').replace('\\', '/')
+              rel = next((target for target in targets if path.endswith('/' + target)), None)
+              if rel is not None:
+                  diagnostics.append((rel, item))
+          print(f'T06.2 basedpyright diagnostics: {len(diagnostics)}')
+          for rel, item in diagnostics:
+              start = item.get('range', {}).get('start', {})
+              print(
+                  f"{rel}:{start.get('line', 0) + 1}:{start.get('character', 0) + 1}: "
+                  f"{item.get('rule')}: {item.get('message')}"
+              )
+          if diagnostics:
+              raise SystemExit(1)
+          PY
+
+      - name: Check task files with mypy
+        env:
+          MYPYPATH: sage-stubs
+        run: |
+          python -m mypy \
+            --strict \
+            --no-incremental \
+            --follow-imports=silent \
+            --show-error-codes \
+            sage-stubs/algebras/free_algebra.pyi \
+            sage-stubs/algebras/free_algebra_element.pyi \
+            sage-stubs/algebras/free_algebra_quotient.pyi \
+            sage-stubs/algebras/free_algebra_quotient_element.pyi \
+            sage-stubs/algebras/free_zinbiel_algebra.pyi \
+            sage-stubs/algebras/letterplace/free_algebra_element_letterplace.pyi \
+            sage-stubs/algebras/letterplace/free_algebra_letterplace.pyi \
+            sage-stubs/algebras/letterplace/letterplace_ideal.pyi
+
+      - name: Verify algebra source coverage
+        run: python scripts/stub_coverage.py --subpackage algebras --missing
