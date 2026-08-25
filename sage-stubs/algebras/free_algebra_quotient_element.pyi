@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from typing import Generic, Self, TypeVar
 
 from sage.algebras.free_algebra_quotient import (
@@ -16,7 +14,6 @@ _Coefficient = TypeVar(
     default=RingElement,
 )
 
-
 class FreeAlgebraQuotientElement(
     AlgebraElement,
     Generic[_Coefficient],
@@ -26,7 +23,6 @@ class FreeAlgebraQuotientElement(
         A: FreeAlgebraQuotient[_Coefficient],
         x: FreeAlgebraQuotientElementInput[_Coefficient],
     ) -> None: ...
-    def parent(self) -> FreeAlgebraQuotient[_Coefficient]: ...
     def _repr_(self) -> str: ...
     def _latex_(self) -> str: ...
     def vector(self) -> FreeModuleElement[_Coefficient]: ...

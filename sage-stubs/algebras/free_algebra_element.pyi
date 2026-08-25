@@ -1,11 +1,9 @@
-from __future__ import annotations
-
-from collections.abc import Callable, Iterator, Sequence
+from collections.abc import Callable, Mapping, Sequence
 from typing import Generic, Self, TypeVar, overload
 
-from sage.algebras.free_algebra import FreeAlgebraElementInput, FreeAlgebra_generic, PBWBasisOfFreeAlgebra
-from sage.monoids.free_monoid_element import FreeMonoidElement
+from sage.algebras.free_algebra import FreeAlgebra_generic, PBWBasisOfFreeAlgebra
 from sage.modules.with_basis.indexed_element import IndexedFreeModuleElement
+from sage.monoids.free_monoid_element import FreeMonoidElement
 from sage.rings.integer import Integer
 from sage.structure.element import AlgebraElement, Element, RingElement
 from sage.structure.factorization import Factorization
@@ -17,28 +15,27 @@ _Coefficient = TypeVar(
     default=RingElement,
 )
 
+type FreeAlgebraElementData[_Coefficient: RingElement] = (
+    FreeAlgebraElement[_Coefficient]
+    | AlgebraElement
+    | FreeMonoidElement
+    | Mapping[
+        FreeMonoidElement | object,
+        _Coefficient | int | Integer,
+    ]
+)
 
 class FreeAlgebraElement(
-    IndexedFreeModuleElement,
-    AlgebraElement,
+    IndexedFreeModuleElement[FreeMonoidElement, _Coefficient],
     Generic[_Coefficient],
 ):
     def __init__(
         self,
         A: FreeAlgebra_generic[_Coefficient],
-        x: FreeAlgebraElementInput[_Coefficient],
+        x: FreeAlgebraElementData[_Coefficient],
     ) -> None: ...
-    def parent(self) -> FreeAlgebra_generic[_Coefficient]: ...
-    def __iter__(
-        self,
-    ) -> Iterator[tuple[FreeMonoidElement, _Coefficient]]: ...
-    def monomial_coefficients(
-        self,
-        copy: bool = True,
-    ) -> dict[FreeMonoidElement, _Coefficient]: ...
     def _repr_(self) -> str: ...
     def _latex_(self) -> str: ...
-
     @overload
     def __call__(
         self,
@@ -46,19 +43,18 @@ class FreeAlgebraElement(
         **kwds: FreeAlgebraElement[_Coefficient],
     ) -> FreeAlgebraElement[_Coefficient]: ...
     @overload
-    def __call__[_Evaluation](
+    def __call__[Evaluation](
         self,
-        *x: _Evaluation,
-        **kwds: _Evaluation,
-    ) -> _Evaluation | FreeAlgebraElement[_Coefficient]: ...
-
+        *x: Evaluation,
+        **kwds: Evaluation,
+    ) -> Evaluation | Element: ...
     def _mul_(self, y: Self) -> Self: ...
-    def __invert__(self) -> Self: ...
     def is_unit(self) -> bool: ...
+    def __invert__(self) -> Self: ...
     def _acted_upon_(
         self,
         scalar: RingElement | int | Integer | Factorization,
-        self_on_left: bool = False,
+        self_on_left: bool = ...,
     ) -> Self | Factorization | None: ...
     def _im_gens_[CodomainElement: Element](
         self,
