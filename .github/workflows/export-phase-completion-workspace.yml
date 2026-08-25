@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   validate-task:
@@ -33,60 +33,9 @@ jobs:
       - name: Install analyzers
         run: python -m pip install --upgrade ruff mypy basedpyright
 
-      - name: Normalize generic syntax and task formatting
+      - name: Check task structure and formatting
         run: |
           set -euo pipefail
-          python - <<'PY'
-          from pathlib import Path
-
-          files = [
-              Path('sage-stubs/algebras/free_algebra.pyi'),
-              Path('sage-stubs/algebras/free_algebra_element.pyi'),
-              Path('sage-stubs/algebras/free_algebra_quotient.pyi'),
-              Path('sage-stubs/algebras/free_algebra_quotient_element.pyi'),
-              Path('sage-stubs/algebras/free_zinbiel_algebra.pyi'),
-              Path('sage-stubs/algebras/letterplace/free_algebra_element_letterplace.pyi'),
-              Path('sage-stubs/algebras/letterplace/free_algebra_letterplace.pyi'),
-              Path('sage-stubs/algebras/letterplace/letterplace_ideal.pyi'),
-          ]
-          for path in files:
-              text = path.read_text()
-              text = text.replace('from __future__ import annotations\n\n', '')
-              path.write_text(text)
-
-          element = Path('sage-stubs/algebras/free_algebra_element.pyi')
-          text = element.read_text()
-          text = text.replace('def __call__[_Evaluation](', 'def __call__[Evaluation](')
-          text = text.replace('*x: _Evaluation,', '*x: Evaluation,')
-          text = text.replace('**kwds: _Evaluation,', '**kwds: Evaluation,')
-          text = text.replace(') -> _Evaluation | Element:', ') -> Evaluation | Element:')
-          element.write_text(text)
-
-          quotient = Path('sage-stubs/algebras/free_algebra_quotient.pyi')
-          text = quotient.read_text()
-          text = text.replace(
-              '_HamiltonCoefficient = TypeVar("_HamiltonCoefficient", bound=RingElement)\n',
-              '',
-          )
-          old = '''def hamilton_quatalg(
-              R: Rings.ParentMethods[_HamiltonCoefficient],
-          ) -> tuple[
-              FreeAlgebraQuotient[_HamiltonCoefficient],
-              tuple[FreeAlgebraQuotientElement[_HamiltonCoefficient], ...],
-          ]: ...
-          '''
-          new = '''def hamilton_quatalg[HamiltonCoefficient: RingElement](
-              R: Rings.ParentMethods[HamiltonCoefficient],
-          ) -> tuple[
-              FreeAlgebraQuotient[HamiltonCoefficient],
-              tuple[FreeAlgebraQuotientElement[HamiltonCoefficient], ...],
-          ]: ...
-          '''
-          if old not in text:
-              raise SystemExit('hamilton_quatalg signature no longer matches expected text')
-          quotient.write_text(text.replace(old, new))
-          PY
-
           files=(
             sage-stubs/algebras/free_algebra.pyi
             sage-stubs/algebras/free_algebra_element.pyi
@@ -97,32 +46,10 @@ jobs:
             sage-stubs/algebras/letterplace/free_algebra_letterplace.pyi
             sage-stubs/algebras/letterplace/letterplace_ideal.pyi
           )
-          ruff check --fix --select I "${files[@]}"
-          ruff format "${files[@]}"
           ruff check "${files[@]}"
+          ruff format --check "${files[@]}"
           python scripts/check_stubs.py "${files[@]}"
           git diff --check
-
-      - name: Commit canonical formatting
-        run: |
-          set -euo pipefail
-          git config user.name 'D. Zack Garza'
-          git config user.email 'dzackgarza@gmail.com'
-          git add \
-            sage-stubs/algebras/free_algebra.pyi \
-            sage-stubs/algebras/free_algebra_element.pyi \
-            sage-stubs/algebras/free_algebra_quotient.pyi \
-            sage-stubs/algebras/free_algebra_quotient_element.pyi \
-            sage-stubs/algebras/free_zinbiel_algebra.pyi \
-            sage-stubs/algebras/letterplace/free_algebra_element_letterplace.pyi \
-            sage-stubs/algebras/letterplace/free_algebra_letterplace.pyi \
-            sage-stubs/algebras/letterplace/letterplace_ideal.pyi
-          if git diff --cached --quiet; then
-            echo 'Task files already use canonical formatting.'
-          else
-            git commit -m 'style(stubs): normalize free algebra task surface'
-            git push origin HEAD:phase-06-t06-2-free-algebras
-          fi
 
       - name: Check task files with basedpyright
         run: |
