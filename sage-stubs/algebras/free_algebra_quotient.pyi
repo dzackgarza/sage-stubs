@@ -23,26 +23,20 @@ _Coefficient = TypeVar(
     bound=RingElement,
     default=RingElement,
 )
-_AmbientCoefficient = TypeVar(
-    "_AmbientCoefficient",
-    bound=RingElement,
-    covariant=True,
-)
+_AmbientAlgebra = TypeVar("_AmbientAlgebra", covariant=True)
+_AmbientParent = TypeVar("_AmbientParent", covariant=True)
+_AmbientElement = TypeVar("_AmbientElement", covariant=True)
 
 type FreeAlgebraQuotientSource[_Coefficient: RingElement] = (
     FreeAlgebra_generic[_Coefficient] | FreeAlgebra_letterplace[_Coefficient]
 )
 
-class AmbientQuotientParent(Protocol[_AmbientCoefficient]):
-    def ambient_algebra(
-        self,
-    ) -> FreeAlgebraQuotient[_AmbientCoefficient]: ...
+class AmbientQuotientParent(Protocol[_AmbientAlgebra]):
+    def ambient_algebra(self) -> _AmbientAlgebra: ...
 
-class AmbientQuotientAlgebraElement(Protocol[_AmbientCoefficient]):
-    def parent(self) -> AmbientQuotientParent[_AmbientCoefficient]: ...
-    def ambient_algebra_element(
-        self,
-    ) -> FreeAlgebraQuotientElement[_AmbientCoefficient]: ...
+class AmbientQuotientAlgebraElement(Protocol[_AmbientParent, _AmbientElement]):
+    def parent(self) -> _AmbientParent: ...
+    def ambient_algebra_element(self) -> _AmbientElement: ...
 
 type FreeAlgebraQuotientElementInput[_InputCoefficient: RingElement] = (
     FreeAlgebraQuotientElement[_InputCoefficient]
@@ -54,7 +48,10 @@ type FreeAlgebraQuotientElementInput[_InputCoefficient: RingElement] = (
     | Integer
     | list[_InputCoefficient | int | Integer]
     | Mapping[FreeMonoidElement, _InputCoefficient | int | Integer]
-    | AmbientQuotientAlgebraElement[_InputCoefficient]
+    | AmbientQuotientAlgebraElement[
+        AmbientQuotientParent[FreeAlgebraQuotient[_InputCoefficient]],
+        FreeAlgebraQuotientElement[_InputCoefficient],
+    ]
 )
 
 class FreeAlgebraQuotient(
