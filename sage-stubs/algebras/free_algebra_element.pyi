@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from collections.abc import Callable, Mapping, Sequence
 from typing import Generic, Self, TypeVar, overload
 
@@ -27,7 +25,6 @@ type FreeAlgebraElementData[_Coefficient: RingElement] = (
     ]
 )
 
-
 class FreeAlgebraElement(
     IndexedFreeModuleElement[FreeMonoidElement, _Coefficient],
     Generic[_Coefficient],
@@ -46,11 +43,11 @@ class FreeAlgebraElement(
         **kwds: FreeAlgebraElement[_Coefficient],
     ) -> FreeAlgebraElement[_Coefficient]: ...
     @overload
-    def __call__[_Evaluation](
+    def __call__[Evaluation](
         self,
-        *x: _Evaluation,
-        **kwds: _Evaluation,
-    ) -> _Evaluation | Element: ...
+        *x: Evaluation,
+        **kwds: Evaluation,
+    ) -> Evaluation | Element: ...
     def _mul_(self, y: Self) -> Self: ...
     def is_unit(self) -> bool: ...
     def __invert__(self) -> Self: ...

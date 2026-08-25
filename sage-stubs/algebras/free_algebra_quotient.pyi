@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from collections.abc import Mapping
 from typing import Generic, Protocol, Self, TypeVar
 
@@ -11,10 +9,10 @@ from sage.algebras.letterplace.free_algebra_letterplace import (
 )
 from sage.categories.rings import Rings
 from sage.matrix.matrix0 import Matrix
-from sage.monoids.free_monoid import FreeMonoid
-from sage.monoids.free_monoid_element import FreeMonoidElement
 from sage.modules.free_module import FreeModule_generic
 from sage.modules.free_module_element import FreeModuleElement
+from sage.monoids.free_monoid import FreeMonoid
+from sage.monoids.free_monoid_element import FreeMonoidElement
 from sage.rings.integer import Integer
 from sage.structure.element import RingElement
 from sage.structure.parent import ElementConstructorInput, Parent
@@ -29,25 +27,21 @@ _AmbientCoefficient = TypeVar(
     "_AmbientCoefficient",
     bound=RingElement,
 )
-_HamiltonCoefficient = TypeVar("_HamiltonCoefficient", bound=RingElement)
 
 type FreeAlgebraQuotientSource[_Coefficient: RingElement] = (
     FreeAlgebra_generic[_Coefficient] | FreeAlgebra_letterplace[_Coefficient]
 )
-
 
 class AmbientQuotientParent(Protocol[_AmbientCoefficient]):
     def ambient_algebra(
         self,
     ) -> FreeAlgebraQuotient[_AmbientCoefficient]: ...
 
-
 class AmbientQuotientAlgebraElement(Protocol[_AmbientCoefficient]):
     def parent(self) -> AmbientQuotientParent[_AmbientCoefficient]: ...
     def ambient_algebra_element(
         self,
     ) -> FreeAlgebraQuotientElement[_AmbientCoefficient]: ...
-
 
 type FreeAlgebraQuotientElementInput[_InputCoefficient: RingElement] = (
     FreeAlgebraQuotientElement[_InputCoefficient]
@@ -61,7 +55,6 @@ type FreeAlgebraQuotientElementInput[_InputCoefficient: RingElement] = (
     | Mapping[FreeMonoidElement, _InputCoefficient | int | Integer]
     | AmbientQuotientAlgebraElement[_InputCoefficient]
 )
-
 
 class FreeAlgebraQuotient(
     UniqueRepresentation,
@@ -101,10 +94,9 @@ class FreeAlgebraQuotient(
     def monoid(self) -> FreeMonoid: ...
     def free_algebra(self) -> FreeAlgebraQuotientSource[_Coefficient]: ...
 
-
-def hamilton_quatalg(
-    R: Rings.ParentMethods[_HamiltonCoefficient],
+def hamilton_quatalg[HamiltonCoefficient: RingElement](
+    R: Rings.ParentMethods[HamiltonCoefficient],
 ) -> tuple[
-    FreeAlgebraQuotient[_HamiltonCoefficient],
-    tuple[FreeAlgebraQuotientElement[_HamiltonCoefficient], ...],
+    FreeAlgebraQuotient[HamiltonCoefficient],
+    tuple[FreeAlgebraQuotientElement[HamiltonCoefficient], ...],
 ]: ...

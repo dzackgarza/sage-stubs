@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from collections.abc import Callable, Iterable, Iterator, Mapping, Sequence
 from typing import Generic, Literal, Protocol, TypeVar, overload
 
@@ -77,7 +75,6 @@ _TargetElement = TypeVar("_TargetElement", bound=Element)
 _TargetCoefficient = TypeVar("_TargetCoefficient", bound=RingElement)
 _SourceCoefficient = TypeVar("_SourceCoefficient", bound=RingElement)
 
-
 class FreeAlgebraGeneratorFamily(Protocol[_GeneratorCoefficient]):
     def __len__(self) -> int: ...
     def __iter__(self) -> Iterator[FreeAlgebraElement[_GeneratorCoefficient]]: ...
@@ -90,7 +87,6 @@ class FreeAlgebraGeneratorFamily(Protocol[_GeneratorCoefficient]):
     def items(
         self,
     ) -> Iterable[tuple[str, FreeAlgebraElement[_GeneratorCoefficient]]]: ...
-
 
 class FreeAlgebraConstructor(Protocol):
     @overload
@@ -134,8 +130,10 @@ class FreeAlgebraConstructor(Protocol):
         name: str | None = ...,
         implementation: FreeAlgebraImplementation | None = ...,
         degrees: FreeAlgebraDegrees | None = ...,
-    ) -> FreeAlgebra_generic[_FactoryCoefficient] | FreeAlgebra_letterplace[_FactoryCoefficient]: ...
-
+    ) -> (
+        FreeAlgebra_generic[_FactoryCoefficient]
+        | FreeAlgebra_letterplace[_FactoryCoefficient]
+    ): ...
 
 class FreeAlgebraFactory(UniqueFactory):
     def create_key(
@@ -150,9 +148,7 @@ class FreeAlgebraFactory(UniqueFactory):
         **extra_args: FactoryArgument,
     ) -> FreeAlgebra_generic[RingElement] | FreeAlgebra_letterplace[RingElement]: ...
 
-
 FreeAlgebra: FreeAlgebraConstructor
-
 
 class FreeAlgebra_generic(
     CombinatorialFreeModule,
@@ -252,7 +248,6 @@ class FreeAlgebra_generic(
         w: FreeMonoidElement | FiniteWord_class | str,
     ) -> FreeAlgebraElement[_Coefficient]: ...
 
-
 class PBWBasisOfFreeAlgebra(
     CombinatorialFreeModule,
     Generic[_Coefficient],
@@ -295,7 +290,6 @@ class PBWBasisOfFreeAlgebra(
         self,
         t: PBWBasisOfFreeAlgebra.Element,
     ) -> FreeAlgebraElement[_Coefficient]: ...
-
 
 class AssociativeFunctor(ConstructionFunctor):
     rank: int

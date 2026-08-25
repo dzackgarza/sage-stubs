@@ -21,7 +21,6 @@ type LetterplaceReductionInput[_Scalar: RingElement] = (
     | Sequence[FreeAlgebraElement_letterplace[_Scalar]]
 )
 
-
 class FreeAlgebraElement_letterplace(
     AlgebraElement,
     Generic[_Scalar],

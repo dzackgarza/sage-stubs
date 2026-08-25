@@ -24,9 +24,9 @@ _TargetScalar = TypeVar("_TargetScalar", bound=RingElement)
 
 type ZinbielSide = Literal["<", ">"]
 type ZinbielWord[_Letter: Hashable] = FiniteWord_class[_Letter]
-type ZinbielElement[_Letter: Hashable, _Scalar: RingElement] = (
-    IndexedFreeModuleElement[ZinbielWord[_Letter], _Scalar]
-)
+type ZinbielElement[_Letter: Hashable, _Scalar: RingElement] = IndexedFreeModuleElement[
+    ZinbielWord[_Letter], _Scalar
+]
 type ZinbielTensorElement[_Letter: Hashable, _Scalar: RingElement] = (
     IndexedFreeModuleElement[
         tuple[ZinbielWord[_Letter], ZinbielWord[_Letter]],
@@ -38,11 +38,8 @@ type ZinbielIndexSet[_Letter: Hashable] = (
     int | Integer | Parent[_Letter] | Iterable[_Letter]
 )
 type ZinbielElementInput[_Letter: Hashable, _Scalar: RingElement] = (
-    ZinbielElement[_Letter, _Scalar]
-    | ZinbielWord[_Letter]
-    | Iterable[_Letter]
+    ZinbielElement[_Letter, _Scalar] | ZinbielWord[_Letter] | Iterable[_Letter]
 )
-
 
 class FreeZinbielAlgebra(
     CombinatorialFreeModule,
@@ -109,7 +106,6 @@ class FreeZinbielAlgebra(
     def construction(
         self,
     ) -> tuple[ZinbielFunctor[_Letter], Parent[_Scalar]]: ...
-
 
 class ZinbielFunctor(
     ConstructionFunctor,

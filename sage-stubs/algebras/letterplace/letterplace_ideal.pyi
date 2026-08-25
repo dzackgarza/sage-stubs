@@ -9,7 +9,7 @@ from sage.algebras.letterplace.free_algebra_letterplace import (
 )
 from sage.rings.infinity import PlusInfinity
 from sage.rings.integer import Integer
-from sage.rings.noncommutative_ideals import IdealSide, Ideal_nc
+from sage.rings.noncommutative_ideals import Ideal_nc, IdealSide
 from sage.structure.element import RingElement
 
 _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
@@ -24,7 +24,6 @@ type LetterplaceIdealInput[_Scalar: RingElement] = (
 type LetterplaceIdealReduction[_Scalar: RingElement] = (
     LetterplaceIdeal[_Scalar] | FreeAlgebraElement_letterplace[_Scalar]
 )
-
 
 class LetterplaceIdeal(
     Ideal_nc,

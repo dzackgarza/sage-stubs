@@ -9,8 +9,8 @@ from sage.rings.integer import Integer
 from sage.rings.noncommutative_ideals import IdealMonoid_nc
 from sage.rings.polynomial.multi_polynomial_ideal import MPolynomialIdeal
 from sage.rings.polynomial.multi_polynomial_libsingular import (
-    MPolynomialRing_libsingular,
     MPolynomial_libsingular,
+    MPolynomialRing_libsingular,
 )
 from sage.rings.polynomial.term_order import TermOrder
 from sage.structure.element import RingElement
@@ -27,7 +27,6 @@ type LetterplaceElementInput[_Scalar: RingElement] = (
     | ElementConstructorInput
     | str
 )
-
 
 class FreeAlgebra_letterplace(
     Parent[FreeAlgebraElement_letterplace[_Scalar]],
@@ -80,7 +79,6 @@ class FreeAlgebra_letterplace(
         self,
         x: LetterplaceElementInput[_Scalar],
     ) -> FreeAlgebraElement_letterplace[_Scalar]: ...
-
 
 class FreeAlgebra_letterplace_libsingular:
     def __init__(
