@@ -1,5 +1,5 @@
 from collections.abc import Callable, Hashable, Iterable, Sequence
-from typing import Generic, Literal, TypeVar
+from typing import Generic, Literal, TypeVar, overload
 
 from sage.categories.morphism import Morphism
 from sage.categories.pushout import ConstructionFunctor
@@ -13,12 +13,14 @@ from sage.modules.with_basis.morphism import ModuleMorphism
 from sage.rings.integer import Integer
 from sage.rings.ring import Ring
 from sage.sets.family import AbstractFamily
-from sage.structure.element import RingElement
+from sage.structure.element import Element, RingElement
 from sage.structure.parent import Parent
 
 _Letter = TypeVar("_Letter", bound=Hashable, default=Hashable)
 _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
-_NewScalar = TypeVar("_NewScalar", bound=RingElement)
+_FunctorScalar = TypeVar("_FunctorScalar", bound=RingElement)
+_SourceScalar = TypeVar("_SourceScalar", bound=RingElement)
+_TargetScalar = TypeVar("_TargetScalar", bound=RingElement)
 
 type ZinbielSide = Literal["<", ">"]
 type ZinbielWord[_Letter: Hashable] = FiniteWord_class[_Letter]
@@ -46,8 +48,6 @@ class FreeZinbielAlgebra(
     CombinatorialFreeModule,
     Generic[_Letter, _Scalar],
 ):
-    Element: type[ZinbielElement[_Letter, _Scalar]]
-    element_class: type[ZinbielElement[_Letter, _Scalar]]
     product_on_basis: Callable[
         [ZinbielWord[_Letter], ZinbielWord[_Letter]],
         ZinbielElement[_Letter, _Scalar],
@@ -55,7 +55,7 @@ class FreeZinbielAlgebra(
 
     @staticmethod
     def __classcall_private__(
-        cls: type[FreeZinbielAlgebra[_Letter, _Scalar]],
+        class_: type[FreeZinbielAlgebra[_Letter, _Scalar]],
         R: Ring,
         n: ZinbielIndexSet[_Letter] | ZinbielNames[_Letter] = ...,
         names: ZinbielNames[_Letter] = ...,
@@ -76,8 +76,8 @@ class FreeZinbielAlgebra(
     def algebra_generators(self) -> AbstractFamily: ...
     def change_ring(
         self,
-        R: Parent[_NewScalar],
-    ) -> FreeZinbielAlgebra[_Letter, _NewScalar]: ...
+        R: Parent,
+    ) -> FreeZinbielAlgebra[_Letter, RingElement]: ...
     def gens(
         self,
     ) -> tuple[ZinbielElement[_Letter, _Scalar], ...] | AbstractFamily: ...
@@ -123,15 +123,19 @@ class ZinbielFunctor(
         variables: Parent[_Letter] | Iterable[_Letter],
         side: ZinbielSide,
     ) -> None: ...
-    def _apply_functor[
-        _FunctorScalar: RingElement
-    ](
+    def _apply_functor(
         self,
         R: Parent[_FunctorScalar],
     ) -> FreeZinbielAlgebra[_Letter, _FunctorScalar]: ...
+    @overload
     def _apply_functor_to_morphism(
         self,
-        f: Morphism[RingElement, RingElement],
+        f: Morphism[Element, Element],
+    ) -> Morphism[Element, Element]: ...
+    @overload
+    def _apply_functor_to_morphism(
+        self,
+        f: Morphism[_SourceScalar, _TargetScalar],
     ) -> ModuleMorphism[
         ZinbielWord[_Letter],
         ZinbielWord[_Letter],

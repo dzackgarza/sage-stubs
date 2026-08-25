@@ -12,7 +12,10 @@ from sage.categories.category import Category
 from sage.categories.morphism import Morphism
 from sage.categories.pushout import ConstructionFunctor
 from sage.categories.rings import Rings
-from sage.combinat.free_module import CombinatorialFreeModule
+from sage.combinat.free_module import (
+    CombinatorialCoercionResult,
+    CombinatorialFreeModule,
+)
 from sage.combinat.words.finite_word import FiniteWord_class
 from sage.matrix.matrix0 import Matrix
 from sage.monoids.free_monoid import FreeMonoid
@@ -23,7 +26,12 @@ from sage.rings.polynomial.plural import NCPolynomialRing_plural
 from sage.rings.polynomial.term_order import TermOrder
 from sage.structure.element import Element, RingElement
 from sage.structure.factorization import Factorization
-from sage.structure.factory import FactoryVersion, UniqueFactory
+from sage.structure.factory import (
+    FactoryArgument,
+    FactoryCacheKey,
+    FactoryVersion,
+    UniqueFactory,
+)
 from sage.structure.parent import ElementConstructorInput, Parent
 
 type FreeAlgebraNames = str | Sequence[str]
@@ -31,16 +39,6 @@ type FreeAlgebraDegree = int | Integer
 type FreeAlgebraDegrees = FreeAlgebraDegree | Sequence[FreeAlgebraDegree]
 type FreeAlgebraImplementation = Literal["generic", "letterplace"]
 type FreeAlgebraFactoryArgument = int | Integer | FreeAlgebraNames | None
-type FreeAlgebraFactoryKey = (
-    tuple[Parent]
-    | tuple[tuple[FreeAlgebraDegree, ...], Parent]
-    | tuple[Rings.ParentMethods[RingElement], tuple[str, ...]]
-    | tuple[
-        Rings.ParentMethods[RingElement],
-        tuple[str, ...],
-        tuple[FreeAlgebraDegree, ...],
-    ]
-)
 type FreeAlgebraElementInput[_Coefficient: RingElement] = (
     FreeAlgebraElement[_Coefficient]
     | FreeMonoidElement
@@ -73,8 +71,11 @@ _Coefficient = TypeVar(
 _GeneratorCoefficient = TypeVar(
     "_GeneratorCoefficient",
     bound=RingElement,
-    covariant=True,
 )
+_FactoryCoefficient = TypeVar("_FactoryCoefficient", bound=RingElement)
+_TargetElement = TypeVar("_TargetElement", bound=Element)
+_TargetCoefficient = TypeVar("_TargetCoefficient", bound=RingElement)
+_SourceCoefficient = TypeVar("_SourceCoefficient", bound=RingElement)
 
 
 class FreeAlgebraGeneratorFamily(Protocol[_GeneratorCoefficient]):
@@ -91,11 +92,9 @@ class FreeAlgebraGeneratorFamily(Protocol[_GeneratorCoefficient]):
     ) -> Iterable[tuple[str, FreeAlgebraElement[_GeneratorCoefficient]]]: ...
 
 
-class FreeAlgebraFactory(UniqueFactory):
+class FreeAlgebraConstructor(Protocol):
     @overload
-    def __call__[
-        _FactoryCoefficient: RingElement
-    ](
+    def __call__(
         self,
         base_ring: Rings.ParentMethods[_FactoryCoefficient],
         arg1: FreeAlgebraFactoryArgument = ...,
@@ -109,9 +108,7 @@ class FreeAlgebraFactory(UniqueFactory):
         degrees: FreeAlgebraDegrees | None = ...,
     ) -> FreeAlgebra_generic[_FactoryCoefficient]: ...
     @overload
-    def __call__[
-        _FactoryCoefficient: RingElement
-    ](
+    def __call__(
         self,
         base_ring: Rings.ParentMethods[_FactoryCoefficient],
         arg1: FreeAlgebraFactoryArgument = ...,
@@ -125,9 +122,7 @@ class FreeAlgebraFactory(UniqueFactory):
         degrees: FreeAlgebraDegrees | None = ...,
     ) -> FreeAlgebra_letterplace[_FactoryCoefficient]: ...
     @overload
-    def __call__[
-        _FactoryCoefficient: RingElement
-    ](
+    def __call__(
         self,
         base_ring: Rings.ParentMethods[_FactoryCoefficient],
         arg1: FreeAlgebraFactoryArgument = ...,
@@ -135,45 +130,34 @@ class FreeAlgebraFactory(UniqueFactory):
         sparse: bool | None = ...,
         order: str | TermOrder | None = ...,
         *,
-        names: FreeAlgebraNames | None = ..,
+        names: FreeAlgebraNames | None = ...,
         name: str | None = ...,
         implementation: FreeAlgebraImplementation | None = ...,
         degrees: FreeAlgebraDegrees | None = ...,
-    ) -> (
-        FreeAlgebra_generic[_FactoryCoefficient]
-        | FreeAlgebra_letterplace[_FactoryCoefficient]
-    ): ...
+    ) -> FreeAlgebra_generic[_FactoryCoefficient] | FreeAlgebra_letterplace[_FactoryCoefficient]: ...
+
+
+class FreeAlgebraFactory(UniqueFactory):
     def create_key(
         self,
-        base_ring: Rings.ParentMethods[RingElement] | Parent,
-        arg1: FreeAlgebraFactoryArgument = ...,
-        arg2: FreeAlgebraFactoryArgument = ...,
-        sparse: bool | None = ..,
-        order: str | TermOrder | None = ...,
-        names: FreeAlgebraNames | None = ..,
-        name: str | None = ...,
-        implementation: FreeAlgebraImplementation | None = ...,
-        degrees: FreeAlgebraDegrees | None = ...,
-    ) -> FreeAlgebraFactoryKey: ...
+        *args: FactoryArgument,
+        **kwds: FactoryArgument,
+    ) -> FactoryCacheKey: ...
     def create_object(
         self,
-        version: FactoryVersion | str,
-        key: FreeAlgebraFactoryKey,
-    ) -> (
-        FreeAlgebra_generic[RingElement]
-        | FreeAlgebra_letterplace[RingElement]
-    ): ...
+        version: FactoryVersion,
+        key: FactoryCacheKey,
+        **extra_args: FactoryArgument,
+    ) -> FreeAlgebra_generic[RingElement] | FreeAlgebra_letterplace[RingElement]: ...
 
 
-FreeAlgebra: FreeAlgebraFactory
+FreeAlgebra: FreeAlgebraConstructor
 
 
 class FreeAlgebra_generic(
     CombinatorialFreeModule,
     Generic[_Coefficient],
 ):
-    Element: type[FreeAlgebraElement[_Coefficient]]
-
     def __init__(
         self,
         R: Rings.ParentMethods[_Coefficient],
@@ -192,12 +176,16 @@ class FreeAlgebra_generic(
         self,
         x: FreeAlgebraElementInput[_Coefficient],
     ) -> FreeAlgebraElement[_Coefficient]: ...
-    def _coerce_map_from_(self, R: Parent | type, /) -> bool: ...
-    def _is_valid_homomorphism_[TargetElement: Element](
+    def _coerce_map_from_(
         self,
-        other: Parent[TargetElement],
-        im_gens: Sequence[TargetElement],
-        base_map: Callable[[_Coefficient], TargetElement] | None = ...,
+        R: Parent | type,
+        /,
+    ) -> CombinatorialCoercionResult: ...
+    def _is_valid_homomorphism_(
+        self,
+        other: Parent[_TargetElement],
+        im_gens: Sequence[_TargetElement],
+        base_map: Callable[[_Coefficient], _TargetElement] | None = ...,
     ) -> bool: ...
     def gen(self, i: int | Integer) -> FreeAlgebraElement[_Coefficient]: ...
     def algebra_generators(
@@ -274,7 +262,7 @@ class PBWBasisOfFreeAlgebra(
 
     @staticmethod
     def __classcall_private__(
-        cls: type[PBWBasisOfFreeAlgebra[_Coefficient]],
+        class_: type[PBWBasisOfFreeAlgebra[_Coefficient]],
         R: FreeAlgebra_generic[_Coefficient] | Rings.ParentMethods[_Coefficient],
         n: int | Integer | None = ...,
         names: FreeAlgebraNames | None = ...,
@@ -285,15 +273,28 @@ class PBWBasisOfFreeAlgebra(
     def _element_constructor_(
         self,
         x: FreeAlgebraElement[_Coefficient] | ElementConstructorInput,
-    ) -> Element: ...
-    def _coerce_map_from_(self, R: Parent | type, /) -> bool: ...
+    ) -> PBWBasisOfFreeAlgebra.Element: ...
+    def _coerce_map_from_(
+        self,
+        R: Parent | type,
+        /,
+    ) -> CombinatorialCoercionResult: ...
     def one_basis(self) -> FreeMonoidElement: ...
-    def algebra_generators(self) -> tuple[Element, ...]: ...
-    def gens(self) -> tuple[Element, ...]: ...
-    def gen(self, i: int | Integer) -> Element: ...
+    def algebra_generators(
+        self,
+    ) -> tuple[PBWBasisOfFreeAlgebra.Element, ...]: ...
+    def gens(self) -> tuple[PBWBasisOfFreeAlgebra.Element, ...]: ...
+    def gen(self, i: int | Integer) -> PBWBasisOfFreeAlgebra.Element: ...
     def free_algebra(self) -> FreeAlgebra_generic[_Coefficient]: ...
-    def product(self, u: Element, v: Element) -> Element: ...
-    def expansion(self, t: Element) -> FreeAlgebraElement[_Coefficient]: ...
+    def product(
+        self,
+        u: PBWBasisOfFreeAlgebra.Element,
+        v: PBWBasisOfFreeAlgebra.Element,
+    ) -> PBWBasisOfFreeAlgebra.Element: ...
+    def expansion(
+        self,
+        t: PBWBasisOfFreeAlgebra.Element,
+    ) -> FreeAlgebraElement[_Coefficient]: ...
 
 
 class AssociativeFunctor(ConstructionFunctor):
@@ -308,21 +309,22 @@ class AssociativeFunctor(ConstructionFunctor):
         | Mapping[str, FreeAlgebraDegree]
         | None = ...,
     ) -> None: ...
-    def _apply_functor[
-        TargetCoefficient: RingElement
-    ](
+    def _apply_functor(
         self,
-        R: Rings.ParentMethods[TargetCoefficient],
-    ) -> FreeAlgebra_generic[TargetCoefficient]: ...
-    def _apply_functor_to_morphism[
-        SourceCoefficient: RingElement,
-        TargetCoefficient: RingElement,
-    ](
+        R: Rings.ParentMethods[_TargetCoefficient],
+    ) -> FreeAlgebra_generic[_TargetCoefficient]: ...
+    @overload
+    def _apply_functor_to_morphism(
         self,
-        f: Morphism[SourceCoefficient, TargetCoefficient],
+        f: Morphism[Element, Element],
+    ) -> Morphism[Element, Element]: ...
+    @overload
+    def _apply_functor_to_morphism(
+        self,
+        f: Morphism[_SourceCoefficient, _TargetCoefficient],
     ) -> Morphism[
-        FreeAlgebraElement[SourceCoefficient],
-        FreeAlgebraElement[TargetCoefficient],
+        FreeAlgebraElement[_SourceCoefficient],
+        FreeAlgebraElement[_TargetCoefficient],
     ]: ...
     def __eq__(self, other: object) -> bool: ...
     def __mul__(self, other: ConstructionFunctor) -> ConstructionFunctor: ...

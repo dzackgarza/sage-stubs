@@ -3,8 +3,8 @@ from __future__ import annotations
 from collections.abc import Callable, Iterable, Mapping, Sequence
 from typing import Generic, TypeVar
 
-from sage.rings.ideal_monoid import IdealMonoid_nc
 from sage.rings.integer import Integer
+from sage.rings.noncommutative_ideals import IdealMonoid_nc
 from sage.rings.polynomial.multi_polynomial_ideal import MPolynomialIdeal
 from sage.rings.polynomial.multi_polynomial_libsingular import (
     MPolynomialRing_libsingular,
@@ -17,12 +17,8 @@ from sage.structure.parent import ElementConstructorInput, Parent
 _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
 
 type LetterplaceDegrees = Sequence[int | Integer] | None
-type LetterplacePickleArgument = (
-    MPolynomialRing_libsingular | tuple[int, ...] | None
-)
-type LetterplaceCoefficientInput[_Scalar: RingElement] = (
-    _Scalar | int | Integer
-)
+type LetterplacePickleArgument = MPolynomialRing_libsingular | tuple[int, ...] | None
+type LetterplaceCoefficientInput[_Scalar: RingElement] = _Scalar | int | Integer
 type LetterplaceElementInput[_Scalar: RingElement] = (
     FreeAlgebraElement_letterplace[_Scalar]
     | MPolynomial_libsingular

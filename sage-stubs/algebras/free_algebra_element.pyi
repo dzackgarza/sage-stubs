@@ -4,8 +4,8 @@ from collections.abc import Callable, Mapping, Sequence
 from typing import Generic, Self, TypeVar, overload
 
 from sage.algebras.free_algebra import FreeAlgebra_generic, PBWBasisOfFreeAlgebra
-from sage.monoids.free_monoid_element import FreeMonoidElement
 from sage.modules.with_basis.indexed_element import IndexedFreeModuleElement
+from sage.monoids.free_monoid_element import FreeMonoidElement
 from sage.rings.integer import Integer
 from sage.structure.element import AlgebraElement, Element, RingElement
 from sage.structure.factorization import Factorization
@@ -30,7 +30,6 @@ type FreeAlgebraElementData[_Coefficient: RingElement] = (
 
 class FreeAlgebraElement(
     IndexedFreeModuleElement[FreeMonoidElement, _Coefficient],
-    AlgebraElement,
     Generic[_Coefficient],
 ):
     def __init__(

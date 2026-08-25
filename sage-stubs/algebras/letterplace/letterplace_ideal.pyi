@@ -40,7 +40,7 @@ class LetterplaceIdeal(
     def __contains__(self, x: object) -> bool: ...
     def reduce(
         self,
-        G: LetterplaceIdealInput[_Scalar],
+        f: LetterplaceIdealInput[_Scalar],
     ) -> LetterplaceIdealReduction[_Scalar]: ...
 
 
