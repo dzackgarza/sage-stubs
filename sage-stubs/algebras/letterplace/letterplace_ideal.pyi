@@ -10,15 +10,15 @@ from sage.algebras.letterplace.free_algebra_letterplace import (
 from sage.rings.infinity import PlusInfinity
 from sage.rings.integer import Integer
 from sage.rings.noncommutative_ideals import Ideal_nc, IdealSide
-from sage.structure.element import RingElement
+from sage.structure.element import Element, RingElement
 
 _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
 
 type LetterplaceDegreeBound = int | Integer | PlusInfinity | None
 type LetterplaceIdealInput[_Scalar: RingElement] = (
-    LetterplaceIdeal[_Scalar]
+    Element
+    | LetterplaceIdeal[_Scalar]
     | FreeAlgebra_letterplace[_Scalar]
-    | FreeAlgebraElement_letterplace[_Scalar]
     | Sequence[FreeAlgebraElement_letterplace[_Scalar]]
 )
 type LetterplaceIdealReduction[_Scalar: RingElement] = (
