@@ -1,8 +1,10 @@
-from __future__ import annotations
-
 from collections.abc import Iterator, Sequence
 from typing import Generic, Self, TypeVar
 
+from sage.algebras.letterplace.free_algebra_letterplace import (
+    FreeAlgebra_letterplace,
+)
+from sage.algebras.letterplace.letterplace_ideal import LetterplaceIdeal
 from sage.rings.polynomial.multi_polynomial_ideal import MPolynomialIdeal
 from sage.rings.polynomial.multi_polynomial_libsingular import (
     MPolynomial_libsingular,
@@ -69,9 +71,3 @@ class FreeAlgebraElement_letterplace(
         G: LetterplaceReductionInput[_Scalar],
     ) -> Self: ...
     def normal_form(self, I: LetterplaceIdeal[_Scalar]) -> Self: ...
-
-
-from sage.algebras.letterplace.free_algebra_letterplace import (
-    FreeAlgebra_letterplace,
-)
-from sage.algebras.letterplace.letterplace_ideal import LetterplaceIdeal

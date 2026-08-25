@@ -1,8 +1,12 @@
-from __future__ import annotations
-
 from collections.abc import Sequence
 from typing import Generic, TypeVar
 
+from sage.algebras.letterplace.free_algebra_element_letterplace import (
+    FreeAlgebraElement_letterplace,
+)
+from sage.algebras.letterplace.free_algebra_letterplace import (
+    FreeAlgebra_letterplace,
+)
 from sage.rings.infinity import PlusInfinity
 from sage.rings.integer import Integer
 from sage.rings.noncommutative_ideals import IdealSide, Ideal_nc
@@ -42,11 +46,3 @@ class LetterplaceIdeal(
         self,
         f: LetterplaceIdealInput[_Scalar],
     ) -> LetterplaceIdealReduction[_Scalar]: ...
-
-
-from sage.algebras.letterplace.free_algebra_element_letterplace import (
-    FreeAlgebraElement_letterplace,
-)
-from sage.algebras.letterplace.free_algebra_letterplace import (
-    FreeAlgebra_letterplace,
-)

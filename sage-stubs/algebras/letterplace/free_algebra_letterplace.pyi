@@ -1,8 +1,10 @@
-from __future__ import annotations
-
 from collections.abc import Callable, Iterable, Mapping, Sequence
 from typing import Generic, TypeVar
 
+from sage.algebras.letterplace.free_algebra_element_letterplace import (
+    FreeAlgebraElement_letterplace,
+)
+from sage.algebras.letterplace.letterplace_ideal import LetterplaceIdeal
 from sage.rings.integer import Integer
 from sage.rings.noncommutative_ideals import IdealMonoid_nc
 from sage.rings.polynomial.multi_polynomial_ideal import MPolynomialIdeal
@@ -86,9 +88,3 @@ class FreeAlgebra_letterplace_libsingular:
         commutative_ring: MPolynomialRing_libsingular,
         degbound: int | Integer,
     ) -> None: ...
-
-
-from sage.algebras.letterplace.free_algebra_element_letterplace import (
-    FreeAlgebraElement_letterplace,
-)
-from sage.algebras.letterplace.letterplace_ideal import LetterplaceIdeal
