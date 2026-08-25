@@ -26,6 +26,7 @@ _Coefficient = TypeVar(
 _AmbientCoefficient = TypeVar(
     "_AmbientCoefficient",
     bound=RingElement,
+    covariant=True,
 )
 
 type FreeAlgebraQuotientSource[_Coefficient: RingElement] = (

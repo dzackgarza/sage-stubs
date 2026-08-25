@@ -126,17 +126,17 @@ class ZinbielFunctor(
     @overload
     def _apply_functor_to_morphism(
         self,
-        f: Morphism[Element, Element],
-    ) -> Morphism[Element, Element]: ...
-    @overload
-    def _apply_functor_to_morphism(
-        self,
         f: Morphism[_SourceScalar, _TargetScalar],
     ) -> ModuleMorphism[
         ZinbielWord[_Letter],
         ZinbielWord[_Letter],
         RingElement,
     ]: ...
+    @overload
+    def _apply_functor_to_morphism(
+        self,
+        f: Morphism[Element, Element],
+    ) -> Morphism[Element, Element]: ...
     def __eq__(self, other: object) -> bool: ...
     def __hash__(self) -> int: ...
     def __mul__(self, other: ConstructionFunctor) -> ConstructionFunctor: ...

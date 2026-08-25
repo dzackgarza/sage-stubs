@@ -69,6 +69,7 @@ _Coefficient = TypeVar(
 _GeneratorCoefficient = TypeVar(
     "_GeneratorCoefficient",
     bound=RingElement,
+    covariant=True,
 )
 _FactoryCoefficient = TypeVar("_FactoryCoefficient", bound=RingElement)
 _TargetElement = TypeVar("_TargetElement", bound=Element)
@@ -310,16 +311,16 @@ class AssociativeFunctor(ConstructionFunctor):
     @overload
     def _apply_functor_to_morphism(
         self,
-        f: Morphism[Element, Element],
-    ) -> Morphism[Element, Element]: ...
-    @overload
-    def _apply_functor_to_morphism(
-        self,
         f: Morphism[_SourceCoefficient, _TargetCoefficient],
     ) -> Morphism[
         FreeAlgebraElement[_SourceCoefficient],
         FreeAlgebraElement[_TargetCoefficient],
     ]: ...
+    @overload
+    def _apply_functor_to_morphism(
+        self,
+        f: Morphism[Element, Element],
+    ) -> Morphism[Element, Element]: ...
     def __eq__(self, other: object) -> bool: ...
     def __mul__(self, other: ConstructionFunctor) -> ConstructionFunctor: ...
     def merge(
