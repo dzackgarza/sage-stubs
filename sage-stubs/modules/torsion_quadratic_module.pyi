@@ -49,18 +49,6 @@ class TorsionQuadraticModule(
     FGP_Module_class[RingElement],
     CachedRepresentation,
 ):
-    Element: type[TorsionQuadraticModuleElement]
-
-    @staticmethod
-    def __classcall__(
-        class_: type[TorsionQuadraticModule],
-        V: FreeModule_generic[RingElement],
-        W: FreeModule_generic[RingElement],
-        gens: Iterable[QuadraticGenerator] | None = ...,
-        modulus: int | Integer | Rational | None = ...,
-        modulus_qf: int | Integer | Rational | None = ...,
-        check: bool = ...,
-    ) -> TorsionQuadraticModule: ...
     def __init__(
         self,
         V: FreeModule_generic[RingElement],

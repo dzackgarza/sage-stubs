@@ -147,18 +147,13 @@ See [feature.md](feature.md#measuring-progress) for the full workflow.
 > 03 (polynomial rings), 04 (number-theoretic rings), 05 (linear algebra), and
 > 16 (symbolic, calculus, and functions) are complete.
 >
-> **Latest completed workstream:** Phase 06 task T06.1 now covers the complete
-> Clifford/exterior parent, element, differential, ideal, and Gröbner surface,
-> including the shared coercion and noncommutative-ideal contracts required by
-> those algebras.
+> **Latest completed workstream:** Phase 06 tasks T06.1 (Clifford/exterior) and
+> T06.2 (free algebras and quotients) are complete.
 >
 > **Active first-level phase:** Phase 06 (associative and non-Lie algebras).
-> T06.1 is complete; the remaining Phase 06 tasks retain their recorded partial
-> or not-started states.
 >
-> **Next valid work:** complete T06.2 (free algebras and quotients) or another
-> named Phase 06 task. Phases 07, 08, 09, 12, 14, 15, and 17 are dependency-ready;
-> Phase 13 remains additionally gated by Phase 12, and Phases 10–11 remain gated
-> by Phase 09.
+> **Next valid work:** advance remaining Phase 06 tasks (T06.3+). Phases 07,
+> 08, 09, 12, 14, 15, and 17 are dependency-ready; Phase 13 remains
+> additionally gated by Phase 12, and Phases 10–11 remain gated by Phase 09.
 
 Update the frontier whenever a first-level phase or task status changes.

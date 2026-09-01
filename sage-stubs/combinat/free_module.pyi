@@ -7,11 +7,12 @@ from sage.modules.free_module_element import FreeModuleElement
 from sage.modules.module import Module
 from sage.rings.infinity import PlusInfinity
 from sage.rings.integer import Integer
-from sage.rings.ring import CommutativeRing
+from sage.rings.ring import CommutativeRing, Ring
 from sage.sets.family import AbstractFamily
 from sage.structure.element import (
     CommutativeRingElement,
     ModuleElement,
+    RingElement,
 )
 from sage.structure.indexed_generators import IndexedGenerators
 from sage.structure.parent import Parent
@@ -24,6 +25,7 @@ type CombinatorialCoercionResult = (
     | Morphism[ModuleElement, ModuleElement]
     | None
 )
+
 
 class CombinatorialFreeModule(
     UniqueRepresentation,
@@ -56,7 +58,7 @@ class CombinatorialFreeModule(
     def construction(
         self,
     ) -> tuple[ConstructionFunctor, Parent] | None: ...
-    def change_ring(self, R: Parent) -> CombinatorialFreeModule: ...
+    def change_ring(self, R: Ring) -> CombinatorialFreeModule: ...
     def dimension(self) -> int | Integer | PlusInfinity: ...
     def is_exact(self) -> bool: ...
     def set_order(self, order: Iterable[Hashable]) -> None: ...
@@ -71,7 +73,9 @@ class CombinatorialFreeModule(
     def sum(self, iter_of_elements: Iterable[Element]) -> Element: ...
     def linear_combination(
         self,
-        iter_of_elements_coeff: Iterable[tuple[Element, CommutativeRingElement]],
+        iter_of_elements_coeff: Iterable[
+            tuple[Element, CommutativeRingElement]
+        ],
         factor_on_left: bool = ...,
     ) -> Element: ...
     def term(
@@ -86,6 +90,7 @@ class CombinatorialFreeModule(
         distinct: bool = ...,
     ) -> Element: ...
     def zero(self) -> Element: ...
+
 
 class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
     @staticmethod

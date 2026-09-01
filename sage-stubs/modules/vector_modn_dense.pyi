@@ -22,6 +22,7 @@ class Vector_modn_dense(FreeModuleElement[IntegerMod_abstract]):
         parent: FreeModule_generic[IntegerMod_abstract],
         x: (
             Sequence[ElementConstructorInput]
+            | range
             | int
             | Integer
             | IntegerMod_abstract
