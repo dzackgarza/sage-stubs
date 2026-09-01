@@ -19,7 +19,6 @@ def dynamic_class(
     doccls: type | None = None,
     prepend_cls_bases: bool = True,
     cache: bool | str = True,
-    prepend_as_category: bool = True,
 ) -> type: ...
 
 def dynamic_class_internal(
