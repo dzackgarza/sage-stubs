@@ -11,6 +11,7 @@ from sage.structure.parent import Parent
 _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
 _NewScalar = TypeVar("_NewScalar", bound=RingElement)
 _Element = TypeVar("_Element", bound=ModuleElement, default=ModuleElement)
+_SourceElement = TypeVar("_SourceElement", bound=ModuleElement)
 
 type ModuleCoercionResult = (
     Callable[[Parent, ModuleElement], ModuleElement]
