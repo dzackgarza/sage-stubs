@@ -1,4 +1,4 @@
-from collections.abc import Callable, Iterable, Iterator
+from collections.abc import Iterable, Iterator
 from typing import Generic, Self, TypeVar, overload
 
 from sage.categories.category import Category

@@ -4,13 +4,13 @@ from typing import Literal, Self, overload
 import sage.rings.abc
 from sage.categories.action import Action
 from sage.categories.pushout import AlgebraicClosureFunctor
+from sage.libs.pari.gen import gen
 from sage.misc.fast_methods import Singleton
 from sage.rings.complex_interval import ComplexIntervalFieldElement
 from sage.rings.complex_interval_field import ComplexIntervalField_class
 from sage.rings.complex_mpfr import ComplexNumber
 from sage.rings.infinity import PlusInfinity
 from sage.rings.integer import Integer
-from sage.libs.pari.gen import gen
 from sage.rings.morphism import RingHomomorphism
 from sage.rings.number_field.number_field import NumberField_generic
 from sage.rings.number_field.number_field_element import NumberFieldElement

@@ -10,6 +10,9 @@ from sage.categories.sets_cat import Sets
 from sage.rings.ring import CommutativeRing, Ring
 from sage.structure.element import Element, RingElement
 from sage.structure.sage_object import SageCoercionAtom
+from sage.structure.unique_representation import (
+    UniqueRepresentation as UniqueRepresentation,
+)
 
 from .category_object import CategoryObject
 

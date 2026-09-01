@@ -1,5 +1,5 @@
 from collections.abc import Callable, Hashable, Iterable, Mapping, Sequence
-from typing import Literal, TypeAlias, overload
+from typing import Literal, overload
 
 from sage.categories.category import Category
 from sage.combinat.posets.linear_extensions import LinearExtensionOfPoset
@@ -10,9 +10,9 @@ from sage.structure.element import Element
 from sage.structure.parent import Parent
 from sage.topology.simplicial_complex import SimplicialComplex
 
-_PosetElement: TypeAlias = Element | Hashable
-_PosetRelation: TypeAlias = tuple[_PosetElement, _PosetElement]
-_PosetData: TypeAlias = (
+type _PosetElement = Element | Hashable
+type _PosetRelation = tuple[_PosetElement, _PosetElement]
+type _PosetData = (
     DiGraph
     | Mapping[_PosetElement, Iterable[_PosetElement]]
     | Iterable[Iterable[_PosetElement]]

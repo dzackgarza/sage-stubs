@@ -1,17 +1,17 @@
 from collections.abc import Iterable, Iterator
-from typing import Literal, overload
+from typing import overload
 
+from sage.categories.morphism import Morphism
 from sage.categories.rings import Rings
 from sage.modules.free_module import FreeModule_generic
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing_generic
 from sage.rings.ideal import Ideal_pid
+from sage.rings.infinity import PlusInfinity as Infinity
 from sage.rings.integer import Integer
+from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.rational_field import RationalField
 from sage.rings.ring import PrincipalIdealDomain, Ring
-from sage.rings.infinity import PlusInfinity as Infinity
 from sage.structure.parent import ElementConstructorInput, MembershipInput, Parent
-from sage.categories.morphism import Morphism
-from sage.rings.polynomial.polynomial_element import Polynomial
 
 class IntegerRing_class(PrincipalIdealDomain, Rings.ParentMethods[Integer]):
     def __init__(self) -> None: ...

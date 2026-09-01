@@ -1,22 +1,22 @@
-from collections.abc import Callable, Hashable, Iterable
-from typing import Generic, ParamSpec, TypeVar, overload
+from collections.abc import Callable, Hashable
+from typing import ParamSpec, Self, TypeVar, overload
 
 _P = ParamSpec("_P")
 _R = TypeVar("_R")
 _T = TypeVar("_T")
 _Owner = TypeVar("_Owner")
 
-def dict_key(o: _T) -> Hashable: ...
-def cache_key(o: _T) -> Hashable: ...
+def dict_key[T](o: _T) -> Hashable: ...
+def cache_key[T](o: _T) -> Hashable: ...
 
-class CachedFunction(Generic[_P, _R]):
+class CachedFunction[P, R]:
     def __init__(
         self,
         f: Callable[_P, _R],
-        classmethod: bool = ...,
-        name: str | None = ...,
-        key: Callable[_P, Hashable] | None = ...,
-        do_pickle: bool | None = ...,
+        classmethod: bool = False,
+        name: str | None = None,
+        key: Callable[..., Hashable] | None = None,
+        do_pickle: bool | None = None,
     ) -> None: ...
     def __call__(self, *args: _P.args, **kwds: _P.kwargs) -> _R: ...
     def cached(self, *args: _P.args, **kwds: _P.kwargs) -> _R: ...
@@ -25,47 +25,67 @@ class CachedFunction(Generic[_P, _R]):
     def get_key(self, *args: _P.args, **kwds: _P.kwargs) -> Hashable: ...
     def clear_cache(self) -> None: ...
 
-class CachedMethod(Generic[_Owner, _P, _R]):
+class CachedMethod[Owner, P, R]:
     def __init__(
         self,
         f: Callable[_P, _R],
-        name: str | None = ...,
-        key: Callable[_P, Hashable] | None = ...,
-        do_pickle: bool | None = ...,
+        name: str | None = None,
+        key: Callable[..., Hashable] | None = None,
+        do_pickle: bool | None = None,
     ) -> None: ...
     def __call__(self, inst: _Owner, *args: _P.args, **kwds: _P.kwargs) -> _R: ...
-    def __get__(
-        self,
-        inst: _Owner,
-        cls: type[_Owner],
-    ) -> CachedMethodCaller[_P, _R]: ...
+    @overload
+    def __get__(self, inst: None, cls: type[_Owner] | None = None) -> Self: ...
+    @overload
+    def __get__(self, inst: _Owner, cls: type[_Owner] | None = None) -> CachedMethodCaller[_P, _R]: ...
 
 class CacheDict(dict[Hashable, _R]): ...
 
-class CachedInParentMethod(CachedMethod[_Owner, _P, _R]): ...
+class CachedInParentMethod[Owner, P, R](CachedMethod[Owner, P, R]): ...
 
-class CachedMethodCaller(CachedFunction[_P, _R]):
+class CachedMethodCaller[P, R]:
+    def __call__(self, *args: _P.args, **kwds: _P.kwargs) -> _R: ...
     def clear_cache(self) -> None: ...
+    def is_in_cache(self, *args: _P.args, **kwds: _P.kwargs) -> bool: ...
+    def set_cache(self, value: _R, *args: _P.args, **kwds: _P.kwargs) -> None: ...
+    def get_key(self, *args: _P.args, **kwds: _P.kwargs) -> Hashable: ...
 
-class CachedMethodCallerNoArgs(CachedFunction[[], _R]):
+class CachedMethodCallerNoArgs[R](CachedMethodCaller[[], R]):
     def __call__(self) -> _R: ...
     def set_cache(self, value: _R) -> None: ...
     def clear_cache(self) -> None: ...
     def is_in_cache(self) -> bool: ...
 
-class GloballyCachedMethodCaller(CachedMethodCaller[_P, _R]):
+class GloballyCachedMethodCaller[P, R](CachedMethodCaller[P, R]):
     def get_key_args_kwds(
         self,
-        args: tuple[_T, ...],
-        kwds: dict[str, _T],
+        args: tuple[object, ...],
+        kwds: dict[str, object],
     ) -> Hashable: ...
 
-def cached_method(func: Callable[_P, _R]) -> Callable[_P, _R]: ...
 @overload
-def cached_function(func: Callable[_P, _R]) -> Callable[_P, _R]: ...
+def cached_method[P, R](func: Callable[_P, _R]) -> CachedMethod[object, _P, _R]: ...
+@overload
+def cached_method(
+    *,
+    name: str | None = None,
+    key: Callable[..., Hashable] | None = None,
+    do_pickle: bool | None = None,
+) -> Callable[[Callable[_P, _R]], CachedMethod[object, _P, _R]]: ...
+
+@overload
+def cached_function[P, R](func: Callable[_P, _R]) -> CachedFunction[_P, _R]: ...
 @overload
 def cached_function(
     *,
-    key: Callable[_P, Hashable] | None = ...,
-    do_pickle: bool = ...,
-) -> Callable[[Callable[_P, _R]], Callable[_P, _R]]: ...
+    classmethod: bool = False,
+    name: str | None = None,
+    key: Callable[..., Hashable] | None = None,
+    do_pickle: bool | None = None,
+) -> Callable[[Callable[_P, _R]], CachedFunction[_P, _R]]: ...
+
+def weak_cached_function[P, R](
+    f: Callable[_P, _R],
+    name: str | None = None,
+    key: Callable[..., Hashable] | None = None,
+) -> CachedFunction[_P, _R]: ...

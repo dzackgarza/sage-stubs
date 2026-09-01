@@ -8,7 +8,6 @@ from sage.matrix.matrix import Matrix
 from sage.rings.integer import Integer
 from sage.rings.polynomial.polynomial_element import Polynomial
 
-
 class _DisjointSet(Protocol):
     def copy(self) -> _DisjointSet: ...
     def find(self, x: int) -> int: ...

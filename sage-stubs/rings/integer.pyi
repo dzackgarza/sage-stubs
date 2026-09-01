@@ -1,16 +1,16 @@
-from typing import TypeAlias, TypeVar, overload
+from typing import TypeVar, overload
 
 from sage.libs.gmp.types import __mpz_struct, mpz_ptr, mpz_t
 from sage.modules.free_module_element import FreeModuleElement
 from sage.rings.rational import Rational
-from sage.structure.factorization import Factorization
 from sage.structure.element import EuclideanDomainElement
+from sage.structure.factorization import Factorization
 from sage.symbolic.expression import Expression
 
 _T = TypeVar("_T")
-_IntegerDigit: TypeAlias = int | Integer
-_IntegerInput: TypeAlias = int | Integer | Rational | float | str | bytes | list[_IntegerDigit] | tuple[_IntegerDigit, ...] | None
-_IntegerComparable: TypeAlias = int | Integer | Rational | float
+type _IntegerDigit = int | Integer
+type _IntegerInput = int | Integer | Rational | float | str | bytes | list[_IntegerDigit] | tuple[_IntegerDigit, ...] | None
+type _IntegerComparable = int | Integer | Rational | float
 
 class Integer(EuclideanDomainElement):
     value: __mpz_struct[1]
@@ -68,7 +68,6 @@ class Integer(EuclideanDomainElement):
     def __le__(self, other: _IntegerComparable) -> bool: ...
     def __gt__(self, other: _IntegerComparable) -> bool: ...
     def __ge__(self, other: _IntegerComparable) -> bool: ...
-    def is_prime(self) -> bool: ...
     def is_square(self) -> bool: ...
     def ndigits(self, base: int = 10) -> int: ...
     def factor(self) -> Factorization: ...

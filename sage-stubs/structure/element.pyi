@@ -10,6 +10,7 @@ from sage.rings.integer import Integer
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.rational import Rational
 from sage.structure.coerce import CoercionModel
+from sage.structure.element_wrapper import ElementWrapper as ElementWrapper
 from sage.structure.parent import ElementConstructorInput, MembershipInput, Parent
 
 coercion_model: CoercionModel

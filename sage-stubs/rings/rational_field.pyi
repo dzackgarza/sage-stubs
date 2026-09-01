@@ -1,14 +1,16 @@
 from collections.abc import Callable, Iterator, Sequence
 from typing import Literal, Self, overload
 
+from sage.categories.fields import Fields
 from sage.categories.map import Map
 from sage.categories.pushout import ConstructionFunctor
 from sage.categories.sets_cat import _SympySetLike
 from sage.groups.additive_abelian.qmodnz import QmodnZ
 from sage.interfaces.expect import Expect
 from sage.misc.sage_input import SageInputBuilder, SageInputExpression
-from sage.rings.infinity import PlusInfinity
+from sage.modules.free_module import FreeModule_generic
 from sage.rings.ideal import Ideal_generic
+from sage.rings.infinity import PlusInfinity
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import IntegerRing_class
 from sage.rings.number_field.number_field import NumberField_generic
@@ -22,7 +24,6 @@ from sage.rings.valuation.valuation import DiscreteValuation
 from sage.structure.factorization import Factorization
 from sage.structure.parent import MembershipInput, Parent
 from sage.structure.sequence import Sequence_generic
-
 
 class RationalField(NumberField, Fields.ParentMethods[Rational]):
     def __new__(cls) -> Self: ...
@@ -155,5 +156,3 @@ class RationalField(NumberField, Fields.ParentMethods[Rational]):
 
 QQ: RationalField
 Q: RationalField
-from sage.categories.fields import Fields
-from sage.modules.free_module import FreeModule_generic

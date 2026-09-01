@@ -1,6 +1,5 @@
 from collections.abc import Callable, Iterable, Iterator
 from typing import Self
-from typing import Self
 
 from sage.rings.integer import Integer
 from sage.structure.element import Element
