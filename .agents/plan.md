@@ -132,6 +132,7 @@ complete.
 ## Measuring progress
 
 ```bash
+just queue
 just coverage
 just coverage -- --subpackage rings --missing
 just coverage -- --threshold 0.95
@@ -142,6 +143,9 @@ for task selection, not substitutes for mathematically meaningful signatures.
 See [feature.md](feature.md#measuring-progress) for the full workflow.
 
 ## Current work frontier
+
+Run `just queue`. That prints the only outstanding-work list: the in-progress
+frontier and every claimable task row (`Depends` satisfied, not `✅`).
 
 > **Completed first-level subtrees:** Phases 01 (foundation), 02 (core rings),
 > 03 (polynomial rings), 04 (number-theoretic rings), 05 (linear algebra), and
@@ -155,5 +159,10 @@ See [feature.md](feature.md#measuring-progress) for the full workflow.
 > **Next valid work:** advance remaining Phase 06 tasks (T06.3+). Phases 07,
 > 08, 09, 12, 14, 15, and 17 are dependency-ready; Phase 13 remains
 > additionally gated by Phase 12, and Phases 10–11 remain gated by Phase 09.
+
+Coverage (`just coverage`) measures file presence. It is not the queue.
+Method gaps and consumer mismatches are derived from current stubs vs
+`sage-src` and from running mypy; do not keep a sidecar gaps ledger.
+`TODO.md` and `STUBS_PROGRESS.md` were retired; do not resurrect them.
 
 Update the frontier whenever a first-level phase or task status changes.

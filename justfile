@@ -61,6 +61,11 @@ fix:
 coverage *args:
     python3 scripts/stub_coverage.py {{args}}
 
+# Outstanding-work queue from .agents/plan.md and in-progress phase cards.
+# Pass --all to include every incomplete phase, not only the frontier.
+queue *args:
+    python3 scripts/stub_queue.py {{args}}
+
 # Scaffold a fresh stub for one Sage module using mypy stubgen.
 # Output lands under /tmp/stubgen/ so it can be hand-refined into sage-stubs/.
 # Example: just scaffold sage.rings.polynomial.polynomial_ring
@@ -76,7 +81,7 @@ setup:
     git config core.hooksPath .githooks
     @git submodule update --init --depth 1
     @echo "sage-stubs ready: hooks active, sage-src initialised."
-    @echo "Next: read .agents/plan.md and claim a phase task."
+    @echo "Next: just queue, then claim a task on the named phase card."
 
 # Legacy single-file installer for clones that haven't migrated to core.hooksPath.
 install-hooks:

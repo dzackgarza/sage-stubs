@@ -36,6 +36,6 @@ Cover the remaining `sage.combinat/` subpackages:
 
 - Crystals subclasses are deep; AGENTS.md "no inherited-method inflation"
   is the main hazard. Re-verify each method is direct on the class.
-- `STUB_GAPS.md` Posets blocker affects the *category* surface, not the
-  `combinat.posets/` subpackage — but the override-variance issue is the
-  same shape, so use precise element types when stubbing direct methods.
+- `Posets.ParentMethods` lives on the *category* surface, not
+  `combinat.posets/`. Override-variance is the same shape, so use precise
+  element types when stubbing direct methods and confirm with mypy.

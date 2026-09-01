@@ -38,11 +38,13 @@ files, and prints current coverage. **Do not skip this step.**
 
 ## How to work on the plan
 
-1. **Read `.agents/plan.md`.** It is the master tracking card and names
-   the next phase to pick up via its "At-a-glance next step" banner.
-2. **Open the relevant phase card** under `.agents/phases/`. Each card
-   has a task table with explicit `Depends` and `Status` columns. Pick
-   a task that is `⬜ Pending` and whose dependencies are satisfied.
+1. **Run `just queue`.** It prints the live worklist from `.agents/plan.md`
+   and the in-progress phase cards. That is the only outstanding-work
+   queue. Then open the named phase card under `.agents/phases/`.
+2. **Pick a claimable task** (`⬜` / `🟡 Partial`, `Depends` satisfied).
+   Coverage `--missing` is a file-presence report, not the queue. Missing
+   methods and consumer mismatches are derived from source vs stubs and
+   from running mypy; do not keep a sidecar gaps ledger.
 3. **Mark the task `🟡 In Progress`** in the phase card, and update the
    phase status in `plan.md` if you are the first to start work in it.
    The hooks accept these doc-only edits.
@@ -50,10 +52,10 @@ files, and prints current coverage. **Do not skip this step.**
 5. **Commit.** Hooks enforce every rule in this document and coverage
    is printed automatically. Mark the task `✅ Done` in the phase card
    as part of the same commit.
-6. **Repeat.** Pick the next task. If no task remains in the current
-   phase, return to `.agents/plan.md` for the next phase. Within a
-   phase, tasks with `Depends: —` can run in parallel — claim by
-   setting an owner annotation in the task row.
+6. **Repeat.** Run `just queue` again. If no task remains in the current
+   phase, the queue will name the next phase. Within a phase, tasks with
+   `Depends: —` can run in parallel — claim by setting an owner annotation
+   in the task row.
 
 ### Document index
 
@@ -61,12 +63,12 @@ files, and prints current coverage. **Do not skip this step.**
 |----------|---------|
 | `AGENTS.md` *(this file)* | Workflow, quality contract, banned patterns |
 | `.agents/feature.md` | Full-parity requirements, scope, tooling references |
-| `.agents/plan.md` | Master tracking card with the 18-phase dependency graph |
+| `.agents/plan.md` | Master tracking card and outstanding-work queue |
 | `.agents/phases/phase-NN-*.md` | One card per phase: tasks, dependencies, risks |
 | `.agents/phases/phase-01-exempt.md` | Produced by T01.1: modules excluded from parity denominator |
-| `STUB_GAPS.md` | Currently-blocked sidecar gaps with diagnostic evidence |
 | `README.md` | User-facing scope description (rewritten at end of Phase 18) |
-| `justfile` | Canonical task entrypoints (`just check`, `just coverage`, etc.) |
+| `justfile` | Canonical entrypoints (`just queue`, `just check`, `just coverage`) |
+| `scripts/stub_queue.py` | Prints claimable tasks from the plan and phase cards |
 | `scripts/stub_coverage.py` | Measures stub coverage vs `sage-src` |
 | `scripts/check_stubs.py` | AST-level `Any` / `object` ban enforcement |
 | `scripts/check_guardrails.py` | Banned patterns, scratch artefacts, protected config |
@@ -229,6 +231,7 @@ Coverage is reported by `scripts/stub_coverage.py` and printed at the
 end of every successful pre-commit run. To query it yourself:
 
 ```bash
+just queue                                         # outstanding-work queue
 just coverage                                      # summary table
 just coverage -- --subpackage rings --missing      # list missing rings/ files
 just coverage -- --threshold 0.95                  # CI gate
@@ -242,6 +245,7 @@ The pre-commit hook runs all of the following on staged files. They can
 also be invoked manually:
 
 ```bash
+just queue       # outstanding-work queue (plan frontier + claimable tasks)
 just check       # ruff + check_stubs + check_guardrails + mypy --strict
 just lint        # ruff + check_stubs only (no mypy)
 just guardrails  # check_guardrails on staged set

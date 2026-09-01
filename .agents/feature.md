@@ -152,19 +152,20 @@ work intact.
 When stubgen fails (Cython modules without `.py` shims, missing optional
 deps), fall back to reading the source directly per AGENTS.md.
 
-When picking up work: read `.agents/plan.md`, find the next phase with
-**Status: Ready** that has no unmet dependencies, open its phase card, pick
-a task marked `⬜ Pending` whose `Depends` column is satisfied, and update
-the task status to `🟡 In Progress` (with your handle / agent id) before
-starting. Mark `✅ Done` on the same line when the commit lands.
+When picking up work: run `just queue`, open the named phase card, pick a
+claimable task (`⬜` / `🟡 Partial`, `Depends` satisfied), and mark it
+`🟡 In Progress` (with your handle / agent id) before starting. Mark `✅ Done`
+on the same line when the commit lands. Do not use coverage `--missing` as
+the worklist. Method gaps are the difference between `sage-src` and the
+matching `.pyi`; consumer mismatches show up when you run mypy.
 
 ## Risks and known blockers
 
-- **`STUB_GAPS.md` blockers.** Three direct-method patches
-  (`Posets.ParentMethods`, `InfiniteEnumeratedSets.ParentMethods.random_element`,
-  `CategoryWithParameters._make_named_class_key`) currently regress the real
-  consumer capture. Phase 1 must keep those changes out unless the consumer
-  side is fixed first.
+- **Category override variance.** Direct-method patches on
+  `Posets.ParentMethods`, `InfiniteEnumeratedSets.ParentMethods.random_element`,
+  and `CategoryWithParameters._make_named_class_key` have historically
+  widened consumer mypy error counts. Re-run the consumer capture before
+  changing those signatures; do not keep a sidecar gaps ledger.
 - **Cython forwarders.** Many `.pyx` modules export Python classes whose
   `__cinit__` and `__init__` signatures live in C-level docstrings. Where
   the runtime accepts arbitrary Python coercion, the rule is **still no
