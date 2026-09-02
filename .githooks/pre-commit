@@ -50,8 +50,9 @@ run "guardrails (banned patterns + protected config)" python3 scripts/check_guar
 run "quality config (full-tree gates remain enabled)" python3 scripts/check_quality_config.py
 
 if [ ${#STAGED_PYI[@]} -gt 0 ]; then
+    : "${SAGE_BIN:?SAGE_BIN must point at the Sage launcher; its interpreter runs mypy}"
     run "mypy --strict (staged .pyi, follow-imports=silent)" \
-        python3 -m mypy --strict --follow-imports=silent "${STAGED_PYI[@]}"
+        "$(dirname "$SAGE_BIN")/python" -m mypy --strict --follow-imports=silent "${STAGED_PYI[@]}"
 else
     ylw "[mypy] no .pyi staged — skipped"
 fi

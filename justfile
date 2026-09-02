@@ -15,7 +15,7 @@ check:
     @echo "--- semantic quality debt audit ---"
     python3 scripts/audit_stub_quality.py --root sage-stubs --fail-on warning
     @echo "--- mypy: strict full-tree type checking ---"
-    python3 -m mypy --strict --no-incremental --follow-imports=normal sage-stubs/
+    "$(dirname "$SAGE_BIN")/python" -m mypy --strict --no-incremental --follow-imports=normal sage-stubs/
     @echo "--- basedpyright: strict full-tree type checking ---"
     basedpyright --project pyrightconfig.json
     @echo "--- semgrep: generated/erased-type rules ---"
@@ -36,7 +36,7 @@ audit *args:
 
 # Both independent full-tree type checkers.
 typecheck:
-    python3 -m mypy --strict --no-incremental --follow-imports=normal sage-stubs/
+    "$(dirname "$SAGE_BIN")/python" -m mypy --strict --no-incremental --follow-imports=normal sage-stubs/
     basedpyright --project pyrightconfig.json
 
 # Repository-local Semgrep rules.
@@ -71,8 +71,8 @@ queue *args:
 # Example: just scaffold sage.rings.polynomial.polynomial_ring
 scaffold module:
     @rm -rf /tmp/stubgen
-    python3 -m mypy.stubgen -m {{module}} --include-private --inspect-mode -o /tmp/stubgen || \
-      python3 -m mypy.stubgen -p {{module}} -o /tmp/stubgen
+    "$(dirname "$SAGE_BIN")/python" -m mypy.stubgen -m {{module}} --include-private --inspect-mode -o /tmp/stubgen || \
+      "$(dirname "$SAGE_BIN")/python" -m mypy.stubgen -p {{module}} -o /tmp/stubgen
     @echo "Scaffold written under /tmp/stubgen/. Refine (replace every Any!) and copy into sage-stubs/."
 
 # One-shot setup: point git at the tracked hooks under .githooks/.
