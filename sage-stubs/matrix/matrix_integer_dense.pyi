@@ -171,20 +171,20 @@ class Matrix_integer_dense(Matrix_dense[Integer]):
     def frobenius_form(
         self,
         flag: Literal[0] = ...,
-        var: str = ..,
+        var: str = ...,
     ) -> Self: ...
     @overload
     def frobenius_form(
         self,
         flag: Literal[1],
-        var: str = ..,
+        var: str = ...,
     ) -> list[Polynomial]: ...
     @overload
     def frobenius_form(
         self,
         flag: Literal[2],
-        var: str = ..,
-    ) -> tuple[Matrix_rational_dense, Matrix_rational_dense]: ..
+        var: str = ...,
+    ) -> tuple[Matrix_rational_dense, Matrix_rational_dense]: ...
     @overload
     def frobenius_form(
         self,
@@ -198,8 +198,8 @@ class Matrix_integer_dense(Matrix_dense[Integer]):
 
     def saturation(
         self,
-        p: int | Integer = ..,
-        proof: bool | None = ..,
+        p: int | Integer = ...,
+        proof: bool | None = ...,
         max_dets: int = ...,
     ) -> Self: ...
     def index_in_saturation(self, proof: bool | None = ...) -> Integer: ...
@@ -207,7 +207,7 @@ class Matrix_integer_dense(Matrix_dense[Integer]):
     def symplectic_form(self) -> tuple[Self, Self]: ...
 
     @overload
-    def LLL\(
+    def LLL(
         self,
         delta: float | None = ...,
         eta: float | None = ...,

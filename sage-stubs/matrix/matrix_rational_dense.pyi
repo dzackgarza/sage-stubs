@@ -199,8 +199,8 @@ class Matrix_rational_dense(Matrix_dense[Rational]):
         is_diagonalizable: bool,
         dual: Literal[True],
         algorithm: str | None = ...,
-       height_guess: int | Integer | None = ..,
-        proof: bool | None = ..,
+       height_guess: int | Integer | None = ...,
+        proof: bool | None = ...,
     ) -> tuple[
         Sequence[_RationalDecompositionFactor],
         Sequence[_RationalDecompositionFactor],
