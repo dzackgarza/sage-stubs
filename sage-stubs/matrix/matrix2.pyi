@@ -58,6 +58,10 @@ class _DeterminantCall[**P, R](Protocol):
     def determinant(self, *args: P.args, **kwds: P.kwargs) -> R: ...
 
 
+class _CharpolyCall[**P, R](Protocol):
+    def charpoly(self, *args: P.args, **kwds: P.kwargs) -> R: ...
+
+
 class Matrix(
     Matrix1[_Scalar],
     Generic[_Scalar],
@@ -183,18 +187,28 @@ class Matrix(
         sparse: bool | None = ...,
     ) -> Matrix[RingElement]: ...
 
-    def characteristic_polynomial(
+    # matrix2.pyx:3084 forwards the selected charpoly, including a concrete
+    # backend's proof argument. The wrapper is not the generic algorithm.
+    def characteristic_polynomial[**P, R](
+        self: _CharpolyCall[P, R], *args: P.args, **kwds: P.kwargs
+    ) -> R: ...
+    def charpoly(
         self,
         var: str = ...,
         algorithm: str | None = ...,
     ) -> Polynomial: ...
-    charpoly = characteristic_polynomial
+    # matrix2.pyx:3098 accepts one positional argument and forwards keyword
+    # options to minpoly; 3112 defines a separate generic minpoly algorithm.
     def minimal_polynomial(
         self,
         var: str = ...,
         **kwds: _MatrixOption,
     ) -> Polynomial: ...
-    minpoly = minimal_polynomial
+    def minpoly(
+        self,
+        var: str = ...,
+        **kwds: _MatrixOption,
+    ) -> Polynomial: ...
     def fcp(self, var: str = ...) -> Factorization: ...
     def denominator(self) -> RingElement: ...
     def diagonal(
