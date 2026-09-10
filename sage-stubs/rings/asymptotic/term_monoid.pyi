@@ -12,7 +12,9 @@ from sage.structure.parent import ElementConstructorInput, Parent
 from sage.structure.unique_representation import UniqueRepresentation
 
 type TermType = Literal["O", "B", "exact"]
-type TermConstructionValue = Parent | GenericGrowthElement | RingElement | ElementConstructorInput
+type TermConstructionValue = (
+    Category | Parent | GenericGrowthElement | RingElement | ElementConstructorInput
+)
 type TermConstruction = tuple[type[GenericTerm], dict[str, TermConstructionValue]]
 type TermMonoidKey = tuple[
     type[GenericTermMonoid],
@@ -58,13 +60,13 @@ class GenericTermMonoid(
 ):
     Element: type[GenericTerm]
     @staticmethod
-    def __classcall__(
-        class_: type[GenericTermMonoid],
+    def __classcall__[T](
+        cls: type[T],
         term_monoid_factory: TermMonoidFactory,
         growth_group: GenericGrowthGroup,
         coefficient_ring: Parent[RingElement],
         category: Category | None = ...,
-    ) -> GenericTermMonoid: ...
+    ) -> T: ...
     def __init__(
         self,
         term_monoid_factory: TermMonoidFactory,
@@ -89,9 +91,11 @@ class GenericTermMonoid(
         construction: TermConstruction,
         **kwds_overrides: TermConstructionValue,
     ) -> GenericTerm: ...
-    def _an_element_(self) -> GenericTerm: ....
+    def _an_element_(self) -> GenericTerm: ...
     def some_elements(self) -> Iterator[GenericTerm]: ...
-    def le(self, left: ElementConstructorInput, right: ElementConstructorInput) -> bool: ...
+    def le(
+        self, left: ElementConstructorInput, right: ElementConstructorInput
+    ) -> bool: ...
     def _repr_(self) -> str: ...
     def _coerce_map_from_(self, S: Parent) -> bool | None: ...
     def _element_constructor_(
@@ -177,16 +181,33 @@ class BTermMonoid(TermWithCoefficientMonoid):
     def some_elements(self) -> Iterator[GenericTerm]: ...
     def _repr_(self) -> str: ...
 
-class TermMonoidFactory(UniqueRepresentation, UniqueFactory):
+type _ExactTermMonoid = ExactTermMonoid
+type _OTermMonoid = OTermMonoid
+type _BTermMonoid = BTermMonoid
+
+class TermMonoidFactory(
+    UniqueRepresentation,
+    UniqueFactory[
+        TermMonoidKey,
+        GenericTermMonoid,
+        TermConstructionValue,
+        [
+            TermType | GenericTermMonoid,
+            GenericGrowthGroup | str | None,
+            Parent[RingElement] | None,
+            Parent | None,
+        ],
+    ],
+):
     ExactTermMonoid: type[ExactTermMonoid]
     OTermMonoid: type[OTermMonoid]
     BTermMonoid: type[BTermMonoid]
     def __init__(
         self,
         name: str,
-        exact_term_monoid_class: type[ExactTermMonoid] | None = ...,
-        O_term_monoid_class: type[OTermMonoid] | None = ...,
-        B_term_monoid_class: type[BTermMonoid] | None = ...,
+        exact_term_monoid_class: type[_ExactTermMonoid] | None = ...,
+        O_term_monoid_class: type[_OTermMonoid] | None = ...,
+        B_term_monoid_class: type[_BTermMonoid] | None = ...,
     ) -> None: ...
     def create_key_and_extra_args(
         self,
