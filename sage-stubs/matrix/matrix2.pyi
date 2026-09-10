@@ -201,7 +201,7 @@ class Matrix(
     def minpoly(
         self,
         var: str = ...,
-        **kwds: _MatrixOption,
+        algorithm: str | None = ...,
     ) -> Polynomial: ...
     def fcp(self, var: str = ...) -> Factorization: ...
     def denominator(self) -> RingElement: ...
@@ -441,8 +441,8 @@ class Matrix(
         exact: bool = ...,
     ) -> tuple[
         Matrix[_Scalar],
-        Matrix[RingElement],
-        Matrix[RingElement],
+        Matrix[_Scalar] | Matrix[RingElement],
+        Matrix[_Scalar] | Matrix[RingElement],
     ]: ...
     @overload
     def smith_form(
@@ -461,8 +461,8 @@ class Matrix(
         Matrix[_Scalar]
         | tuple[
             Matrix[_Scalar],
-            Matrix[RingElement],
-            Matrix[RingElement],
+            Matrix[_Scalar] | Matrix[RingElement],
+            Matrix[_Scalar] | Matrix[RingElement],
         ]
     ): ...
     @overload

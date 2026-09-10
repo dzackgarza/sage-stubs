@@ -1,12 +1,9 @@
 from collections.abc import Iterable, Sequence
-from typing import Generic, Literal, Self, TypeVar, overload
+from typing import Generic, Literal, Protocol, Self, TypeVar, overload
 
 import numpy as np
-from mpmath.matrices.matrices import matrix as MpmathMatrix
-from numpy.typing import DTypeLike, NDArray
-from sympy.matrices.matrixbase import MatrixBase
-
 from sage.interfaces.expect import Expect, ExpectElement
+from sage.interfaces.singular import Singular, SingularElement
 from sage.libs.gap.element import ElementLibGAP
 from sage.libs.pari.gen import gen
 from sage.matrix.matrix0 import Matrix as Matrix0
@@ -17,11 +14,17 @@ from sage.modules.free_module_element import FreeModuleElement
 from sage.rings.integer import Integer
 from sage.structure.element import FieldElement, RingElement
 from sage.structure.parent import ElementConstructorInput, Parent
+from sympy.matrices.matrixbase import MatrixBase
 
 _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
 _NewScalar = TypeVar("_NewScalar", bound=RingElement)
 _OtherScalar = TypeVar("_OtherScalar", bound=RingElement)
 
+type _NumpyDType = str | type[np.generic] | np.dtype[np.generic]
+
+class _MpmathMatrix(Protocol):
+    rows: int
+    cols: int
 
 class Matrix(
     Matrix0[_Scalar],
@@ -39,7 +42,7 @@ class Matrix(
     def _magma_init_(self, magma: Expect) -> str: ...
     def _maple_init_(self) -> str: ...
     def _polymake_(self, polymake: Expect | None = ...) -> ExpectElement: ...
-    def _singular_(self, singular: Expect | None = ...) -> ExpectElement: ...
+    def _singular_(self, singular: Singular | None = ...) -> SingularElement: ...
     def _macaulay2_(self, macaulay2: Expect | None = ...) -> ExpectElement: ...
     def _scilab_init_(self) -> str: ...
     def _scilab_(self, scilab: Expect | None = ...) -> ExpectElement: ...
@@ -49,22 +52,19 @@ class Matrix(
         sib: SageInputBuilder,
         coerce: bool,
     ) -> SageInputExpression: ...
-
     def numpy(
         self,
-        dtype: DTypeLike | None = ...,
+        dtype: _NumpyDType | None = ...,
         copy: bool = ...,
-    ) -> NDArray[np.generic]: ...
+    ) -> np.ndarray[tuple[int, int], np.dtype[np.generic]]: ...
     def _mpmath_(
         self,
         prec: int | None = ...,
         rounding: str | None = ...,
-    ) -> MpmathMatrix: ...
-
+    ) -> _MpmathMatrix: ...
     def matrix_over_field(self) -> Matrix[FieldElement]: ...
     def lift(self) -> Self | Matrix[RingElement]: ...
     def lift_centered(self) -> Self | Matrix[RingElement]: ...
-
     @overload
     def row_ambient_module(
         self,
@@ -77,7 +77,6 @@ class Matrix(
         base_ring: Parent[_NewScalar],
         sparse: bool | None = ...,
     ) -> FreeModule_generic[_NewScalar]: ...
-
     @overload
     def column_ambient_module(
         self,
@@ -90,7 +89,6 @@ class Matrix(
         base_ring: Parent[_NewScalar],
         sparse: bool | None = ...,
     ) -> FreeModule_generic[_NewScalar]: ...
-
     @overload
     def columns(
         self,
@@ -106,7 +104,6 @@ class Matrix(
         self,
         copy: bool,
     ) -> list[FreeModuleElement[_Scalar]] | tuple[FreeModuleElement[_Scalar], ...]: ...
-
     @overload
     def rows(
         self,
@@ -122,7 +119,6 @@ class Matrix(
         self,
         copy: bool,
     ) -> list[FreeModuleElement[_Scalar]] | tuple[FreeModuleElement[_Scalar], ...]: ...
-
     @overload
     def dense_columns(
         self,
@@ -138,7 +134,6 @@ class Matrix(
         self,
         copy: bool,
     ) -> list[FreeModuleElement[_Scalar]] | tuple[FreeModuleElement[_Scalar], ...]: ...
-
     @overload
     def dense_rows(
         self,
@@ -154,7 +149,6 @@ class Matrix(
         self,
         copy: bool,
     ) -> list[FreeModuleElement[_Scalar]] | tuple[FreeModuleElement[_Scalar], ...]: ...
-
     @overload
     def sparse_columns(
         self,
@@ -170,7 +164,6 @@ class Matrix(
         self,
         copy: bool,
     ) -> list[FreeModuleElement[_Scalar]] | tuple[FreeModuleElement[_Scalar], ...]: ...
-
     @overload
     def sparse_rows(
         self,
@@ -186,7 +179,6 @@ class Matrix(
         self,
         copy: bool,
     ) -> list[FreeModuleElement[_Scalar]] | tuple[FreeModuleElement[_Scalar], ...]: ...
-
     def column(
         self,
         i: int | Integer,
@@ -197,7 +189,6 @@ class Matrix(
         i: int | Integer,
         from_list: bool = ...,
     ) -> FreeModuleElement[_Scalar]: ...
-
     def stack(
         self,
         bottom: Matrix[_OtherScalar] | FreeModuleElement[_OtherScalar],
@@ -208,7 +199,6 @@ class Matrix(
         right: Matrix[_OtherScalar] | FreeModuleElement[_OtherScalar],
         subdivide: bool = ...,
     ) -> Self: ...
-
     def matrix_from_columns(
         self,
         columns: Iterable[int | Integer],
@@ -239,7 +229,6 @@ class Matrix(
         nrows: int | Integer = ...,
         ncols: int | Integer = ...,
     ) -> Self: ...
-
     def set_row(
         self,
         row: int | Integer,
@@ -250,7 +239,6 @@ class Matrix(
         col: int | Integer,
         v: Sequence[ElementConstructorInput] | FreeModuleElement[_Scalar],
     ) -> None: ...
-
     @overload
     def zero_pattern_matrix(
         self,
@@ -261,7 +249,6 @@ class Matrix(
         self,
         ring: Parent[_NewScalar],
     ) -> Matrix[_NewScalar]: ...
-
     def dense_matrix(self) -> Matrix[_Scalar]: ...
     def sparse_matrix(self) -> Matrix[_Scalar]: ...
     def matrix_space(
