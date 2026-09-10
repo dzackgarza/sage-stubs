@@ -1,22 +1,26 @@
-from collections.abc import Mapping, Sequence
-from typing import Self, TypeVar
+from collections.abc import Hashable, Mapping, Sequence
+from typing import Literal, overload
 
 from sage.categories.category import Category
+from sage.categories.rings import Rings
 from sage.geometry.polyhedron.base import Polyhedron_base
 from sage.modules.free_module_element import FreeModuleElement
 from sage.rings.asymptotic.asymptotic_ring import AsymptoticExpansion
 from sage.rings.ideal import Ideal_generic
 from sage.rings.integer import Integer
-from sage.structure.element import RingElement
+from sage.structure.element import Element, RingElement
 from sage.structure.parent import ElementConstructorInput, Parent
 from sage.structure.unique_representation import UniqueRepresentation
+from sage.symbolic.expression import Expression
 
 type DenominatorFactor = tuple[RingElement, Integer]
 type MultiIndex = tuple[int | Integer, ...]
 type DifferentialTable = dict[MultiIndex, RingElement]
 type AsymptoticTriple = tuple[RingElement, RingElement, RingElement]
 type CriticalCone = tuple[list[FreeModuleElement[RingElement]], Polyhedron_base]
-_T = TypeVar("_T")
+type _Substitutions[K: Hashable, V: ElementConstructorInput] = (
+    dict[K, V] | list[dict[K, V]] | tuple[dict[K, V], ...] | None
+)
 
 class FractionWithFactoredDenominator(RingElement):
     def __init__(
@@ -132,12 +136,14 @@ class FractionWithFactoredDenominatorRing(
         numerator_ring: Parent[RingElement] | None = ...,
         category: Category | None = ...,
     ) -> None: ...
-    def base_ring(self) -> Parent[RingElement]: ...
+    def base_ring(self) -> Rings.ParentMethods[RingElement]: ...
     def _repr_(self) -> str: ...
     def _element_constructor_(
         self,
         numerator: ElementConstructorInput,
-        denominator_factored: Sequence[tuple[ElementConstructorInput, int | Integer]] = ...,
+        denominator_factored: Sequence[
+            tuple[ElementConstructorInput, int | Integer]
+        ] = ...,
         reduce: bool = ...,
     ) -> FractionWithFactoredDenominator: ...
     def _coerce_map_from_(self, P: Parent) -> bool | None: ...
@@ -145,7 +151,7 @@ class FractionWithFactoredDenominatorRing(
 
 class FractionWithFactoredDenominatorSum(list[FractionWithFactoredDenominator]):
     def __repr__(self) -> str: ...
-    def __eq__(self, other: object) -> bool: ....
+    def __eq__(self, other: object) -> bool: ...
     def __ne__(self, other: object) -> bool: ...
     @property
     def denominator_ring(self) -> Parent[RingElement] | None: ...
@@ -164,11 +170,77 @@ def diff_prod(
     uderivs: DifferentialTable,
     atc: Mapping[RingElement, RingElement] | None,
 ) -> DifferentialTable: ...
-def subs_all(
-    f: _T,
-    sub: Mapping[RingElement, RingElement],
+
+# Source 3623-3700: lists and tuples both produce a list, never a tuple.
+# Symbolic results stay symbolic; Element.subs (element.pyx:778-828) can change
+# the concrete element type. None is the identity substitution (expression.pyx:5789).
+@overload
+def subs_all[K: Hashable, V: ElementConstructorInput](
+    f: Expression,
+    sub: _Substitutions[K, V],
     simplify: bool = ...,
-) -> _T: ...
+) -> Expression: ...
+@overload
+def subs_all[D: Hashable, K: Hashable, V: ElementConstructorInput](
+    f: dict[D, Expression],
+    sub: _Substitutions[K, V],
+    simplify: bool = ...,
+) -> dict[D, Expression]: ...
+@overload
+def subs_all[K: Hashable, V: ElementConstructorInput](
+    f: list[Expression] | tuple[Expression, ...],
+    sub: _Substitutions[K, V],
+    simplify: bool = ...,
+) -> list[Expression]: ...
+@overload
+def subs_all[D: Hashable, K: Hashable, V: ElementConstructorInput](
+    f: list[dict[D, Expression]] | tuple[dict[D, Expression], ...],
+    sub: _Substitutions[K, V],
+    simplify: bool = ...,
+) -> list[dict[D, Expression]]: ...
+@overload
+def subs_all[D: Hashable, K: Hashable, V: ElementConstructorInput](
+    f: (
+        list[Expression | dict[D, Expression]]
+        | tuple[Expression | dict[D, Expression], ...]
+    ),
+    sub: _Substitutions[K, V],
+    simplify: bool = ...,
+) -> (
+    list[Expression]
+    | list[dict[D, Expression]]
+    | list[Expression | dict[D, Expression]]
+): ...
+@overload
+def subs_all[K: Hashable, V: ElementConstructorInput](
+    f: Element,
+    sub: _Substitutions[K, V],
+    simplify: Literal[False] = ...,
+) -> Element: ...
+@overload
+def subs_all[D: Hashable, K: Hashable, V: ElementConstructorInput](
+    f: dict[D, Element],
+    sub: _Substitutions[K, V],
+    simplify: bool = ...,
+) -> dict[D, Element]: ...
+@overload
+def subs_all[D: Hashable, K: Hashable, V: ElementConstructorInput](
+    f: (
+        list[Element]
+        | list[dict[D, Element]]
+        | list[Element | dict[D, Element]]
+        | tuple[Element | dict[D, Element], ...]
+    ),
+    sub: _Substitutions[K, V],
+    simplify: Literal[False] = ...,
+) -> (
+    list[Expression]
+    | list[Element]
+    | list[dict[D, Expression]]
+    | list[dict[D, Element]]
+    | list[Expression | dict[D, Expression]]
+    | list[Element | dict[D, Element]]
+): ...
 def diff_all(
     f: RingElement,
     V: Sequence[RingElement],
@@ -188,7 +260,7 @@ def diff_op(
     r: int | Integer,
     N: int | Integer,
 ) -> DifferentialTable: ...
-def diff_seq(V: Sequence[_T], s: Sequence[MultiIndex]) -> tuple[_T, ...]: ...
+def diff_seq[T](V: Sequence[T], s: Sequence[MultiIndex]) -> tuple[T, ...]: ...
 def diff_op_simple(
     A: RingElement,
     B: RingElement,
