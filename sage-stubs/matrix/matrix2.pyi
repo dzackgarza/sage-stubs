@@ -1,5 +1,5 @@
 from collections.abc import Callable, Iterable, Mapping, Sequence
-from typing import Generic, Literal, TypeVar, overload
+from typing import Generic, Literal, Protocol, TypeVar, overload
 
 from sage.categories.morphism import Morphism
 from sage.combinat.free_module import CombinatorialFreeModule
@@ -51,6 +51,13 @@ type _KrylovRow = tuple[int, int, int]
 type _MatrixOption = Element | str | int | float | bool | None
 
 
+# matrix2.pyx:2260-2270 forwards the actual determinant method, including
+# the extra options supplied by a concrete backend. This is not an alias
+# to the generic implementation below.
+class _DeterminantCall[**P, R](Protocol):
+    def determinant(self, *args: P.args, **kwds: P.kwargs) -> R: ...
+
+
 class Matrix(
     Matrix1[_Scalar],
     Generic[_Scalar],
@@ -58,8 +65,8 @@ class Matrix(
     # Entrywise maps and linear equations
     def subs(
         self,
-        *args: Element | int | float | Mapping[Element, Element | int | float],
-        **kwds: Element | int | float,
+        *args: Element | float | Mapping[Element, Element | int | float],
+        **kwds: Element | float,
     ) -> Matrix[RingElement]: ...
 
     @overload
@@ -133,9 +140,10 @@ class Matrix(
     def determinant(
         self,
         algorithm: str | None = ...,
-        **kwds: _MatrixOption,
     ) -> _Scalar: ...
-    det = determinant
+    def det[**P, R](
+        self: _DeterminantCall[P, R], *args: P.args, **kwds: P.kwargs
+    ) -> R: ...
     def quantum_determinant(
         self,
         q: RingElement | None = ...,
@@ -203,11 +211,8 @@ class Matrix(
     def hessenbergize(self) -> None: ...
 
     # Kernels, images, invariant subspaces, and decompositions
-    def rank(
-        self,
-        algorithm: str | None = ...,
-        **kwds: _MatrixOption,
-    ) -> int: ...
+    # rank is inherited from matrix0.pyx:5043. Concrete backends own their
+    # additional algorithm arguments; matrix2 defines no rank override.
     def left_nullity(self) -> int: ...
     nullity = left_nullity
     def right_nullity(self) -> int: ...
@@ -254,19 +259,21 @@ class Matrix(
         self,
         base_ring: Parent[_NewScalar],
     ) -> FreeModule_generic[_NewScalar]: ...
-    row_space = row_module
-
     @overload
-    def column_module(
+    def row_space(
         self,
         base_ring: None = ...,
     ) -> FreeModule_generic[_Scalar]: ...
     @overload
-    def column_module(
+    def row_space(
         self,
         base_ring: Parent[_NewScalar],
     ) -> FreeModule_generic[_NewScalar]: ...
-    column_space = column_module
+
+    # Unlike row_module/row_space, these two source-defined methods do not
+    # accept a base_ring argument (matrix2.pyx:5768-5814).
+    def column_module(self) -> FreeModule_generic[_Scalar]: ...
+    def column_space(self) -> FreeModule_generic[_Scalar]: ...
 
     @overload
     def decomposition(
@@ -644,7 +651,7 @@ class Matrix(
     def conjugate_transpose(self) -> Matrix[RingElement]: ...
     def norm(
         self,
-        p: int | float | str = ...,
+        p: float | str = ...,
     ) -> Element: ...
     def numerical_approx(
         self,
