@@ -1,16 +1,19 @@
-from collections.abc import Callable, Iterable, ItemsView, Iterator, Mapping, Sequence
-from typing import Generic, Literal, Self, TypeVar, overload
+from collections.abc import Callable, ItemsView, Iterable, Iterator, Mapping, Sequence
+from typing import Generic, Literal, Protocol, Self, TypeVar, overload
 
 from sage.groups.perm_gps.permgroup_element import PermutationGroupElement
 from sage.modules.free_module_element import FreeModuleElement
 from sage.rings.infinity import PlusInfinity
 from sage.rings.integer import Integer
-from sage.structure.element import Element, Expression
+from sage.structure.element import Element, Expression, RingElement
 from sage.structure.element import Matrix as MatrixElement
-from sage.structure.element import RingElement
 from sage.structure.parent import ElementConstructorInput, Parent
 from sage.typeset.ascii_art import AsciiArt
 from sage.typeset.unicode_art import UnicodeArt
+
+type _List[T] = list[T]
+type _Dict[K, V] = dict[K, V]
+type _Str = str
 
 _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
 _NewScalar = TypeVar("_NewScalar", bound=RingElement)
@@ -19,39 +22,44 @@ _Polynomial = TypeVar("_Polynomial", bound=RingElement)
 
 type _MatrixAxisIndex = int | Integer
 type _MatrixIndexCollection = (
-    list[_MatrixAxisIndex]
-    | tuple[_MatrixAxisIndex, ...]
-    | range
+    _List[_MatrixAxisIndex] | tuple[_MatrixAxisIndex, ...] | range
 )
 type _MatrixAxisSelection = _MatrixAxisIndex | slice | _MatrixIndexCollection
-type _MatrixSingleSelection = _MatrixAxisIndex | slice | list[_MatrixAxisIndex]
+type _MatrixAxisSubset = slice | _MatrixIndexCollection
+type _MatrixSingleSelection = _MatrixAxisIndex | slice | _List[_MatrixAxisIndex]
 type _MatrixEntryKey = tuple[_MatrixAxisIndex, _MatrixAxisIndex]
 type _MatrixSelectionKey = (
-    _MatrixSingleSelection
-    | tuple[_MatrixAxisSelection, _MatrixAxisSelection]
+    _MatrixSingleSelection | tuple[_MatrixAxisSelection, _MatrixAxisSelection]
 )
 type _MatrixAssignment = (
-    ElementConstructorInput
-    | Sequence[Sequence[ElementConstructorInput]]
+    ElementConstructorInput | Sequence[Sequence[ElementConstructorInput]]
 )
-type _EntryFormatter[_T: RingElement] = Mapping[_T, str] | Callable[[_T], str]
+type _EntryFormatter[_T: RingElement] = Mapping[_T, _Str] | Callable[[_T], _Str]
 type _BorderLabels = Sequence[object] | None
 
+class _Invertible[R](Protocol):
+    def __invert__(self) -> R: ...
+
+class _MatrixInverseData[M, R: RingElement](Protocol):
+    def __pos__(self) -> M: ...
+    def __getitem__(self, key: _MatrixEntryKey) -> _Invertible[R]: ...
+
+class _MatrixPowerData[M, I](Protocol):
+    def __pos__(self) -> M: ...
+    def __invert__(self) -> I: ...
 
 class Matrix(MatrixElement[_Scalar], Generic[_Scalar]):
-    def list(self) -> list[_Scalar]: ...
+    def list(self) -> _List[_Scalar]: ...
     def dense_coefficient_list(
         self,
         order: Iterable[_MatrixEntryKey] | None = ...,
-    ) -> list[_Scalar]: ...
-    def dict(self, copy: bool = ...) -> dict[tuple[int, int], _Scalar]: ...
+    ) -> _List[_Scalar]: ...
+    def dict(self, copy: bool = ...) -> _Dict[tuple[int, int], _Scalar]: ...
     monomial_coefficients = dict
     def items(self) -> ItemsView[tuple[int, int], _Scalar]: ...
-
     def set_immutable(self) -> None: ...
     def is_immutable(self) -> bool: ...
     def is_mutable(self) -> bool: ...
-
     def add_to_entry(
         self,
         i: _MatrixAxisIndex,
@@ -66,14 +74,17 @@ class Matrix(MatrixElement[_Scalar], Generic[_Scalar]):
     @overload
     def __getitem__(
         self,
-        key: slice | list[_MatrixAxisIndex],
+        key: slice | _List[_MatrixAxisIndex],
     ) -> Self: ...
     @overload
     def __getitem__(
         self,
-        key: tuple[_MatrixAxisSelection, _MatrixAxisSelection],
+        key: tuple[_MatrixAxisSubset, _MatrixAxisSelection]
+        | tuple[_MatrixAxisIndex, _MatrixAxisSubset],
     ) -> Self: ...
-    def __setitem__(self, key: _MatrixSelectionKey, value: _MatrixAssignment) -> None: ...
+    def __setitem__(
+        self, key: _MatrixSelectionKey, value: _MatrixAssignment
+    ) -> None: ...
     def __reduce__(
         self,
     ) -> tuple[
@@ -82,28 +93,26 @@ class Matrix(MatrixElement[_Scalar], Generic[_Scalar]):
             type[Self],
             Parent[Self],
             bool,
-            dict[str, object] | None,
+            _Dict[_Str, object] | None,
             object,
             int,
         ],
     ]: ...
-
     def base_ring(self) -> Parent[_Scalar]: ...
     def change_ring(self, ring: Parent[_NewScalar]) -> Matrix[_NewScalar]: ...
     @overload
     def _matrix_(self, R: None = ...) -> Self: ...
     @overload
     def _matrix_(self, R: Parent[_NewScalar]) -> Matrix[_NewScalar]: ...
-
-    def __repr__(self) -> str: ...
-    def __str__(self) -> str: ...
+    def __repr__(self) -> _Str: ...
+    def __str__(self) -> _Str: ...
     @overload
     def str(
         self,
         rep_mapping: _EntryFormatter[_Scalar] | None = ...,
-        zero: str | None = ...,
-        plus_one: str | None = ...,
-        minus_one: str | None = ...,
+        zero: _Str | None = ...,
+        plus_one: _Str | None = ...,
+        minus_one: _Str | None = ...,
         *,
         unicode: bool = ...,
         shape: Literal["square", "round"] | None = ...,
@@ -112,14 +121,14 @@ class Matrix(MatrixElement[_Scalar], Generic[_Scalar]):
         right_border: _BorderLabels = ...,
         top_border: _BorderLabels = ...,
         bottom_border: _BorderLabels = ...,
-    ) -> str: ...
+    ) -> _Str: ...
     @overload
     def str(
         self,
         rep_mapping: _EntryFormatter[_Scalar] | None = ...,
-        zero: str | None = ...,
-        plus_one: str | None = ...,
-        minus_one: str | None = ...,
+        zero: _Str | None = ...,
+        plus_one: _Str | None = ...,
+        minus_one: _Str | None = ...,
         *,
         unicode: Literal[False] = ...,
         shape: Literal["square", "round"] | None = ...,
@@ -133,9 +142,9 @@ class Matrix(MatrixElement[_Scalar], Generic[_Scalar]):
     def str(
         self,
         rep_mapping: _EntryFormatter[_Scalar] | None = ...,
-        zero: str | None = ...,
-        plus_one: str | None = ...,
-        minus_one: str | None = ...,
+        zero: _Str | None = ...,
+        plus_one: _Str | None = ...,
+        minus_one: _Str | None = ...,
         *,
         unicode: Literal[True],
         shape: Literal["square", "round"] | None = ...,
@@ -149,9 +158,9 @@ class Matrix(MatrixElement[_Scalar], Generic[_Scalar]):
     def str(
         self,
         rep_mapping: _EntryFormatter[_Scalar] | None = ...,
-        zero: str | None = ...,
-        plus_one: str | None = ...,
-        minus_one: str | None = ...,
+        zero: _Str | None = ...,
+        plus_one: _Str | None = ...,
+        minus_one: _Str | None = ...,
         *,
         unicode: bool = ...,
         shape: Literal["square", "round"] | None = ...,
@@ -160,20 +169,17 @@ class Matrix(MatrixElement[_Scalar], Generic[_Scalar]):
         right_border: _BorderLabels = ...,
         top_border: _BorderLabels = ...,
         bottom_border: _BorderLabels = ...,
-    ) -> str | AsciiArt | UnicodeArt: ...
+    ) -> _Str | AsciiArt | UnicodeArt: ...
     def _ascii_art_(self) -> AsciiArt: ...
     def _unicode_art_(self) -> UnicodeArt: ...
-    def _latex_(self) -> str: ...
-
+    def _latex_(self) -> _Str: ...
     def ncols(self) -> int: ...
     def nrows(self) -> int: ...
     def dimensions(self) -> tuple[int, int]: ...
-
     def act_on_polynomial(self, f: _Polynomial) -> _Polynomial: ...
     def __call__(self, *args: object, **kwargs: object) -> Matrix[RingElement]: ...
     def commutator(self, other: Matrix[_OtherScalar]) -> Matrix[RingElement]: ...
     def anticommutator(self, other: Matrix[_OtherScalar]) -> Matrix[RingElement]: ...
-
     def swap_columns(self, c1: _MatrixAxisIndex, c2: _MatrixAxisIndex) -> None: ...
     def with_swapped_columns(
         self,
@@ -200,7 +206,6 @@ class Matrix(MatrixElement[_Scalar], Generic[_Scalar]):
         row_permutation: PermutationGroupElement,
         column_permutation: PermutationGroupElement,
     ) -> Self: ...
-
     def add_multiple_of_row(
         self,
         i: _MatrixAxisIndex,
@@ -283,7 +288,6 @@ class Matrix(MatrixElement[_Scalar], Generic[_Scalar]):
     ) -> Matrix[RingElement]: ...
     def reverse_rows_and_columns(self) -> None: ...
     def mutate(self, k: _MatrixAxisIndex) -> None: ...
-
     def linear_combination_of_rows(
         self,
         v: Iterable[ElementConstructorInput],
@@ -292,7 +296,6 @@ class Matrix(MatrixElement[_Scalar], Generic[_Scalar]):
         self,
         v: Iterable[ElementConstructorInput],
     ) -> FreeModuleElement[RingElement]: ...
-
     def is_symmetric(self) -> bool: ...
     def is_hermitian(self) -> bool: ...
     def is_skew_hermitian(self) -> bool: ...
@@ -309,13 +312,13 @@ class Matrix(MatrixElement[_Scalar], Generic[_Scalar]):
         self,
         return_diag: Literal[True],
         positive: bool = ...,
-    ) -> list[RingElement] | Literal[False]: ...
+    ) -> _List[RingElement] | Literal[False]: ...
     @overload
     def is_symmetrizable(
         self,
         return_diag: bool = ...,
         positive: bool = ...,
-    ) -> bool | list[RingElement]: ...
+    ) -> bool | _List[RingElement]: ...
     @overload
     def is_skew_symmetrizable(
         self,
@@ -327,20 +330,19 @@ class Matrix(MatrixElement[_Scalar], Generic[_Scalar]):
         self,
         return_diag: Literal[True],
         positive: bool = ...,
-    ) -> list[RingElement] | Literal[False]: ...
+    ) -> _List[RingElement] | Literal[False]: ...
     @overload
     def is_skew_symmetrizable(
         self,
         return_diag: bool = ...,
         positive: bool = ...,
-    ) -> bool | list[RingElement]: ...
+    ) -> bool | _List[RingElement]: ...
     def is_dense(self) -> bool: ...
     def is_sparse(self) -> bool: ...
     def is_square(self) -> bool: ...
     def is_invertible(self) -> bool: ...
     is_unit = is_invertible
     def is_singular(self) -> bool: ...
-
     def pivots(self) -> tuple[int, ...]: ...
     def rank(self) -> int: ...
     def nonpivots(self) -> tuple[int, ...]: ...
@@ -348,9 +350,9 @@ class Matrix(MatrixElement[_Scalar], Generic[_Scalar]):
         self,
         copy: bool = ...,
         column_order: bool = ...,
-    ) -> list[tuple[int, int]]: ...
-    def nonzero_positions_in_column(self, i: _MatrixAxisIndex) -> list[int]: ...
-    def nonzero_positions_in_row(self, i: _MatrixAxisIndex) -> list[int]: ...
+    ) -> _List[tuple[int, int]]: ...
+    def nonzero_positions_in_column(self, i: _MatrixAxisIndex) -> _List[int]: ...
+    def nonzero_positions_in_row(self, i: _MatrixAxisIndex) -> _List[int]: ...
     def multiplicative_order(self) -> Integer | PlusInfinity: ...
     def iterates(
         self,
@@ -358,7 +360,6 @@ class Matrix(MatrixElement[_Scalar], Generic[_Scalar]):
         n: _MatrixAxisIndex,
         rows: bool = ...,
     ) -> Matrix[_Scalar]: ...
-
     def _add_(self, right: Matrix[_Scalar]) -> Self: ...
     def _sub_(self, right: Matrix[_Scalar]) -> Self: ...
     def __mod__(self, p: ElementConstructorInput) -> Self: ...
@@ -366,15 +367,20 @@ class Matrix(MatrixElement[_Scalar], Generic[_Scalar]):
     def _rmul_(self, left: Element) -> Self: ...
     def _lmul_(self, right: Element) -> Self: ...
     def __neg__(self) -> Self: ...
-    def __invert__(self) -> Matrix[RingElement]: ...
+    # matrix0.pyx:6272-6312 preserves the original matrix for an empty
+    # input or an inverse over a non-domain; otherwise its coefficients
+    # lie in the same extension as scalar reciprocals (6148-6186).
+    def __invert__[M, R: RingElement](
+        self: _MatrixInverseData[M, R],
+    ) -> M | Matrix[R]: ...
     def inverse_of_unit(self, algorithm: Literal["df"] | None = ...) -> Self: ...
     def __pos__(self) -> Self: ...
     @overload
-    def __pow__(
-        self,
+    def __pow__[M, I](
+        self: _MatrixPowerData[M, I],
         n: int | Integer,
         ignored: None = ...,
-    ) -> Matrix[RingElement]: ...
+    ) -> M | I: ...
     @overload
     def __pow__(
         self,
@@ -385,12 +391,11 @@ class Matrix(MatrixElement[_Scalar], Generic[_Scalar]):
     def _richcmp_(self, right: object, op: int) -> bool: ...
     def __bool__(self) -> bool: ...
 
-
-def unpickle[_T: RingElement](
-    cls: type[Matrix[_T]],
-    parent: Parent[Matrix[_T]],
+def unpickle[T: RingElement](
+    cls: type[Matrix[T]],
+    parent: Parent[Matrix[T]],
     immutability: bool,
-    cache: dict[str, object] | None,
+    cache: _Dict[_Str, object] | None,
     data: object,
     version: int,
-) -> Matrix[_T]: ...
+) -> Matrix[T]: ...
