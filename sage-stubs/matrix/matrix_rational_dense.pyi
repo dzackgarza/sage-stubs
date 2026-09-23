@@ -1,5 +1,5 @@
 from collections.abc import Callable, Iterable, Mapping, Sequence
-from typing import Literal, Self, overload
+from typing import Literal, Never, Self, overload
 
 from sage.libs.pari.gen import gen
 from sage.matrix.matrix_dense import Matrix_dense
@@ -11,7 +11,6 @@ from sage.rings.integer import Integer
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.rational import Rational
 from sage.structure.parent import ElementConstructorInput
-
 
 type _RationalMatrixEntries = (
     float
@@ -30,7 +29,6 @@ type _RationalDecompositionFactor = tuple[
     bool,
 ]
 
-
 class Matrix_rational_dense(Matrix_dense[Rational]):
     def __init__(
         self,
@@ -45,7 +43,7 @@ class Matrix_rational_dense(Matrix_dense[Rational]):
     def list(self) -> list[Rational]: ...
     def matrix_from_columns(
         self,
-        columns: Sequence[int | Integer],
+        columns: Iterable[int | Integer],
     ) -> Self: ...
     def add_to_entry(
         self,
@@ -55,12 +53,12 @@ class Matrix_rational_dense(Matrix_dense[Rational]):
     ) -> None: ...
     def row(
         self,
-        i: int,
+        i: int | Integer,
         from_list: bool = ...,
     ) -> FreeModuleElement[Rational]: ...
     def column(
         self,
-        j: int,
+        j: int | Integer,
         from_list: bool = ...,
     ) -> FreeModuleElement[Rational]: ...
     def transpose(self) -> Self: ...
@@ -71,7 +69,6 @@ class Matrix_rational_dense(Matrix_dense[Rational]):
         j: int | Integer,
         s: ElementConstructorInput,
     ) -> None: ...
-
     def inverse(
         self,
         algorithm: str | None = ...,
@@ -89,23 +86,21 @@ class Matrix_rational_dense(Matrix_dense[Rational]):
     def denominator(self) -> Integer: ...
     def _clear_denom(self) -> tuple[Matrix_integer_dense, Integer]: ...
     def height(self) -> Integer: ...
-    def characteristic_polynomial(
+    def charpoly(
         self,
         var: str = ...,
         algorithm: str | None = ...,
     ) -> Polynomial: ...
-    charpoly = characteristic_polynomial
-    def minimal_polynomial(
+    def minpoly(
         self,
         var: str = ...,
         algorithm: str | None = ...,
     ) -> Polynomial: ...
-    minpoly = minimal_polynomial
     def prod_of_row_sums(
         self,
         cols: Iterable[int | Integer],
     ) -> Rational: ...
-
+    @overload
     def echelonize(
         self,
         algorithm: str | None = ...,
@@ -113,6 +108,14 @@ class Matrix_rational_dense(Matrix_dense[Rational]):
         proof: bool | None = ...,
         **kwds: object,
     ) -> None: ...
+    @overload
+    def echelonize(
+        self,
+        algorithm: str = ...,
+        cutoff: int = ...,
+        **kwds: object,
+    ) -> Never: ...
+    @overload
     def echelon_form(
         self,
         algorithm: str | None = ...,
@@ -120,9 +123,15 @@ class Matrix_rational_dense(Matrix_dense[Rational]):
         proof: bool | None = ...,
         **kwds: object,
     ) -> Self: ...
+    @overload
+    def echelon_form(
+        self,
+        algorithm: str = ...,
+        cutoff: int = ...,
+        **kwds: object,
+    ) -> Never: ...
     def pivots(self) -> tuple[int, ...]: ...
     def nonpivots(self) -> tuple[int, ...]: ...
-
     def _right_kernel_matrix(
         self,
         **kwds: object,
@@ -147,43 +156,7 @@ class Matrix_rational_dense(Matrix_dense[Rational]):
         *args: object,
         **kwds: object,
     ) -> FreeModule_generic[Rational]: ...
-    def row_space(self) -> FreeModule_generic[Rational]: ...
-    def column_space(self) -> FreeModule_generic[Rational]: ...
     def image(self) -> FreeModule_generic[Rational]: ...
-
-    @overload
-    def solve_right(
-        self,
-        B: Self,
-        check: bool = ...,
-        *,
-        extend: bool = ...,
-    ) -> Self: ...
-    @overload
-    def solve_right(
-        self,
-        B: FreeModuleElement[Rational],
-        check: bool = ...,
-        *,
-        extend: bool = ...,
-    ) -> FreeModuleElement[Rational]: ...
-    @overload
-    def solve_left(
-        self,
-        B: Self,
-        check: bool = ...,
-        *,
-        extend: bool = ...,
-    ) -> Self: ...
-    @overload
-    def solve_left(
-        self,
-        B: FreeModuleElement[Rational],
-        check: bool = ...,
-        *,
-        extend: bool = ...,
-    ) -> FreeModuleElement[Rational]: ...
-
     @overload
     def decomposition(
         self,
@@ -199,7 +172,7 @@ class Matrix_rational_dense(Matrix_dense[Rational]):
         is_diagonalizable: bool,
         dual: Literal[True],
         algorithm: str | None = ...,
-       height_guess: int | Integer | None = ...,
+        height_guess: int | Integer | None = ...,
         proof: bool | None = ...,
     ) -> tuple[
         Sequence[_RationalDecompositionFactor],
@@ -220,7 +193,23 @@ class Matrix_rational_dense(Matrix_dense[Rational]):
             Sequence[_RationalDecompositionFactor],
         ]
     ): ...
-
+    @overload
+    def decomposition(
+        self,
+        algorithm: str = ...,
+        is_diagonalizable: bool = ...,
+        dual: Literal[False] = ...,
+    ) -> Sequence[_RationalDecompositionFactor]: ...
+    @overload
+    def decomposition(
+        self,
+        algorithm: str,
+        is_diagonalizable: bool,
+        dual: Literal[True],
+    ) -> tuple[
+        Sequence[_RationalDecompositionFactor],
+        Sequence[_RationalDecompositionFactor],
+    ]: ...
     @overload
     def LLL(
         self,
@@ -280,7 +269,7 @@ class Matrix_rational_dense(Matrix_dense[Rational]):
         delta: float | None = ...,
         eta: float | None = ...,
     ) -> bool: ...
-
+    @overload
     def randomize(
         self,
         density: float = ...,
@@ -288,5 +277,13 @@ class Matrix_rational_dense(Matrix_dense[Rational]):
         den_bound: int | Integer = ...,
         distribution: str | None = ...,
         nonzero: bool = ...,
+    ) -> None: ...
+    @overload
+    def randomize(
+        self,
+        density: float = ...,
+        nonzero: bool = ...,
+        *args: object,
+        **kwds: object,
     ) -> None: ...
     def __pari__(self) -> gen: ...

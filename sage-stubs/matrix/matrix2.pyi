@@ -1,11 +1,12 @@
 from collections.abc import Callable, Iterable, Mapping, Sequence
-from typing import Generic, Literal, TypeVar, overload
+from typing import Generic, Literal, Protocol, TypeVar, overload
 
 from sage.categories.morphism import Morphism
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.geometry.abc import ConvexRationalPolyhedralCone
 from sage.graphs.graph import Graph
 from sage.groups.perm_gps.permgroup_element import PermutationGroupElement
+from sage.matrix.matrix0 import _Invertible
 from sage.matrix.matrix1 import Matrix as Matrix1
 from sage.matrix.matrix_window import MatrixWindow
 from sage.modules.free_module import FreeModule_generic
@@ -50,6 +51,14 @@ type _DecompositionFactor[_T: RingElement] = tuple[
 type _KrylovRow = tuple[int, int, int]
 type _MatrixOption = Element | str | int | float | bool | None
 
+# matrix2.pyx:2260-2270 forwards the actual determinant method, including
+# the extra options supplied by a concrete backend. This is not an alias
+# to the generic implementation below.
+class _DeterminantCall[**P, R](Protocol):
+    def determinant(self, *args: P.args, **kwds: P.kwargs) -> R: ...
+
+class _CharpolyCall[**P, R](Protocol):
+    def charpoly(self, *args: P.args, **kwds: P.kwargs) -> R: ...
 
 class Matrix(
     Matrix1[_Scalar],
@@ -58,10 +67,9 @@ class Matrix(
     # Entrywise maps and linear equations
     def subs(
         self,
-        *args: Element | int | float | Mapping[Element, Element | int | float],
-        **kwds: Element | int | float,
+        *args: Element | float | Mapping[Element, Element | int | float],
+        **kwds: Element | float,
     ) -> Matrix[RingElement]: ...
-
     @overload
     def solve_left(
         self,
@@ -78,7 +86,6 @@ class Matrix(
         *,
         extend: bool = ...,
     ) -> FreeModuleElement[RingElement]: ...
-
     @overload
     def solve_right(
         self,
@@ -95,7 +102,6 @@ class Matrix(
         *,
         extend: bool = ...,
     ) -> FreeModuleElement[RingElement]: ...
-
     def pivot_rows(self) -> tuple[int, ...]: ...
     def prod_of_row_sums(
         self,
@@ -133,9 +139,10 @@ class Matrix(
     def determinant(
         self,
         algorithm: str | None = ...,
-        **kwds: _MatrixOption,
     ) -> _Scalar: ...
-    det = determinant
+    def det[**P, R](
+        self: _DeterminantCall[P, R], *args: P.args, **kwds: P.kwargs
+    ) -> R: ...
     def quantum_determinant(
         self,
         q: RingElement | None = ...,
@@ -152,7 +159,6 @@ class Matrix(
         self,
         phi: Morphism[_Scalar, _NewScalar],
     ) -> Matrix[_NewScalar]: ...
-
     @overload
     def apply_map(
         self,
@@ -175,18 +181,28 @@ class Matrix(
         sparse: bool | None = ...,
     ) -> Matrix[RingElement]: ...
 
-    def characteristic_polynomial(
+    # matrix2.pyx:3084 forwards the selected charpoly, including a concrete
+    # backend's proof argument. The wrapper is not the generic algorithm.
+    def characteristic_polynomial[**P, R](
+        self: _CharpolyCall[P, R], *args: P.args, **kwds: P.kwargs
+    ) -> R: ...
+    def charpoly(
         self,
         var: str = ...,
         algorithm: str | None = ...,
     ) -> Polynomial: ...
-    charpoly = characteristic_polynomial
+    # matrix2.pyx:3098 accepts one positional argument and forwards keyword
+    # options to minpoly; 3112 defines a separate generic minpoly algorithm.
     def minimal_polynomial(
         self,
         var: str = ...,
         **kwds: _MatrixOption,
     ) -> Polynomial: ...
-    minpoly = minimal_polynomial
+    def minpoly(
+        self,
+        var: str = ...,
+        algorithm: str | None = ...,
+    ) -> Polynomial: ...
     def fcp(self, var: str = ...) -> Factorization: ...
     def denominator(self) -> RingElement: ...
     def diagonal(
@@ -203,11 +219,8 @@ class Matrix(
     def hessenbergize(self) -> None: ...
 
     # Kernels, images, invariant subspaces, and decompositions
-    def rank(
-        self,
-        algorithm: str | None = ...,
-        **kwds: _MatrixOption,
-    ) -> int: ...
+    # rank is inherited from matrix0.pyx:5043. Concrete backends own their
+    # additional algorithm arguments; matrix2 defines no rank override.
     def left_nullity(self) -> int: ...
     nullity = left_nullity
     def right_nullity(self) -> int: ...
@@ -243,7 +256,6 @@ class Matrix(
         ring: Parent[_NewScalar] = ...,
     ) -> FreeModule_generic[_NewScalar]: ...
     def image(self) -> FreeModule_generic[_Scalar]: ...
-
     @overload
     def row_module(
         self,
@@ -254,20 +266,21 @@ class Matrix(
         self,
         base_ring: Parent[_NewScalar],
     ) -> FreeModule_generic[_NewScalar]: ...
-    row_space = row_module
-
     @overload
-    def column_module(
+    def row_space(
         self,
         base_ring: None = ...,
     ) -> FreeModule_generic[_Scalar]: ...
     @overload
-    def column_module(
+    def row_space(
         self,
         base_ring: Parent[_NewScalar],
     ) -> FreeModule_generic[_NewScalar]: ...
-    column_space = column_module
 
+    # Unlike row_module/row_space, these two source-defined methods do not
+    # accept a base_ring argument (matrix2.pyx:5768-5814).
+    def column_module(self) -> FreeModule_generic[_Scalar]: ...
+    def column_space(self) -> FreeModule_generic[_Scalar]: ...
     @overload
     def decomposition(
         self,
@@ -313,7 +326,6 @@ class Matrix(
         i: int | Integer,
         t: int | Integer = ...,
     ) -> Polynomial: ...
-
     @overload
     def cyclic_subspace(
         self,
@@ -421,7 +433,6 @@ class Matrix(
         subdivide: bool = ...,
         **kwds: _MatrixOption,
     ) -> Matrix[_Scalar]: ...
-
     @overload
     def smith_form(
         self,
@@ -430,8 +441,8 @@ class Matrix(
         exact: bool = ...,
     ) -> tuple[
         Matrix[_Scalar],
-        Matrix[RingElement],
-        Matrix[RingElement],
+        Matrix[_Scalar] | Matrix[RingElement],
+        Matrix[_Scalar] | Matrix[RingElement],
     ]: ...
     @overload
     def smith_form(
@@ -450,11 +461,10 @@ class Matrix(
         Matrix[_Scalar]
         | tuple[
             Matrix[_Scalar],
-            Matrix[RingElement],
-            Matrix[RingElement],
+            Matrix[_Scalar] | Matrix[RingElement],
+            Matrix[_Scalar] | Matrix[RingElement],
         ]
     ): ...
-
     @overload
     def hermite_form(
         self,
@@ -467,7 +477,6 @@ class Matrix(
         include_zero_rows: bool,
         transformation: Literal[True],
     ) -> tuple[Matrix[_Scalar], Matrix[_Scalar]]: ...
-
     @overload
     def zigzag_form(
         self,
@@ -480,13 +489,11 @@ class Matrix(
         subdivide: bool,
         transformation: Literal[True],
     ) -> tuple[Matrix[_Scalar], Matrix[RingElement]]: ...
-
     def rational_form(
         self,
         format: str = ...,
         subdivide: bool = ...,
     ) -> Matrix[_Scalar]: ...
-
     @overload
     def jordan_form(
         self,
@@ -507,7 +514,6 @@ class Matrix(
         eigenvalues: Sequence[RingElement] | None = ...,
         check_input: bool = ...,
     ) -> tuple[Matrix[RingElement], Matrix[RingElement]]: ...
-
     def jordan_decomposition(
         self,
     ) -> tuple[Matrix[RingElement], Matrix[RingElement]]: ...
@@ -519,7 +525,6 @@ class Matrix(
         self,
         base_field: Parent | None = ...,
     ) -> bool: ...
-
     @overload
     def is_similar(
         self,
@@ -538,7 +543,6 @@ class Matrix(
     def automorphisms_of_rows_and_columns(
         self,
     ) -> list[_PermutationPair]: ...
-
     @overload
     def permutation_normal_form(
         self,
@@ -549,7 +553,6 @@ class Matrix(
         self,
         check: Literal[True],
     ) -> tuple[Matrix[_Scalar], _PermutationPair]: ...
-
     @overload
     def is_permutation_of(
         self,
@@ -562,7 +565,6 @@ class Matrix(
         N: Matrix[_Scalar],
         check: Literal[True],
     ) -> tuple[bool, _PermutationPair | None]: ...
-
     def matrix_window(
         self,
         row: int = ...,
@@ -637,14 +639,15 @@ class Matrix(
         check_positivity: bool = ...,
     ) -> Matrix[RingElement]: ...
     def density(self) -> Rational | int: ...
-    def inverse(self) -> Matrix[RingElement]: ...
+    # matrix2.pyx:10830-10893 returns ~self, not a scalar-erased matrix.
+    def inverse[I](self: _Invertible[I]) -> I: ...
     def adjugate(self) -> Matrix[_Scalar]: ...
     adjoint_classical = adjugate
     def conjugate(self) -> Matrix[RingElement]: ...
     def conjugate_transpose(self) -> Matrix[RingElement]: ...
     def norm(
         self,
-        p: int | float | str = ...,
+        p: float | str = ...,
     ) -> Element: ...
     def numerical_approx(
         self,
@@ -678,7 +681,6 @@ class Matrix(
         extended: bool = ...,
     ) -> Matrix[RingElement]: ...
     def inverse_positive_definite(self) -> Matrix[RingElement]: ...
-
     @overload
     def LU(
         self,
@@ -708,7 +710,6 @@ class Matrix(
         ]
         | tuple[tuple[int, ...], Matrix[RingElement]]
     ): ...
-
     def indefinite_factorization(
         self,
         algorithm: str = ...,
@@ -759,7 +760,6 @@ class Matrix(
         self,
         flag: int = ...,
     ) -> Matrix[Integer]: ...
-
     @overload
     def find(
         self,
@@ -785,15 +785,22 @@ class Matrix(
         self,
         M: Matrix[_Scalar],
         shifts: Sequence[int | Integer] | FreeModuleElement[Integer] | None = ...,
-        degrees: int | Integer | Sequence[int | Integer] | FreeModuleElement[Integer] | None = ...,
+        degrees: int
+        | Integer
+        | Sequence[int | Integer]
+        | FreeModuleElement[Integer]
+        | None = ...,
     ) -> Matrix[_Scalar]: ...
-
     @overload
     def krylov_basis(
         self,
         M: Matrix[_Scalar],
         shifts: Sequence[int | Integer] | FreeModuleElement[Integer] | None = ...,
-        degrees: int | Integer | Sequence[int | Integer] | FreeModuleElement[Integer] | None = ...,
+        degrees: int
+        | Integer
+        | Sequence[int | Integer]
+        | FreeModuleElement[Integer]
+        | None = ...,
         output_rows: Literal[True] = ...,
         algorithm: str | None = ...,
     ) -> tuple[Matrix[_Scalar], tuple[_KrylovRow, ...]]: ...
@@ -802,17 +809,24 @@ class Matrix(
         self,
         M: Matrix[_Scalar],
         shifts: Sequence[int | Integer] | FreeModuleElement[Integer] | None,
-        degrees: int | Integer | Sequence[int | Integer] | FreeModuleElement[Integer] | None,
+        degrees: int
+        | Integer
+        | Sequence[int | Integer]
+        | FreeModuleElement[Integer]
+        | None,
         output_rows: Literal[False],
         algorithm: str | None = ...,
     ) -> Matrix[_Scalar]: ...
-
     @overload
     def krylov_kernel_basis(
         self,
         M: Matrix[_Scalar],
         shifts: Sequence[int | Integer] | FreeModuleElement[Integer] | None = ...,
-        degrees: int | Integer | Sequence[int | Integer] | FreeModuleElement[Integer] | None = ...,
+        degrees: int
+        | Integer
+        | Sequence[int | Integer]
+        | FreeModuleElement[Integer]
+        | None = ...,
         output_rows: Literal[True] = ...,
         var: str | None = ...,
         basis_algorithm: str | None = ...,
@@ -822,12 +836,15 @@ class Matrix(
         self,
         M: Matrix[_Scalar],
         shifts: Sequence[int | Integer] | FreeModuleElement[Integer] | None,
-        degrees: int | Integer | Sequence[int | Integer] | FreeModuleElement[Integer] | None,
+        degrees: int
+        | Integer
+        | Sequence[int | Integer]
+        | FreeModuleElement[Integer]
+        | None,
         output_rows: Literal[False],
         var: str | None = ...,
         basis_algorithm: str | None = ...,
     ) -> Matrix[Polynomial]: ...
-
     @property
     def T(self) -> Matrix[_Scalar]: ...
     @property

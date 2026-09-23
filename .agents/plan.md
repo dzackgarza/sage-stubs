@@ -60,11 +60,11 @@ first-level subtree.
 
 | ID | Phase | Tier | Depends on | Source files | Status |
 |----|-------|------|------------|--------------|--------|
-| 01 | [Foundation completion](phases/phase-01-foundation.md) | 0 | — | ~145 | ✅ Complete |
+| 01 | [Foundation completion](phases/phase-01-foundation.md) | 0 | — | ~145 | 🟡 In Progress |
 | 02 | [Core rings & arithmetic](phases/phase-02-core-rings.md) | 1 | 01 | ~80 | ✅ Complete |
 | 03 | [Polynomial rings](phases/phase-03-polynomial-rings.md) | 1 | 01 | ~95 | ✅ Complete |
-| 04 | [Number-theoretic rings](phases/phase-04-number-theory-rings.md) | 1 | 01 | ~130 | ✅ Complete |
-| 05 | [Linear algebra: matrices & modules](phases/phase-05-linear-algebra.md) | 1 | 01 | ~120 | ✅ Complete |
+| 04 | [Number-theoretic rings](phases/phase-04-number-theory-rings.md) | 1 | 01 | ~130 | 🟡 In Progress |
+| 05 | [Linear algebra: matrices & modules](phases/phase-05-linear-algebra.md) | 1 | 01 | ~120 | 🟡 In Progress |
 | 06 | [Algebras: associative & non-Lie](phases/phase-06-algebras-core.md) | 2 | 02, 05 | ~70 | 🟡 In Progress |
 | 07 | [Lie algebras & quantum groups](phases/phase-07-lie-quantum.md) | 2 | 02, 05 | ~50 | ⬜ Not Started |
 | 08 | [Groups](phases/phase-08-groups.md) | 2 | 02, 05 | ~92 | ⬜ Not Started |

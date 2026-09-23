@@ -1,5 +1,5 @@
 from collections.abc import Sequence
-from typing import Generic, Literal, Self, TypeVar
+from typing import Generic, Self, TypeVar
 
 from sage.matrix.matrix import Matrix
 from sage.structure.element import Element, RingElement
@@ -7,13 +7,12 @@ from sage.structure.parent import Parent
 
 _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
 
-
 class Matrix_dense(
     Matrix[_Scalar],
     Generic[_Scalar],
 ):
     def __copy__(self) -> Self: ...
-    def _pickle(self) -> tuple[list[_Scalar], Literal[-1]]: ...
+    def _pickle(self) -> tuple[list[_Scalar] | tuple[str, int], int]: ...
     def _unpickle_generic(
         self,
         data: Sequence[_Scalar],
@@ -21,7 +20,7 @@ class Matrix_dense(
     ) -> None: ...
     def _richcmp_(
         self,
-        right: Matrix_dense[_Scalar],
+        right: object,
         op: int,
     ) -> bool: ...
     def transpose(self) -> Self: ...

@@ -23,6 +23,8 @@ extend-exclude = ["sage-src"]
 [tool.ruff.lint]
 # Syntax/undefined names/import hygiene plus strict annotation and stub rules.
 select = ["E4", "E7", "E9", "F", "I", "ANN", "UP", "PYI", "RUF"]
+# Direct source-defined __str__/__repr__ methods belong in this parity surface.
+ignore = ["PYI029"]
 
 [tool.ruff.lint.per-file-ignores]
 "sage-stubs/rings/asymptotic/asymptotic_ring.pyi" = ["E743"]

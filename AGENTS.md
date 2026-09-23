@@ -167,6 +167,11 @@ helper functions (e.g. `def coefficient(n)` defined inside `__call__`)
 are not class methods. Inherited aliases are not direct definitions.
 Check `cls.body` in the AST, not the full `ast.walk` output.
 
+Retain directly defined `__str__` and `__repr__` methods as part of source
+parity. Ruff's `PYI029` redundancy preference is not applicable to this
+contract and is excluded from the rule selection; strict type checks and
+all other selected rules remain enabled.
+
 ## Banned output patterns
 
 These patterns are rejected by `scripts/check_guardrails.py`, which
