@@ -12,7 +12,10 @@ class CategoryWithAxiom(Category):
 class CategoryWithAxiom_over_base_ring(CategoryWithAxiom, Category_over_base_ring):
     def __init__(self, base_category: Category) -> None: ...
 
-class CategoryWithAxiom_singleton(Category_singleton, CategoryWithAxiom): ...
+class CategoryWithAxiom_singleton(Category_singleton, CategoryWithAxiom):
+    # CategoryWithAxiom.__classcall__ builds `Cls()` as the singleton base category
+    # with the axiom applied, and passes `Cls(base)` through to `__init__`.
+    def __init__(self, base_category: Category = ...) -> None: ...
 
 all_axioms: AxiomContainer
 
