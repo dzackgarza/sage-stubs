@@ -3,7 +3,7 @@ from typing import overload
 
 from sage.rings.integer import Integer
 from sage.structure.sage_object import SageObject
-from sage.structure.unique_representation import UniqueRepresentation
+from sage.structure.unique_representation import UniqueRepresentation, _Classcall
 
 type _CategoryArg = Category | int | Integer | str | type | tuple[str, ...] | None
 type _CategoryOption = Category | bool | int | Integer | str | type | tuple[str, ...] | None
@@ -28,8 +28,7 @@ class Category(UniqueRepresentation, SageObject):
     ) -> Category | list[Category]: ...
     @staticmethod
     def meet(categories: Iterable[Category]) -> Category: ...
-    @classmethod
-    def __classcall__(cls, *args: object, **options: object) -> Category: ...
+    __classcall__: _Classcall[...]
     @classmethod
     def _set_classcall(cls, value: type) -> None: ...
     def __call__(self, x: object, *args: object, **opts: object) -> SageObject: ...
@@ -52,7 +51,7 @@ class Category(UniqueRepresentation, SageObject):
     def _make_named_class(
         self,
         name: str,
-        method_provider: type,
+        method_provider: str,
         cache: bool = ...,
         picklable: bool = ...,
     ) -> type: ...
