@@ -10,6 +10,9 @@ type _CategoryOption = Category | bool | int | Integer | str | type | tuple[str,
 
 class Category(UniqueRepresentation, SageObject):
     parent_class: type
+    element_class: type
+    morphism_class: type
+    subcategory_class: type
     Constructors: type
     def __init__(self) -> None: ...
     @staticmethod
