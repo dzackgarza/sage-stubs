@@ -1,5 +1,6 @@
-from sage.structure.sage_object import SageObject
 from typing import Self
+
+from sage.structure.sage_object import SageObject
 
 def list_function(x: list[object]) -> str: ...
 def tuple_function(x: tuple[object, ...], combine_all: bool = False) -> str: ...
@@ -31,6 +32,8 @@ class LatexCall:
 class Latex(LatexCall):
     def __init__(self, *args: object) -> None: ...
     def __call__(self, x: object) -> str: ...
+
+latex: Latex
 
 class LatexExamples:
     def __init__(self, x: object) -> None: ...

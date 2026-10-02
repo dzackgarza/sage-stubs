@@ -18,7 +18,10 @@ class SimplicialComplex(GenericCellComplex):
     def __init__(
         self,
         maximal_faces: Iterable[Iterable[Hashable]] | SimplicialComplex | None = None,
-        from_characteristic_function: tuple[Callable[[frozenset[Hashable]], bool], Iterable[Hashable]] | None = None,
+        from_characteristic_function: tuple[
+            Callable[[frozenset[Hashable]], bool], Iterable[Hashable]
+        ]
+        | None = None,
         maximality_check: bool = True,
         sort_facets: dict[Hashable, int] | None = None,
         name_check: bool = False,

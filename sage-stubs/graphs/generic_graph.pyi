@@ -13,7 +13,9 @@ type _Vertex = Hashable
 type _Edge = tuple[_Vertex, _Vertex] | tuple[_Vertex, _Vertex, object]
 type _EdgeWeight = Callable[[_Edge], int | float | Integer]
 # ``relabel``'s ``perm``: a function, dictionary, iterable or permutation.
-type _Relabeling = Callable[[_Vertex], _Vertex] | Mapping[_Vertex, _Vertex] | Iterable[_Vertex]
+type _Relabeling = (
+    Callable[[_Vertex], _Vertex] | Mapping[_Vertex, _Vertex] | Iterable[_Vertex]
+)
 
 def tachyon_vertex_plot(g: Element, bgcolor: Element | int | str | bool | None, vertex_colors: Element | int | str | bool | None, vertex_size: Element | int | str | bool | None, pos3d: Element | int | str | bool | None) -> Element: ...
 def graph_isom_equivalent_non_edge_labeled_graph(g: Element, partition: Element | int | str | bool | None, standard_label: Element | int | str | bool | None, return_relabeling: Element | int | str | bool | None, return_edge_labels: Element | int | str | bool | None, inplace: Element | int | str | bool | None, ignore_edge_labels: Element | int | str | bool | None, immutable: Element | int | str | bool | None) -> Element: ...
