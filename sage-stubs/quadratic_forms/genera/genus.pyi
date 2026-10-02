@@ -1,9 +1,11 @@
 from typing import Literal, TypeVar, overload
 
+from sage.groups.abelian_gps.abelian_group_gap import AbelianGroupSubgroup_gap
 from sage.matrix.matrix0 import Matrix
 from sage.matrix.matrix_integer_dense import Matrix_integer_dense
 from sage.matrix.matrix_rational_dense import Matrix_rational_dense
 from sage.modules.torsion_quadratic_module import TorsionQuadraticModule
+from sage.quadratic_forms.genera.spinor_genus import SpinorOperator, SpinorOperators
 from sage.rings.integer import Integer
 from sage.structure.element import RingElement
 
@@ -61,7 +63,18 @@ class GenusSymbol_global_ring:
         tuple[Matrix_integer_dense | Matrix_rational_dense, ...]
         | list[Matrix_integer_dense]
     ): ...
+    # genus.py:2547: (A, K) with A the spinor operators at the primes of the
+    # local symbols and K = A.subgroup(kernel generators).
+    def _proper_spinor_kernel(
+        self,
+    ) -> tuple[SpinorOperators, AbelianGroupSubgroup_gap]: ...
+    # genus.py:2586: (A, K), K enlarged by the improper operator when needed.
+    def _improper_spinor_kernel(
+        self,
+    ) -> tuple[SpinorOperators, AbelianGroupSubgroup_gap]: ...
     def spinor_generators(self, proper: bool) -> list[Integer]: ...
+    # genus.py:2665: returns j in K, j with j = A.delta(r).
+    def _proper_is_improper(self) -> tuple[bool, SpinorOperator]: ...
 
 def Genus(
     A: Matrix[_Scalar], factored_determinant: list[tuple[Integer, Integer]] | None = ...
