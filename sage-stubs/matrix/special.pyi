@@ -1,4 +1,4 @@
-from collections.abc import Callable, Iterable, Mapping, Sequence
+from collections.abc import Callable, Iterable, Sequence
 from typing import ParamSpec, TypeVar, overload
 
 from sage.matrix.matrix import Matrix
@@ -15,45 +15,33 @@ _P = ParamSpec("_P")
 _Return = TypeVar("_Return")
 
 type MatrixBlock[_Scalar: RingElement] = (
-    Matrix[_Scalar]
-    | ElementConstructorInput
-    | None
+    Matrix[_Scalar] | ElementConstructorInput | None
 )
 type VectorData[_Scalar: RingElement] = (
-    Sequence[_Scalar | ElementConstructorInput]
-    | FreeModuleElement[_Scalar]
+    Sequence[_Scalar | ElementConstructorInput] | FreeModuleElement[_Scalar]
 )
 
-
 @overload
-def matrix_method(
-    func: Callable[_P, _Return],
+def matrix_method[**P, R](
+    func: Callable[P, R],
     name: str | None = ...,
-) -> Callable[_P, _Return]: ...
-
-
+) -> Callable[P, R]: ...
 @overload
 def matrix_method(
     func: None = ...,
     name: str | None = ...,
 ) -> Callable[[Callable[_P, _Return]], Callable[_P, _Return]]: ...
-
-
 @overload
 def column_matrix(
     ring: Parent[_Scalar],
     *args: object,
     **kwds: object,
 ) -> Matrix[_Scalar]: ...
-
-
 @overload
 def column_matrix(
     *args: object,
     **kwds: object,
 ) -> Matrix[RingElement]: ...
-
-
 def random_matrix(
     ring: Parent[_Scalar],
     nrows: int | Integer,
@@ -63,8 +51,6 @@ def random_matrix(
     *args: object,
     **kwds: object,
 ) -> Matrix[_Scalar]: ...
-
-
 @overload
 def diagonal_matrix(
     arg0: Parent[_Scalar],
@@ -72,8 +58,6 @@ def diagonal_matrix(
     arg2: None = ...,
     sparse: bool = ...,
 ) -> Matrix[_Scalar]: ...
-
-
 @overload
 def diagonal_matrix(
     arg0: Parent[_Scalar],
@@ -81,8 +65,6 @@ def diagonal_matrix(
     arg2: Iterable[_Scalar | ElementConstructorInput],
     sparse: bool = ...,
 ) -> Matrix[_Scalar]: ...
-
-
 @overload
 def diagonal_matrix(
     arg0: Iterable[_Scalar | ElementConstructorInput],
@@ -90,8 +72,6 @@ def diagonal_matrix(
     arg2: None = ...,
     sparse: bool = ...,
 ) -> Matrix[_Scalar]: ...
-
-
 @overload
 def diagonal_matrix(
     arg0: int | Integer,
@@ -99,38 +79,28 @@ def diagonal_matrix(
     arg2: None = ...,
     sparse: bool = ...,
 ) -> Matrix[RingElement]: ...
-
-
 @overload
 def identity_matrix(
     ring: Parent[_Scalar],
     n: int | Integer = ...,
     sparse: bool = ...,
 ) -> Matrix[_Scalar]: ...
-
-
 @overload
 def identity_matrix(
     ring: int | Integer,
     n: int | Integer = ...,
     sparse: bool = ...,
 ) -> Matrix[Integer]: ...
-
-
 @overload
 def lehmer(
     ring: Parent[_Scalar],
     n: int | Integer = ...,
 ) -> Matrix[_Scalar]: ...
-
-
 @overload
 def lehmer(
     ring: int | Integer,
     n: int | Integer = ...,
 ) -> Matrix[Rational]: ...
-
-
 @overload
 def zero_matrix(
     ring: Parent[_Scalar],
@@ -138,8 +108,6 @@ def zero_matrix(
     ncols: int | Integer | None = ...,
     sparse: bool = ...,
 ) -> Matrix[_Scalar]: ...
-
-
 @overload
 def zero_matrix(
     ring: int | Integer,
@@ -147,8 +115,6 @@ def zero_matrix(
     ncols: int | Integer | None = ...,
     sparse: bool = ...,
 ) -> Matrix[Integer]: ...
-
-
 @overload
 def ones_matrix(
     ring: Parent[_Scalar],
@@ -156,8 +122,6 @@ def ones_matrix(
     ncols: int | Integer | None = ...,
     sparse: bool = ...,
 ) -> Matrix[_Scalar]: ...
-
-
 @overload
 def ones_matrix(
     ring: int | Integer,
@@ -165,38 +129,28 @@ def ones_matrix(
     ncols: int | Integer | None = ...,
     sparse: bool = ...,
 ) -> Matrix[Integer]: ...
-
-
 @overload
 def elementary_matrix(
     arg0: MatrixSpace[_Scalar],
     arg1: int | Integer | None = ...,
     **kwds: ElementConstructorInput,
 ) -> Matrix[_Scalar]: ...
-
-
 @overload
 def elementary_matrix(
     arg0: Parent[_Scalar],
     arg1: int | Integer | None = ...,
     **kwds: ElementConstructorInput,
 ) -> Matrix[_Scalar]: ...
-
-
 @overload
 def elementary_matrix(
     arg0: int | Integer,
     arg1: int | Integer | None = ...,
     **kwds: ElementConstructorInput,
 ) -> Matrix[Integer]: ...
-
-
 def circulant(
     v: VectorData[_Scalar],
     sparse: bool | None = ...,
 ) -> Matrix[_Scalar]: ...
-
-
 def block_matrix(
     *args: (
         Parent[_Scalar]
@@ -210,154 +164,119 @@ def block_matrix(
     **kwds: object,
 ) -> Matrix[_Scalar]: ...
 
-
+# special.py:2249: the blocks are the arguments, or one list or tuple of them.
+@overload
+def block_diagonal_matrix(
+    sub_matrices: Sequence[Matrix[_Scalar]],
+    /,
+    **kwds: object,
+) -> Matrix[_Scalar]: ...
+@overload
 def block_diagonal_matrix(
     *sub_matrices: Matrix[_Scalar],
     **kwds: object,
 ) -> Matrix[_Scalar]: ...
-
-
 def jordan_block(
     eigenvalue: _Scalar,
     size: int | Integer,
     sparse: bool = ...,
 ) -> Matrix[_Scalar]: ...
-
-
 def companion_matrix(
     poly: Polynomial,
     format: str = ...,
 ) -> Matrix[RingElement]: ...
-
-
 def random_rref_matrix(
     parent: MatrixSpace[_Scalar],
     num_pivots: int | Integer,
 ) -> Matrix[_Scalar]: ...
-
-
 def random_echelonizable_matrix(
     parent: MatrixSpace[_Scalar],
     rank: int | Integer,
     upper_bound: int | Integer | None = ...,
     max_tries: int | Integer = ...,
 ) -> Matrix[_Scalar]: ...
-
-
 def random_subspaces_matrix(
     parent: MatrixSpace[_Scalar],
     rank: int | Integer | None = ...,
 ) -> Matrix[_Scalar]: ...
-
-
 def random_unimodular_matrix(
     parent: MatrixSpace[_Scalar],
     upper_bound: int | Integer | None = ...,
     max_tries: int | Integer = ...,
 ) -> Matrix[_Scalar]: ...
-
-
 def random_unitary_matrix(
     parent: MatrixSpace[_Scalar],
 ) -> Matrix[_Scalar]: ...
-
-
 def random_bistochastic_matrix(
     parent: MatrixSpace[_Scalar],
 ) -> Matrix[_Scalar]: ...
-
-
 def random_diagonalizable_matrix(
     parent: MatrixSpace[_Scalar],
     eigenvalues: Sequence[_Scalar] | None = ...,
     dimensions: Sequence[int | Integer] | None = ...,
 ) -> Matrix[_Scalar]: ...
-
-
 @overload
 def vector_on_axis_rotation_matrix(
     v: VectorData[_Scalar],
     i: int | Integer,
     ring: Parent[_Scalar],
 ) -> Matrix[_Scalar]: ...
-
-
 @overload
 def vector_on_axis_rotation_matrix(
     v: Sequence[ElementConstructorInput] | FreeModuleElement[RingElement],
     i: int | Integer,
     ring: None = ...,
 ) -> Matrix[RingElement]: ...
-
-
 @overload
 def ith_to_zero_rotation_matrix(
     v: VectorData[_Scalar],
     i: int | Integer,
     ring: Parent[_Scalar],
 ) -> Matrix[_Scalar]: ...
-
-
 @overload
 def ith_to_zero_rotation_matrix(
     v: Sequence[ElementConstructorInput] | FreeModuleElement[RingElement],
     i: int | Integer,
     ring: None = ...,
 ) -> Matrix[RingElement]: ...
-
-
 @overload
 def hilbert(
     dim: int | Integer,
     ring: Parent[_Scalar],
 ) -> Matrix[_Scalar]: ...
-
-
 @overload
 def hilbert(
     dim: int | Integer,
     ring: None = ...,
 ) -> Matrix[Rational]: ...
-
-
 @overload
 def vandermonde(
     v: VectorData[_Scalar],
     ring: Parent[_Scalar],
 ) -> Matrix[_Scalar]: ...
-
-
 @overload
 def vandermonde(
     v: Sequence[ElementConstructorInput] | FreeModuleElement[RingElement],
     ring: None = ...,
 ) -> Matrix[RingElement]: ...
-
-
 @overload
 def toeplitz(
     c: VectorData[_Scalar],
     r: VectorData[_Scalar],
     ring: Parent[_Scalar],
 ) -> Matrix[_Scalar]: ...
-
-
 @overload
 def toeplitz(
     c: Sequence[ElementConstructorInput] | FreeModuleElement[RingElement],
     r: Sequence[ElementConstructorInput] | FreeModuleElement[RingElement],
     ring: None = ...,
 ) -> Matrix[RingElement]: ...
-
-
 @overload
 def hankel(
     c: VectorData[_Scalar],
     r: VectorData[_Scalar] | None = ...,
     ring: Parent[_Scalar] = ...,
 ) -> Matrix[_Scalar]: ...
-
-
 @overload
 def hankel(
     c: Sequence[ElementConstructorInput] | FreeModuleElement[RingElement],

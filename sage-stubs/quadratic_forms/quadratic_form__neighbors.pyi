@@ -23,14 +23,14 @@ def find_primitive_p_divisible_vector__next(
 def find_p_neighbor_from_vec(
     self: QuadraticForm,
     p: int | Integer,
-    y: FreeModuleElement[RingElement],
+    y: FreeModuleElement[Integer],
     return_matrix: Literal[False] = False,
 ) -> QuadraticForm: ...
 @overload
 def find_p_neighbor_from_vec(
     self: QuadraticForm,
     p: int | Integer,
-    y: FreeModuleElement[RingElement],
+    y: FreeModuleElement[Integer],
     return_matrix: Literal[True],
 ) -> Matrix[RingElement]: ...
 

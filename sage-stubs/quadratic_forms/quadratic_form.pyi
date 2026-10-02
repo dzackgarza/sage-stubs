@@ -17,6 +17,9 @@ from sage.structure.parent import ElementConstructorInput, Parent
 from sage.structure.sage_object import SageObject
 
 _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+# The scalars of a matrix or vector the form is evaluated on; quadratic_form.py
+# coerces them into the base ring.
+_Arg = TypeVar("_Arg", bound=RingElement)
 
 def quadratic_form_from_invariants(
     F: ElementConstructorInput,
@@ -36,8 +39,8 @@ class QuadraticForm(SageObject, Generic[_Scalar]):
     def __init__(
         self,
         R: Parent[_Scalar],
-        n: int | Integer | Matrix[RingElement],
-        entries: FreeModuleElement[RingElement]
+        n: int | Integer | Matrix[_Scalar],
+        entries: FreeModuleElement[_Scalar]
         | Sequence[ElementConstructorInput]
         | None = None,
         unsafe_initialization: bool = False,
@@ -81,13 +84,13 @@ class QuadraticForm(SageObject, Generic[_Scalar]):
     # quadratic_form.py:954: a matrix gives the form v^t Q v, a vector the
     # value Q(v).
     @overload
-    def __call__(self, v: Matrix[RingElement]) -> QuadraticForm[_Scalar]: ...
+    def __call__(self, v: Matrix[_Arg]) -> QuadraticForm[_Scalar]: ...
     @overload
     def __call__(
-        self, v: FreeModuleElement[RingElement] | Sequence[ElementConstructorInput]
+        self, v: FreeModuleElement[_Arg] | Sequence[ElementConstructorInput]
     ) -> _Scalar: ...
     def _is_even_symmetric_matrix_(
-        self, A: Matrix[RingElement], R: Ring | None = None
+        self, A: Matrix[_Arg], R: Ring | None = None
     ) -> bool: ...
     def matrix(self) -> Matrix[_Scalar]: ...
     def Hessian_matrix(self) -> Matrix[_Scalar]: ...
@@ -294,14 +297,14 @@ class QuadraticForm(SageObject, Generic[_Scalar]):
     def find_p_neighbor_from_vec(
         self,
         p: int | Integer,
-        y: FreeModuleElement[RingElement],
+        y: FreeModuleElement[Integer],
         return_matrix: Literal[False] = False,
     ) -> QuadraticForm[_Scalar]: ...
     @overload
     def find_p_neighbor_from_vec(
         self,
         p: int | Integer,
-        y: FreeModuleElement[RingElement],
+        y: FreeModuleElement[Integer],
         return_matrix: Literal[True],
     ) -> Matrix[RingElement]: ...
     # quadratic_form__neighbors.py:55: None once the vectors are exhausted.
