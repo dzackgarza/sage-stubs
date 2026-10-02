@@ -1,5 +1,5 @@
 from collections.abc import Iterator
-from typing import Literal, overload
+from typing import Literal, Self, overload
 
 import sage.rings.abc
 from sage.categories.category import Category
@@ -8,34 +8,45 @@ from sage.categories.rings import Rings
 from sage.groups.abelian_gps.values import AbelianGroupWithValues_class
 from sage.interfaces.expect import Expect
 from sage.rings.finite_rings.element_base import FiniteRingElement
+from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
 from sage.rings.integer import Integer
+from sage.rings.integer_ring import IntegerRing_class
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.quotient_ring import QuotientRing_generic
-from sage.structure.element import Element
+from sage.rings.ring import Ring
 from sage.structure.factorization import Factorization
 from sage.structure.factory import (
-    FactoryArgument,
-    FactoryCacheKey,
-    FactoryExtraArgs,
     FactoryVersion,
     UniqueFactory,
 )
 from sage.structure.parent import Parent
 
-class IntegerModFactory(UniqueFactory):
+# integer_mod_ring.py:207-247: the key is the order, the only extra argument
+# is ``category`` (``Fields()`` when ``is_field``), and the order 0 gives ``ZZ``.
+class IntegerModFactory(
+    UniqueFactory[
+        int | Integer,
+        IntegerModRing_generic | IntegerRing_class,
+        Category,
+        [int | Integer, bool, Category | None],
+    ]
+):
     def get_object(
         self,
         version: FactoryVersion,
-        key: FactoryCacheKey,
-        extra_args: FactoryExtraArgs,
-    ) -> IntegerModRing_generic: ...
+        key: int | Integer,
+        extra_args: dict[str, Category],
+    ) -> IntegerModRing_generic | IntegerRing_class: ...
     def create_key_and_extra_args(
-        self, *args: FactoryArgument, **kwds: FactoryArgument
-    ) -> tuple[FactoryCacheKey, FactoryExtraArgs]: ...
+        self,
+        order: int | Integer = ...,
+        is_field: bool = ...,
+        category: Category | None = ...,
+    ) -> tuple[int | Integer, dict[str, Category]]: ...
     def create_object(
-        self, version: FactoryVersion, key: FactoryCacheKey, **kwds: FactoryArgument
-    ) -> IntegerModRing_generic: ...
+        self, version: FactoryVersion, key: int | Integer, **kwds: Category
+    ) -> IntegerModRing_generic | IntegerRing_class: ...
 
 def _unit_gens_primepowercase(
     p: int | Integer, r: int | Integer
@@ -65,8 +76,9 @@ class IntegerModRing_generic(
     def is_integral_domain(self, proof: bool | None = ...) -> bool: ...
     def is_unique_factorization_domain(self, proof: bool | None = ...) -> bool: ...
     def is_field(self, proof: bool | None = ...) -> bool: ...
-    def field(self) -> sage.rings.abc.Ring: ...
-    def _pseudo_fraction_field(self) -> sage.rings.abc.Ring: ...
+    # integer_mod_ring.py:731: ``FiniteField(self.order())``.
+    def field(self) -> FiniteField[IntegerMod_abstract]: ...
+    def _pseudo_fraction_field(self) -> Self: ...
     def multiplicative_group_is_cyclic(self) -> bool: ...
     def multiplicative_generator(self) -> FiniteRingElement: ...
     def quadratic_nonresidue(self) -> IntegerMod_abstract: ...
@@ -95,7 +107,12 @@ class IntegerModRing_generic(
     def unit_group_exponent(self) -> Integer: ...
     def unit_group_order(self) -> Integer: ...
     def unit_group(self, algorithm: str = ...) -> AbelianGroupWithValues_class: ...
-    def random_element(self, *args: int, **kwds: int | bool) -> Element: ...
+    # integer_mod_ring.py:1487: ``self(a)`` for a random integer ``a``. The
+    # source takes one ``bound``; the stub keeps the arity of
+    # Rings.ParentMethods.random_element, which this method overrides.
+    def random_element(
+        self, a: int | Integer = ..., b: int | Integer = ..., /
+    ) -> IntegerMod_abstract: ...
     def _lift_residue_field_root(
         self,
         p: int | Integer,
@@ -108,7 +125,7 @@ class IntegerModRing_generic(
     def _roots_univariate_polynomial(
         self,
         f: Polynomial,
-        ring: sage.rings.abc.Ring | None = ...,
+        ring: Ring | None = ...,
         multiplicities: Literal[True] = ...,
         algorithm: str | None = ...,
     ) -> list[tuple[FiniteRingElement, int]]: ...
@@ -116,7 +133,7 @@ class IntegerModRing_generic(
     def _roots_univariate_polynomial(
         self,
         f: Polynomial,
-        ring: sage.rings.abc.Ring | None = ...,
+        ring: Ring | None = ...,
         multiplicities: Literal[False] = ...,
         algorithm: str | None = ...,
     ) -> list[FiniteRingElement]: ...
@@ -124,7 +141,7 @@ class IntegerModRing_generic(
     def _roots_univariate_polynomial(
         self,
         f: Polynomial,
-        ring: sage.rings.abc.Ring | None = ...,
+        ring: Ring | None = ...,
         multiplicities: bool = ...,
         algorithm: str | None = ...,
     ) -> list[FiniteRingElement] | list[tuple[FiniteRingElement, int]]: ...
