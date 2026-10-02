@@ -1,8 +1,8 @@
 from collections.abc import Callable, Iterable, Mapping, Sequence
 from typing import Literal, Never, Self, overload
 
+from cypari2.gen import Gen
 from sage.interfaces.singular import Singular, SingularElement
-from sage.libs.pari.gen import gen
 from sage.matrix.matrix import Matrix
 from sage.matrix.matrix1 import Matrix as Matrix1
 from sage.matrix.matrix_dense import Matrix_dense
@@ -410,7 +410,7 @@ class Matrix_integer_dense(Matrix_dense[Integer]):
         *args: object,
         **kwds: object,
     ) -> None: ...
-    def __pari__(self) -> gen: ...
+    def __pari__(self) -> Gen: ...
     def _singular_(
         self,
         singular: Singular | None = ...,

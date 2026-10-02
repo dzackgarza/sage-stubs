@@ -1,21 +1,19 @@
-from typing import TypeAlias
 
+from cypari2.gen import Gen
 from sage.geometry.newton_polygon import NewtonPolygon_element
-from sage.rings.infinity import MinusInfinity, PlusInfinity
+from sage.rings.infinity import PlusInfinity
 from sage.rings.integer import Integer
+from sage.rings.polynomial.padics.polynomial_padic import Polynomial_padic
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.polynomial.polynomial_element_generic import Polynomial_generic_cdv
-from sage.rings.polynomial.padics.polynomial_padic import Polynomial_padic
 from sage.rings.rational import Rational
 from sage.structure.element import Element
 from sage.structure.parent import Parent
 
-class gen: ...
-
-_ElementList: TypeAlias = list[Element]
-_RationalList: TypeAlias = list[Rational]
-_IntList: TypeAlias = list[int]
-_FactorList: TypeAlias = list[tuple[Polynomial_padic_capped_relative_dense, int]]
+type _ElementList = list[Element]
+type _RationalList = list[Rational]
+type _IntList = list[int]
+type _FactorList = list[tuple[Polynomial_padic_capped_relative_dense, int]]
 
 class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_padic):
     def __init__(self, parent: Parent, x: object = None, check: bool = True, is_gen: bool = False, construct: bool = False, absprec: int | PlusInfinity = ..., relprec: int | PlusInfinity = ...) -> None: ...
@@ -40,7 +38,7 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
     def lshift_coeffs(self, shift: int, no_list: bool = False) -> Polynomial_padic_capped_relative_dense | _ElementList: ...
     def rshift_coeffs(self, shift: int, no_list: bool = False) -> Polynomial_padic_capped_relative_dense | _ElementList: ...
     def _unsafe_mutate(self, n: int, value: object) -> None: ...
-    def __pari__(self, variable: str | None = None) -> gen: ...
+    def __pari__(self, variable: str | None = None) -> Gen: ...
     def __copy__(self) -> Polynomial_padic_capped_relative_dense: ...
     def degree(self, gen: object = ..., secure: bool = False) -> Integer: ...
     def prec_degree(self) -> int: ...

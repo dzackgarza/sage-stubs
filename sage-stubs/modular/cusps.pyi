@@ -1,18 +1,18 @@
-from typing import Literal, Protocol, TypeAlias, overload
+from typing import Literal, overload
+
+from cypari2.gen import Gen
 from sage.matrix.matrix_integer_dense import Matrix_integer_dense
 from sage.misc.fast_methods import Singleton
-from sage.structure.element import Element as SageElement, InfinityElement
-from sage.structure.parent import Parent
+from sage.modular.arithgroup.congroup_gammaH import GammaH_class
 from sage.rings.integer import Integer
 from sage.rings.rational import Rational
-from sage.modular.arithgroup.congroup_gammaH import GammaH_class
+from sage.structure.element import Element as SageElement
+from sage.structure.element import InfinityElement
+from sage.structure.parent import Parent
 
-class _PariGen(Protocol):
-    def type(self) -> str: ...
-
-_CuspScalar: TypeAlias = Integer | Rational | InfinityElement | _PariGen | int | str
-_CuspPair: TypeAlias = tuple[_CuspScalar, _CuspScalar] | list[_CuspScalar]
-_CuspInput: TypeAlias = _CuspScalar | _CuspPair | Cusp
+type _CuspScalar = Integer | Rational | InfinityElement | Gen | int | str
+type _CuspPair = tuple[_CuspScalar, _CuspScalar] | list[_CuspScalar]
+type _CuspInput = _CuspScalar | _CuspPair | Cusp
 
 class Cusp(SageElement):
 
@@ -45,7 +45,7 @@ class Cusp(SageElement):
     def __neg__(self) -> Cusp: ...
 
     @overload
-    def is_gamma0_equiv(self, other: _CuspInput, N: int | Integer, transformation: None | Literal[False] = None) -> bool: ...
+    def is_gamma0_equiv(self, other: _CuspInput, N: int | Integer, transformation: Literal[False] | None = None) -> bool: ...
     @overload
     def is_gamma0_equiv(self, other: _CuspInput, N: int | Integer, transformation: Literal[True, "corner"]) -> tuple[bool, Integer | None]: ...
     @overload
@@ -61,7 +61,7 @@ class Cusp(SageElement):
 
     def galois_action(self, t: int | Integer, N: int | Integer) -> Cusp: ...
 
-    def __pari__(self) -> _PariGen: ...
+    def __pari__(self) -> Gen: ...
 
 class Cusps_class(Singleton, Parent):
 

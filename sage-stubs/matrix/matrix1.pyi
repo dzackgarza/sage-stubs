@@ -2,10 +2,10 @@ from collections.abc import Iterable, Sequence
 from typing import Generic, Literal, Protocol, Self, TypeVar, overload
 
 import numpy as np
+from cypari2.gen import Gen
 from sage.interfaces.expect import Expect, ExpectElement
 from sage.interfaces.singular import Singular, SingularElement
 from sage.libs.gap.element import ElementLibGAP
-from sage.libs.pari.gen import gen
 from sage.matrix.matrix0 import Matrix as Matrix0
 from sage.matrix.matrix_space import MatrixData, MatrixSpace
 from sage.misc.sage_input import SageInputBuilder, SageInputExpression
@@ -32,7 +32,7 @@ class Matrix(
 ):
     # External-system conversions directly implemented by matrix1.pyx.
     def _pari_init_(self) -> str: ...
-    def __pari__(self) -> gen: ...
+    def __pari__(self) -> Gen: ...
     def _gap_init_(self) -> str: ...
     def _libgap_(self) -> ElementLibGAP: ...
     def _fricas_init_(self) -> str: ...

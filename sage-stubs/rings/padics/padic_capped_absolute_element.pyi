@@ -1,6 +1,7 @@
 from collections.abc import Callable, Iterator
 from typing import Self
 
+from cypari2.gen import Gen
 from sage.categories.morphism import Morphism
 from sage.rings.function_field.function_field import FunctionField
 from sage.rings.infinity import PlusInfinity
@@ -63,7 +64,7 @@ class PowComputer_(PowComputer_base):
 class pAdicCappedAbsoluteElement(CAElement):
     def lift(self) -> pAdicCappedAbsoluteElement: ...
     def lift_c(self) -> Self: ...
-    def __pari__(self) -> Self: ...
+    def __pari__(self) -> Gen: ...
     def residue(
         self,
         absprec: int | Integer = ...,

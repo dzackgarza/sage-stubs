@@ -2,13 +2,12 @@ from collections.abc import Callable, Iterable, Iterator, Mapping, Sequence
 from typing import Generic, Literal, NoReturn, Self, TypeVar, overload
 
 import numpy as np
+from cypari2.gen import Gen
 from numpy.typing import DTypeLike, NDArray
-from sympy.matrices.matrixbase import MatrixBase
-
 from sage.interfaces.expect import Expect, ExpectElement
-from sage.libs.pari.gen import gen
 from sage.matrix.matrix import Matrix
 from sage.misc.sage_input import SageInputBuilder, SageInputExpression
+from sage.modules.free_module import FreeModule_generic
 from sage.plot.graphics import Graphics
 from sage.plot.plot3d.base import Graphics3d
 from sage.rings.infinity import AnInfinity, PlusInfinity
@@ -16,6 +15,7 @@ from sage.rings.integer import Integer
 from sage.structure.element import Element, RingElement, Vector
 from sage.structure.parent import ElementConstructorInput, Parent
 from sage.structure.sequence import Sequence_generic
+from sympy.matrices.matrixbase import MatrixBase
 
 _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
 _NewScalar = TypeVar("_NewScalar", bound=RingElement)
@@ -148,7 +148,7 @@ class FreeModuleElement(Vector[_Scalar], Generic[_Scalar]):
     def base_ring(self) -> Parent[_Scalar]: ...
     def monomial_coefficients(self, copy: bool = ...) -> dict[int, _Scalar]: ...
     def _giac_init_(self) -> list[_Scalar]: ...
-    def __pari__(self) -> gen: ...
+    def __pari__(self) -> Gen: ...
     def _pari_init_(self) -> str: ...
     def _magma_init_(self, magma: Expect) -> str: ...
     def numpy(self, dtype: DTypeLike | None = ...) -> NDArray[np.generic]: ...
@@ -184,7 +184,7 @@ class FreeModuleElement(Vector[_Scalar], Generic[_Scalar]):
     def __abs__(self) -> RingElement: ...
     def norm(
         self,
-        p: int | Integer | float | RingElement | PlusInfinity = ...,
+        p: Integer | float | RingElement | PlusInfinity = ...,
     ) -> RingElement: ...
     def _richcmp_(self, right: FreeModuleElement[_Scalar], op: int) -> bool: ...
     @overload
@@ -224,9 +224,9 @@ class FreeModuleElement(Vector[_Scalar], Generic[_Scalar]):
     ) -> Graphics | Graphics3d: ...
     def plot_step(
         self,
-        xmin: RingElement | int | float = ...,
-        xmax: RingElement | int | float = ...,
-        eps: RingElement | int | float | None = ...,
+        xmin: RingElement | float = ...,
+        xmax: RingElement | float = ...,
+        eps: RingElement | float | None = ...,
         res: int | Integer | None = ...,
         connect: bool = ...,
         **kwds: object,
@@ -260,7 +260,7 @@ class FreeModuleElement(Vector[_Scalar], Generic[_Scalar]):
     def monic(self) -> FreeModuleElement[RingElement]: ...
     def normalized(
         self,
-        p: int | Integer | float | RingElement | PlusInfinity = ...,
+        p: Integer | float | RingElement | PlusInfinity = ...,
     ) -> FreeModuleElement[RingElement]: ...
     def conjugate(self) -> FreeModuleElement[RingElement]: ...
     def inner_product(
@@ -412,6 +412,3 @@ class FreeModuleElement_generic_sparse(FreeModuleElement[_Scalar], Generic[_Scal
     def list(self, copy: bool = ...) -> list[_Scalar]: ...
     def nonzero_positions(self) -> list[int]: ...
     def hamming_weight(self) -> int: ...
-
-
-from sage.modules.free_module import FreeModule_generic

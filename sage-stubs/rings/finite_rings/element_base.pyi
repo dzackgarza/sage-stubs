@@ -1,6 +1,7 @@
 from collections.abc import Iterator
 from typing import Generic, Self, TypeVar
 
+from cypari2.gen import Gen
 from sage.categories.map import Map
 from sage.matrix.matrix0 import Matrix
 from sage.modules.free_module_element import FreeModuleElement
@@ -10,10 +11,6 @@ from sage.rings.ring import Field
 from sage.structure.element import Element, RingElement
 from sage.structure.parent import Parent
 from sage.structure.sage_object import SageObject
-
-
-class gen: ...
-
 
 class FiniteRingElement(RingElement):
     def _nth_root_common(
@@ -67,7 +64,7 @@ class FinitePolyExtElement(
         reverse: bool = ...,
     ) -> Matrix[_Coefficient]: ...
     def _latex_(self) -> str: ...
-    def __pari__(self, var: str | None = ...) -> gen: ...
+    def __pari__(self, var: str | None = ...) -> Gen: ...
     def _pari_init_(self, var: str | None = ...) -> str: ...
     def charpoly(
         self,
