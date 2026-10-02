@@ -1,4 +1,4 @@
-from collections.abc import Iterable, Sequence
+from collections.abc import Iterable, Iterator, Sequence
 
 from sage.groups.additive_abelian.qmodnz import QmodnZ
 from sage.groups.additive_abelian.qmodnz_element import QmodnZ_Element
@@ -18,13 +18,11 @@ from sage.structure.unique_representation import CachedRepresentation
 type SignaturePair = tuple[int | Integer, int | Integer]
 type QuadraticGenerator = FreeModuleElement[RingElement] | Sequence[RingElement]
 
-
 def TorsionQuadraticForm(q: Matrix[Rational]) -> TorsionQuadraticModule: ...
 def _brown_indecomposable(
     q: Matrix[Rational],
     p: int | Integer,
 ) -> IntegerMod_abstract: ...
-
 
 class TorsionQuadraticModuleElement(FGP_Element[RingElement]):
     def _repr_(self) -> str: ...
@@ -43,7 +41,10 @@ class TorsionQuadraticModuleElement(FGP_Element[RingElement]):
     ) -> QmodnZ_Element: ...
     def quadratic_product(self) -> QmodnZ_Element: ...
     def q(self) -> QmodnZ_Element: ...
-
+    # torsion_quadratic_module.py, __classcall__: V and W have equal rank, so
+    # the module is finite and every element has finite order.
+    def additive_order(self) -> Integer: ...
+    order = additive_order
 
 class TorsionQuadraticModule(
     FGP_Module_class[RingElement],
@@ -69,6 +70,8 @@ class TorsionQuadraticModule(
     def gram_matrix_bilinear(self) -> Matrix[Rational]: ...
     def gram_matrix_quadratic(self) -> Matrix[Rational]: ...
     def gens(self) -> tuple[TorsionQuadraticModuleElement, ...]: ...
+    # torsion_quadratic_module.py:227: the elements are of class Element.
+    def __iter__(self) -> Iterator[TorsionQuadraticModuleElement]: ...
     def genus(self, signature_pair: SignaturePair) -> GenusSymbol_global_ring: ...
     def is_genus(
         self,

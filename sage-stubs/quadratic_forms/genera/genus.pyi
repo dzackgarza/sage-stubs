@@ -1,24 +1,22 @@
-from collections.abc import Iterator, Sequence
-from typing import Self, TypeVar
+from typing import Literal, TypeVar, overload
+
 from sage.matrix.matrix0 import Matrix
-from sage.modules.free_module import FreeModule_generic
-from sage.modules.free_module_element import FreeModuleElement
-from sage.modules.free_module_homspace import FreeModuleHomspace
+from sage.matrix.matrix_integer_dense import Matrix_integer_dense
+from sage.matrix.matrix_rational_dense import Matrix_rational_dense
+from sage.modules.torsion_quadratic_module import TorsionQuadraticModule
 from sage.rings.integer import Integer
-from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.rings.rational import Rational
-from sage.rings.real_double import RealDoubleElement
-from sage.rings.complex_double import ComplexDoubleElement
-from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
-from sage.rings.ring import Ring
 from sage.structure.element import RingElement
-from sage.structure.parent import ElementConstructorInput
-from sage.structure.sage_object import SageObject
-from sage.symbolic.expression import Expression
 
 _Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
 
-from sage.modules.torsion_quadratic_module import TorsionQuadraticModule
+# genus.py:41: every non-empty global genus with the given signature pair and
+# determinant.
+def genera(
+    sig_pair: tuple[int | Integer, int | Integer],
+    determinant: int | Integer,
+    max_scale: int | Integer | None = None,
+    even: bool = False,
+) -> list[GenusSymbol_global_ring]: ...
 
 class Genus_Symbol_p_adic_ring:
     def prime(self) -> Integer: ...
@@ -29,6 +27,10 @@ class Genus_Symbol_p_adic_ring:
     def excess(self) -> Integer: ...
     def level(self) -> Integer: ...
     def is_even(self) -> bool: ...
+    # genus.py:2058.
+    def direct_sum(
+        self, other: Genus_Symbol_p_adic_ring
+    ) -> Genus_Symbol_p_adic_ring: ...
 
 class GenusSymbol_global_ring:
     def __eq__(self, other: object) -> bool: ...
@@ -42,10 +44,23 @@ class GenusSymbol_global_ring:
     def local_symbols(self) -> list[Genus_Symbol_p_adic_ring]: ...
     def local_symbol(self, p: int | Integer) -> Genus_Symbol_p_adic_ring: ...
     def discriminant_form(self) -> TorsionQuadraticModule: ...
-    def representative(self) -> ElementConstructorInput: ...
+    # genus.py:2768: the genus of the direct sum of representatives.
+    def direct_sum(self, other: GenusSymbol_global_ring) -> GenusSymbol_global_ring: ...
+    # genus.py:2369, 2938: the Gram matrix is changed to ZZ before it is stored.
+    def representative(self) -> Matrix_integer_dense: ...
+    # genus.py:2970: the sage backend gives integer Gram matrices, as a list
+    # in dimension 1; the magma backend gives Gram matrices over QQ.
+    @overload
+    def representatives(
+        self, backend: Literal["sage"], algorithm: str | None = ...
+    ) -> tuple[Matrix_integer_dense, ...] | list[Matrix_integer_dense]: ...
+    @overload
     def representatives(
         self, backend: str | None = ..., algorithm: str | None = ...
-    ) -> ElementConstructorInput: ...
+    ) -> (
+        tuple[Matrix_integer_dense | Matrix_rational_dense, ...]
+        | list[Matrix_integer_dense]
+    ): ...
     def spinor_generators(self, proper: bool) -> list[Integer]: ...
 
 def Genus(
