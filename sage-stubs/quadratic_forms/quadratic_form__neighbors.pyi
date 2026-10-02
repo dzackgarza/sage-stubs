@@ -17,15 +17,15 @@ def find_primitive_p_divisible_vector__next(
     self: QuadraticForm, p: int | Integer, v: FreeModuleElement[Integer] | None = None
 ) -> FreeModuleElement[Integer] | None: ...
 
-# quadratic_form__neighbors.py:243-248: the neighbour, or with
-# ``return_matrix`` the transpose of its basis over QQ.
+# quadratic_form__neighbors.py:243-248: the neighbour, over the base ring of
+# ``self``, or with ``return_matrix`` the transpose of its basis over QQ.
 @overload
-def find_p_neighbor_from_vec(
-    self: QuadraticForm,
+def find_p_neighbor_from_vec[S: RingElement](
+    self: QuadraticForm[S],
     p: int | Integer,
     y: FreeModuleElement[Integer],
     return_matrix: Literal[False] = False,
-) -> QuadraticForm: ...
+) -> QuadraticForm[S]: ...
 @overload
 def find_p_neighbor_from_vec(
     self: QuadraticForm,
@@ -35,16 +35,16 @@ def find_p_neighbor_from_vec(
 ) -> Matrix[RingElement]: ...
 
 # quadratic_form__neighbors.py:251: the classes of the p-neighbour graph
-# reached from the seeds, one form per class.
-def neighbor_iteration(
-    seeds: Sequence[QuadraticForm],
+# reached from the seeds, one form per class, each a neighbour of a seed.
+def neighbor_iteration[S: RingElement](
+    seeds: Sequence[QuadraticForm[S]],
     p: int | Integer,
     mass: RingElement | None = None,
     max_classes: int | Integer | None = None,
     algorithm: str | None = None,
     max_neighbors: int | Integer = 1000,
     verbose: bool = False,
-) -> list[QuadraticForm]: ...
+) -> list[QuadraticForm[S]]: ...
 
 # quadratic_form__neighbors.py:379: representatives of the orbits of the
 # automorphism group on the lines of (ZZ/pZZ)^n.
