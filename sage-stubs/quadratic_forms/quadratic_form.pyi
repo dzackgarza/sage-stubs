@@ -1,32 +1,22 @@
-from collections.abc import Iterator, Sequence
-from typing import Self, TypeVar
-from sage.matrix.matrix0 import Matrix
-from sage.modules.free_module import FreeModule_generic
-from sage.modules.free_module_element import FreeModuleElement
-from sage.modules.free_module_homspace import FreeModuleHomspace
-from sage.rings.integer import Integer
-from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.rings.rational import Rational
-from sage.rings.real_double import RealDoubleElement
-from sage.rings.complex_double import ComplexDoubleElement
-from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
-from sage.rings.ring import Ring
-from sage.structure.element import RingElement
-from sage.structure.parent import ElementConstructorInput
-from sage.structure.sage_object import SageObject
-from sage.symbolic.expression import Expression
-
-_Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
+from collections.abc import Sequence
+from typing import Generic, Literal, TypeVar, overload
 
 from sage.groups.matrix_gps.finitely_generated_gap import (
     FinitelyGeneratedMatrixGroup_gap,
 )
 from sage.matrix.matrix import Matrix
+from sage.matrix.matrix_integer_dense import Matrix_integer_dense
+from sage.modules.free_module_element import FreeModuleElement
+from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
+from sage.rings.integer import Integer
 from sage.rings.polynomial.multi_polynomial import MPolynomial
+from sage.rings.polynomial.polynomial_element import Polynomial
+from sage.rings.ring import Ring
+from sage.structure.element import RingElement
+from sage.structure.parent import ElementConstructorInput, Parent
+from sage.structure.sage_object import SageObject
 
-class Vector: ...
-class CommutativeRing: ...
-class PermutationGroup: ...
+_Scalar = TypeVar("_Scalar", bound=RingElement, default=RingElement)
 
 def quadratic_form_from_invariants(
     F: ElementConstructorInput,
@@ -37,15 +27,42 @@ def quadratic_form_from_invariants(
 ) -> QuadraticForm: ...
 def DiagonalQuadraticForm(R: Ring, diag: ElementConstructorInput) -> QuadraticForm: ...
 
-class QuadraticForm:
+# quadratic_form.py:161. The form is over the ring of its coefficients.
+class QuadraticForm(SageObject, Generic[_Scalar]):
+    # quadratic_form.py:545-590: a ring with a size and upper-triangular
+    # coefficients, a ring with a symmetric matrix with even diagonal, such a
+    # matrix alone, or a homogeneous polynomial of degree 2.
+    @overload
     def __init__(
         self,
-        R: Ring,
-        n: int | Integer = None,
-        entries: FreeModuleElement[_Scalar] | Sequence[_Scalar] = None,
+        R: Parent[_Scalar],
+        n: int | Integer | Matrix[RingElement],
+        entries: FreeModuleElement[RingElement]
+        | Sequence[ElementConstructorInput]
+        | None = None,
         unsafe_initialization: bool = False,
-        number_of_automorphisms: ElementConstructorInput = None,
-        determinant: ElementConstructorInput = None,
+        number_of_automorphisms: int | Integer | None = None,
+        determinant: RingElement | int | None = None,
+    ) -> None: ...
+    @overload
+    def __init__(
+        self,
+        R: Matrix[_Scalar],
+        n: None = None,
+        entries: None = None,
+        unsafe_initialization: bool = False,
+        number_of_automorphisms: int | Integer | None = None,
+        determinant: RingElement | int | None = None,
+    ) -> None: ...
+    @overload
+    def __init__(
+        self,
+        R: Polynomial | MPolynomial,
+        n: None = None,
+        entries: None = None,
+        unsafe_initialization: bool = False,
+        number_of_automorphisms: int | Integer | None = None,
+        determinant: RingElement | int | None = None,
     ) -> None: ...
     def list_external_initializations(self) -> list[str]: ...
     def _pari_init_(self) -> str: ...
@@ -58,19 +75,19 @@ class QuadraticForm:
         self, ij: ElementConstructorInput, coeff: ElementConstructorInput
     ) -> None: ...
     def __hash__(self) -> int: ...
-    def __eq__(self, right: ElementConstructorInput) -> bool: ...
+    def __eq__(self, right: object) -> bool: ...
     def __add__(self, right: QuadraticForm) -> QuadraticForm: ...
     def sum_by_coefficients_with(self, right: QuadraticForm) -> QuadraticForm: ...
+    # quadratic_form.py:954: a matrix gives the form v^t Q v, a vector the
+    # value Q(v).
+    @overload
+    def __call__(self, v: Matrix[RingElement]) -> QuadraticForm[_Scalar]: ...
     @overload
     def __call__(
-        self, v: FreeModuleElement[_Scalar] | Sequence[_Scalar]
-    ) -> QuadraticForm: ...
-    @overload
-    def __call__(
-        self, v: FreeModuleElement[_Scalar] | Sequence[_Scalar]
-    ) -> ElementConstructorInput: ...
+        self, v: FreeModuleElement[RingElement] | Sequence[ElementConstructorInput]
+    ) -> _Scalar: ...
     def _is_even_symmetric_matrix_(
-        self, A: Matrix[_Scalar], R: Ring = None
+        self, A: Matrix[RingElement], R: Ring | None = None
     ) -> bool: ...
     def matrix(self) -> Matrix[_Scalar]: ...
     def Hessian_matrix(self) -> Matrix[_Scalar]: ...
@@ -85,7 +102,7 @@ class QuadraticForm:
     def primitive(self) -> QuadraticForm: ...
     def adjoint_primitive(self) -> QuadraticForm: ...
     def dim(self) -> int: ...
-    def base_ring(self) -> CommutativeRing: ...
+    def base_ring(self) -> Ring[_Scalar]: ...
     def coefficients(self) -> tuple[_Scalar, ...]: ...
     def det(self) -> _Scalar: ...
     def Gram_det(self) -> ElementConstructorInput: ...
@@ -129,9 +146,15 @@ class QuadraticForm:
     def count_congruence_solutions__zero_type(
         self, *args: ElementConstructorInput, **kwargs: ElementConstructorInput
     ) -> int: ...
+    # count_local_2.pyx:163: the counts [All, Good, Zero, Bad, BadI, BadII].
     def count_congruence_solutions_as_vector(
-        self, *args: ElementConstructorInput, **kwargs: ElementConstructorInput
-    ) -> Vector: ...
+        self,
+        p: int | Integer,
+        k: int | Integer,
+        m: int | Integer,
+        zvec: Sequence[int] | None,
+        nzvec: Sequence[int] | None,
+    ) -> list[int]: ...
     def count_modp_solutions__by_Gauss_sum(
         self, *args: ElementConstructorInput, **kwargs: ElementConstructorInput
     ) -> int: ...
@@ -218,9 +241,7 @@ class QuadraticForm:
     def basiclemma(
         self, *args: ElementConstructorInput, **kwargs: ElementConstructorInput
     ) -> ElementConstructorInput: ...
-    def basiclemmavec(
-        self, *args: ElementConstructorInput, **kwargs: ElementConstructorInput
-    ) -> Vector: ...
+    def basiclemmavec(self, M: int | Integer) -> FreeModuleElement[_Scalar]: ...
     def clifford_conductor(self) -> int: ...
     def clifford_invariant(self, prime: int) -> int: ...
     def content(self) -> ElementConstructorInput: ...
@@ -241,9 +262,11 @@ class QuadraticForm:
     def representation_number_list(
         self, *args: ElementConstructorInput, **kwargs: ElementConstructorInput
     ) -> list[int]: ...
+    # quadratic_form__ternary_Tornaria.py:543: entry m lists the vectors of
+    # value m.
     def representation_vector_list(
-        self, *args: ElementConstructorInput, **kwargs: ElementConstructorInput
-    ) -> list[Vector]: ...
+        self, B: int | Integer, maxvectors: int | Integer = ...
+    ) -> list[list[FreeModuleElement[Integer]]]: ...
     def xi(
         self, *args: ElementConstructorInput, **kwargs: ElementConstructorInput
     ) -> ElementConstructorInput: ...
@@ -265,21 +288,43 @@ class QuadraticForm:
     def siegel_product(
         self, *args: ElementConstructorInput, **kwargs: ElementConstructorInput
     ) -> ElementConstructorInput: ...
+    # quadratic_form__neighbors.py:141, 243-248: the neighbour, or with
+    # ``return_matrix`` the transpose of its basis over QQ.
+    @overload
     def find_p_neighbor_from_vec(
-        self, *args: ElementConstructorInput, **kwargs: ElementConstructorInput
-    ) -> QuadraticForm: ...
+        self,
+        p: int | Integer,
+        y: FreeModuleElement[RingElement],
+        return_matrix: Literal[False] = False,
+    ) -> QuadraticForm[_Scalar]: ...
+    @overload
+    def find_p_neighbor_from_vec(
+        self,
+        p: int | Integer,
+        y: FreeModuleElement[RingElement],
+        return_matrix: Literal[True],
+    ) -> Matrix[RingElement]: ...
+    # quadratic_form__neighbors.py:55: None once the vectors are exhausted.
     def find_primitive_p_divisible_vector__next(
-        self, *args: ElementConstructorInput, **kwargs: ElementConstructorInput
-    ) -> Vector: ...
+        self, p: int | Integer, v: FreeModuleElement[Integer] | None = None
+    ) -> FreeModuleElement[Integer] | None: ...
     def find_primitive_p_divisible_vector__random(
-        self, *args: ElementConstructorInput, **kwargs: ElementConstructorInput
-    ) -> Vector: ...
+        self, p: int | Integer
+    ) -> FreeModuleElement[Integer]: ...
+    # quadratic_form__neighbors.py:251: bound as a method, ``self`` is the
+    # list of seeds.
     def neighbor_iteration(
-        self, *args: ElementConstructorInput, **kwargs: ElementConstructorInput
+        self,
+        p: int | Integer,
+        mass: RingElement | None = None,
+        max_classes: int | Integer | None = None,
+        algorithm: str | None = None,
+        max_neighbors: int | Integer = 1000,
+        verbose: bool = False,
     ) -> list[QuadraticForm]: ...
     def orbits_lines_mod_p(
-        self, *args: ElementConstructorInput, **kwargs: ElementConstructorInput
-    ) -> ElementConstructorInput: ...
+        self, p: int | Integer
+    ) -> list[FreeModuleElement[IntegerMod_abstract]]: ...
     def minkowski_reduction(
         self, *args: ElementConstructorInput, **kwargs: ElementConstructorInput
     ) -> QuadraticForm: ...
@@ -344,15 +389,23 @@ class QuadraticForm:
     def vectors_by_length(
         self, *args: ElementConstructorInput, **kwargs: ElementConstructorInput
     ) -> ElementConstructorInput: ...
+    # quadratic_form__automorphisms.py:21, 92-93.
+    @overload
     def basis_of_short_vectors(
-        self, *args: ElementConstructorInput, **kwargs: ElementConstructorInput
-    ) -> list[Vector]: ...
+        self, show_lengths: Literal[False] = False
+    ) -> tuple[FreeModuleElement[Integer], ...]: ...
+    @overload
+    def basis_of_short_vectors(
+        self, show_lengths: Literal[True]
+    ) -> tuple[tuple[FreeModuleElement[Integer], ...], tuple[Integer, ...]]: ...
     def short_vector_list_up_to_length(
         self, len_bound: int | Integer, up_to_sign_flag: bool = ...
     ) -> ElementConstructorInput: ...
+    # quadratic_form__automorphisms.py:220: entry m lists the primitive
+    # vectors of value m.
     def short_primitive_vector_list_up_to_length(
-        self, *args: ElementConstructorInput, **kwargs: ElementConstructorInput
-    ) -> list[tuple[Vector, int]]: ...
+        self, len_bound: int | Integer, up_to_sign_flag: bool = False
+    ) -> list[list[FreeModuleElement[Integer]]]: ...
     def _compute_automorphisms(
         self, *args: ElementConstructorInput, **kwargs: ElementConstructorInput
     ) -> ElementConstructorInput: ...
@@ -363,19 +416,20 @@ class QuadraticForm:
     def has_equivalent_Jordan_decomposition_at_prime(
         self, *args: ElementConstructorInput, **kwargs: ElementConstructorInput
     ) -> bool: ...
+    # quadratic_form__equivalence_testing.py:109-115: with ``return_matrix``,
+    # PARI's ``qfisom`` matrix or ``False``.
     @overload
     def is_globally_equivalent_to(
-        self, other: QuadraticForm, return_matrix: Literal[False] = ...
+        self, other: QuadraticForm, return_matrix: Literal[False] = False
     ) -> bool: ...
     @overload
     def is_globally_equivalent_to(
         self, other: QuadraticForm, return_matrix: Literal[True]
-    ) -> bool: ...
+    ) -> Matrix_integer_dense | Literal[False]: ...
     def is_locally_equivalent_to(
         self, *args: ElementConstructorInput, **kwargs: ElementConstructorInput
     ) -> bool: ...
     def is_rationally_isometric(self, other: QuadraticForm) -> bool: ...
-    def solve(
-        self, *args: ElementConstructorInput, **kwargs: ElementConstructorInput
-    ) -> Vector: ...
+    # qfsolve.py:133: a nonzero vector x with Q(x) == c.
+    def solve(self, c: RingElement | int = 0) -> FreeModuleElement[RingElement]: ...
     def genera(self) -> ElementConstructorInput: ...
