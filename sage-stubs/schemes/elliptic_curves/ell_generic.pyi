@@ -1,18 +1,15 @@
 from collections.abc import Sequence
 from typing import Self
-from sage.rings.integer import Integer
-from sage.rings.rational import Rational
+
+from cypari2.gen import Gen
+from sage.categories.category import Category
+from sage.categories.map import Map
+from sage.plot.graphics import Graphics
+from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.ring import Ring
 from sage.structure.element import RingElement
 from sage.structure.parent import ParentCallInput
-
-
-from sage.categories.category import Category
-from sage.categories.map import Map
-from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.symbolic.expression import Expression
-from sage.plot.graphics import Graphics
-from sage.libs.pari.gen import gen as pari_gen
 
 from ..curves.projective_curve import ProjectivePlaneCurve
 from ..projective.projective_homset import SchemeHomset_points_abelian_variety_field
@@ -87,8 +84,8 @@ class EllipticCurve_generic(ProjectivePlaneCurve):
     def formal_group(self) -> EllipticCurveFormalGroup: ...
     def _p_primary_torsion_basis(self, p: int, m: int) -> tuple[EllipticCurvePoint_field, EllipticCurvePoint_field]: ...
     def hyperelliptic_polynomials(self) -> tuple[Polynomial, Polynomial]: ...
-    def pari_curve(self) -> pari_gen: ...
-    def __pari__(self) -> pari_gen: ...
+    def pari_curve(self) -> Gen: ...
+    def __pari__(self) -> Gen: ...
     def is_smooth(
         self,
         point: SchemeMorphism_point_projective_ring | Sequence[RingElement] | None = None,

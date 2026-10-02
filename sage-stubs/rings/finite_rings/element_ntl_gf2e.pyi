@@ -11,10 +11,6 @@ from sage.rings.integer_ring import IntegerRing_class
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.structure.element import Element
 
-
-class gen: ...
-
-
 class Cache_ntl_gf2e(Cache_base[IntegerMod_abstract]):
     def __init__(
         self,

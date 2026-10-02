@@ -2,10 +2,10 @@ from collections.abc import Iterable, Sequence
 from typing import Generic, Literal, Protocol, Self, TypeVar, overload
 
 import numpy as np
+from cypari2.gen import Gen
 from sage.interfaces.expect import Expect, ExpectElement
 from sage.interfaces.singular import Singular, SingularElement
 from sage.libs.gap.element import ElementLibGAP
-from sage.libs.pari.gen import gen
 from sage.matrix.matrix0 import Matrix as Matrix0
 from sage.matrix.matrix_space import MatrixData, MatrixSpace
 from sage.misc.sage_input import SageInputBuilder, SageInputExpression
@@ -26,13 +26,19 @@ class _MpmathMatrix(Protocol):
     rows: int
     cols: int
 
+class _ColumnSource[V](Protocol):
+    def column(self, i: int | Integer, /, from_list: bool = ...) -> V: ...
+
+class _RowSource[V](Protocol):
+    def row(self, i: int | Integer, /, from_list: bool = ...) -> V: ...
+
 class Matrix(
     Matrix0[_Scalar],
     Generic[_Scalar],
 ):
     # External-system conversions directly implemented by matrix1.pyx.
     def _pari_init_(self) -> str: ...
-    def __pari__(self) -> gen: ...
+    def __pari__(self) -> Gen: ...
     def _gap_init_(self) -> str: ...
     def _libgap_(self) -> ElementLibGAP: ...
     def _fricas_init_(self) -> str: ...
@@ -89,36 +95,14 @@ class Matrix(
         base_ring: Parent[_NewScalar],
         sparse: bool | None = ...,
     ) -> FreeModule_generic[_NewScalar]: ...
-    @overload
-    def columns(
-        self,
-        copy: Literal[True] = ...,
-    ) -> list[FreeModuleElement[_Scalar]]: ...
-    @overload
-    def columns(
-        self,
-        copy: Literal[False],
-    ) -> tuple[FreeModuleElement[_Scalar], ...]: ...
-    @overload
-    def columns(
-        self,
-        copy: bool,
-    ) -> list[FreeModuleElement[_Scalar]] | tuple[FreeModuleElement[_Scalar], ...]: ...
-    @overload
-    def rows(
-        self,
-        copy: Literal[True] = ...,
-    ) -> list[FreeModuleElement[_Scalar]]: ...
-    @overload
-    def rows(
-        self,
-        copy: Literal[False],
-    ) -> tuple[FreeModuleElement[_Scalar], ...]: ...
-    @overload
-    def rows(
-        self,
-        copy: bool,
-    ) -> list[FreeModuleElement[_Scalar]] | tuple[FreeModuleElement[_Scalar], ...]: ...
+    # matrix1.pyx: columns() returns the cached list of dense_columns() or
+    # sparse_columns(), whose entries are built as column(i) builds them;
+    # copy=False returns that list itself rather than a copy.
+    def columns[V](self: _ColumnSource[V], copy: bool = ...) -> list[V]: ...
+    # matrix1.pyx: rows() returns the cached list of dense_rows() or
+    # sparse_rows(), whose entries are built as row(i) builds them;
+    # copy=False returns that list itself rather than a copy.
+    def rows[V](self: _RowSource[V], copy: bool = ...) -> list[V]: ...
     @overload
     def dense_columns(
         self,

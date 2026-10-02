@@ -1,15 +1,11 @@
-from typing import Self
-from sage.rings.integer import Integer
-from sage.rings.rational import Rational
-from sage.rings.ring import Ring
-from sage.structure.element import RingElement, Element
-from sage.schemes.elliptic_curves.ell_generic import EllipticCurve_generic
-from sage.schemes.projective.projective_point import SchemeMorphism_point_projective_ring
-from sage.schemes.projective.projective_homset import SchemeHomset_points_abelian_variety_field
-from sage.libs.pari.gen import gen as pari_gen
-from sage.plot.graphics import Graphics
-from sage.rings.polynomial.polynomial_element import Polynomial
 import typing
+
+from cypari2.gen import Gen
+from sage.plot.graphics import Graphics
+from sage.rings.integer import Integer
+from sage.rings.polynomial.polynomial_element import Polynomial
+from sage.schemes.elliptic_curves.ell_generic import EllipticCurve_generic
+from sage.structure.element import Element, RingElement
 
 # We drop bases like AdditiveGroupElement, SchemeMorphism_point_abelian_variety_field, etc.
 # Actually we can keep EllipticCurvePoint_field as inheriting from some common bases if needed, but drop it for simplicity.
@@ -21,7 +17,7 @@ class EllipticCurvePoint_field(Element):
     def __iter__(self) -> typing.Iterator[RingElement]: ...
     def __tuple__(self) -> tuple[RingElement, ...]: ...
     def _richcmp_(self, other: object, op: int) -> bool: ...
-    def __pari__(self) -> pari_gen: ...
+    def __pari__(self) -> Gen: ...
     def order(self, algorithm: str | None = ...) -> Integer: ...
     def _compute_order(self, algorithm: str | None = ...) -> Integer: ...
     def __bool__(self) -> bool: ...

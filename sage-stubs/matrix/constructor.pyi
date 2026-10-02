@@ -2,10 +2,12 @@ from collections.abc import Callable, Mapping, Sequence
 from typing import Literal, Protocol, TypeVar, overload
 
 import sage.matrix.special
+from cypari2.gen import Gen
 from sage.matrix.matrix import Matrix as MatrixClass
 from sage.matrix.matrix_integer_dense import Matrix_integer_dense
 from sage.matrix.matrix_space import MatrixIndexKeys, MatrixSpace
 from sage.modules.free_module_element import FreeModuleElement
+from sage.modules.vector_integer_dense import Vector_integer_dense
 from sage.modules.with_basis.morphism import ModuleMorphism
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import IntegerRing_class
@@ -24,9 +26,17 @@ type MatrixEntries[_Scalar: RingElement] = (
     | Callable[[int, int], ElementConstructorInput]
 )
 
-# Flat or nested sequences of integers. args.pyx:1202 makes the matrix dense
-# unless the entries are a mapping, a sparse matrix or sparse vectors.
-type _IntegerEntries = Sequence[int | Integer] | Sequence[Sequence[int | Integer]]
+# A PARI object, or flat or nested sequences of integers, whose rows may be
+# PARI vectors or dense integer vectors. args.pyx:1202 makes the matrix dense
+# unless the entries are a mapping, a sparse matrix or sparse vectors
+# (finalize_seq_seq); a PARI object is classified by pari_typ_to_entries_type,
+# which never gives sparse entries.
+type _IntegerScalar = int | Integer | Gen
+type _IntegerEntries = (
+    Gen
+    | Sequence[_IntegerScalar]
+    | Sequence[Sequence[_IntegerScalar] | Vector_integer_dense | Gen]
+)
 
 class options(GlobalOptions):
     max_cols: int

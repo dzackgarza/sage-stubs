@@ -1,34 +1,28 @@
-from typing import Self
+
+from cypari2.gen import Gen
+from sage.graphs.digraph import DiGraph
 from sage.groups.abelian_gps.abelian_group import AbelianGroup
-from sage.schemes.elliptic_curves.gal_reps import GaloisRepresentation
-from sage.schemes.elliptic_curves.sha_tate import Sha
-from sage.schemes.elliptic_curves.period_lattice import PeriodLattice_ell
-from sage.modular.modsym.space import ModularSymbolsSpace
+from sage.libs.eclib.mwrank import _mwrank_EllipticCurve
 from sage.modular.abvar.abvar import ModularAbelianVariety_modsym_abstract
 from sage.modular.modform.element import ModularFormElement
-from sage.modular.modsym.element import ModularSymbolsElement
-from sage.modular.pollack_stevens.modsym import PSModularSymbolElement
-from sage.lfunctions.sympow import Sympow
-from sage.lfunctions.lcalc import LCalc
-from sage.schemes.elliptic_curves.lseries_ell import Lseries_ell
 from sage.modular.modform.l_series_gross_zagier import GrossZagierLseries
-from sage.schemes.elliptic_curves.mod_sym_num import ModularSymbolNumerical
-from sage.schemes.elliptic_curves.kodaira_symbol import KodairaSymbol
-from sage.graphs.digraph import DiGraph
-from sage.rings.padics.padic_generic import pAdicGeneric
-from sage.schemes.elliptic_curves.ell_tate_curve import TateCurve
-from sage.libs.eclib.mwrank import _mwrank_EllipticCurve
-
+from sage.modular.modsym.element import ModularSymbolsElement
+from sage.modular.modsym.space import ModularSymbolsSpace
+from sage.modular.pollack_stevens.modsym import PSModularSymbolElement
 from sage.rings.integer import Integer
-from sage.rings.rational import Rational
+from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.ring import Ring
-from sage.structure.element import RingElement
 from sage.schemes.elliptic_curves.ell_generic import EllipticCurve_generic
 from sage.schemes.elliptic_curves.ell_point import EllipticCurvePoint_field
-from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.schemes.elliptic_curves.weierstrass_morphism import WeierstrassIsomorphism
-from sage.libs.pari.gen import gen as pari_gen
+from sage.schemes.elliptic_curves.ell_tate_curve import TateCurve
+from sage.schemes.elliptic_curves.gal_reps import GaloisRepresentation
 from sage.schemes.elliptic_curves.isogeny_class import IsogenyClass_EC_Rational
+from sage.schemes.elliptic_curves.kodaira_symbol import KodairaSymbol
+from sage.schemes.elliptic_curves.lseries_ell import Lseries_ell
+from sage.schemes.elliptic_curves.mod_sym_num import ModularSymbolNumerical
+from sage.schemes.elliptic_curves.period_lattice import PeriodLattice_ell
+from sage.schemes.elliptic_curves.sha_tate import Sha
+from sage.structure.element import RingElement
 
 # Drop inheritance to avoid missing base class issues
 class EllipticCurve_rational_field:
@@ -44,8 +38,8 @@ class EllipticCurve_rational_field:
     def is_integral(self) -> bool: ...
     def mwrank(self, options: str = ...) -> str: ...
     def conductor(self) -> Integer: ...
-    def pari_curve(self, prec: int = ...) -> pari_gen: ...
-    def pari_mincurve(self) -> pari_gen: ...
+    def pari_curve(self, prec: int = ...) -> Gen: ...
+    def pari_mincurve(self) -> Gen: ...
     def database_attributes(self) -> dict[str, object]: ...
     def database_curve(self) -> EllipticCurve_rational_field: ...
     def Np(self, p: int | Integer) -> Integer: ...

@@ -4,8 +4,6 @@ from sage.rings.finite_rings.finite_field_prime_modn import FiniteField_prime_mo
 from sage.rings.integer import Integer
 from sage.rings.polynomial.polynomial_element import Polynomial
 
-class gen: ...
-
 class FiniteField_ntl_gf2e(FiniteField):
     def __init__(
         self,

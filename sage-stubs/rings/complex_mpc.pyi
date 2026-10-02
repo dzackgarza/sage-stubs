@@ -1,11 +1,12 @@
 from typing import Literal, Self, overload
-from sage.rings.ring import Field
-from sage.rings.real_mpfr import RealField_class, RealNumber
-from sage.rings.integer import Integer
-from sage.structure.element import FieldElement
+
+from cypari2.gen import Gen
 from sage.categories.map import Map
-from sage.libs.pari.gen import gen
+from sage.rings.integer import Integer
 from sage.rings.polynomial.polynomial_element import Polynomial
+from sage.rings.real_mpfr import RealField_class, RealNumber
+from sage.rings.ring import Field
+from sage.structure.element import FieldElement
 
 _str = str
 
@@ -62,7 +63,7 @@ class MPComplexNumber(FieldElement):
     def __int__(self) -> int: ...
     def __float__(self) -> float: ...
     def __complex__(self) -> complex: ...
-    def __pari__(self) -> gen: ...
+    def __pari__(self) -> Gen: ...
     def __mpc__(self) -> gmpy2.mpc: ...
     def _richcmp_(self, other: object, op: int) -> bool: ...
     def __bool__(self) -> bool: ...

@@ -1,7 +1,7 @@
 from collections.abc import Callable, Iterable, Mapping, Sequence
 from typing import Literal, Never, Self, overload
 
-from sage.libs.pari.gen import gen
+from cypari2.gen import Gen
 from sage.matrix.matrix_dense import Matrix_dense
 from sage.matrix.matrix_integer_dense import Matrix_integer_dense
 from sage.matrix.matrix_space import MatrixSpace
@@ -286,4 +286,4 @@ class Matrix_rational_dense(Matrix_dense[Rational]):
         *args: object,
         **kwds: object,
     ) -> None: ...
-    def __pari__(self) -> gen: ...
+    def __pari__(self) -> Gen: ...

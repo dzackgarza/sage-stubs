@@ -1,29 +1,27 @@
 from collections.abc import Sequence
-from typing import NoReturn, SupportsFloat, TypeAlias
+from typing import NoReturn, SupportsFloat
 
+from cypari2.gen import Gen
 from sage.categories.morphism import Morphism
 from sage.categories.pushout import CompletionFunctor
 from sage.interfaces.expect import Expect
-from sage.rings.integer import Integer
+from sage.misc.sage_input import SageInputBuilder, SageInputExpression
 from sage.rings.abc import RealDoubleField as RealDoubleFieldABC
-from sage.rings.integer_ring import IntegerRing_class
-from sage.rings.infinity import PlusInfinity
-from sage.rings.rational import Rational
-from sage.rings.rational_field import RationalField
-from sage.rings.real_mpfr import RealField_class, RealNumber
 from sage.rings.complex_double import ComplexDoubleElement, ComplexDoubleField_class
 from sage.rings.complex_mpfr import ComplexField_class, ComplexNumber
-from sage.misc.sage_input import SageInputBuilder, SageInputExpression
-from sage.structure.factorization import Factorization
+from sage.rings.infinity import PlusInfinity
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import IntegerRing_class
+from sage.rings.polynomial.polynomial_element import Polynomial
+from sage.rings.rational_field import RationalField
+from sage.rings.real_mpfr import RealField_class, RealNumber
 from sage.structure.element import Element, FieldElement
+from sage.structure.factorization import Factorization
 from sage.structure.parent import Parent
 from sage.structure.sage_object import SageCoercionAtom
-from sage.rings.polynomial.polynomial_element import Polynomial
 
-class gen: ...
-
-_RealDoubleInput: TypeAlias = RealDoubleElement | RealNumber | SageCoercionAtom | SupportsFloat
-_CoerceDomain: TypeAlias = Parent | type
+type _RealDoubleInput = RealDoubleElement | RealNumber | SageCoercionAtom | SupportsFloat
+type _CoerceDomain = Parent | type
 
 class RealDoubleField_class(RealDoubleFieldABC):
     def __init__(self) -> None: ...
@@ -110,7 +108,7 @@ class RealDoubleElement(FieldElement):
     def __int__(self) -> int: ...
     def _complex_mpfr_field_(self, CC: ComplexField_class) -> ComplexNumber: ...
     def _complex_double_(self, CDF: ComplexDoubleField_class) -> ComplexDoubleElement: ...
-    def __pari__(self) -> gen: ...
+    def __pari__(self) -> Gen: ...
     def is_NaN(self) -> bool: ...
     def is_positive_infinity(self) -> bool: ...
     def is_negative_infinity(self) -> bool: ...

@@ -178,7 +178,7 @@ jobs:
             --show-error-codes \
             --show-column-numbers \
             --no-pretty \
-            sage-stubs/ > reports/mypy.txt 2>&1
+            sage-stubs/ cypari2-stubs/ > reports/mypy.txt 2>&1
           status=$?
           set -e
           errors=$(grep -c ' error:' reports/mypy.txt || true)

@@ -1,8 +1,8 @@
 from collections.abc import Callable, Iterable, Mapping, Sequence
 from typing import Literal, Never, Self, overload
 
+from cypari2.gen import Gen
 from sage.interfaces.singular import Singular, SingularElement
-from sage.libs.pari.gen import gen
 from sage.matrix.matrix import Matrix
 from sage.matrix.matrix1 import Matrix as Matrix1
 from sage.matrix.matrix_dense import Matrix_dense
@@ -10,6 +10,7 @@ from sage.matrix.matrix_rational_dense import Matrix_rational_dense
 from sage.matrix.matrix_space import MatrixSpace
 from sage.modules.free_module import FreeModule_generic
 from sage.modules.free_module_element import FreeModuleElement
+from sage.modules.vector_integer_dense import Vector_integer_dense
 from sage.rings.fraction_field_element import FractionFieldElement
 from sage.rings.ideal import Ideal_generic
 from sage.rings.integer import Integer
@@ -64,16 +65,18 @@ class Matrix_integer_dense(Matrix_dense[Integer]):
     def is_one(self) -> bool: ...
     def _list(self) -> _List[Integer]: ...
     def list(self) -> _List[Integer]: ...
+    # row() and column() build an element of the dense ambient module ZZ^n,
+    # whose element class is Vector_integer_dense.
     def row(
         self,
         i: int | Integer,
         from_list: bool = ...,
-    ) -> FreeModuleElement[Integer]: ...
+    ) -> Vector_integer_dense: ...
     def column(
         self,
         j: int | Integer,
         from_list: bool = ...,
-    ) -> FreeModuleElement[Integer]: ...
+    ) -> Vector_integer_dense: ...
     def transpose(self) -> Self: ...
     def antitranspose(self) -> Self: ...
     def augment[T: RingElement](
@@ -410,7 +413,7 @@ class Matrix_integer_dense(Matrix_dense[Integer]):
         *args: object,
         **kwds: object,
     ) -> None: ...
-    def __pari__(self) -> gen: ...
+    def __pari__(self) -> Gen: ...
     def _singular_(
         self,
         singular: Singular | None = ...,
