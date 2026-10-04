@@ -1,4 +1,4 @@
-from sage.matrix.matrix import Matrix
+from sage.matrix.matrix2 import Matrix
 
 class Matrix_dense(Matrix):
     def __copy__(self) -> Matrix_dense: ...

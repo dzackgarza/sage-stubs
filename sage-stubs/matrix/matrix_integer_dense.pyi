@@ -1,4 +1,4 @@
-from sage.matrix.matrix import Matrix_dense
+from sage.matrix.matrix_dense import Matrix_dense
 from sage.structure.parent import Parent
 from sage.rings.integer import Integer
 from sage.matrix.matrix_rational_dense import Matrix_rational_dense
