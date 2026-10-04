@@ -1,11 +1,12 @@
 from sage.rings.integer import Integer
 from sage.rings.ring import CommutativeRing, Ring
 from sage.rings.infinity import PlusInfinity as Infinity
-from sage.structure.parent import Parent
+from sage.structure.parent import Parent, ParentCallInput
 from sage.categories.morphism import Morphism
 from sage.rings.polynomial.polynomial_element import Polynomial
 
 class IntegerRing_class(CommutativeRing):
+    def __call__(self, x: ParentCallInput = ..., *args: ParentCallInput, **kwds: ParentCallInput) -> Integer: ...
     def characteristic(self) -> int: ...
     def order(self) -> Infinity: ...
     def is_field(self, proof: bool = ...) -> bool: ...

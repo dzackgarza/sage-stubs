@@ -2,6 +2,7 @@ from typing import TypeAlias, TypeVar, overload
 
 from sage.structure.factorization import Factorization
 from sage.rings.rational import Rational
+from sage.structure.parent import Parent
 
 _T = TypeVar("_T")
 _IntegerDigit: TypeAlias = int | Integer
@@ -9,6 +10,7 @@ _IntegerInput: TypeAlias = int | Integer | Rational | float | str | bytes | list
 _IntegerComparable: TypeAlias = int | Integer | Rational | float
 
 class Integer:
+    def parent(self, x: None = None) -> Parent: ...
     def __init__(self, x: _IntegerInput = None, base: int = 0) -> None: ...
     def __index__(self) -> int: ...
     def __neg__(self) -> Integer: ...
