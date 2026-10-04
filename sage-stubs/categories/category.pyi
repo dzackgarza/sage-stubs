@@ -44,7 +44,7 @@ class Category:
     def _make_named_class(
         self,
         name: str,
-        method_provider: type,
+        method_provider: str,
         cache: bool = ...,
         picklable: bool = ...,
     ) -> type: ...
