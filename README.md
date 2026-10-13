@@ -56,3 +56,16 @@ Stubs cover the plugin-facing infrastructure surface:
 - `sage.rings.real_mpfi` — RealIntervalField
 - `sage.rings.polynomial.ore_polynomial_ring` — OrePolynomialRing
 - `sage.combinat.posets.posets` — FinitePoset
+
+## Development tools
+
+This repository does not require an installed Sage runtime or a Sage fork.
+`just setup` initializes the pinned upstream `sage-src` source submodule for
+signature inspection and coverage; do not build Sage or create a Sage environment
+inside it.
+
+Local mypy checks use `uvx` with Python 3.12 and mypy 2.0.0. Install `uv` to run
+these commands. No `SAGE_BIN` or Sage environment activation is needed.
+`just scaffold sage.categories.category` parses the pinned Python source without
+importing Sage. Cython modules must be enumerated from their `.pyx` source;
+source parsing does not expose runtime-generated members.

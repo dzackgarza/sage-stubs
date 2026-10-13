@@ -15,7 +15,7 @@ check:
     @echo "--- semantic quality debt audit ---"
     python3 scripts/audit_stub_quality.py --root sage-stubs --fail-on warning
     @echo "--- mypy: strict full-tree type checking ---"
-    "$(dirname "$SAGE_BIN")/python" -m mypy --strict --no-incremental --follow-imports=normal sage-stubs/
+    uvx --python 3.12 mypy==2.0.0 --strict --no-incremental --follow-imports=normal sage-stubs/
     @echo "--- basedpyright: strict full-tree type checking ---"
     basedpyright --project pyrightconfig.json
     @echo "--- semgrep: generated/erased-type rules ---"
@@ -36,7 +36,7 @@ audit *args:
 
 # Both independent full-tree type checkers.
 typecheck:
-    "$(dirname "$SAGE_BIN")/python" -m mypy --strict --no-incremental --follow-imports=normal sage-stubs/
+    uvx --python 3.12 mypy==2.0.0 --strict --no-incremental --follow-imports=normal sage-stubs/
     basedpyright --project pyrightconfig.json
 
 # Repository-local Semgrep rules.
@@ -66,14 +66,13 @@ coverage *args:
 queue *args:
     python3 scripts/stub_queue.py {{args}}
 
-# Scaffold a fresh stub for one Sage module using mypy stubgen.
-# Output lands under /tmp/stubgen/ so it can be hand-refined into sage-stubs/.
-# Example: just scaffold sage.rings.polynomial.polynomial_ring
+# Scaffold a Python module from the pinned source without importing Sage.
+# Cython modules must be enumerated directly from their .pyx source.
+# Output is a draft requiring source review and concrete type annotations.
+# Example: just scaffold sage.categories.category
 scaffold module:
-    @rm -rf /tmp/stubgen
-    "$(dirname "$SAGE_BIN")/python" -m mypy.stubgen -m {{module}} --include-private --inspect-mode -o /tmp/stubgen || \
-      "$(dirname "$SAGE_BIN")/python" -m mypy.stubgen -p {{module}} -o /tmp/stubgen
-    @echo "Scaffold written under /tmp/stubgen/. Refine (replace every Any!) and copy into sage-stubs/."
+    uvx --python 3.12 --from mypy==2.0.0 stubgen --no-import --parse-only {{quote("sage-src/src/" + replace(module, ".", "/") + ".py")}} --include-private -o /tmp/stubgen
+    @echo "Draft written under /tmp/stubgen/. Resolve types from source before copying into sage-stubs/."
 
 # One-shot setup: point git at the tracked hooks under .githooks/.
 # Run this once per clone. Idempotent.
